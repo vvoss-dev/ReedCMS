@@ -740,6 +740,8 @@ project.public.cache.max_age|3600|Cache max age in seconds
 
 ### ReedStream - Universal Module Communication Interface
 
+> **Note**: Complete implementation specification in REED-01-01. Service template standardisation completed 2025-01-30 (see `project_optimisations.md` §17).
+
 All ReedCMS modules must use the standardised ReedStream communication protocol:
 
 ```rust

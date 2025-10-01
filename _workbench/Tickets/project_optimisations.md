@@ -265,6 +265,43 @@ All 37 tickets across 10 layers have been optimised and are now ready for implem
 
 **Next Phase**: Complete remaining template integration questions (D-H), then begin systematic implementation starting with Foundation Layer (REED-01).
 
+### 17. Service Template Standardisation
+**Status**: ✅ Complete - All templates aligned with REED-01-01 specification
+
+**Changes**:
+- **CSV Delimiter**: Changed from semicolon (`;`) to pipe (`|`) in all file headers and examples
+- **ReedRequest Structure**: Updated field names (`lang` → `language`) and optionality (`value`, `description` now `Option<String>`)
+- **ReedResponse Structure**: Aligned with REED-01-01 (removed `success`, `message`; added `source`, `cached`, `timestamp`, `metrics`)
+- **ReedError Variants**: Reduced to 10 base variants matching REED-01-01:
+  - `NotFound`, `ValidationError`, `ParseError`, `IoError`
+  - `CsvError`, `AuthError`, `ConfigError`, `TemplateError`
+  - `ServerError`, `InvalidCommand`
+- **Error Messages**: Changed to simple format strings with `{field:?}` syntax (Option A)
+- **Response Constructors**: Added helper functions (`new()`, `with_metrics()`)
+- **Timestamp Helper**: Added central `current_timestamp()` function
+- **Convenience Functions**: Specified all 10 ReedError convenience constructors
+
+**Affected Files**:
+- `_workbench/Tickets/templates/service-template.md` (primary template)
+- `_workbench/Tickets/templates/service-template.test.md` (unchanged, already consistent)
+
+**Benefits**:
+- Single source of truth for all service implementations
+- Consistent error handling across all modules
+- Clear separation: base errors (REED-01-01) vs. extended errors (REED-01-02)
+- Ergonomic helper functions for common patterns
+- Zero confusion about pipe vs. semicolon delimiter
+
+**Implementation Decisions**:
+- Error format: Option A (simple `{field:?}` strings)
+- Response helpers: Yes (ergonomic API)
+- Timestamp function: Central in `reedstream.rs`
+- Convenience functions: All 10 variants
+- Cargo.toml: Self-managed, extended as needed
+- Directory structure: `src/reedcms/` created from scratch
+
+**Files**: `_workbench/Tickets/templates/service-template.md`
+
 ---
 
 **Note**: This document complements `project_summary.md` which contains the main system design. This file focuses exclusively on decisions and optimisations made during the planning phase.

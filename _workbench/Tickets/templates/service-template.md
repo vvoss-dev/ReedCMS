@@ -26,7 +26,7 @@
 // MANDATORY: BBC English for all documentation and comments
 // MANDATORY: Type-safe HashMap lookups, O(1) performance priority
 // MANDATORY: Environment-aware with @suffix support (key@dev, key@prod)
-// MANDATORY: CSV format: key;value;description (semicolon-separated, quoted when needed)
+// MANDATORY: CSV format: key|value|description (pipe-delimited, quoted when needed)
 // MANDATORY: Error handling with Result<T, ReedError> pattern
 //
 // == FILE PURPOSE ==
@@ -52,7 +52,7 @@
 // MANDATORY: BBC English for all documentation and comments
 // MANDATORY: Type-safe HashMap lookups, O(1) performance priority
 // MANDATORY: Environment-aware with @suffix support (key@dev, key@prod)
-// MANDATORY: CSV format: key;value;description (semicolon-separated, quoted when needed)
+// MANDATORY: CSV format: key|value|description (pipe-delimited, quoted when needed)
 // MANDATORY: Error handling with Result<T, ReedError> pattern
 //
 // == FILE PURPOSE ==
@@ -74,7 +74,7 @@ use crate::reedcms::reedbase::backup::create_backup;
 ///
 /// ## Input
 /// - `req.key`: Text identifier (e.g., "welcome.title")
-/// - `req.lang`: Language code (e.g., "en", "de")
+/// - `req.language`: Language code (e.g., "en", "de")
 /// - `req.value`: Text content to store
 /// - `req.description`: Mandatory description for documentation
 /// - `req.environment`: Optional environment override (@dev, @prod)
@@ -89,20 +89,19 @@ use crate::reedcms::reedbase::backup::create_backup;
 /// - **Total**: ~7ms per text setting operation
 ///
 /// ## Error Conditions
-/// - `ReedError::InvalidKey`: Key contains invalid characters
-/// - `ReedError::MissingDescription`: Description field empty
-/// - `ReedError::BackupFailed`: Cannot create backup before modification
-/// - `ReedError::CsvWriteFailed`: Cannot write to CSV file
-/// - `ReedError::HashMapUpdateFailed`: Runtime cache update failed
+/// - `ReedError::ValidationError`: Key contains invalid characters or description missing
+/// - `ReedError::IoError`: Cannot create backup before modification
+/// - `ReedError::CsvError`: Cannot write to CSV file
 ///
 /// ## Example Usage
 /// ```rust
 /// let req = ReedRequest {
 ///     key: "welcome.title".to_string(),
-///     lang: Some("en".to_string()),
-///     value: "Welcome to ReedCMS".to_string(),
-///     description: "Landing page main title".to_string(),
+///     language: Some("en".to_string()),
+///     value: Some("Welcome to ReedCMS".to_string()),
+///     description: Some("Landing page main title".to_string()),
 ///     environment: None,
+///     context: None,
 /// };
 /// let result = set_text(req).await?;
 /// ```
@@ -117,10 +116,10 @@ pub async fn set_text(req: ReedRequest) -> ReedResult<ReedResponse<()>> {
     create_backup(".reed/text.csv").await?;
 
     // == STEP 4: CSV File Update ==
-    write_to_csv(&final_key, &req.lang, &req.value, &req.description).await?;
+    write_to_csv(&final_key, &req.language, &req.value.as_deref(), &req.description.as_deref()).await?;
 
     // == STEP 5: Runtime HashMap Update ==
-    update_runtime_cache(&final_key, &req.lang, &req.value).await?;
+    update_runtime_cache(&final_key, &req.language, req.value.as_deref()).await?;
 
     // == STEP 6: Success Response ==
     Ok(ReedResponse::success(()))
@@ -146,38 +145,44 @@ fn validate_text_input(req: &ReedRequest) -> ReedResult<()> {
     // Key validation
     let key_pattern = Regex::new(r"^[a-zA-Z0-9._-]+$").unwrap();
     if !key_pattern.is_match(&req.key) {
-        return Err(ReedError::InvalidKey {
-            key: req.key.clone(),
-            reason: "Key must contain only alphanumeric, dots, underscores and hyphens".to_string(),
+        return Err(ReedError::ValidationError {
+            field: "key".to_string(),
+            value: req.key.clone(),
+            constraint: "Key must contain only alphanumeric, dots, underscores and hyphens".to_string(),
         });
     }
 
     // Language validation
-    if let Some(ref lang) = req.lang {
+    if let Some(ref lang) = req.language {
         if lang.len() != 2 || !lang.chars().all(|c| c.is_ascii_lowercase()) {
-            return Err(ReedError::InvalidLanguage {
-                language: lang.clone(),
-                reason: "Language must be 2-character ISO 639-1 code (e.g., 'en', 'de')".to_string(),
+            return Err(ReedError::ValidationError {
+                field: "language".to_string(),
+                value: lang.clone(),
+                constraint: "Language must be 2-character ISO 639-1 code (e.g., 'en', 'de')".to_string(),
             });
         }
     }
 
     // Value validation
-    if req.value.trim().is_empty() {
-        return Err(ReedError::EmptyValue {
-            key: req.key.clone(),
-            reason: "Text content cannot be empty".to_string(),
-        });
+    if let Some(ref value) = req.value {
+        if value.trim().is_empty() {
+            return Err(ReedError::ValidationError {
+                field: "value".to_string(),
+                value: req.key.clone(),
+                constraint: "Text content cannot be empty".to_string(),
+            });
+        }
     }
 
     // Description validation (mandatory for all text content)
-    if req.description.trim().len() < 10 {
-        return Err(ReedError::MissingDescription {
-            key: req.key.clone(),
-            current_length: req.description.len(),
-            minimum_required: 10,
-            reason: "Description must be at least 10 characters for documentation purposes".to_string(),
-        });
+    if let Some(ref desc) = req.description {
+        if desc.trim().len() < 10 {
+            return Err(ReedError::ValidationError {
+                field: "description".to_string(),
+                value: req.key.clone(),
+                constraint: format!("Description must be at least 10 characters (current: {})", desc.len()),
+            });
+        }
     }
 
     Ok(())
@@ -202,10 +207,10 @@ fn resolve_environment_key(base_key: &str, environment: &Option<String>) -> Reed
                 if parts.len() == 2 && parts[1] == env {
                     Ok(base_key.to_string())
                 } else {
-                    Err(ReedError::EnvironmentMismatch {
-                        key: base_key.to_string(),
-                        requested_env: env.clone(),
-                        existing_env: parts.get(1).unwrap_or(&"").to_string(),
+                    Err(ReedError::ValidationError {
+                        field: "environment".to_string(),
+                        value: base_key.to_string(),
+                        constraint: format!("Environment mismatch: requested '{}', existing '{}'", env, parts.get(1).unwrap_or(&"")),
                     })
                 }
             } else {
@@ -221,9 +226,9 @@ fn resolve_environment_key(base_key: &str, environment: &Option<String>) -> Reed
 ///
 /// ## CSV Format
 /// ```csv
-/// key;language;value;description
-/// welcome.title;en;"Welcome to ReedCMS";"Landing page main title"
-/// welcome.title;de;"Willkommen bei ReedCMS";"Haupttitel der Startseite"
+/// key|language|value|description
+/// welcome.title|en|"Welcome to ReedCMS"|"Landing page main title"
+/// welcome.title|de|"Willkommen bei ReedCMS"|"Haupttitel der Startseite"
 /// ```
 ///
 /// ## Atomic Write Process
@@ -268,8 +273,9 @@ async fn write_to_csv(key: &str, lang: &Option<String>, value: &str, description
     write_csv_entries(temp_path, &existing_entries).await?;
 
     // Atomic rename
-    fs::rename(temp_path, csv_path).await.map_err(|e| ReedError::CsvWriteFailed {
-        path: csv_path.to_string(),
+    fs::rename(temp_path, csv_path).await.map_err(|e| ReedError::CsvError {
+        file_type: "text".to_string(),
+        operation: "write".to_string(),
         reason: format!("Atomic rename failed: {}", e),
     })?;
 
@@ -380,51 +386,46 @@ pub async fn function_name(param1: Type1, param2: Type2) -> ReedResult<ReedRespo
 ```rust
 // == REEDSTREAM COMMUNICATION PATTERNS ==
 
-// Standard request structure
+// Standard request structure (defined in REED-01-01)
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ReedRequest {
-    pub key: String,                    // Primary identifier
-    pub lang: Option<String>,           // Language code (ISO 639-1)
-    pub value: String,                  // Content/data to store
-    pub description: String,            // Mandatory documentation
-    pub environment: Option<String>,    // Environment override (@dev, @prod)
-    pub metadata: Option<HashMap<String, String>>, // Additional context
+    pub key: String,
+    pub language: Option<String>,
+    pub environment: Option<String>,
+    pub context: Option<String>,
+    pub value: Option<String>,        // For set operations
+    pub description: Option<String>,  // For set operations (comment field in CSV)
 }
 
-// Standard response structure
+// Standard response structure (defined in REED-01-01)
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ReedResponse<T> {
-    pub success: bool,                  // Operation success flag
-    pub data: T,                        // Response payload
-    pub message: Option<String>,        // Human-readable message
-    pub execution_time_ms: u64,         // Performance tracking
-    pub cache_hit: bool,                // Performance indicator
+    pub data: T,
+    pub source: String,
+    pub cached: bool,
+    pub timestamp: u64,
+    pub metrics: Option<ResponseMetrics>,
 }
 
 // Result type alias
 pub type ReedResult<T> = Result<T, ReedError>;
 
-// Standard response constructors
-impl<T> ReedResponse<T> {
-    pub fn success(data: T) -> Self {
-        Self {
-            success: true,
-            data,
-            message: None,
-            execution_time_ms: 0,
-            cache_hit: false,
-        }
-    }
+// Performance metrics structure (defined in REED-01-01)
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ResponseMetrics {
+    pub processing_time_us: u64,
+    pub memory_allocated: Option<u64>,
+    pub csv_files_accessed: u8,
+    pub cache_info: Option<CacheInfo>,
+}
 
-    pub fn success_with_message(data: T, message: String) -> Self {
-        Self {
-            success: true,
-            data,
-            message: Some(message),
-            execution_time_ms: 0,
-            cache_hit: false,
-        }
-    }
+// Cache information structure (defined in REED-01-01)
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CacheInfo {
+    pub hit: bool,
+    pub ttl_remaining_s: Option<u64>,
+    pub cache_key: String,
+    pub cache_layer: String,
 }
 ```
 
@@ -442,8 +443,10 @@ impl<T> ReedResponse<T> {
 fn validate_input(req: &ReedRequest) -> ReedResult<()> {
     // Key validation (mandatory for all services)
     if req.key.trim().is_empty() {
-        return Err(ReedError::EmptyKey {
-            reason: "Key cannot be empty".to_string(),
+        return Err(ReedError::ValidationError {
+            field: "key".to_string(),
+            value: String::new(),
+            constraint: "Key cannot be empty".to_string(),
         });
     }
 
@@ -462,79 +465,92 @@ fn validate_input(req: &ReedRequest) -> ReedResult<()> {
 
 ```rust
 // == REED ERROR TYPES ==
-// All services MUST use these standardised error types
+// Base error types defined in REED-01-01
+// Note: Additional specific variants will be added in REED-01-02
 
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum ReedError {
-    // Input validation errors
-    #[error("Invalid key '{key}': {reason}")]
-    InvalidKey { key: String, reason: String },
-
-    #[error("Invalid language '{language}': {reason}")]
-    InvalidLanguage { language: String, reason: String },
-
-    #[error("Empty value for key '{key}': {reason}")]
-    EmptyValue { key: String, reason: String },
-
-    #[error("Missing description for key '{key}': current length {current_length}, minimum required {minimum_required}. {reason}")]
-    MissingDescription {
-        key: String,
-        current_length: usize,
-        minimum_required: usize,
-        reason: String,
+    /// Resource not found (e.g., key not in CSV, template file missing)
+    #[error("Resource not found: {resource}" + if context.is_some() { format!(" ({})", context.as_ref().unwrap()) } else { String::new() })]
+    NotFound { 
+        resource: String, 
+        context: Option<String> 
     },
 
-    // Environment errors
-    #[error("Environment mismatch for key '{key}': requested '{requested_env}', existing '{existing_env}'")]
-    EnvironmentMismatch {
-        key: String,
-        requested_env: String,
-        existing_env: String,
+    /// Data parsing or validation error (e.g., invalid key format, malformed CSV)
+    #[error("Validation error in field '{field}': value '{value}' does not meet constraint '{constraint}'")]
+    ValidationError { 
+        field: String, 
+        value: String, 
+        constraint: String 
     },
 
-    // File system errors
-    #[error("CSV write failed for path '{path}': {reason}")]
-    CsvWriteFailed { path: String, reason: String },
+    /// File system or I/O operation error
+    #[error("I/O error during operation '{operation}' on path '{path}': {reason}")]
+    IoError { 
+        operation: String, 
+        path: String, 
+        reason: String 
+    },
 
-    #[error("Backup creation failed for path '{path}': {reason}")]
-    BackupFailed { path: String, reason: String },
+    /// CSV file operation error
+    #[error("CSV error in file '{file_type}' during operation '{operation}': {reason}")]
+    CsvError { 
+        file_type: String, 
+        operation: String, 
+        reason: String 
+    },
 
-    #[error("Backup not found: cannot restore {steps_back} steps back")]
-    BackupNotFound { steps_back: u32 },
+    /// Authentication or authorisation failure
+    #[error("Authentication failed" + if user.is_some() { format!(" for user '{}'", user.as_ref().unwrap()) } else { String::new() } + " during action '{action}': {reason}")]
+    AuthError { 
+        user: Option<String>, 
+        action: String, 
+        reason: String 
+    },
 
-    // Cache errors
-    #[error("HashMap update failed for key '{key}': {reason}")]
-    HashMapUpdateFailed { key: String, reason: String },
+    /// Configuration or setup error
+    #[error("Configuration error in component '{component}': {reason}")]
+    ConfigError { 
+        component: String, 
+        reason: String 
+    },
 
-    #[error("Cache corruption detected for key '{key}': {reason}")]
-    CacheCorruption { key: String, reason: String },
-
-    // Server errors
-    #[error("Server start failed: {reason}")]
-    ServerStartFailed { reason: String },
-
-    #[error("Unix socket error for path '{socket_path}': {reason}")]
-    UnixSocketError { socket_path: String, reason: String },
-
-    // Template errors
+    /// Template rendering error
     #[error("Template rendering failed for '{template}': {reason}")]
-    TemplateRenderingFailed { template: String, reason: String },
+    TemplateError { 
+        template: String, 
+        reason: String 
+    },
 
-    #[error("Template not found: '{template}'")]
-    TemplateNotFound { template: String },
+    /// Server or network operation error
+    #[error("Server error in component '{component}': {reason}")]
+    ServerError { 
+        component: String, 
+        reason: String 
+    },
 
-    // System errors
-    #[error("Configuration error: {reason}")]
-    ConfigurationError { reason: String },
+    /// Invalid CLI command or parameters
+    #[error("Invalid command '{command}': {reason}")]
+    InvalidCommand { 
+        command: String, 
+        reason: String 
+    },
 
-    #[error("IO error: {reason}")]
-    IoError { reason: String },
+    /// Data parsing error (distinct from validation)
+    #[error("Parse error for input '{input}': {reason}")]
+    ParseError { 
+        input: String, 
+        reason: String 
+    },
 }
 
 // Error conversion patterns
 impl From<std::io::Error> for ReedError {
     fn from(err: std::io::Error) -> Self {
         ReedError::IoError {
+            operation: "unknown".to_string(),
+            path: "unknown".to_string(),
             reason: err.to_string(),
         }
     }
@@ -542,8 +558,9 @@ impl From<std::io::Error> for ReedError {
 
 impl From<csv::Error> for ReedError {
     fn from(err: csv::Error) -> Self {
-        ReedError::CsvWriteFailed {
-            path: "unknown".to_string(),
+        ReedError::CsvError {
+            file_type: "unknown".to_string(),
+            operation: "unknown".to_string(),
             reason: err.to_string(),
         }
     }
@@ -558,16 +575,35 @@ impl From<csv::Error> for ReedError {
 /// ## Error Context
 /// Always provide rich context for debugging and user feedback.
 async fn service_function(req: ReedRequest) -> ReedResult<ReedResponse<T>> {
+    let start = std::time::Instant::now();
+    
     // Wrap operations with context
     let result = risky_operation(&req)
         .await
-        .map_err(|e| ReedError::SpecificError {
-            key: req.key.clone(),
-            reason: format!("Operation failed in service_function: {}", e),
+        .map_err(|e| ReedError::IoError {
+            operation: "service_function".to_string(),
+            path: req.key.clone(),
+            reason: format!("Operation failed: {}", e),
         })?;
 
-    // Always return structured response
-    Ok(ReedResponse::success(result))
+    let processing_time = start.elapsed().as_micros() as u64;
+
+    // Always return structured response with metrics
+    Ok(ReedResponse {
+        data: result,
+        source: "service_name".to_string(),
+        cached: false,
+        timestamp: std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs(),
+        metrics: Some(ResponseMetrics {
+            processing_time_us: processing_time,
+            memory_allocated: None,
+            csv_files_accessed: 0,
+            cache_info: None,
+        }),
+    })
 }
 
 /// Error logging pattern (optional, for debugging)
