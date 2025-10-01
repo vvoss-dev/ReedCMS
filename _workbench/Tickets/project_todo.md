@@ -1,7 +1,7 @@
 # ReedCMS Template Integration - Project TODO
 
 **Main Task**: Complete Template System Integration Analysis
-**Status**: In Progress - Question F (6/9 resolved)
+**Status**: In Progress - Question G (7/9 resolved)
 **Date**: 2025-01-30
 
 ---
@@ -270,22 +270,59 @@ pub struct ClientInfo {
 
 **Current Structure**:
 ```
-templates/components/atoms/icons/arrow-right.jinja
-  → Contains: <line .../><polyline .../>
-  → NO <svg> wrapper
+### F) Icon Atoms: SVG Fragments without Wrapper
+**Status**: ✅ Resolved - Use svg-icon Molecule
+
+**Decision**: 
+- **Use existing `svg-icon` molecule** as SVG wrapper
+- Icon atoms contain only SVG fragments (paths, lines, polylines)
+- Molecule provides `<svg>` wrapper with attributes and accessibility
+
+**Implementation** (already exists):
+```jinja
+{# Usage in templates #}
+{% include molecule('svg-icon') with {
+  icon: "arrow-right",
+  size: "24",
+  class: "nav-icon",
+  alt: "Next page"
+} %}
 ```
 
-**Problem**: Templates need complete `<svg>` element, not just paths.
+**Molecule Responsibilities**:
+- Adds `<svg>` element with viewBox, stroke attributes
+- Handles icon size (width/height)
+- Adds CSS class for styling
+- Provides accessibility (role="img", aria-label)
+- Error handling with fallback icon (try/catch)
+- Includes atom via dynamic path: `atoms/icons/{icon_name}.jinja`
 
-**Possible Solutions**:
-1. **Wrapper in Template**: Each template wraps icon manually
-2. **Molecule Wrapper**: `svg-icon` molecule adds `<svg>` wrapper
-3. **Atom Rendering Function**: `icon()` function adds wrapper automatically
+**Atom Structure** (example: `arrow-right.jinja`):
+```xml
+<line x1="5" y1="12" x2="19" y2="12"/>
+<polyline points="12 5 19 12 12 19"/>
+```
 
-**Archive Reference**: `_workbench/Archive/libs/icons.rs` has `load_icon()` function
+**Benefits**:
+- **Atomic Design compliance**: Molecule = Atom + Wrapper
+- **Flexibility**: Variant-specific CSS (`svg-icon.mouse.css` vs `svg-icon.touch.css`)
+- **Accessibility**: Centralized ARIA attributes
+- **Error handling**: Fallback for missing icons
+- **KISS principle**: Template-based, no Rust function needed
 
-**Question**: How should icons be rendered in ReedCMS?
+**Action Required**:
+- ✅ Molecule already implemented in `templates/components/molecules/svg-icon/`
+- ⚠️ File currently blacklisted (suffix `_blacklisted_20250928_194115_ski43XZb31.jinja`)
+- 📝 Need to remove blacklist suffix and create variant files
 
+**Files**:
+- `svg-icon.mouse.jinja` (reactive from blacklisted)
+- `svg-icon.touch.jinja` (create as copy)
+- `svg-icon.reader.jinja` (create as copy)
+- `svg-icon.mouse.css` (already exists)
+- `svg-icon.reader.css` (already exists)
+
+---
 ---
 
 ### G) Navigation: Hardcoded vs. Registry.csv
