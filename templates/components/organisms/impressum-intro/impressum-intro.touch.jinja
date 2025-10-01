@@ -4,25 +4,25 @@
 <section class="section intro padding-y-2 padding-x-2">
     <article class="breakbox grid-1 gap-2">
         <div class="section-header padding-left-1">
-            <h1>{{ 'IMPRESSUM_TITLE' | text('auto') }}</h1>
+            <h1>{{ 'impressum.title' | text('auto') }}</h1>
         </div>
         
         {# Single column layout for mobile with clear separation #}
         <div class="grid-1 gap-3">
             <div class="column grid-1 gap-y-1">
-                <h2>{{ 'IMPRESSUM_RESPONSIBLE_TITLE' | text('auto') }}</h2>
+                <h2>{{ 'impressum.responsible.title' | text('auto') }}</h2>
                 <p>
-                    {{ 'IMPRESSUM_RESPONSIBLE_NAME' | text('auto') }}<br>
-                    {{ 'IMPRESSUM_RESPONSIBLE_STREET' | text('auto') }}<br>
-                    {{ 'IMPRESSUM_RESPONSIBLE_CITY' | text('auto') }}<br>
-                    {{ 'IMPRESSUM_RESPONSIBLE_COUNTRY' | text('auto') }}
+                    {{ 'impressum.responsible.name' | text('auto') }}<br>
+                    {{ 'impressum.responsible.street' | text('auto') }}<br>
+                    {{ 'impressum.responsible.city' | text('auto') }}<br>
+                    {{ 'impressum.responsible.country' | text('auto') }}
                 </p>
                 
-                <h3>{{ 'IMPRESSUM_CONTACT_TITLE' | text('auto') }}</h3>
+                <h3>{{ 'impressum.contact.title' | text('auto') }}</h3>
                 <p>
-                    {{ 'IMPRESSUM_CONTACT_EMAIL_LABEL' | text('auto') }}
-                    <a href="mailto:{{ 'IMPRESSUM_CONTACT_EMAIL_VALUE' | text('auto') }}" class="email-link touch-target">{{ 'IMPRESSUM_CONTACT_EMAIL_VALUE' | text('auto') }}</a><br>
-                    {{ 'IMPRESSUM_CONTACT_WEB_LABEL' | text('auto') }}
+                    {{ 'impressum.contact.email.label' | text('auto') }}
+                    <a href="mailto:{{ 'impressum.contact.email.value' | text('auto') }}" class="email-link touch-target">{{ 'impressum.contact.email.value' | text('auto') }}</a><br>
+                    {{ 'impressum.contact.web.label' | text('auto') }}
                     <a href="https://vvoss.dev" class="touch-target">vvoss.dev</a>
                 </p>
             </div>
@@ -31,11 +31,11 @@
             <div class="separator" aria-hidden="true"></div>
             
             <div class="column grid-1 gap-y-1">
-                <h2>{{ 'IMPRESSUM_LEGAL_TITLE' | text('auto') }}</h2>
-                <p>{{ 'IMPRESSUM_LEGAL_DISCLAIMER' | text('auto') }}</p>
+                <h2>{{ 'impressum.legal.title' | text('auto') }}</h2>
+                <p>{{ 'impressum.legal.disclaimer' | text('auto') }}</p>
                 
-                <h3>{{ 'IMPRESSUM_PRIVACY_TITLE' | text('auto') }}</h3>
-                <p>{{ 'IMPRESSUM_PRIVACY_TEXT' | text('auto') }}</p>
+                <h3>{{ 'impressum.privacy.title' | text('auto') }}</h3>
+                <p>{{ 'impressum.privacy.text' | text('auto') }}</p>
             </div>
         </div>
     </article>

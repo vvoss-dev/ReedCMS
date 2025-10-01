@@ -4,12 +4,12 @@
 {% set pages = ["knowledge", "portfolio", "blog", "impressum"] %}
 
 <section class="section header">
-    <nav role="navigation" aria-label="{{ 'PAGE_HEADER_MAIN_LABEL' | text('auto') or ('Main navigation') }}">
+    <nav role="navigation" aria-label="{{ 'page.header.main.label' | text('auto') or ('Main navigation') }}">
 
         {# Simple text-based logo/title for bots and screen readers #}
         <h1>
             <a href="/{{ client.lang }}/">
-                {{ 'PAGE_HEADER_LOGO_NAME' | text('auto') }} - {{ 'PAGE_HEADER_LOGO_TITLE' | text('auto') }}
+                {{ 'page.header.logo.name' | text('auto') }} - {{ 'page.header.logo.title' | text('auto') }}
             </a>
         </h1>
 
@@ -19,7 +19,7 @@
                 <li>
                     <a href="/{{ client.lang }}/{% if pagekey != 'landing' %}{{ reed['pageroute@' + pagekey] }}/{% endif %}"
                        {% if current_pagekey == pagekey %}aria-current="page"{% endif %}>
-                        {{ ("PAGE_HEADER_" ~ pagekey.upper() ~ "_TEXT") | text('auto') }}
+                        {{ ("page.header." ~ pagekey ~ ".text") | text('auto') }}
                     </a>
                 </li>
             {% endfor %}
@@ -28,13 +28,13 @@
             {% if client.lang == "en" %}
                 <li>
                     <a href="/de/{% if reed.pageroute %}{{ reed.pageroute }}{% endif %}" hreflang="de" lang="de">
-                        {{ 'PAGE_HEADER_LANG_DE_TEXT' | text('auto') or ('DE') }}
+                        {{ 'page.header.lang.de.text' | text('auto') or ('DE') }}
                     </a>
                 </li>
             {% else %}
                 <li>
                     <a href="/en/{% if reed.pageroute %}{{ reed.pageroute }}{% endif %}" hreflang="en" lang="en">
-                        {{ 'PAGE_HEADER_LANG_EN_TEXT' | text('auto') or ('EN') }}
+                        {{ 'page.header.lang.en.text' | text('auto') or ('EN') }}
                     </a>
                 </li>
             {% endif %}

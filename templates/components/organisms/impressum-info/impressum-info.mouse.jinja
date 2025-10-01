@@ -7,64 +7,64 @@
         <div class="grid-3 gap-3">
             {# Left column: Technical Information #}
             <div class="column grid-1 gap-y-1">
-                <h3>{{ 'IMPRESSUM_INFO_TECHNICAL_TITLE' | text('auto') }}</h3>
+                <h3>{{ 'impressum.info.technical.title' | text('auto') }}</h3>
 
-                <h4>{{ 'IMPRESSUM_INFO_TECHNICAL_CO2_TITLE' | text('auto') }}</h4>
+                <h4>{{ 'impressum.info.technical.co2.title' | text('auto') }}</h4>
                 <p>
-                    {{ 'IMPRESSUM_INFO_TECHNICAL_CO2_HOSTING' | text('auto') }}<br>
-                    <span style="color: var(--color-success);">{{ 'IMPRESSUM_INFO_TECHNICAL_CO2_ENERGY' | text('auto') }}</span><br>
-                    {{ 'IMPRESSUM_INFO_TECHNICAL_CO2_ISO' | text('auto') }}<br>
-                    {{ 'IMPRESSUM_INFO_TECHNICAL_CO2_DSGVO' | text('auto') }}
+                    {{ 'impressum.info.technical.co2.hosting' | text('auto') }}<br>
+                    <span style="color: var(--color-success);">{{ 'impressum.info.technical.co2.energy' | text('auto') }}</span><br>
+                    {{ 'impressum.info.technical.co2.iso' | text('auto') }}<br>
+                    {{ 'impressum.info.technical.co2.dsgvo' | text('auto') }}
                 </p>
 
-                <h4>{{ 'IMPRESSUM_INFO_TECHNICAL_ACCESSIBILITY_TITLE' | text('auto') }}</h4>
-                <p>{{ 'IMPRESSUM_INFO_TECHNICAL_ACCESSIBILITY_TEXT' | text('auto') }}</p>
+                <h4>{{ 'impressum.info.technical.accessibility.title' | text('auto') }}</h4>
+                <p>{{ 'impressum.info.technical.accessibility.text' | text('auto') }}</p>
 
-                <h4>{{ 'IMPRESSUM_INFO_TECHNICAL_BROWSERS_TITLE' | text('auto') }}</h4>
+                <h4>{{ 'impressum.info.technical.browsers.title' | text('auto') }}</h4>
                 <p>
-                    {{ 'IMPRESSUM_INFO_TECHNICAL_BROWSERS_MODERN' | text('auto') }}<br><br>
-                    {{ 'IMPRESSUM_INFO_TECHNICAL_BROWSERS_COMPATIBILITY' | text('auto') }}<br>
-                    {{ 'IMPRESSUM_INFO_TECHNICAL_BROWSERS_WEBKIT' | text('auto') }}<br>
-                    {{ 'IMPRESSUM_INFO_TECHNICAL_BROWSERS_BLINK' | text('auto') }}<br>
-                    {{ 'IMPRESSUM_INFO_TECHNICAL_BROWSERS_QUANTUM' | text('auto') }}
+                    {{ 'impressum.info.technical.browsers.modern' | text('auto') }}<br><br>
+                    {{ 'impressum.info.technical.browsers.compatibility' | text('auto') }}<br>
+                    {{ 'impressum.info.technical.browsers.webkit' | text('auto') }}<br>
+                    {{ 'impressum.info.technical.browsers.blink' | text('auto') }}<br>
+                    {{ 'impressum.info.technical.browsers.quantum' | text('auto') }}
                 </p>
             </div>
 
             {# Middle column: Legal Information #}
             <div class="column grid-1 gap-y-1 odr-highlight">
-                <h3>{{ 'IMPRESSUM_INFO_LEGAL_TITLE' | text('auto') }}</h3>
+                <h3>{{ 'impressum.info.legal.title' | text('auto') }}</h3>
 
-                <h4>{{ 'IMPRESSUM_INFO_LEGAL_LIABILITY_TITLE' | text('auto') }}</h4>
-                <p>{{ 'IMPRESSUM_INFO_LEGAL_LIABILITY_TEXT' | text('auto') }}</p>
+                <h4>{{ 'impressum.info.legal.liability.title' | text('auto') }}</h4>
+                <p>{{ 'impressum.info.legal.liability.text' | text('auto') }}</p>
 
-                <h4>{{ 'IMPRESSUM_INFO_LEGAL_LINKS_TITLE' | text('auto') }}</h4>
-                <p>{{ 'IMPRESSUM_INFO_LEGAL_LINKS_TEXT' | text('auto') }}</p>
+                <h4>{{ 'impressum.info.legal.links.title' | text('auto') }}</h4>
+                <p>{{ 'impressum.info.legal.links.text' | text('auto') }}</p>
 
-                <h4>{{ 'IMPRESSUM_INFO_LEGAL_ODR_TITLE' | text('auto') }}</h4>
+                <h4>{{ 'impressum.info.legal.odr.title' | text('auto') }}</h4>
                 <p>
-                    {{ 'IMPRESSUM_INFO_LEGAL_ODR_TEXT' | text('auto') }}<br>
+                    {{ 'impressum.info.legal.odr.text' | text('auto') }}<br>
                     <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr/</a>
                 </p>
-                <p>{{ 'IMPRESSUM_INFO_LEGAL_ODR_PARTICIPATION' | text('auto') }}</p>
+                <p>{{ 'impressum.info.legal.odr.participation' | text('auto') }}</p>
             </div>
 
             {# Right column: Miscellaneous #}
             <div class="column grid-1 gap-y-1">
-                <h3>{{ 'IMPRESSUM_INFO_MISC_TITLE' | text('auto') }}</h3>
+                <h3>{{ 'impressum.info.misc.title' | text('auto') }}</h3>
 
-                <h4>{{ 'IMPRESSUM_INFO_TECHNICAL_COOKIES_TITLE' | text('auto') }}</h4>
-                <p>{{ 'IMPRESSUM_INFO_TECHNICAL_COOKIES_TEXT' | text('auto') }}</p>
+                <h4>{{ 'impressum.info.technical.cookies.title' | text('auto') }}</h4>
+                <p>{{ 'impressum.info.technical.cookies.text' | text('auto') }}</p>
 
-                <h4>{{ 'IMPRESSUM_INFO_MISC_DETECTION_TITLE' | text('auto') }}</h4>
+                <h4>{{ 'impressum.info.misc.detection.title' | text('auto') }}</h4>
                 <p>
-                    {{ 'IMPRESSUM_INFO_MISC_DETECTION_LANGUAGE' | text('auto') }}: {{ client.lang }}<br>
-                    {{ 'IMPRESSUM_INFO_MISC_DETECTION_MONITOR' | text('auto') }}: {{ client.device_type }}
+                    {{ 'impressum.info.misc.detection.language' | text('auto') }}: {{ client.lang }}<br>
+                    {{ 'impressum.info.misc.detection.monitor' | text('auto') }}: {{ client.device_type }}
                     {% if client.viewport_width %}({{ client.viewport_width }}×{{ client.viewport_height }}){% endif %}<br>
-                    {% if client.dpr %}{{ 'IMPRESSUM_INFO_MISC_DETECTION_PIXELRATIO' | text('auto') }}: {{ client.dpr }}{% endif %}
+                    {% if client.dpr %}{{ 'impressum.info.misc.detection.pixelratio' | text('auto') }}: {{ client.dpr }}{% endif %}
                 </p>
 
-                <h4>{{ 'IMPRESSUM_INFO_MISC_UPDATE_TITLE' | text('auto') }}</h4>
-                <p>{{ page.latest_update or ('IMPRESSUM_INFO_MISC_UPDATE_FALLBACK' | text('auto')) }}</p>
+                <h4>{{ 'impressum.info.misc.update.title' | text('auto') }}</h4>
+                <p>{{ page.latest_update or ('impressum.info.misc.update.fallback' | text('auto')) }}</p>
             </div>
         </div>
     </article>

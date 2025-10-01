@@ -9,28 +9,28 @@
 <section class="section header grid-1 padding-y-1 padding-x-1">
     <nav class="nav-content breakbox grid-1 gap-y-1"
          role="navigation"
-         aria-label="{{ 'PAGE_HEADER_MAIN_LABEL' | text('auto') or ('Main navigation') }}">
+         aria-label="{{ 'page.header.main.label' | text('auto') or ('Main navigation') }}">
 
         <div class="logo-wrapper grid-2 gap-x-1">
             {# Logo with red dots #}
-            <a href="/{{ client.lang }}/" class="logo-container flex-x gap-1" aria-label="{{ 'PAGE_HEADER_HOME_LABEL' | text('auto') or ('Home') }} - {{ 'PAGE_HEADER_LOGO_TITLE' | text('auto') }}">
+            <a href="/{{ client.lang }}/" class="logo-container flex-x gap-1" aria-label="{{ 'page.header.home.label' | text('auto') or ('Home') }} - {{ 'page.header.logo.title' | text('auto') }}">
                 <div class="logo-dots flex-x" aria-hidden="true">
                     <div class="dot"></div>
                     <div class="dot"></div>
                 </div>
                 <div class="logo-text grid-1">
-                    <span class="logo-name">{{ 'PAGE_HEADER_LOGO_NAME' | text('auto') }}</span>
-                    <span class="subtitle">{{ 'PAGE_HEADER_LOGO_TITLE' | text('auto') }}</span>
+                    <span class="logo-name">{{ 'page.header.logo.name' | text('auto') }}</span>
+                    <span class="subtitle">{{ 'page.header.logo.title' | text('auto') }}</span>
                 </div>
             </a>
 
             {# Language switcher touch only #}
             {% if client.lang == "en" %}
-                <a class="lang-switch" href="/de/{% if reed.pageroute %}{{ reed.pageroute }}{% endif %}" aria-label="{{ 'PAGE_HEADER_LANG_SWITCH' | text('auto') }}" lang="de">
+                <a class="lang-switch" href="/de/{% if reed.pageroute %}{{ reed.pageroute }}{% endif %}" aria-label="{{ 'page.header.lang.switch' | text('auto') }}" lang="de">
                     DE
                 </a>
             {% else %}
-                <a class="lang-switch" href="/en/{% if reed.pageroute %}{{ reed.pageroute }}{% endif %}" aria-label="{{ 'PAGE_HEADER_LANG_SWITCH' | text('auto') }}" lang="en">
+                <a class="lang-switch" href="/en/{% if reed.pageroute %}{{ reed.pageroute }}{% endif %}" aria-label="{{ 'page.header.lang.switch' | text('auto') }}" lang="en">
                     EN
                 </a>
             {% endif %}
@@ -49,7 +49,7 @@
                             class="grid-2 gap-x-1"
                             {% if current_pagekey == pagekey %}aria-current="page"{% endif %}>
                             {{ icon("chevrons-right", 16, 2, "nav-chevron") | safe }}
-                            <span>{{ ("PAGE_HEADER_" ~ pagekey.upper() ~ "_TEXT") | text('auto') }}</span>
+                            <span>{{ ("page.header." ~ pagekey ~ ".text") | text('auto') }}</span>
                         </a>
                     </li>
                 {% endfor %}
