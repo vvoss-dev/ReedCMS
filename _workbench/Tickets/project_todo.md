@@ -130,39 +130,65 @@ pub fn make_organism_function(interaction_mode: String) -> impl Function {
 ## 📋 Remaining Open Questions
 
 ### D) CSS Bundling: Session Hash + Asset Discovery
+**Status**: ✅ Resolved and documented in REED-08-01 + REED-05-03
 
-**Template Usage** (current):
-```html
-<link rel="stylesheet" href="/public/session/styles/{{ layout_name }}.{{ config.session_hash }}.{{ client.interaction_mode }}.css">
+**Template Usage** (simplified):
+```jinja
+<link rel="stylesheet" href="{{ asset_css }}">
+<script src="{{ asset_js }}" defer></script>
 ```
 
-**What Must Happen**:
-1. Discover all CSS files for a layout:
-   - `landing.mouse.css`
-   - `landing-hero.mouse.css` (included organism)
-   - `landing-problems.mouse.css` (included organism)
-   - etc.
-2. Bundle them into single file
-3. Generate session hash (MD5 of content?)
-4. Serve under `/public/session/styles/`
+**Decision**: Session hash bundling with on-demand generation
 
-**Missing in Tickets**:
-- REED-08-01 (CSS Bundler) mentions "component asset discovery" but:
-  - No session hash generation specified
-  - No "when to bundle" strategy (on-demand? pre-build? hot-reload?)
-  - No caching strategy specified
+**Implementation Strategy**:
 
-**Questions**:
-- When is CSS bundled? (First request? Startup? Build command?)
-- How is session hash generated? (Content hash? Timestamp?)
-- Where is bundled CSS stored? (Memory? Disk?)
-- How does hot-reload work with bundling?
+1. **Session Hash Generation** (REED-08-01):
+   - MD5 hash over all CSS/JS files in templates/
+   - 8-character hex string (e.g., \`a3f5b2c8\`)
+   - Stored in \`.reed/project.csv\` → \`project.session_hash\`
+   - Generated at build time or server startup
+
+2. **Component Discovery** (REED-08-01):
+   - Parse layout template: extract \`{% include organism("...") %}\`
+   - Recursively discover dependencies (organisms → molecules → atoms)
+   - Collect all CSS/JS files in inclusion order
+   - Bundle naming: \`{layout}.{session_hash}.{variant}.css\`
+
+3. **On-Demand Bundling** (REED-08-01):
+   - Bundles generated on first request per layout
+   - Check: Does \`/public/session/styles/landing.a3f5b2c8.mouse.css\` exist?
+   - If NO: Discover assets, bundle all 3 variants (mouse/touch/reader), minify
+   - If YES: Use existing bundle
+   - Performance: < 100ms first request, < 1ms cached
+
+4. **Template Integration** (REED-05-03):
+   - Context builder adds \`asset_css\` and \`asset_js\` variables
+   - Calls \`ensure_bundles_exist(layout, session_hash)\` from REED-08-01
+   - Constructs paths: \`/public/session/styles/{layout}.{hash}.{variant}.css\`
+
+**Output Structure**:
+```
+public/session/
+├── styles/
+│   ├── landing.a3f5b2c8.mouse.css
+│   ├── landing.a3f5b2c8.touch.css
+│   └── landing.a3f5b2c8.reader.css
+└── scripts/
+    └── landing.a3f5b2c8.js
+```
+
+**Benefits**:
+- Simple template variables (no complex logic)
+- Automatic cache-busting via session hash
+- Component discovery follows template structure
+- On-demand generation (no pre-build required)
+- Cleanup of old bundles automatic
+
+**Files Updated**:
+- ✅ REED-08-01: Session hash, component discovery, on-demand generation
+- ✅ REED-05-03: asset_css/asset_js context variables
 
 ---
-
-### E) Screen Info Cookie → Client Context Population
-
-**Template Usage** (current):
 ```jinja
 <html lang="{{ client.lang }}">
 <link rel="stylesheet" href="/public/static/styles/{{ client.interaction_mode }}.css">
@@ -276,15 +302,18 @@ reed migrate:text templates/layouts/knowledge/
 ## 📊 Progress Summary
 
 **Total Questions Identified**: 9 (including B.1 as separate implementation)
-**Resolved**: 4 (A, B, B.1, C)
+**Resolved**: 5 (A, B, B.1, C, D)
 **In Progress**: 0
-**Remaining**: 5 (D, E, F, G, H)
+**Remaining**: 4 (E, F, G, H)
 
 **Recent Commits**:
-- `[DOCS]` - Template integration analysis + 13 ticket optimizations
+- `[DOCS]` - Template integration analysis + 13 ticket optimisations
 - `[DOCS]` - Created project_todo.md for tracking
+- `[DOCS]` - Extracted optimisations to project_optimisations.md
 - `[TEMPLATES]` - Migrated reed dictionary to route filter
 - `[REED-05-01]` - Simplified route filter with empty route handling
 - `[REED-05-02]` - Added custom functions for component inclusion
+- `[REED-08-01]` - Session hash bundling and component discovery
+- `[REED-05-03]` - Asset CSS/JS context variables
 
 **Estimated Completion**: After all questions answered, tickets are 100% implementation-ready.
