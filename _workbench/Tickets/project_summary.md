@@ -1837,217 +1837,40 @@ monitor|tcp|127.0.0.1:9090|||reedcms|reedcms
 - **Permission Management**: Fine-grained socket access control
 - **Automatic Cleanup**: Socket file management on service restart
 
-## Decision History
 
-Key architectural decisions are tracked in `decisions.csv` for transparency and consistency:
 
-```csv
-ID,Decision,Rationale,Date,Status
-D001,CSV-based storage,"Fast, git-friendly, direct editing",2025-01-15,Active
-D002,Rust implementation,"Memory safety, performance, type safety",2025-01-15,Active
-D003,Matrix CSV for complex data,"Enhanced relationships, backward compatible",2025-01-15,Active
-D004,ReedStream universal interface,"Consistent cross-module communication",2025-01-15,Active
-D005,Environment-aware fallback,"Flexible deployment, inheritance patterns",2025-01-15,Active
-D006,FreeBSD syslog format,"Professional system integration, standard compliance",2025-01-15,Active
-D007,XZ backup compression,"Efficient storage, automatic recovery",2025-01-15,Active
-D008,Argon2 password hashing,"Security best practice, future-proof",2025-01-15,Active
-D009,Unix socket deployment,"High performance, security, nginx integration",2025-01-15,Active
-D010,Template hot-reload,"Development efficiency, immediate feedback",2025-01-15,Active
-D011,Rate limiting system,"API protection, DoS prevention",2025-01-15,Active
-D012,Hierarchical taxonomy,"Universal categorisation, scalable organisation",2025-01-15,Active
-D013,Permission caching,"Sub-millisecond lookups, performance optimization",2025-01-15,Active
-D014,CLI command bridge,"Zero business logic duplication, direct execution",2025-01-15,Active
-D015,Flow persistence rules,"Clear data ownership, service coordination",2025-01-15,Active
-```
+---
+
+## Template System Integration Status
+
+**Status**: Active analysis phase (2025-01-30)  
+**Tracking**: See `_workbench/Tickets/project_todo.md` for detailed progress
+
+**Completed Integration Tasks**:
+- Filter system migration (text, route, meta, config filters)
+- Component inclusion functions (organism, molecule, atom, layout)
+- Empty route handling in filter logic
+- Language detection from URL path
+
+**Remaining Integration Questions**: 5 open questions (D-H)
+- CSS bundling strategy with session hash
+- Client context population from screen info cookie
+- Icon atoms rendering approach
+- Navigation auto-population vs. manual registry queries
+- Text migration from component-local `.text.csv` to central `.reed/text.csv`
+
+**Next Phase**: Complete template integration analysis, then begin systematic implementation starting with Foundation Layer (REED-01).
+
+---
+
+## Related Documentation
+
+- **Architectural Decisions**: See `project_optimisations.md` for complete decision history and system optimisations
+- **Implementation Templates**: See `templates/service-template.md` and `templates/service-template.test.md`
+- **Ticket Index**: See `ticket-index.csv` for complete ticket overview
 
 ---
 
 **This comprehensive guide contains all ReedCMS planning information in a logical, didactic structure. Every concept builds upon previous sections, ensuring complete understanding from basic philosophy to detailed implementation specifications.**
 
 This architecture ensures ReedCMS delivers on its promise of **simplicity without compromise** - providing enterprise-grade functionality through an elegantly simple CSV-based foundation.
-
-**Complete Feature Coverage**:
-- ✅ Universal ReedStream communication interface with comprehensive error handling
-- ✅ Matrix CSV system with 4-type value support and XZ backup protection
-- ✅ Advanced user management with Argon2 hashing and social profiles
-- ✅ Role-based permissions with inheritance and sub-millisecond cached lookups
-- ✅ Universal taxonomy system with hierarchical terms and cross-entity tagging
-- ✅ FreeBSD-style monitoring with configurable output modes
-- ✅ API security matrix with rate limiting and token management
-- ✅ CLI command execution bridge with streaming and batch support
-- ✅ Template hot-reload for development efficiency
-- ✅ Unix socket deployment for production performance
-- ✅ Flow persistence with clear data ownership rules
-- ✅ Environment-aware fallback system for flexible deployment
-
----
-
-## Recent System Optimizations (2025-01-30)
-
-This section documents the comprehensive system optimization phase completed before implementation begins. All tickets have been refined for consistency, performance, and implementation clarity.
-
-### 1. CSV Delimiter Standardization
-**Status**: ✅ Complete across all tickets and documentation
-
-- **Change**: Standardized CSV delimiter from semicolon (`;`) to pipe (`|`) globally
-- **Affected Files**: REED-02-02, REED-10-04, REED-07-02, project_summary.md
-- **Rationale**: Pipe delimiter reduces escaping complexity and improves readability
-- **Format**: `key|value|description` for all CSV files in `.reed/` directory
-
-### 2. ReedRequest Structure Enhancement
-**Status**: ✅ Extended in REED-01-01 and project_summary.md
-
-- **Added Fields**:
-  - `pub value: Option<String>` - For set operations
-  - `pub description: Option<String>` - For CSV comment field in set operations
-- **Benefit**: Unified request structure for both get and set operations via ReedStream
-
-### 3. CacheInfo Structure Definition
-**Status**: ✅ Fully specified in REED-01-01 and project_summary.md
-
-```rust
-pub struct CacheInfo {
-    pub hit: bool,                    // Whether this was a cache hit
-    pub ttl_remaining_s: Option<u64>, // Time-to-live remaining
-    pub cache_key: String,            // Cache key used for lookup
-    pub cache_layer: String,          // Which cache (text/route/meta)
-}
-```
-- **Integration**: Used in `ResponseMetrics.cache_info` for performance tracking
-
-### 4. Dependency Chain Corrections
-**Status**: ✅ Fixed in REED-02-01 and REED-04-08
-
-- **REED-02-01 (ReedBase Core)**: Now depends on `REED-02-02` (CSV Handler) and `REED-02-04` (Backup System)
-- **REED-04-08 (Build Commands)**: Now depends on `REED-08-01` (CSS Bundler) and `REED-08-02` (JS Bundler)
-- **Benefit**: Proper build order and clear service dependencies
-
-### 5. Route CSV Format Clarification
-**Status**: ✅ Specified in REED-06-02
-
-- **Format**: `route|layout|language|description`
-- **Value Field**: Contains `layout|language` (pipe-delimited)
-- **Parsing**: Updated route resolution to correctly parse multi-component values
-- **Example**: `knowledge@de|wissen|knowledge|de|German knowledge page route`
-
-### 6. FreeBSD Logging System Specification
-**Status**: ✅ Comprehensive implementation added to REED-10-01 (~240 lines)
-
-- **Format**: `{timestamp} {hostname} {process}[{pid}]: {level}: {message}`
-- **8 Log Levels**: EMERG, ALERT, CRIT, ERROR, WARN, NOTICE, INFO, DEBUG (RFC 5424)
-- **4 Output Modes**: Silent, Log, Forward, Both
-- **Features**: Log rotation (100MB limit), compression (gzip), retention (10 files)
-- **Performance**: Zero-allocation message passing, <1% overhead, 10k+ msg/s throughput
-
-### 7. ReedModule Trait Implementation
-**Status**: ✅ Implemented across all REED-02 tickets
-
-- **Tickets**: REED-02-01, REED-02-02, REED-02-03, REED-02-04
-- **Methods**:
-  - `module_name() -> &'static str` - Module identification
-  - `version() -> &'static str` - Version tracking
-  - `health_check() -> ReedResult<String>` - System health verification
-  - `dependencies() -> Vec<&'static str>` - Dependency declaration
-- **Benefit**: Standardized module interface for monitoring and diagnostics
-
-### 8. Registry CSV Format Definition
-**Status**: ✅ Specified in REED-05-03
-
-- **Format**: `key|type|enabled|order|parent|description`
-- **Purpose**: Layout registry and navigation management
-- **Implementation**: Dynamic navigation loading from `.reed/registry.csv`
-- **Example**: `knowledge|layout|true|10||Knowledge base layout`
-
-### 9. Template Engine Initialization Sequence
-**Status**: ✅ Documented in REED-05-02 (~130 lines)
-
-- **Pattern**: Global singleton with `OnceLock<Environment<'static>>`
-- **Startup Sequence**:
-  1. Template Engine initialization
-  2. Hot-reload setup (DEV mode only)
-  3. ReedBase initialization
-  4. Monitoring system initialization
-- **Benefit**: Clear startup order and proper resource initialization
-
-### 10. Filter Error Conversion Layer
-**Status**: ✅ Implemented in REED-05-01
-
-- **Function**: `convert_reed_error_to_jinja(err: ReedError, filter: &str, key: &str) -> minijinja::Error`
-- **Coverage**: All ReedError variants mapped to appropriate MiniJinja ErrorKind
-- **Integration**: All four filters (text, route, meta, config) use error conversion
-- **Benefit**: Proper error context in template rendering with actionable messages
-
-### 11. Cache Invalidation Strategy
-**Status**: ✅ Comprehensive specification in REED-02-01 (~100 lines)
-
-- **Granularity Levels**:
-  - Key-specific: `invalidate_text_key(key)`, `invalidate_route_key(key)`, `invalidate_meta_key(key)`
-  - Cache-type: `invalidate_text_cache()`, `invalidate_route_cache()`, `invalidate_meta_cache()`
-  - Global: `invalidate_all_caches()`, `refresh_cache()`
-- **Integration**: `set.rs` calls `cache::invalidate_*_key()` after each CSV write
-- **Performance**: < 50ms for complete cache refresh (5 CSV files + HashMap rebuild)
-- **Triggers**: Set operations, file watcher, CLI commands, periodic refresh
-
-### 12. Environment.rs Ownership Resolution
-**Status**: ✅ Clarified in REED-02-01 and REED-02-03
-
-- **Owner**: REED-02-03 (Environment Resolution Service)
-- **File**: `src/reedcms/reedbase/environment.rs`
-- **Reference**: REED-02-01 (ReedBase Core) references but does not create
-- **Benefit**: Clear ownership prevents duplicate implementations
-
-### 13. Performance Target Corrections
-**Status**: ✅ Fixed in REED-02-01 and project_summary.md
-
-- **Startup**: Changed from "< 200μs" to "< 50ms" (realistic for 5 CSV files + HashMap build)
-- **Cache Refresh**: Changed from "< 200ms" to "< 50ms" (consistent with init)
-- **Rationale**: 200μs was unrealistic for file I/O; 50ms is achievable and professionally acceptable
-- **Other Targets Remain**: Get < 100μs, Set < 10ms, O(1) cache lookups
-
-### 14. Template Integration: Filter System Migration
-**Status**: ✅ Completed - Templates migrated to ReedCMS filter pattern
-
-**Changes**:
-- Removed legacy `reed` dictionary pattern from vvoss.dev
-- Migrated to consistent filter usage: `{{ pagekey | route('auto') }}`
-- Simplified route filter with empty route handling for landing pages
-
-**Migration Results**:
-```jinja
-// Before (legacy vvoss.dev):
-{{ reed['pageroute@' + pagekey] }}
-{{ reed.pageroute }}
-{% if pagekey != 'landing' %}{{ pagekey | route('auto') }}/{% endif %}
-
-// After (ReedCMS):
-{{ pagekey | route('auto') }}
-{{ current_pagekey | route('de') }}
-{{ pagekey | route('auto') }}/  // Filter handles empty routes internally
-```
-
-**Benefits**:
-- Consistent filter system across all template types
-- KISS principle: Logic in Rust filters, not template conditionals
-- No dictionary overhead in template context
-- Lazy evaluation - only computed when used
-- Clear data flow: Template → Filter → ReedBase
-
-**Files Updated**:
-- REED-05-01: Language detection strategy + empty route handling specification
-- page-header.mouse/touch/reader.jinja: All reed references migrated
-
-**Performance**: No dictionary population overhead, filters execute on-demand with < 100μs latency
-
-### Implementation Readiness
-
-All 37 tickets across 10 layers have been optimized and are now ready for implementation:
-
-- ✅ **Consistency**: CSV delimiter, key nomenclature, error handling, filter patterns
-- ✅ **Completeness**: All missing structures, formats, and specifications added
-- ✅ **Correctness**: Dependencies, performance targets, integration points verified
-- ✅ **Clarity**: Implementation guidance, ownership, and patterns documented
-- ✅ **Template Integration**: Existing templates analyzed and migrated to ReedCMS patterns
-
-**Active Analysis**: Template system integration ongoing - tracking in `_workbench/Tickets/project_todo.md`
-
-**Next Phase**: Complete remaining template integration questions (C-H), then begin systematic implementation starting with Foundation Layer (REED-01).
