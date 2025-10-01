@@ -54,6 +54,14 @@ Implement template context building system that prepares all necessary data for 
 /// - globals: Global configuration values
 /// - asset_css: Bundled CSS path with session hash
 /// - asset_js: Bundled JS path with session hash
+/// - client: Client information (REED-06-05)
+///   - client.lang: Language code
+///   - client.interaction_mode: mouse/touch/reader
+///   - client.device_type: mobile/tablet/desktop/bot
+///   - client.breakpoint: phone/tablet/screen/wide
+///   - client.viewport_width: Browser viewport width (optional)
+///   - client.viewport_height: Browser viewport height (optional)
+///   - client.is_bot: Bot detection flag
 ///
 /// ## Performance
 /// - Context building: < 5ms
@@ -65,7 +73,8 @@ pub fn build_context(
     layout: &str,
     language: &str,
     environment: &str,
-    variant: &str
+    variant: &str,
+    client: &ClientInfo  // From REED-06-05
 ) -> ReedResult<Context> {
     let mut ctx = Context::new();
 
@@ -74,6 +83,9 @@ pub fn build_context(
     ctx.insert("lang", language);
     ctx.insert("environment", environment);
     ctx.insert("variant", variant);
+
+    // Client information (REED-06-05 integration)
+    ctx.insert("client", client);
 
     // Asset bundle paths (REED-08-01 integration)
     add_asset_paths(&mut ctx, layout, variant)?;
