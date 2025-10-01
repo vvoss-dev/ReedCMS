@@ -3,6 +3,7 @@
 
 //! ReedCMS module organisation.
 
+pub mod csv;
 pub mod reedstream;
 
 #[cfg(test)]
