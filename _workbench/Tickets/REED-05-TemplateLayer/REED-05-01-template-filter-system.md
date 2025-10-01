@@ -98,7 +98,62 @@ pub fn make_text_filter() -> impl Filter {
         // Call ReedBase get
         match reedbase::get::text(&req) {
             Ok(response) => Ok(response.data),
-            Err(e) => Err(Error::new(ErrorKind::NotFound, format!("Text not found: {} ({})", key, e)))
+            Err(e) => Err(convert_reed_error_to_jinja(e, "text", &key))
+        }
+    }
+}
+
+/// Converts ReedError to MiniJinja Error with context.
+///
+/// ## Error Mapping
+/// - NotFound → TemplateNotFound
+/// - DataError → InvalidOperation  
+/// - ConfigError → InvalidOperation
+/// - IoError → InvalidOperation
+/// - SystemError → InvalidOperation
+///
+/// ## Context Preservation
+/// - Includes original error message
+/// - Adds filter context (filter name, key)
+/// - Preserves error chain for debugging
+fn convert_reed_error_to_jinja(err: ReedError, filter: &str, key: &str) -> minijinja::Error {
+    use minijinja::ErrorKind;
+    
+    match err {
+        ReedError::NotFound { data_type, key: orig_key, context } => {
+            let msg = format!(
+                "Filter '{}': {} not found for key '{}' (context: {:?})",
+                filter, data_type, orig_key, context
+            );
+            minijinja::Error::new(ErrorKind::TemplateNotFound, msg)
+        }
+        ReedError::DataError { component, reason } => {
+            let msg = format!(
+                "Filter '{}': Data error in {} for key '{}': {}",
+                filter, component, key, reason
+            );
+            minijinja::Error::new(ErrorKind::InvalidOperation, msg)
+        }
+        ReedError::ConfigError { component, reason } => {
+            let msg = format!(
+                "Filter '{}': Config error in {} for key '{}': {}",
+                filter, component, key, reason
+            );
+            minijinja::Error::new(ErrorKind::InvalidOperation, msg)
+        }
+        ReedError::IoError { operation, path, reason } => {
+            let msg = format!(
+                "Filter '{}': IO error during {} on '{}': {}",
+                filter, operation, path, reason
+            );
+            minijinja::Error::new(ErrorKind::InvalidOperation, msg)
+        }
+        _ => {
+            let msg = format!(
+                "Filter '{}': Error for key '{}': {:?}",
+                filter, key, err
+            );
+            minijinja::Error::new(ErrorKind::InvalidOperation, msg)
         }
     }
 }
@@ -108,6 +163,82 @@ fn detect_language_from_context() -> ReedResult<String>
 
 /// Gets current environment from context.
 fn get_current_environment() -> Option<String>
+```
+
+### Language Detection Strategy
+
+**Source of Truth**: URL path is the **single source of truth** for current language.
+
+**Why URL over Cookie:**
+- ✅ URL = user's **conscious choice** (via language switcher)
+- ✅ Cookie = only **initial detection** (Accept-Language header)
+- ✅ URL is bookmarkable, shareable, SEO-friendly
+- ✅ No race conditions between cookie and URL
+
+**Implementation:**
+
+```rust
+// Language is injected into filter at creation time from request URL
+// In REED-06-02 Request Handler or REED-05-03 Context Builder:
+
+// 1. Extract language from URL path
+let current_lang = extract_lang_from_path(&req.path()); // /de/wissen → "de"
+
+// 2. Create text filter with injected language
+pub fn make_text_filter(current_lang: String) -> impl Filter + Send + Sync + 'static {
+    move |key: &str, lang_param: Option<&str>| -> Result<String, minijinja::Error> {
+        // Resolve 'auto' to current request language (from URL)
+        let resolved_lang = match lang_param {
+            Some("auto") => &current_lang,      // Use URL language
+            Some(explicit) => explicit,          // Explicit override (e.g., "de" on English page)
+            None => &current_lang,               // Default to URL language
+        };
+        
+        let req = ReedRequest {
+            key: key.to_string(),
+            language: Some(resolved_lang.to_string()),
+            environment: get_current_environment(),
+            context: None,
+            value: None,
+            description: None,
+        };
+        
+        match reedbase::get::text(&req) {
+            Ok(response) => Ok(response.data),
+            Err(err) => Err(convert_reed_error_to_jinja(err, "text", key)),
+        }
+    }
+}
+```
+
+**Request Flow:**
+
+1. **First Visit** (`/`):
+   - Client detection (no `screen_info` cookie yet)
+   - JavaScript collects screen data + sets cookie
+   - Server detects language from `Accept-Language` header
+   - Cookie `lang=de` set for future visits
+   - Redirect to `/de/` (URL becomes source of truth)
+
+2. **Subsequent Visits**:
+   - URL language is used: `/de/wissen` → `current_lang = "de"`
+   - Filter uses URL language for `text('auto')`
+   - Cookie `lang` is **only checked on root path** (`/`) for redirect
+
+3. **Language Switcher**:
+   - User clicks "EN" on `/de/wissen`
+   - Navigates to `/en/knowledge`
+   - URL language changes, templates re-render with new language
+   - Cookie remains `lang=de` (ignored for language, only for next root visit)
+
+**Long-Term Behavior:**
+- User returns after months → visits `/` → Cookie `lang=de` redirects to `/de/`
+- This ensures returning users get their system language, not last visited URL
+
+**Filter Parameters:**
+- `text('auto')` - Uses URL language (most common case)
+- `text('de')` - Forces German text (even on English page)
+- `text('en')` - Forces English text (even on German page)
 ```
 
 #### Route Filter (`src/reedcms/filters/route.rs`)
@@ -141,7 +272,7 @@ pub fn make_route_filter() -> impl Filter {
 
         match reedbase::get::route(&req) {
             Ok(response) => Ok(format!("/{}", response.data)),
-            Err(e) => Err(Error::new(ErrorKind::NotFound, format!("Route not found: {} ({})", key, e)))
+            Err(e) => Err(convert_reed_error_to_jinja(e, "route", &key))
         }
     }
 }
@@ -175,7 +306,7 @@ pub fn make_meta_filter() -> impl Filter {
 
         match reedbase::get::meta(&req) {
             Ok(response) => Ok(response.data),
-            Err(e) => Err(Error::new(ErrorKind::NotFound, format!("Meta not found: {} ({})", key, e)))
+            Err(e) => Err(convert_reed_error_to_jinja(e, "meta", &key))
         }
     }
 }
@@ -230,9 +361,10 @@ pub fn make_config_filter() -> impl Filter {
 
         match reedbase::get::server(&req_server) {
             Ok(response) => Ok(response.data),
-            Err(_) => Err(Error::new(
-                ErrorKind::NotFound,
-                format!("Config not found: '{}' (tried project.{} and server.{})", key, key, key)
+            Err(e) => Err(convert_reed_error_to_jinja(
+                e,
+                "config",
+                &format!("{} (tried project.{} and server.{})", key, key, key)
             ))
         }
     }

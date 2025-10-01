@@ -105,6 +105,66 @@ pub struct CleanupStats {
 }
 ```
 
+### ReedModule Trait Implementation (`src/reedcms/backup/mod.rs`)
+
+```rust
+use crate::reedstream::{ReedModule, ReedResult};
+
+/// Backup System module implementation.
+pub struct BackupSystemModule;
+
+impl ReedModule for BackupSystemModule {
+    fn module_name(&self) -> &'static str {
+        "backup_system"
+    }
+
+    fn version(&self) -> &'static str {
+        env!("CARGO_PKG_VERSION")
+    }
+
+    fn health_check(&self) -> ReedResult<String> {
+        // Check backup directory exists
+        let backup_dir = ".reed/backups";
+        if !std::path::Path::new(backup_dir).exists() {
+            std::fs::create_dir_all(backup_dir).map_err(|e| ReedError::IoError {
+                operation: "create_dir".to_string(),
+                path: backup_dir.to_string(),
+                reason: e.to_string(),
+            })?;
+        }
+
+        // Count existing backups
+        let backup_count = list_backups(backup_dir)?.len();
+        
+        // Test compression capability
+        let test_data = b"Backup system health check test data";
+        let compressed = compress_xz(test_data, 6)?;
+        let decompressed = decompress_xz(&compressed)?;
+        
+        if decompressed != test_data {
+            return Err(ReedError::SystemError {
+                component: "backup_system".to_string(),
+                reason: "XZ compression/decompression test failed".to_string(),
+            });
+        }
+        
+        Ok(format!(
+            "Backup System healthy: {} existing backups, XZ compression functional",
+            backup_count
+        ))
+    }
+
+    fn dependencies(&self) -> Vec<&'static str> {
+        vec!["csv_handler"]
+    }
+}
+
+/// Returns Backup System module instance.
+pub fn module() -> BackupSystemModule {
+    BackupSystemModule
+}
+```
+
 ## Implementation Files
 
 ### Primary Implementation

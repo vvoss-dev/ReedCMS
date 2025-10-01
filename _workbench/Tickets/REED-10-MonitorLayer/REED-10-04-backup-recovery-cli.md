@@ -431,7 +431,7 @@ fn decompress_xz_backup(path: &str) -> ReedResult<String> {
 /// Verifies CSV structure.
 fn verify_csv_structure(content: &str) -> ReedResult<()> {
     let mut reader = csv::ReaderBuilder::new()
-        .delimiter(b';')
+        .delimiter(b'|')
         .from_reader(content.as_bytes());
 
     // Check if at least one record exists

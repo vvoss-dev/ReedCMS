@@ -99,6 +99,39 @@ pub fn validate_environment(env: &str) -> ReedResult<()>
 pub fn build_env_key(base: &str, environment: &str) -> String
 ```
 
+### ReedModule Trait Implementation (`src/reedcms/reedbase/environment.rs`)
+
+**Note**: This module is part of ReedBase, so it inherits the ReedBaseModule implementation. Add this helper function:
+
+```rust
+/// Module identification for environment subsystem.
+pub fn subsystem_name() -> &'static str {
+    "reedbase::environment"
+}
+
+/// Health check for environment fallback.
+pub fn health_check() -> ReedResult<String> {
+    // Test environment fallback chain
+    let test_cases = vec![
+        ("test.key@dev", "test.key"),
+        ("test.key@prod", "test.key"),
+        ("test.key@christmas", "test.key"),
+    ];
+    
+    for (env_key, fallback_key) in test_cases {
+        let resolved = resolve_with_fallback(env_key)?;
+        if resolved != env_key && resolved != fallback_key {
+            return Err(ReedError::SystemError {
+                component: "environment".to_string(),
+                reason: format!("Fallback resolution failed for {}", env_key),
+            });
+        }
+    }
+    
+    Ok("Environment fallback system healthy".to_string())
+}
+```
+
 ## Implementation Files
 
 ### Primary Implementation

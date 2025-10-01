@@ -51,6 +51,8 @@ pub struct ReedRequest {
     pub language: Option<String>,
     pub environment: Option<String>,
     pub context: Option<String>,
+    pub value: Option<String>,        // For set operations
+    pub description: Option<String>,  // For set operations (comment field in CSV)
 }
 ```
 
@@ -68,6 +70,16 @@ pub struct ReedResponse<T> {
 
 #### ResponseMetrics Structure
 ```rust
+/// Cache information for responses.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CacheInfo {
+    pub hit: bool,              // Was this a cache hit?
+    pub ttl_remaining_s: Option<u64>,  // Seconds until cache expires
+    pub cache_key: String,      // Key used for caching
+    pub cache_layer: String,    // Which cache layer (L1/L2/etc)
+}
+
+/// Performance metrics for responses.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ResponseMetrics {
     pub processing_time_us: u64,

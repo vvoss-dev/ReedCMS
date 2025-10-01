@@ -220,7 +220,7 @@ fn load_security_rules() -> ReedResult<HashMap<String, SecurityRule>> {
 
     let mut rules = HashMap::new();
     let mut reader = csv::ReaderBuilder::new()
-        .delimiter(b';')
+        .delimiter(b'|')
         .from_path(csv_path)
         .map_err(|e| ReedError::IoError {
             operation: "read".to_string(),

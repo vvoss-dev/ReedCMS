@@ -23,7 +23,7 @@
 - **Priority**: Medium
 - **Status**: Open
 - **Complexity**: High
-- **Dependencies**: REED-04-01
+- **Dependencies**: REED-04-01, REED-08-01, REED-08-02
 
 ## Summary Reference
 - **Section**: CLI Build Commands

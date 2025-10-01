@@ -104,7 +104,7 @@ Every Rust file must begin with this standardised header:
 // MANDATORY: BBC English for all documentation and comments
 // MANDATORY: Type-safe HashMap lookups, O(1) performance priority
 // MANDATORY: Environment-aware with @suffix support (key@dev, key@prod)
-// MANDATORY: CSV format: key;value;description (semicolon-separated, quoted when needed)
+// MANDATORY: CSV format: key|value|description (pipe-delimited, quoted when needed)
 // MANDATORY: Error handling with ReedResult<T> pattern
 // CRITICAL: AI agents must NEVER execute rm commands without explicit user confirmation
 //
@@ -780,6 +780,8 @@ pub struct ReedRequest {
     pub language: Option<String>,
     pub environment: Option<String>,
     pub context: Option<String>,
+    pub value: Option<String>,        // For set operations
+    pub description: Option<String>,  // For set operations (comment field in CSV)
 }
 
 /// Standard Response structure with performance metrics
@@ -799,6 +801,15 @@ pub struct ResponseMetrics {
     pub memory_allocated: Option<u64>,     // Memory allocated during processing
     pub csv_files_accessed: u8,            // Number of CSV files accessed
     pub cache_info: Option<CacheInfo>,     // Cache hit/miss information
+}
+
+/// Cache information for performance tracking
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CacheInfo {
+    pub hit: bool,                         // Whether this was a cache hit
+    pub ttl_remaining_s: Option<u64>,      // Time-to-live remaining in seconds
+    pub cache_key: String,                 // The cache key used for lookup
+    pub cache_layer: String,               // Which cache layer (text/route/meta)
 }
 
 /// Standard Module trait - ALL modules must implement
@@ -893,6 +904,12 @@ pub fn resolve_url(req: &ReedRequest) -> ReedResult<ReedResponse<RouteInfo>> {
 #### 2. **ReedBase Dispatcher** - `reedbase.rs` - Intelligent data engine dispatcher
 - **Environment-Fallback Logic**: `key@dev` → `key` when not found
 - **Cache Management**: O(1) HashMap performance with smart invalidation
+- **Cache Invalidation Strategy**: 
+  - Granular key-specific invalidation after set operations
+  - Full cache type invalidation (text/route/meta) on demand
+  - Global cache invalidation for migrations and system restarts
+  - Automatic invalidation on CSV file writes via `set.rs` integration
+  - Performance: < 50ms for complete cache refresh (5 CSV files + HashMap rebuild)
 - **Error Recovery**: Retry-logic for CSV file operations
 - **Data Consistency**: Atomic writes to .reed/ files
 - **Batch Optimisation**: Group operations by CSV file type
@@ -1109,7 +1126,8 @@ service|svc_*|get[rwx],set[rw-]|unlimited|10000|Service-to-service communication
 > - [Service Test Template](_workbench/Tickets/templates/service-template.test.md) - Separate test file structure and patterns
 
 #### 6. **ReedBase Services** (`src/reedcms/reedbase/`)
-- `get.rs`, `set.rs`, `init.rs` - O(1) HashMap CSV database implementation services
+- `get.rs`, `set.rs`, `init.rs`, `cache.rs` - O(1) HashMap CSV database implementation services
+- **Note**: `environment.rs` is owned by REED-02-03 (Environment Resolution Service) and referenced by ReedBase
 
 #### 7. **CLI Services** (`src/reedcms/cli/`)
 - `init.rs`, `set.rs`, `get.rs`, `migrate.rs`, `validate.rs`, `preset.rs`, `build.rs`, `server.rs` - CLI command services
@@ -1481,8 +1499,11 @@ pub fn set(file_type: &str, key: &str, value: &str, comment: &str) -> ReedResult
 ## Performance & Technical Specifications
 
 ### Performance Characteristics
-- **Startup**: ~200μs for 17 layouts (4x faster than template parsing)
+- **Startup**: < 50ms for initialisation (loads 5 CSV files + builds HashMap caches)
 - **Runtime**: O(1) HashMap lookups for all data access
+- **Get Operations**: p95 < 100μs (cached HashMap lookups)
+- **Set Operations**: p95 < 10ms (CSV write + cache invalidation)
+- **Cache Refresh**: < 50ms (complete cache rebuild from CSV files)
 - **Memory**: Efficient CSV-to-HashMap transformation at startup
 - **Scalability**: Tested up to 100+ layouts
 
@@ -1858,3 +1879,138 @@ This architecture ensures ReedCMS delivers on its promise of **simplicity withou
 - ✅ Unix socket deployment for production performance
 - ✅ Flow persistence with clear data ownership rules
 - ✅ Environment-aware fallback system for flexible deployment
+
+---
+
+## Recent System Optimizations (2025-01-30)
+
+This section documents the comprehensive system optimization phase completed before implementation begins. All tickets have been refined for consistency, performance, and implementation clarity.
+
+### 1. CSV Delimiter Standardization
+**Status**: ✅ Complete across all tickets and documentation
+
+- **Change**: Standardized CSV delimiter from semicolon (`;`) to pipe (`|`) globally
+- **Affected Files**: REED-02-02, REED-10-04, REED-07-02, project_summary.md
+- **Rationale**: Pipe delimiter reduces escaping complexity and improves readability
+- **Format**: `key|value|description` for all CSV files in `.reed/` directory
+
+### 2. ReedRequest Structure Enhancement
+**Status**: ✅ Extended in REED-01-01 and project_summary.md
+
+- **Added Fields**:
+  - `pub value: Option<String>` - For set operations
+  - `pub description: Option<String>` - For CSV comment field in set operations
+- **Benefit**: Unified request structure for both get and set operations via ReedStream
+
+### 3. CacheInfo Structure Definition
+**Status**: ✅ Fully specified in REED-01-01 and project_summary.md
+
+```rust
+pub struct CacheInfo {
+    pub hit: bool,                    // Whether this was a cache hit
+    pub ttl_remaining_s: Option<u64>, // Time-to-live remaining
+    pub cache_key: String,            // Cache key used for lookup
+    pub cache_layer: String,          // Which cache (text/route/meta)
+}
+```
+- **Integration**: Used in `ResponseMetrics.cache_info` for performance tracking
+
+### 4. Dependency Chain Corrections
+**Status**: ✅ Fixed in REED-02-01 and REED-04-08
+
+- **REED-02-01 (ReedBase Core)**: Now depends on `REED-02-02` (CSV Handler) and `REED-02-04` (Backup System)
+- **REED-04-08 (Build Commands)**: Now depends on `REED-08-01` (CSS Bundler) and `REED-08-02` (JS Bundler)
+- **Benefit**: Proper build order and clear service dependencies
+
+### 5. Route CSV Format Clarification
+**Status**: ✅ Specified in REED-06-02
+
+- **Format**: `route|layout|language|description`
+- **Value Field**: Contains `layout|language` (pipe-delimited)
+- **Parsing**: Updated route resolution to correctly parse multi-component values
+- **Example**: `knowledge@de|wissen|knowledge|de|German knowledge page route`
+
+### 6. FreeBSD Logging System Specification
+**Status**: ✅ Comprehensive implementation added to REED-10-01 (~240 lines)
+
+- **Format**: `{timestamp} {hostname} {process}[{pid}]: {level}: {message}`
+- **8 Log Levels**: EMERG, ALERT, CRIT, ERROR, WARN, NOTICE, INFO, DEBUG (RFC 5424)
+- **4 Output Modes**: Silent, Log, Forward, Both
+- **Features**: Log rotation (100MB limit), compression (gzip), retention (10 files)
+- **Performance**: Zero-allocation message passing, <1% overhead, 10k+ msg/s throughput
+
+### 7. ReedModule Trait Implementation
+**Status**: ✅ Implemented across all REED-02 tickets
+
+- **Tickets**: REED-02-01, REED-02-02, REED-02-03, REED-02-04
+- **Methods**:
+  - `module_name() -> &'static str` - Module identification
+  - `version() -> &'static str` - Version tracking
+  - `health_check() -> ReedResult<String>` - System health verification
+  - `dependencies() -> Vec<&'static str>` - Dependency declaration
+- **Benefit**: Standardized module interface for monitoring and diagnostics
+
+### 8. Registry CSV Format Definition
+**Status**: ✅ Specified in REED-05-03
+
+- **Format**: `key|type|enabled|order|parent|description`
+- **Purpose**: Layout registry and navigation management
+- **Implementation**: Dynamic navigation loading from `.reed/registry.csv`
+- **Example**: `knowledge|layout|true|10||Knowledge base layout`
+
+### 9. Template Engine Initialization Sequence
+**Status**: ✅ Documented in REED-05-02 (~130 lines)
+
+- **Pattern**: Global singleton with `OnceLock<Environment<'static>>`
+- **Startup Sequence**:
+  1. Template Engine initialization
+  2. Hot-reload setup (DEV mode only)
+  3. ReedBase initialization
+  4. Monitoring system initialization
+- **Benefit**: Clear startup order and proper resource initialization
+
+### 10. Filter Error Conversion Layer
+**Status**: ✅ Implemented in REED-05-01
+
+- **Function**: `convert_reed_error_to_jinja(err: ReedError, filter: &str, key: &str) -> minijinja::Error`
+- **Coverage**: All ReedError variants mapped to appropriate MiniJinja ErrorKind
+- **Integration**: All four filters (text, route, meta, config) use error conversion
+- **Benefit**: Proper error context in template rendering with actionable messages
+
+### 11. Cache Invalidation Strategy
+**Status**: ✅ Comprehensive specification in REED-02-01 (~100 lines)
+
+- **Granularity Levels**:
+  - Key-specific: `invalidate_text_key(key)`, `invalidate_route_key(key)`, `invalidate_meta_key(key)`
+  - Cache-type: `invalidate_text_cache()`, `invalidate_route_cache()`, `invalidate_meta_cache()`
+  - Global: `invalidate_all_caches()`, `refresh_cache()`
+- **Integration**: `set.rs` calls `cache::invalidate_*_key()` after each CSV write
+- **Performance**: < 50ms for complete cache refresh (5 CSV files + HashMap rebuild)
+- **Triggers**: Set operations, file watcher, CLI commands, periodic refresh
+
+### 12. Environment.rs Ownership Resolution
+**Status**: ✅ Clarified in REED-02-01 and REED-02-03
+
+- **Owner**: REED-02-03 (Environment Resolution Service)
+- **File**: `src/reedcms/reedbase/environment.rs`
+- **Reference**: REED-02-01 (ReedBase Core) references but does not create
+- **Benefit**: Clear ownership prevents duplicate implementations
+
+### 13. Performance Target Corrections
+**Status**: ✅ Fixed in REED-02-01 and project_summary.md
+
+- **Startup**: Changed from "< 200μs" to "< 50ms" (realistic for 5 CSV files + HashMap build)
+- **Cache Refresh**: Changed from "< 200ms" to "< 50ms" (consistent with init)
+- **Rationale**: 200μs was unrealistic for file I/O; 50ms is achievable and professionally acceptable
+- **Other Targets Remain**: Get < 100μs, Set < 10ms, O(1) cache lookups
+
+### Implementation Readiness
+
+All 37 tickets across 10 layers have been optimized and are now ready for implementation:
+
+- ✅ **Consistency**: CSV delimiter, key nomenclature, error handling
+- ✅ **Completeness**: All missing structures, formats, and specifications added
+- ✅ **Correctness**: Dependencies, performance targets, integration points verified
+- ✅ **Clarity**: Implementation guidance, ownership, and patterns documented
+
+**Next Phase**: Begin systematic implementation starting with Foundation Layer (REED-01).

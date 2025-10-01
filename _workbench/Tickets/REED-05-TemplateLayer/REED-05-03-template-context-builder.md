@@ -298,14 +298,45 @@ fn get_config_value(key: &str) -> ReedResult<String> {
 }
 
 /// Gets navigation keys from registry.
+///
+/// ## Registry CSV Format (.reed/registry.csv)
+/// ```csv
+/// key|type|enabled|order|parent|description
+/// home|layout|true|1||Home page
+/// knowledge|layout|true|2||Knowledge base
+/// blog|layout|true|3||Blog section
+/// about|layout|true|4||About page
+/// imprint|page|true|5|about|Legal imprint
+/// privacy|page|true|6|about|Privacy policy
+/// ```
+///
+/// ## Implementation
+/// - Read .reed/registry.csv
+/// - Filter by enabled=true
+/// - Sort by order field
+/// - Build hierarchical structure via parent field
 fn get_navigation_keys() -> ReedResult<Vec<String>> {
-    // TODO: Read from registry.csv
-    Ok(vec![
-        "home".to_string(),
-        "knowledge".to_string(),
-        "blog".to_string(),
-        "about".to_string(),
-    ])
+    use crate::csv::reader;
+    
+    let entries = reader::read_csv(".reed/registry.csv")?;
+    
+    let mut nav_items: Vec<_> = entries
+        .iter()
+        .filter(|e| {
+            // Parse enabled field
+            e.value.split('|').nth(0).unwrap_or("false") == "true"
+        })
+        .map(|e| {
+            let parts: Vec<&str> = e.value.split('|').collect();
+            let order: u32 = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(999);
+            (e.key.clone(), order)
+        })
+        .collect();
+    
+    // Sort by order
+    nav_items.sort_by_key(|(_, order)| *order);
+    
+    Ok(nav_items.into_iter().map(|(key, _)| key).collect())
 }
 
 /// Gets request information from thread-local storage.

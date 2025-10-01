@@ -104,6 +104,65 @@ pub fn get_existing_comment(file_path: &str, key: &str) -> Option<String>
 pub fn validate_comment(comment: &str) -> ReedResult<()>
 ```
 
+### ReedModule Trait Implementation (`src/reedcms/csv/mod.rs`)
+
+```rust
+use crate::reedstream::{ReedModule, ReedResult};
+
+/// CSV Handler module implementation.
+pub struct CsvHandlerModule;
+
+impl ReedModule for CsvHandlerModule {
+    fn module_name(&self) -> &'static str {
+        "csv_handler"
+    }
+
+    fn version(&self) -> &'static str {
+        env!("CARGO_PKG_VERSION")
+    }
+
+    fn health_check(&self) -> ReedResult<String> {
+        // Test read/write capabilities
+        let test_path = ".reed/test.csv";
+        
+        // Write test
+        let test_entries = vec![
+            CsvEntry {
+                key: "test.key".to_string(),
+                value: "test.value".to_string(),
+                comment: "Health check test".to_string(),
+            }
+        ];
+        
+        writer::write_csv(test_path, &test_entries)?;
+        
+        // Read test
+        let read_entries = reader::read_csv(test_path)?;
+        
+        // Cleanup
+        let _ = std::fs::remove_file(test_path);
+        
+        if read_entries.len() == 1 && read_entries[0].key == "test.key" {
+            Ok("CSV Handler healthy: read/write operations functional".to_string())
+        } else {
+            Err(ReedError::SystemError {
+                component: "csv_handler".to_string(),
+                reason: "Health check read/write test failed".to_string(),
+            })
+        }
+    }
+
+    fn dependencies(&self) -> Vec<&'static str> {
+        vec![]  // No dependencies
+    }
+}
+
+/// Returns CSV Handler module instance.
+pub fn module() -> CsvHandlerModule {
+    CsvHandlerModule
+}
+```
+
 ## Implementation Files
 
 ### Primary Implementation
@@ -121,7 +180,7 @@ pub fn validate_comment(comment: &str) -> ReedResult<()>
 ## Testing Requirements
 
 ### Unit Tests
-- [ ] Test CSV parsing with semicolon separator
+- [ ] Test CSV parsing with pipe separator
 - [ ] Test quoted value handling
 - [ ] Test comment preservation
 - [ ] Test atomic write operation
@@ -148,22 +207,22 @@ pub fn validate_comment(comment: &str) -> ReedResult<()>
 
 ### File Format
 ```csv
-key;value;comment
-knowledge.title@de;Wissen;German page title
-knowledge.title@en;Knowledge;English page title
+key|value|comment
+knowledge.title@de|Wissen|German page title
+knowledge.title@en|Knowledge|English page title
 ```
 
 ### Quoted Values
-When values contain semicolons or newlines:
+When values contain pipes or newlines:
 ```csv
-key;"value;with;semicolons";"comment"
+key|"value|with|pipes"|"comment"
 ```
 
 ### Multi-line Support
 ```csv
-key;"Multi-line
+key|"Multi-line
 value
-here";"Description"
+here"|"Description"
 ```
 
 ## Acceptance Criteria

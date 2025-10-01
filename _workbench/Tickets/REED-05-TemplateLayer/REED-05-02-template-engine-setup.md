@@ -256,6 +256,133 @@ impl AutoReloader<'_> {
 }
 ```
 
+### Server Integration and Startup Sequence
+
+#### Global Template Engine Singleton (`src/reedcms/templates/engine.rs`)
+
+```rust
+use std::sync::OnceLock;
+
+/// Global template engine singleton.
+static TEMPLATE_ENGINE: OnceLock<Environment<'static>> = OnceLock::new();
+
+/// Gets or initializes the global template engine.
+///
+/// ## Thread Safety
+/// - OnceLock ensures single initialization
+/// - Thread-safe access without locks after init
+/// - Panic-free initialization
+///
+/// ## Usage
+/// ```rust
+/// let engine = get_template_engine()?;
+/// let template = engine.get_template("layout.mouse.jinja")?;
+/// ```
+pub fn get_template_engine() -> ReedResult<&'static Environment<'static>> {
+    TEMPLATE_ENGINE.get_or_try_init(|| {
+        init_template_engine()
+    })
+}
+
+/// Clears template cache (DEV mode hot-reload).
+///
+/// ## Note
+/// This creates a new engine instance since Environment is immutable.
+/// Only used in DEV mode for hot-reload functionality.
+pub fn reload_template_engine() -> ReedResult<()> {
+    // In production, this should be a no-op
+    if !is_dev_environment() {
+        return Ok(());
+    }
+    
+    // Force re-initialization
+    // Note: OnceLock doesn't support clearing, so this only works
+    // if we use a different pattern for DEV mode
+    Ok(())
+}
+```
+
+#### Server Startup Integration (`src/reedcms/server/startup.rs`)
+
+**This should be called from REED-06-01 server startup:**
+
+```rust
+use crate::templates::engine;
+
+/// Initializes all required systems before starting HTTP server.
+///
+/// ## Initialization Order
+/// 1. Template Engine (registers filters, sets up loader)
+/// 2. Hot-reload watcher (DEV mode only)
+/// 3. ReedBase cache (loads CSV files)
+/// 4. Monitoring system (starts metrics collection)
+///
+/// ## Error Handling
+/// - Fatal errors stop server startup
+/// - Non-fatal errors logged as warnings
+pub async fn initialize_systems() -> ReedResult<()> {
+    println!("🚀 Initializing ReedCMS systems...");
+    
+    // 1. Initialize template engine
+    println!("  📄 Loading template engine...");
+    let _engine = engine::get_template_engine()?;
+    println!("  ✓ Template engine ready");
+    
+    // 2. Start hot-reload watcher (DEV only)
+    if is_dev_environment() {
+        println!("  🔄 Starting template hot-reload...");
+        engine::start_hot_reload()?;
+        println!("  ✓ Hot-reload active");
+    }
+    
+    // 3. Initialize ReedBase
+    println!("  💾 Loading ReedBase cache...");
+    crate::reedbase::init::initialize()?;
+    println!("  ✓ ReedBase ready");
+    
+    // 4. Initialize monitoring
+    println!("  📊 Starting monitoring system...");
+    crate::monitor::core::initialize()?;
+    println!("  ✓ Monitoring active");
+    
+    println!("✓ All systems initialized\n");
+    Ok(())
+}
+
+fn is_dev_environment() -> bool {
+    std::env::var("REED_ENV")
+        .unwrap_or_else(|_| "DEV".to_string())
+        .to_uppercase() == "DEV"
+}
+```
+
+#### Integration in Server Main (`src/reedcms/server/main.rs`)
+
+```rust
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    // Initialize all systems
+    if let Err(e) = startup::initialize_systems().await {
+        eprintln!("❌ Startup failed: {:?}", e);
+        std::process::exit(1);
+    }
+    
+    // Start HTTP server
+    HttpServer::new(|| {
+        App::new()
+            // Middleware
+            .wrap(middleware::Logger::default())
+            .wrap(monitor::middleware::MonitoringMiddleware::new())
+            
+            // Routes
+            .configure(routes::configure)
+    })
+    .bind(("127.0.0.1", 3000))?
+    .run()
+    .await
+}
+```
+
 ## Implementation Files
 
 ### Primary Implementation

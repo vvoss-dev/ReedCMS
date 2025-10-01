@@ -31,9 +31,240 @@
 - **Key Concepts**: Performance monitoring, metrics collection, request tracking, system health
 
 ## Objective
-Implement ReedMonitor foundation system that collects performance metrics, tracks request timing, monitors system resources, aggregates statistics, and provides health check endpoints for production monitoring and debugging.
+Implement ReedMonitor foundation system with FreeBSD-style syslog output, performance metrics collection, request tracking, system resource monitoring, and health check endpoints for production operations.
 
 ## Requirements
+
+### 1. FreeBSD-Style Logging System (`src/reedcms/monitor/syslog.rs`)
+
+#### Log Format Specification
+```
+{timestamp} {hostname} {process}[{pid}]: {level}: {message}
+
+Example:
+Dec 15 14:23:01 server reedcms[1234]: INFO: Server started on 127.0.0.1:3000
+Dec 15 14:23:02 server reedcms[1234]: INFO: METRIC[counter] requests_total: 42
+Dec 15 14:23:03 server reedcms[1234]: ERROR: Database connection failed: timeout
+```
+
+#### Log Levels (RFC 5424)
+```rust
+pub enum LogLevel {
+    EMERG = 0,   // Emergency: system is unusable
+    ALERT = 1,   // Alert: action must be taken immediately
+    CRIT = 2,    // Critical: critical conditions
+    ERROR = 3,   // Error: error conditions
+    WARN = 4,    // Warning: warning conditions
+    NOTICE = 5,  // Notice: normal but significant condition
+    INFO = 6,    // Informational: informational messages
+    DEBUG = 7,   // Debug: debug-level messages
+}
+```
+
+#### Output Modes
+```rust
+pub enum OutputMode {
+    Silent,      // No output (metrics only)
+    Log,         // Write to log file
+    Forward,     // Forward to external system (syslog, journald)
+    Both,        // Log file + forward
+}
+```
+
+#### Implementation
+```rust
+/// FreeBSD-style syslog logger.
+pub struct SysLogger {
+    hostname: String,
+    process_name: String,
+    pid: u32,
+    output_mode: OutputMode,
+    log_file: Option<std::fs::File>,
+    min_level: LogLevel,
+}
+
+impl SysLogger {
+    /// Creates new syslog logger.
+    pub fn new(output_mode: OutputMode, min_level: LogLevel) -> ReedResult<Self> {
+        Ok(Self {
+            hostname: get_hostname(),
+            process_name: "reedcms".to_string(),
+            pid: std::process::id(),
+            output_mode,
+            log_file: Self::open_log_file(&output_mode)?,
+            min_level,
+        })
+    }
+
+    /// Logs message at specified level.
+    ///
+    /// ## Performance
+    /// - < 50μs for Silent mode
+    /// - < 500μs for file write
+    /// - < 1ms for external forward
+    pub fn log(&mut self, level: LogLevel, message: &str) {
+        if level as u8 > self.min_level as u8 {
+            return; // Level filtered out
+        }
+
+        let timestamp = format_timestamp();
+        let formatted = format!(
+            "{} {} {}[{}]: {}: {}",
+            timestamp,
+            self.hostname,
+            self.process_name,
+            self.pid,
+            level.as_str(),
+            message
+        );
+
+        match self.output_mode {
+            OutputMode::Silent => {},
+            OutputMode::Log => self.write_to_file(&formatted),
+            OutputMode::Forward => self.forward_to_syslog(&formatted),
+            OutputMode::Both => {
+                self.write_to_file(&formatted);
+                self.forward_to_syslog(&formatted);
+            }
+        }
+    }
+
+    /// Logs metric in standard format.
+    pub fn log_metric(&mut self, metric_type: &str, name: &str, value: &str) {
+        let message = format!("METRIC[{}] {}: {}", metric_type, name, value);
+        self.log(LogLevel::INFO, &message);
+    }
+
+    fn write_to_file(&mut self, message: &str) {
+        if let Some(ref mut file) = self.log_file {
+            use std::io::Write;
+            let _ = writeln!(file, "{}", message);
+        }
+    }
+
+    fn forward_to_syslog(&self, message: &str) {
+        // Forward to system syslog
+        #[cfg(target_os = "linux")]
+        {
+            // Use libc syslog
+        }
+        #[cfg(target_os = "macos")]
+        {
+            // Use unified logging system
+        }
+    }
+
+    fn open_log_file(mode: &OutputMode) -> ReedResult<Option<std::fs::File>> {
+        match mode {
+            OutputMode::Log | OutputMode::Both => {
+                let path = ".reed/flow/reedmonitor.log";
+                std::fs::create_dir_all(".reed/flow")?;
+                let file = std::fs::OpenOptions::new()
+                    .create(true)
+                    .append(true)
+                    .open(path)?;
+                Ok(Some(file))
+            }
+            _ => Ok(None),
+        }
+    }
+}
+
+impl LogLevel {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            LogLevel::EMERG => "EMERG",
+            LogLevel::ALERT => "ALERT",
+            LogLevel::CRIT => "CRIT",
+            LogLevel::ERROR => "ERROR",
+            LogLevel::WARN => "WARN",
+            LogLevel::NOTICE => "NOTICE",
+            LogLevel::INFO => "INFO",
+            LogLevel::DEBUG => "DEBUG",
+        }
+    }
+}
+
+/// Gets system hostname.
+fn get_hostname() -> String {
+    hostname::get()
+        .ok()
+        .and_then(|h| h.into_string().ok())
+        .unwrap_or_else(|| "localhost".to_string())
+}
+
+/// Formats timestamp in BSD syslog format.
+fn format_timestamp() -> String {
+    chrono::Local::now().format("%b %d %H:%M:%S").to_string()
+}
+```
+
+#### Log File Management
+```rust
+/// Manages log file rotation and cleanup.
+pub struct LogFileManager;
+
+impl LogFileManager {
+    /// Rotates log file if size exceeds limit.
+    ///
+    /// ## Rotation Strategy
+    /// - Max size: 100MB per file
+    /// - Keep last 10 files
+    /// - Compress old files with gzip
+    pub fn rotate_if_needed(log_path: &str) -> ReedResult<()> {
+        let metadata = std::fs::metadata(log_path)?;
+        if metadata.len() > 100 * 1024 * 1024 {
+            Self::rotate_log(log_path)?;
+        }
+        Ok(())
+    }
+
+    fn rotate_log(log_path: &str) -> ReedResult<()> {
+        let timestamp = chrono::Utc::now().format("%Y%m%d-%H%M%S");
+        let rotated = format!("{}.{}.gz", log_path, timestamp);
+        
+        // Compress and rename
+        let content = std::fs::read(log_path)?;
+        let compressed = compress_gzip(&content)?;
+        std::fs::write(&rotated, compressed)?;
+        
+        // Clear original file
+        std::fs::write(log_path, "")?;
+        
+        // Cleanup old logs
+        Self::cleanup_old_logs(log_path)?;
+        
+        Ok(())
+    }
+
+    fn cleanup_old_logs(log_path: &str) -> ReedResult<()> {
+        // Keep only last 10 rotated files
+        let dir = std::path::Path::new(log_path).parent().unwrap();
+        let base_name = std::path::Path::new(log_path).file_name().unwrap();
+        
+        let mut log_files: Vec<_> = std::fs::read_dir(dir)?
+            .filter_map(|e| e.ok())
+            .filter(|e| {
+                e.file_name().to_string_lossy().starts_with(base_name.to_str().unwrap())
+                    && e.file_name().to_string_lossy().ends_with(".gz")
+            })
+            .collect();
+        
+        log_files.sort_by_key(|e| e.metadata().unwrap().modified().unwrap());
+        
+        // Remove oldest files if more than 10
+        if log_files.len() > 10 {
+            for file in log_files.iter().take(log_files.len() - 10) {
+                let _ = std::fs::remove_file(file.path());
+            }
+        }
+        
+        Ok(())
+    }
+}
+```
+
+### 2. Metrics Collection System
 
 ### Metrics Collected
 
@@ -570,12 +801,16 @@ fn format_duration(duration: std::time::Duration) -> String {
 ## Implementation Files
 
 ### Primary Implementation
+- `src/reedcms/monitor/syslog.rs` - FreeBSD syslog logger
+- `src/reedcms/monitor/log_manager.rs` - Log file rotation and cleanup
 - `src/reedcms/monitor/core.rs` - Monitor core
 - `src/reedcms/monitor/metrics.rs` - Metrics storage
 - `src/reedcms/monitor/middleware.rs` - Actix middleware
 - `src/reedcms/monitor/health.rs` - Health check endpoints
 
 ### Test Files
+- `src/reedcms/monitor/syslog.test.rs`
+- `src/reedcms/monitor/log_manager.test.rs`
 - `src/reedcms/monitor/core.test.rs`
 - `src/reedcms/monitor/metrics.test.rs`
 - `src/reedcms/monitor/middleware.test.rs`
@@ -584,6 +819,13 @@ fn format_duration(duration: std::time::Duration) -> String {
 ## Testing Requirements
 
 ### Unit Tests
+- [ ] Test FreeBSD syslog format generation
+- [ ] Test all 8 log levels (EMERG through DEBUG)
+- [ ] Test log level filtering
+- [ ] Test output mode switching (Silent/Log/Forward/Both)
+- [ ] Test hostname and PID integration
+- [ ] Test log file rotation
+- [ ] Test log file cleanup (keep last 10)
 - [ ] Test metrics recording
 - [ ] Test metrics aggregation
 - [ ] Test health status calculation
@@ -592,19 +834,33 @@ fn format_duration(duration: std::time::Duration) -> String {
 - [ ] Test cache hit rate calculation
 
 ### Integration Tests
+- [ ] Test syslog logger with actual file writes
+- [ ] Test log rotation trigger at 100MB
+- [ ] Test log compression (gzip)
 - [ ] Test middleware integration
 - [ ] Test health endpoint
 - [ ] Test metrics endpoint
 - [ ] Test concurrent metric recording
 - [ ] Test memory trimming
+- [ ] Test FreeBSD logging from all layers (Data, Template, Server)
 
 ### Performance Tests
+- [ ] Silent mode logging: < 50μs
+- [ ] File write logging: < 500μs
+- [ ] External forward: < 1ms
 - [ ] Metric recording: < 10μs
 - [ ] Metric retrieval: < 1ms
 - [ ] Middleware overhead: < 10μs
+- [ ] Log file rotation: < 100ms
 - [ ] Memory usage: < 10MB for 24h data
 
 ## Acceptance Criteria
+- [ ] FreeBSD syslog format implemented with all 8 log levels
+- [ ] Hostname and PID integration working
+- [ ] All 4 output modes functional (Silent/Log/Forward/Both)
+- [ ] Log file rotation at 100MB implemented
+- [ ] Log file cleanup (keep last 10) working
+- [ ] Log compression (gzip) functional
 - [ ] ReedMonitor core implemented
 - [ ] Request metrics collection working
 - [ ] ReedBase metrics collection working
@@ -615,7 +871,7 @@ fn format_duration(duration: std::time::Duration) -> String {
 - [ ] Metrics endpoint working
 - [ ] Thread-safe metrics recording
 - [ ] All tests pass with 100% coverage
-- [ ] Performance benchmarks met
+- [ ] Performance benchmarks met (syslog + metrics)
 - [ ] Documentation complete
 - [ ] BBC English throughout
 

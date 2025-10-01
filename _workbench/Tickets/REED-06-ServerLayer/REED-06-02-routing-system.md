@@ -37,11 +37,11 @@ Implement URL resolution system that maps incoming URLs to layout + language com
 
 ### Routes Configuration (.reed/routes.csv)
 ```csv
-route|layout|language|description
-wissen|knowledge|de|German route for knowledge layout
-knowledge|knowledge|en|English route for knowledge layout
-blog|blog|de|German blog
-blog|blog|en|English blog
+route|value|description
+wissen|knowledge|de|German route for knowledge layout (de)
+knowledge|knowledge|en|English route for knowledge layout (en)
+blog|blog|de|German blog (de)
+blog|blog|en|English blog (en)
 ```
 
 ### Implementation (`src/reedcms/routing/resolver.rs`)
@@ -105,16 +105,20 @@ fn lookup_exact_route(path: &str) -> ReedResult<Option<RouteInfo>> {
 
     match reedbase::get::route(&req) {
         Ok(response) => {
-            // Parse response: "layout:language"
-            let parts: Vec<&str> = response.data.split(':').collect();
-            if parts.len() == 2 {
+            // Parse response: "layout|language" (from routes.csv value column: layout|language)
+            let parts: Vec<&str> = response.data.split('|').collect();
+            if parts.len() >= 2 {
                 Ok(Some(RouteInfo {
                     layout: parts[0].to_string(),
                     language: parts[1].to_string(),
                     params: HashMap::new(),
                 }))
             } else {
-                Ok(None)
+                // Malformed route data
+                Err(ReedError::DataError {
+                    component: "routing".to_string(),
+                    reason: format!("Malformed route data: expected 'layout|language', got '{}'", response.data),
+                })
             }
         }
         Err(_) => Ok(None)
