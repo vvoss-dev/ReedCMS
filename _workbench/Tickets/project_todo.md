@@ -29,18 +29,51 @@ Analyzing existing template structure (layouts + components) to ensure 100% comp
 ---
 
 ### B) `reed` Dictionary vs. Filter Usage
-**Status**: ✅ Resolved
+**Status**: ✅ Resolved and implemented
 
 **Decision**:
 - **NO** `reed` Dictionary in context (legacy pattern from vvoss.dev)
 - **YES** Use filter system consistently: `{{ pagekey | route('auto') }}`
-- Migration needed: Replace all `reed['pageroute@...']` with `| route('auto')`
+
+**Implementation Completed**:
+- ✅ Migrated all `reed['pageroute@' + pagekey]` → `pagekey | route('auto')`
+- ✅ Migrated all `reed.pageroute` → `current_pagekey | route('de'/'en')`
+- ✅ Updated 3 templates: page-header.mouse/touch/reader.jinja
 
 **Rationale**:
 - Consistent with Filter-System
 - No Dictionary-Overhead
 - Lazy evaluation
 - Clear data flow
+
+### B.1) Route Filter: Empty Route Handling
+**Status**: ✅ Resolved and implemented
+
+**Decision**: Route filter handles landing page logic internally
+
+**Before** (complex):
+```jinja
+{% if pagekey != 'landing' %}{{ pagekey | route('auto') }}/{% endif %}
+```
+
+**After** (simple):
+```jinja
+{{ pagekey | route('auto') }}/
+```
+
+**Implementation**:
+- Filter returns empty string for landing page
+- Filter returns route segment only (no slashes)
+- Template constructs full URL: `/de/` + `""` + `/` → `/de/`
+
+**Benefits**:
+- KISS principle: Logic in Rust, not templates
+- Cleaner templates (removed 3x conditional logic)
+- Single source of truth for route handling
+
+**Files Updated**:
+- ✅ REED-05-01 specification updated with empty route documentation
+- ✅ page-header.mouse/touch/reader.jinja simplified
 
 ---
 
@@ -243,9 +276,15 @@ reed migrate:text templates/layouts/knowledge/
 
 ## 📊 Progress Summary
 
-**Total Questions Identified**: 8
-**Resolved**: 2 (A, B)
+**Total Questions Identified**: 9 (including B.1 as separate implementation)
+**Resolved**: 3 (A, B, B.1)
 **In Progress**: 1 (C)
 **Remaining**: 5 (D, E, F, G, H)
+
+**Recent Commits**:
+- `[DOCS]` - Template integration analysis + 13 ticket optimizations
+- `[DOCS]` - Created project_todo.md for tracking
+- `[TEMPLATES]` - Migrated reed dictionary to route filter
+- `[REED-05-01]` - Simplified route filter with empty route handling
 
 **Estimated Completion**: After all questions answered, tickets are 100% implementation-ready.

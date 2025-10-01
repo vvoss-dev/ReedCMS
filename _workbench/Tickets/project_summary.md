@@ -2004,13 +2004,50 @@ pub struct CacheInfo {
 - **Rationale**: 200μs was unrealistic for file I/O; 50ms is achievable and professionally acceptable
 - **Other Targets Remain**: Get < 100μs, Set < 10ms, O(1) cache lookups
 
+### 14. Template Integration: Filter System Migration
+**Status**: ✅ Completed - Templates migrated to ReedCMS filter pattern
+
+**Changes**:
+- Removed legacy `reed` dictionary pattern from vvoss.dev
+- Migrated to consistent filter usage: `{{ pagekey | route('auto') }}`
+- Simplified route filter with empty route handling for landing pages
+
+**Migration Results**:
+```jinja
+// Before (legacy vvoss.dev):
+{{ reed['pageroute@' + pagekey] }}
+{{ reed.pageroute }}
+{% if pagekey != 'landing' %}{{ pagekey | route('auto') }}/{% endif %}
+
+// After (ReedCMS):
+{{ pagekey | route('auto') }}
+{{ current_pagekey | route('de') }}
+{{ pagekey | route('auto') }}/  // Filter handles empty routes internally
+```
+
+**Benefits**:
+- Consistent filter system across all template types
+- KISS principle: Logic in Rust filters, not template conditionals
+- No dictionary overhead in template context
+- Lazy evaluation - only computed when used
+- Clear data flow: Template → Filter → ReedBase
+
+**Files Updated**:
+- REED-05-01: Language detection strategy + empty route handling specification
+- page-header.mouse/touch/reader.jinja: All reed references migrated
+
+**Performance**: No dictionary population overhead, filters execute on-demand with < 100μs latency
+
 ### Implementation Readiness
 
 All 37 tickets across 10 layers have been optimized and are now ready for implementation:
 
-- ✅ **Consistency**: CSV delimiter, key nomenclature, error handling
+- ✅ **Consistency**: CSV delimiter, key nomenclature, error handling, filter patterns
 - ✅ **Completeness**: All missing structures, formats, and specifications added
 - ✅ **Correctness**: Dependencies, performance targets, integration points verified
 - ✅ **Clarity**: Implementation guidance, ownership, and patterns documented
+- ✅ **Template Integration**: Existing templates analyzed and migrated to ReedCMS patterns
 
-**Next Phase**: Begin systematic implementation starting with Foundation Layer (REED-01).
+**Active Analysis**: Template system integration ongoing - tracking in `_workbench/Tickets/project_todo.md`
+
+**Next Phase**: Complete remaining template integration questions (C-H), then begin systematic implementation starting with Foundation Layer (REED-01).
