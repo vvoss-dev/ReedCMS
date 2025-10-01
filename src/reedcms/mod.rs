@@ -10,6 +10,7 @@ pub mod reed;
 pub mod reedbase;
 pub mod reedstream;
 pub mod security;
+pub mod taxonomy;
 
 #[cfg(test)]
 mod reedstream_test;
