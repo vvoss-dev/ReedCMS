@@ -9,6 +9,7 @@ pub mod matrix;
 pub mod reed;
 pub mod reedbase;
 pub mod reedstream;
+pub mod security;
 
 #[cfg(test)]
 mod reedstream_test;
