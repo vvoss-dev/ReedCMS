@@ -1,0 +1,15 @@
+[package]
+name = "reedcms"
+version = "0.1.0"
+edition = "2021"
+authors = ["Vivian Voss <ask@vvoss.dev>"]
+license = "Apache-2.0"
+description = "High-Performance Headless Rust CMS"
+repository = "https://github.com/vvoss-dev/reedcms"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "1.0"
+
+[dev-dependencies]
+# Test dependencies will be added as needed
