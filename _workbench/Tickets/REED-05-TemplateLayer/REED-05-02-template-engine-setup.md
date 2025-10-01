@@ -433,10 +433,173 @@ src/reedcms/templates/
 - [ ] Hot-reload detection: < 100ms
 - [ ] Preload 50 templates: < 500ms
 
+## Custom Functions for Component Inclusion
+
+The template engine provides 4 custom functions for component and layout inclusion. These functions automatically resolve paths based on the current `interaction_mode`.
+
+### Function Specifications
+
+#### `organism(name: String) -> String`
+Resolves path to organism component with current interaction mode.
+
+**Input**: Component name (e.g., `"page-header"`)  
+**Output**: `"templates/components/organisms/{name}/{name}.{interaction_mode}.jinja"`
+
+**Example Usage**:
+```jinja
+{% include organism("page-header") %}
+{% include organism("landing-hero") %}
+```
+
+**Resolved Path** (when `interaction_mode = "mouse"`):
+```
+templates/components/organisms/page-header/page-header.mouse.jinja
+templates/components/organisms/landing-hero/landing-hero.mouse.jinja
+```
+
+#### `molecule(name: String) -> String`
+Resolves path to molecule component with current interaction mode.
+
+**Input**: Component name (e.g., `"nav-item"`)  
+**Output**: `"templates/components/molecules/{name}/{name}.{interaction_mode}.jinja"`
+
+**Example Usage**:
+```jinja
+{% include molecule("nav-item") %}
+```
+
+#### `atom(name: String) -> String`
+Resolves path to atom component with current interaction mode.
+
+**Input**: Component name (e.g., `"icon-logo"`)  
+**Output**: `"templates/components/atoms/{name}/{name}.{interaction_mode}.jinja"`
+
+**Example Usage**:
+```jinja
+{% include atom("icon-logo") %}
+```
+
+#### `layout(name: String) -> String`
+Resolves path to layout. Layouts do NOT use interaction mode variants.
+
+**Input**: Layout name (e.g., `"page"`)  
+**Output**: `"templates/layouts/{name}/{name}.jinja"`
+
+**Example Usage**:
+```jinja
+{% extends layout("page") %}
+```
+
+### Implementation (`src/reedcms/templates/functions.rs`)
+
+```rust
+/// Creates organism component path resolver function.
+///
+/// ## Arguments
+/// - interaction_mode: Current interaction mode (mouse/touch/reader)
+///
+/// ## Output
+/// - MiniJinja function that resolves organism names to paths
+///
+/// ## Performance
+/// - O(1) string formatting
+/// - < 1μs per function call
+pub fn make_organism_function(interaction_mode: String) -> impl minijinja::functions::Function + Send + Sync + 'static {
+    move |name: &str| -> Result<String, minijinja::Error> {
+        Ok(format!(
+            "templates/components/organisms/{}/{}.{}.jinja",
+            name, name, interaction_mode
+        ))
+    }
+}
+
+/// Creates molecule component path resolver function.
+pub fn make_molecule_function(interaction_mode: String) -> impl minijinja::functions::Function + Send + Sync + 'static {
+    move |name: &str| -> Result<String, minijinja::Error> {
+        Ok(format!(
+            "templates/components/molecules/{}/{}.{}.jinja",
+            name, name, interaction_mode
+        ))
+    }
+}
+
+/// Creates atom component path resolver function.
+pub fn make_atom_function(interaction_mode: String) -> impl minijinja::functions::Function + Send + Sync + 'static {
+    move |name: &str| -> Result<String, minijinja::Error> {
+        Ok(format!(
+            "templates/components/atoms/{}/{}.{}.jinja",
+            name, name, interaction_mode
+        ))
+    }
+}
+
+/// Creates layout path resolver function.
+///
+/// ## Note
+/// Layouts do NOT use interaction_mode variants.
+pub fn make_layout_function() -> impl minijinja::functions::Function + Send + Sync + 'static {
+    move |name: &str| -> Result<String, minijinja::Error> {
+        Ok(format!("templates/layouts/{}/{}.jinja", name, name))
+    }
+}
+```
+
+### Environment Setup (Updated `engine.rs`)
+
+```rust
+use crate::filters::{make_text_filter, make_route_filter, make_meta_filter, make_config_filter};
+use crate::functions::{make_organism_function, make_molecule_function, make_atom_function, make_layout_function};
+
+pub fn init_template_engine(interaction_mode: String, current_lang: String) -> ReedResult<Environment<'static>> {
+    let mut env = Environment::new();
+
+    // Set template loader
+    env.set_loader(template_loader);
+
+    // Register custom filters
+    env.add_filter("text", make_text_filter(current_lang.clone()));
+    env.add_filter("route", make_route_filter(current_lang.clone()));
+    env.add_filter("meta", make_meta_filter(current_lang.clone()));
+    env.add_filter("config", make_config_filter());
+
+    // Register custom functions for component inclusion
+    env.add_function("organism", make_organism_function(interaction_mode.clone()));
+    env.add_function("molecule", make_molecule_function(interaction_mode.clone()));
+    env.add_function("atom", make_atom_function(interaction_mode.clone()));
+    env.add_function("layout", make_layout_function());
+
+    // Configure auto-escape for HTML
+    env.set_auto_escape_callback(|name| {
+        name.ends_with(".jinja") || name.ends_with(".html")
+    });
+
+    // Enable strict mode (undefined variables error)
+    env.set_undefined_behavior(UndefinedBehavior::Strict);
+
+    Ok(env)
+}
+```
+
+### Performance Considerations
+
+- **O(1) path resolution**: Simple string formatting
+- **No filesystem access**: Functions only return paths, MiniJinja handles loading
+- **Zero allocations in hot path**: Pre-allocated interaction_mode string in closure
+- **< 1μs per function call**: Direct string formatting without validation
+
+### Error Conditions
+
+These functions return paths only. Actual template loading errors are handled by MiniJinja:
+- **Template not found**: MiniJinja returns 404 with missing path
+- **Invalid name parameter**: Returns syntactically valid but non-existent path
+- **Interaction mode mismatch**: Path resolves correctly, filesystem may be missing variant
+
 ## Acceptance Criteria
 - [ ] MiniJinja environment configured
 - [ ] Template loader working
 - [ ] All filters registered (text, route, meta, config)
+- [ ] Custom functions registered (organism, molecule, atom, layout)
+- [ ] Functions correctly resolve paths with interaction_mode
 - [ ] Hot-reload for DEV environment functional
 - [ ] Static template loading for PROD
 - [ ] Template preloading working
