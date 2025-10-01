@@ -188,36 +188,84 @@ public/session/
 - ✅ REED-08-01: Session hash, component discovery, on-demand generation
 - ✅ REED-05-03: asset_css/asset_js context variables
 
----
+### E) Screen Info Cookie → Client Context Population
+**Status**: ✅ Resolved - New ticket REED-06-05 created + REED-05-03 updated
+
+**Template Usage** (simple):
 ```jinja
-<html lang="{{ client.lang }}">
-<link rel="stylesheet" href="/public/static/styles/{{ client.interaction_mode }}.css">
+<html lang="{{ client.lang }}" class="interaction-{{ client.interaction_mode }}">
+{% if client.is_bot %}
+  {# Text-only content for bots #}
+{% endif %}
 ```
 
-**Required Context Variables**:
+**Decision**: Comprehensive client detection service
+
+**Implementation Strategy**:
+
+1. **Screen Info Cookie** (REED-06-05):
+   - JSON format: width, height, dpr, viewport_width, viewport_height, active_voices
+   - URL-encoded, 1 year max-age, SameSite=Lax
+   - Example: `{"width":1920,"height":1080,"dpr":2.0,"viewport_width":1920,"viewport_height":937,"active_voices":0}`
+
+2. **Detection Logic** (REED-06-05):
+   - **Device Type**: mobile (<560px), tablet (<960px), desktop
+   - **Breakpoint**: phone (≤559), tablet (≤959), screen (≤1259), wide (>1259)
+   - **Interaction Mode**:
+     - reader → no viewport, bot, or active_voices > 0
+     - touch → phone/tablet breakpoint
+     - mouse → screen/wide breakpoint
+   - **Fallback**: User-Agent parsing if no cookie
+
+3. **Screen Detection HTML** (REED-06-05):
+   - First visit: Send minimal HTML with JavaScript
+   - JavaScript detects screen, sets cookie, reloads
+   - Second visit: Cookie present, serve actual content
+   - Bypassed for bots (no detection needed)
+   - Performance: < 100ms one-time delay
+
+4. **Context Integration** (REED-05-03):
+   - build_context() takes ClientInfo parameter
+   - ctx.insert("client", client) for all templates
+   - Available fields: lang, interaction_mode, device_type, breakpoint, viewport_*, is_bot
+
+**Client Context Structure**:
 ```rust
-struct ClientInfo {
-    lang: String,                    // From URL: /de/wissen → "de"
-    interaction_mode: String,        // From heuristic: "mouse"/"touch"/"reader"
-    viewport_width: Option<u32>,     // From cookie
-    viewport_height: Option<u32>,    // From cookie
-    dpr: Option<f32>,                // From cookie
-    // ... etc
+pub struct ClientInfo {
+    pub lang: String,
+    pub interaction_mode: String,      // mouse/touch/reader
+    pub device_type: String,           // mobile/tablet/desktop/bot
+    pub breakpoint: String,            // phone/tablet/screen/wide
+    pub viewport_width: Option<u32>,
+    pub viewport_height: Option<u32>,
+    pub screen_width: Option<u32>,
+    pub screen_height: Option<u32>,
+    pub dpr: Option<f32>,
+    pub active_voices: Option<u32>,
+    pub is_bot: bool,
 }
 ```
 
-**Missing in Tickets**:
-- REED-06-02 (Routing System) or REED-06-03/04 (Middleware/Handler) should specify:
-  - Cookie parsing for `screen_info`
-  - Interaction mode heuristic (viewport < 768 → touch, voices > 0 → reader)
-  - Context population for `client` object
+**Template Variables**:
+- `client.lang` - Language code
+- `client.interaction_mode` - Mouse/touch/reader
+- `client.device_type` - Mobile/tablet/desktop/bot
+- `client.breakpoint` - Phone/tablet/screen/wide
+- `client.viewport_width` - Browser viewport width
+- `client.is_bot` - Bot detection flag
 
-**Archive Reference**: `_workbench/Archive/libs/client.rs` has complete implementation
+**Benefits**:
+- Server-side responsive rendering (no client-side detection)
+- Accurate interaction mode selection
+- Accessibility support (reader mode for screen readers)
+- SEO optimised (reader mode for bots)
+- One-time detection on first visit only
 
-**Question**: Should we create **REED-06-05: Client Detection Service**?
+**Files Created/Updated**:
+- ✅ REED-06-05: Complete client detection service specification
+- ✅ REED-05-03: ClientInfo parameter in build_context()
 
 ---
-
 ### F) Icon Atoms: SVG Fragments without Wrapper
 
 **Current Structure**:
