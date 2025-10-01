@@ -29,6 +29,11 @@ D013,Permission caching,"Sub-millisecond lookups, performance optimisation",2025
 D014,CLI command bridge,"Zero business logic duplication, direct execution",2025-01-15,Active
 D015,Flow persistence rules,"Clear data ownership, service coordination",2025-01-15,Active
 D016,Component inclusion functions,"KISS principle, automatic variant resolution",2025-01-30,Active
+D017,Taxonomy-based navigation,"Drupal-style flexibility, multiple menu locations",2025-01-30,Active
+D018,Session hash asset bundling,"MD5-based cache-busting, on-demand generation",2025-01-30,Active
+D019,Client detection via cookie,"Server-side responsive rendering, no JS needed",2025-01-30,Active
+D020,SVG icon molecule wrapper,"Atomic Design compliance, accessibility support",2025-01-30,Active
+D021,Full namespace text keys,"No auto-prefixing, explicit key format validation",2025-01-30,Active
 ```
 
 ---
@@ -263,3 +268,187 @@ All 37 tickets across 10 layers have been optimised and are now ready for implem
 ---
 
 **Note**: This document complements `project_summary.md` which contains the main system design. This file focuses exclusively on decisions and optimisations made during the planning phase.
+
+---
+
+## Template Integration Decisions (2025-01-30)
+
+### 16. Template System Integration Analysis - COMPLETED
+
+**Status**: ✅ All 9 questions resolved  
+**Duration**: 2025-01-30 (single day)  
+**Result**: Existing templates 100% compatible with ReedCMS architecture
+
+#### Decision D017: Taxonomy-Based Navigation (Drupal-Style)
+**Problem**: Templates had hardcoded navigation arrays. How to make dynamic?
+
+**Solution**: Use REED-03-03 taxonomy system with Matrix Type 4 syntax:
+```csv
+# .reed/entity_taxonomy.matrix.csv
+entity_id|term_id|properties|desc
+knowledge|navigation|weight[10],enabled[true]|Main navigation entry
+portfolio|navigation|weight[20],enabled[true]|Main navigation entry
+impressum|footer-legal|weight[10],enabled[true]|Footer link
+```
+
+**Template Usage**:
+```jinja
+{% for item in taxonomy('navigation') %}
+  <a href="/{{ client.lang }}/{{ item.entity_id | route('auto') }}/">
+    {{ item.entity_id | text('auto') }}
+  </a>
+{% endfor %}
+```
+
+**Benefits**:
+- Multiple menu locations (navigation, footer-legal, sidebar, etc.)
+- Weight-based ordering
+- Enable/disable per item
+- Hierarchical support with `parent[term_id]`
+- CLI management: `reed taxonomy:assign knowledge navigation weight[10],enabled[true]`
+
+**Files**: REED-03-03, REED-05-03
+
+---
+
+#### Decision D018: Session Hash Asset Bundling
+**Problem**: How to bundle CSS/JS per layout with cache-busting?
+
+**Solution**: MD5 session hash over all CSS/JS files:
+- Generate hash: `MD5(all_css_files + all_js_files)` → 8-char hex
+- Store in `.reed/project.csv`: `project.session_hash|a3f5b2c8`
+- Bundle naming: `{layout}.{session_hash}.{variant}.css`
+- On-demand generation on first request
+- Template variables: `{{ asset_css }}`, `{{ asset_js }}`
+
+**Example**:
+```
+/public/session/styles/landing.a3f5b2c8.mouse.css
+/public/session/scripts/landing.a3f5b2c8.js
+```
+
+**Benefits**:
+- Automatic cache invalidation when files change
+- No manual versioning needed
+- Per-layout bundles (optimal loading)
+- On-demand generation (no build-time overhead)
+- Component discovery via template parsing
+
+**Files**: REED-08-01, REED-05-03
+
+---
+
+#### Decision D019: Client Detection via Screen Info Cookie
+**Problem**: How to detect device type and interaction mode for server-side variant selection?
+
+**Solution**: JavaScript screen info cookie on first visit:
+```javascript
+document.cookie='screen_info='+encodeURIComponent(JSON.stringify({
+  width: screen.width,
+  height: screen.height,
+  dpr: window.devicePixelRatio,
+  viewport_width: window.innerWidth,
+  viewport_height: window.innerHeight,
+  active_voices: window.speechSynthesis.getVoices().length
+}));
+```
+
+**ClientInfo Structure**:
+```rust
+pub struct ClientInfo {
+    pub lang: String,
+    pub interaction_mode: String,      // mouse/touch/reader
+    pub device_type: String,           // mobile/tablet/desktop/bot
+    pub breakpoint: String,            // phone/tablet/screen/wide
+    pub viewport_width: Option<u32>,
+    pub is_bot: bool,
+}
+```
+
+**Detection Logic**:
+- `reader` mode: active_voices > 0 (screen reader detected)
+- `touch` mode: mobile/tablet device
+- `mouse` mode: desktop device
+- Breakpoints: phone (≤559px), tablet (≤959px), screen (≤1259px), wide (>1259px)
+
+**Benefits**:
+- Server-side responsive rendering
+- No client-side detection logic
+- Accessibility support (reader mode)
+- SEO optimised (bots get reader mode)
+- One-time detection (cookie persists)
+
+**Files**: REED-06-05 (new ticket), REED-05-03
+
+---
+
+#### Decision D020: SVG Icon Molecule Wrapper
+**Problem**: Icon atoms contain only SVG fragments. How to add `<svg>` wrapper?
+
+**Solution**: Use existing `svg-icon` molecule as wrapper:
+```jinja
+{% include molecule('svg-icon') with {
+  icon: "arrow-right",
+  size: "24",
+  class: "nav-icon",
+  alt: "Next page"
+} %}
+```
+
+**Molecule Responsibilities**:
+- Adds `<svg>` element with viewBox, stroke attributes
+- Handles size (width/height)
+- Adds CSS class for styling
+- Provides accessibility (role="img", aria-label)
+- Error handling with fallback icon
+- Includes atom: `atoms/icons/{icon_name}.jinja`
+
+**Benefits**:
+- Atomic Design compliance (Molecule = Atom + Wrapper)
+- Variant-specific CSS (`svg-icon.mouse.css` vs `svg-icon.touch.css`)
+- Centralised accessibility attributes
+- Template-based (no Rust function needed)
+- Error handling with fallback
+
+**Files**: Existing `templates/components/molecules/svg-icon/`
+
+---
+
+#### Decision D021: Full Namespace Text Keys (No Auto-Prefixing)
+**Problem**: Do migration commands auto-prefix component keys?
+
+**Solution**: NO auto-prefixing. Keys MUST have full namespace:
+- Component keys: `page-header.logo.title@de` ✅
+- Layout keys: `knowledge.intro.title@de` ✅
+- Partial keys rejected: `logo.title@de` ❌
+- No `@lang` suffix rejected: `page-header.logo.title` ❌
+
+**Migration Process**:
+1. Discover `.text.csv` files
+2. Validate: key has `@lang` suffix
+3. Validate: key has namespace (contains `.`)
+4. Check duplicates in `.reed/text.csv`
+5. XZ backup
+6. Direct 1:1 append to `.reed/text.csv`
+
+**Benefits**:
+- No ambiguity about key format
+- Simple validation: check for `@` and `.`
+- No complex auto-prefixing logic
+- Consistent with key nomenclature rules
+- KISS principle: direct copy
+
+**Files**: REED-04-07
+
+---
+
+### Integration Statistics
+
+**Questions Resolved**: 9 (A, B, B.1, C, D, E, F, G, H)  
+**Tickets Created**: 1 (REED-06-05)  
+**Tickets Extended**: 6 (REED-05-01, REED-05-02, REED-05-03, REED-03-03, REED-08-01, REED-04-07)  
+**Template Files Analyzed**: 31 `.text.csv` files, 14 `.jinja` files  
+**New Decisions**: 5 (D017-D021)  
+**Result**: Template integration ready for implementation
+
+---
