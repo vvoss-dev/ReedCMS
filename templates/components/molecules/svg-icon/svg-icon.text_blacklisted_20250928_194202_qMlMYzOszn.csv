@@ -1,0 +1,7 @@
+key|value|comment
+SVG_ICON_DEFAULT_ALT@DE|Icon|Default German alt text
+SVG_ICON_DEFAULT_ALT@EN|Icon|Default English alt text
+SVG_ICON_MISSING_ICON_ALT@DE|Fehlendes Icon|German alt text for missing icons
+SVG_ICON_MISSING_ICON_ALT@EN|Missing Icon|English alt text for missing icons
+SVG_ICON_FEATHER_CREDIT@DE|Feather Icons von feathericons.com|German credit for Feather icons
+SVG_ICON_FEATHER_CREDIT@EN|Feather Icons from feathericons.com|English credit for Feather icons

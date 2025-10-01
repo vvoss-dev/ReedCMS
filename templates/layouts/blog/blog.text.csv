@@ -1,0 +1,7 @@
+key|value|comment
+blog.title@de|Blog|German blog title
+blog.title@en|Blog|English blog title
+blog.subtitle@de|Einblicke in Enterprise-Architektur und moderne Software-Entwicklung|German blog subtitle
+blog.subtitle@en|Insights into enterprise architecture and modern software development|English blog subtitle
+blog.message@de|Bald verfügbar - Blog-Artikel über Enterprise-Architektur, TCO-Optimierung und Vendor Independence|German placeholder message
+blog.message@en|Coming soon - Blog articles about enterprise architecture, TCO optimisation and vendor independence|English placeholder message

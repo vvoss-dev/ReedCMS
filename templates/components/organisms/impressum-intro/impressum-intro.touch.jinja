@@ -1,0 +1,42 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Impressum intro section - Touch interaction mode #}
+
+<section class="section intro padding-y-2 padding-x-2">
+    <article class="breakbox grid-1 gap-2">
+        <div class="section-header padding-left-1">
+            <h1>{{ 'IMPRESSUM_TITLE' | text('auto') }}</h1>
+        </div>
+        
+        {# Single column layout for mobile with clear separation #}
+        <div class="grid-1 gap-3">
+            <div class="column grid-1 gap-y-1">
+                <h2>{{ 'IMPRESSUM_RESPONSIBLE_TITLE' | text('auto') }}</h2>
+                <p>
+                    {{ 'IMPRESSUM_RESPONSIBLE_NAME' | text('auto') }}<br>
+                    {{ 'IMPRESSUM_RESPONSIBLE_STREET' | text('auto') }}<br>
+                    {{ 'IMPRESSUM_RESPONSIBLE_CITY' | text('auto') }}<br>
+                    {{ 'IMPRESSUM_RESPONSIBLE_COUNTRY' | text('auto') }}
+                </p>
+                
+                <h3>{{ 'IMPRESSUM_CONTACT_TITLE' | text('auto') }}</h3>
+                <p>
+                    {{ 'IMPRESSUM_CONTACT_EMAIL_LABEL' | text('auto') }}
+                    <a href="mailto:{{ 'IMPRESSUM_CONTACT_EMAIL_VALUE' | text('auto') }}" class="email-link touch-target">{{ 'IMPRESSUM_CONTACT_EMAIL_VALUE' | text('auto') }}</a><br>
+                    {{ 'IMPRESSUM_CONTACT_WEB_LABEL' | text('auto') }}
+                    <a href="https://vvoss.dev" class="touch-target">vvoss.dev</a>
+                </p>
+            </div>
+            
+            {# Visual separator for mobile #}
+            <div class="separator" aria-hidden="true"></div>
+            
+            <div class="column grid-1 gap-y-1">
+                <h2>{{ 'IMPRESSUM_LEGAL_TITLE' | text('auto') }}</h2>
+                <p>{{ 'IMPRESSUM_LEGAL_DISCLAIMER' | text('auto') }}</p>
+                
+                <h3>{{ 'IMPRESSUM_PRIVACY_TITLE' | text('auto') }}</h3>
+                <p>{{ 'IMPRESSUM_PRIVACY_TEXT' | text('auto') }}</p>
+            </div>
+        </div>
+    </article>
+</section>

@@ -1,0 +1,63 @@
+key|value|comment
+apache.title@de|Apache HTTP Server|Content text for de locale
+apache.title@en|Apache HTTP Server|Content text for en locale
+apache.category.label@de|Kategorie|Content text for de locale
+apache.category.label@en|Category|Content text for en locale
+apache.category.value@de|Webserver|Content text for de locale
+apache.category.value@en|Web Server|Content text for en locale
+apache.stable.label@de|Stabil seit|Content text for de locale
+apache.stable.label@en|Stable since|Content text for en locale
+apache.stable.value@de|1995|Content text for de locale
+apache.stable.value@en|1995|Content text for en locale
+apache.creator.label@de|Erschaffer|Content text for de locale
+apache.creator.label@en|Creator|Content text for en locale
+apache.creator.value@de|Robert McCool|Content text for de locale
+apache.creator.value@en|Robert McCool|Content text for en locale
+apache.project.label@de|Projekt|Content text for de locale
+apache.project.label@en|Project|Content text for en locale
+apache.project.value@de|"<a href=""https://httpd.apache.org"" target=""_blank"">Apache Software Foundation</a>"|Content text for de locale
+apache.project.value@en|"<a href=""https://httpd.apache.org"" target=""_blank"">Apache Software Foundation</a>"|Content text for en locale
+apache.description@de|"Apache HTTP Server ist der Dinosaurier unter den Webservern - und das ist positiv gemeint. Seit 1995 läuft er zuverlässig auf Millionen von Servern weltweit. Geboren aus dem NCSA HTTPd (""a patchy server""), wurde Apache zum Fundament des modernen Webs. Mit seinem modularen Aufbau und der legendären .htaccess-Konfiguration prägte er Generationen von Webentwicklern. Während modernere Server wie Nginx bei statischen Inhalten schneller sind, bleibt Apache bei dynamischen PHP-Anwendungen oft erste Wahl. mod_rewrite ist ein Schweizer Taschenmesser für URL-Manipulation. Die Dokumentation ist vorbildlich, die Community riesig. Apache mag nicht mehr der schnellste sein, aber er ist wie ein alter Mercedes: solide, verlässlich und läuft ewig."|Content text for de locale
+apache.description@en|"Apache HTTP Server is the dinosaur among web servers - and that's meant positively. Since 1995, it has been running reliably on millions of servers worldwide. Born from NCSA HTTPd (""a patchy server""), Apache became the foundation of the modern web. With its modular architecture and legendary .htaccess configuration, it shaped generations of web developers. While modern servers like Nginx are faster for static content, Apache remains the first choice for dynamic PHP applications. mod_rewrite is a Swiss Army knife for URL manipulation. The documentation is exemplary, the community huge. Apache may no longer be the fastest, but it's like an old Mercedes: solid, reliable, and runs forever."|Content text for en locale
+apache.enterprise@de|Immer noch verwendet von Wikipedia, WordPress.com, Adobe, PayPal, eBay und zahllosen Shared-Hosting-Providern weltweit. Über 30% aller Webseiten laufen auf Apache - nicht schlecht für einen 30-jährigen Server.|Content text for de locale
+apache.enterprise@en|Still used by Wikipedia, WordPress.com, Adobe, PayPal, eBay, and countless shared hosting providers worldwide. Over 30% of all websites run on Apache - not bad for a 30-year-old server.|Content text for en locale
+apache.compare.title@de|Bewertung|Content text for de locale
+apache.compare.title@en|Assessment|Content text for en locale
+apache.compare.subtitle@de|Ehrliche Einschätzung der Technologie|Content text for de locale
+apache.compare.subtitle@en|Honest assessment of the technology|Content text for en locale
+apache.cons.title@de|Nachteile|Content text for de locale
+apache.cons.title@en|Disadvantages|Content text for en locale
+apache.cons.1@de|Höherer Speicherverbrauch als Nginx|Content text for de locale
+apache.cons.1@en|Higher memory usage than Nginx|Content text for en locale
+apache.cons.2@de|Langsamer bei statischen Dateien|Content text for de locale
+apache.cons.2@en|Slower for static files|Content text for en locale
+apache.cons.3@de|Komplexe Konfiguration bei großen Setups|Content text for de locale
+apache.cons.3@en|Complex configuration for large setups|Content text for en locale
+apache.cons.4@de|Thread-basiert statt Event-driven|Content text for de locale
+apache.cons.4@en|Thread-based instead of event-driven|Content text for en locale
+apache.cons.5@de|.htaccess Performance-Overhead|Content text for de locale
+apache.cons.5@en|.htaccess performance overhead|Content text for en locale
+apache.pros.title@de|Vorteile|Content text for de locale
+apache.pros.title@en|Advantages|Content text for en locale
+apache.pros.1@de|Bewährt seit 30 Jahren|Content text for de locale
+apache.pros.1@en|Proven for 30 years|Content text for en locale
+apache.pros.2@de|Perfekte PHP-Integration|Content text for de locale
+apache.pros.2@en|Perfect PHP integration|Content text for en locale
+apache.pros.3@de|mod_rewrite ist mächtig|Content text for de locale
+apache.pros.3@en|mod_rewrite is powerful|Content text for en locale
+apache.pros.4@de|Riesige Community und Dokumentation|Content text for de locale
+apache.pros.4@en|Huge community and documentation|Content text for en locale
+apache.pros.5@de|Läuft überall, extrem stabil|Content text for de locale
+apache.pros.5@en|Runs everywhere, extremely stable|Content text for en locale
+apache.syntax.label@de|Konfiguration|Content text for de locale
+apache.syntax.label@en|Configuration|Content text for en locale
+apache.syntax.value@de|httpd.conf und .htaccess|Content text for de locale
+apache.syntax.value@en|httpd.conf and .htaccess|Content text for en locale
+apache.security.label@de|Sicherheit|Content text for de locale
+apache.security.label@en|Security|Content text for en locale
+apache.security.value@de|Sehr sicher mit mod_security|Content text for de locale
+apache.security.value@en|Very secure with mod_security|Content text for en locale
+apache.performance.label@de|Performance|Content text for de locale
+apache.performance.label@en|Performance|Content text for en locale
+apache.performance.value@de|Solide, aber nicht der schnellste|Content text for de locale
+apache.performance.value@en|Solid, but not the fastest|Content text for en locale

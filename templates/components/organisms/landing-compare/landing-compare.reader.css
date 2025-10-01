@@ -1,0 +1,85 @@
+/* Landing Compare Organism - Reader/Screen reader mode */
+/* Anti-pitch comparison with accessibility enhancements */
+
+@layer reader {
+    /* Compare section accessibility */
+    .section.compare {
+        border: 2px solid var(--color-border-strong);
+        margin: 2rem 0;
+    }
+
+    /* High contrast section header */
+    .section-header h2 {
+        color: var(--color-text-high-contrast);
+        font-size: 2.2rem;
+        font-weight: bold;
+    }
+
+    .section-header .description {
+        color: var(--color-text-high-contrast);
+        font-size: 1.1rem;
+        line-height: 1.7;
+    }
+
+    /* Strong visual distinction for compare columns */
+    .compare-column {
+        border: 3px solid var(--color-border-default);
+        margin-bottom: 2rem;
+        padding: 2rem;
+    }
+
+    .compare-column.no {
+        border-left: 8px solid var(--color-warning-strong);
+        background-color: var(--color-warning-bg);
+    }
+
+    .compare-column.yes {
+        border-left: 8px solid var(--color-success-strong);
+        background-color: var(--color-success-bg);
+    }
+
+    /* High contrast column headers */
+    .compare-column h3 {
+        color: var(--color-text-high-contrast);
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 2rem;
+    }
+
+    /* Enhanced list item readability */
+    .compare-list li {
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        line-height: 1.8;
+        font-size: 1.1rem;
+        color: var(--color-text-high-contrast);
+        border: 1px solid var(--color-border-default);
+        border-radius: 4px;
+    }
+
+    /* Screen reader helpers */
+    .compare-column.no::before {
+        content: "Disadvantages: ";
+        position: absolute;
+        left: -10000px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+    }
+
+    .compare-column.yes::before {
+        content: "Advantages: ";
+        position: absolute;
+        left: -10000px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+    }
+
+    /* Focus indicators for keyboard navigation */
+    .compare-column:focus,
+    .compare-list li:focus {
+        outline: 3px solid var(--color-focus);
+        outline-offset: 2px;
+    }
+}

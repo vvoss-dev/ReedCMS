@@ -1,0 +1,30 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Knowledge Main Layout - Overview page with intro and index #}
+
+{# Page configuration via pageconf() - replaces system.csv metadata #}
+{{ pageconf("pagekey", "knowledge") }}
+{{ pageconf("pageroute", "wissen") }}
+{{ pageconf("pagetitle", "KNOWLEDGE_META_TITLE") }}
+{{ pageconf("pagedescription", "KNOWLEDGE_META_DESCRIPTION") }}
+
+{% extends layout("page") %}
+
+{% block content %}
+    {# Intro Section #}
+    <section class="section intro padding-y-3 padding-x-4">
+        <article class="breakbox grid-1 gap-3">
+            <div class="section-header padding-left-2">
+                <h1>{{ 'KNOWLEDGE_INTRO_TITLE' | text('auto') }}</h1>
+            </div>
+
+            <div class="grid-1 gap-3">
+                <div class="column grid-1 gap-y-1">
+                    <p>{{ 'KNOWLEDGE_INTRO_DESCRIPTION' | text('auto') }}</p>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    {# Knowledge Index Organism #}
+    {% include organism("knowledge-index") %}
+{% endblock %}

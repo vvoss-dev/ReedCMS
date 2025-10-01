@@ -37,23 +37,23 @@ Implement hierarchical taxonomy system for universal entity tagging with usage a
 
 ### Taxonomy Matrix CSV
 ```csv
-term_id;term;parent_id;category;description;color;icon;status;created_by;usage_count
-1;technology;;category;Technology related content;#2563eb;tech;active;admin;42
-2;rust;1;tag;Rust programming language;#ce422b;rust;active;admin;15
-3;cms;1;tag;Content Management System;#059669;cms;active;admin;8
-4;content-type;;category;Content type classification;#8b5cf6;type;active;admin;128
-5;blog;4;tag;Blog posts and articles;#06b6d4;blog;active;admin;89
+term_id|term|parent_id|category|description|color|icon|status|created_by|usage_count
+1|technology||category|Technology related content|#2563eb|tech|active|admin|42
+2|rust|1|tag|Rust programming language|#ce422b|rust|active|admin|15
+3|cms|1|tag|Content Management System|#059669|cms|active|admin|8
+4|content-type||category|Content type classification|#8b5cf6|type|active|admin|128
+5|blog|4|tag|Blog posts and articles|#06b6d4|blog|active|admin|89
 ```
 
 ### Entity Assignment CSV
 ```csv
-entity_type;entity_id;term_ids;assigned_by;assigned_at;context;inherited_from
-user;admin;1,4,6;system;2025-01-15T10:00:00Z;auto_assigned;
-content;blog.post.001;1,2,3,5;editor;2025-01-15T12:00:00Z;content_creation;
-template;blog.jinja;1,3,5;admin;2025-01-15T10:30:00Z;template_creation;
-route;blog@de;1,3,5;admin;2025-01-15T10:31:00Z;route_creation;
-site;main;1,4;admin;2025-01-15T09:00:00Z;site_creation;
-content;blog.post.002;1,2,5;editor;2025-01-15T14:00:00Z;inherited;site:main
+entity_type|entity_id|term_ids|assigned_by|assigned_at|context|inherited_from
+user|admin|1,4,6|system|2025-01-15T10:00:00Z|auto_assigned|
+content|blog.post.001|1,2,3,5|editor|2025-01-15T12:00:00Z|content_creation|
+template|blog.jinja|1,3,5|admin|2025-01-15T10:30:00Z|template_creation|
+route|blog@de|1,3,5|admin|2025-01-15T10:31:00Z|route_creation|
+site|main|1,4|admin|2025-01-15T09:00:00Z|site_creation|
+content|blog.post.002|1,2,5|editor|2025-01-15T14:00:00Z|inherited|site:main
 ```
 
 ### Implementation Files

@@ -1,0 +1,31 @@
+{# SVG-Icon Molecule - Intelligent Feather Icon Wrapper #}
+{# Usage: {% include "svg-icon.jinja" with {icon: "home", size: "24", class: "nav-icon", alt: "Home"} %} #}
+
+{%- set icon_name = icon | default("home") -%}
+{%- set icon_size = size | default("24") -%}
+{%- set icon_class = class | default("icon") -%}
+{%- set icon_alt = alt | default("Icon") -%}
+
+<svg
+  class="{{ icon_class }}"
+  width="{{ icon_size }}"
+  height="{{ icon_size }}"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  role="img"
+  aria-label="{{ icon_alt }}"
+>
+  {# Include the specific icon atom #}
+  {%- set icon_template = "atoms/icons/" + icon_name + ".jinja" -%}
+  {%- try -%}
+    {% include icon_template %}
+  {%- catch -%}
+    {# Fallback for missing icons #}
+    <circle cx="12" cy="12" r="10"/>
+    <path d="m9 12 2 2 4-4"/>
+  {%- endtry -%}
+</svg>

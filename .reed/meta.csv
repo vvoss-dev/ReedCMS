@@ -1,0 +1,73 @@
+key|value|comment
+actix-web.description@de|Actix-Web ist ein extrem schnelles Web-Framework für Rust. Actor-Modell, Tokio-Runtime, weltklasse Performance. Diese Webseite läuft darauf.|SEO meta description
+actix-web.description@en|Actix-Web is an extremely fast web framework for Rust. Actor model, Tokio runtime, world-class performance. This website runs on it.|SEO meta description
+actix-web.title@de|Actix-Web: Das schnellste Rust Web-Framework - Vivian Voss|SEO page title
+actix-web.title@en|Actix-Web: The Fastest Rust Web Framework - Vivian Voss|SEO page title
+aeo.description@de|AEO optimiert für Featured Snippets und direkte Antworten. FAQ-Schema, Position Zero und strukturierte Daten für maximale Sichtbarkeit.|SEO meta description
+aeo.description@en|AEO optimizes for featured snippets and direct answers. FAQ schema, position zero and structured data for maximum visibility.|SEO meta description
+aeo.title@de|AEO (Answer Engine Optimization): Featured Snippets erobern - Vivian Voss|SEO page title
+aeo.title@en|AEO (Answer Engine Optimization): Conquering Featured Snippets - Vivian Voss|SEO page title
+agility.description@de|Kritische Analyse der Agile-Bewegung: Wie aus technischer Exzellenz Meeting-Overhead wurde. Scrum-Bürokratie vs. echte Entwickleragilitäß.|SEO meta description
+agility.description@en|Critical analysis of the Agile movement: How technical excellence became meeting overhead. Scrum bureaucracy vs. real developer agility.|SEO meta description
+agility.title@de|Agilität: Prozess-Theater statt echter Beweglichkeit - Vivian Voss|SEO page title
+agility.title@en|Agility: Process Theater Instead of Real Agility - Vivian Voss|SEO page title
+ai-visibility.description@de|AI Visibility Strategien für KI-gestützte Plattformen. AEO und GEO für ChatGPT, Claude, Gemini. Zukunftssichere digitale Präsenz aufbauen.|SEO meta description
+ai-visibility.description@en|AI Visibility strategies for AI-powered platforms. AEO and GEO for ChatGPT, Claude, Gemini. Building future-proof digital presence.|SEO meta description
+ai-visibility.title@de|AI Visibility: Die Zukunft der digitalen Sichtbarkeit - Vivian Voss|SEO page title
+ai-visibility.title@en|AI Visibility: The Future of Digital Visibility - Vivian Voss|SEO page title
+apache.description@de|Apache HTTP Server Erklärung: Der bewährte Open-Source-Webserver seit 1995. Modulare Architektur, .htaccess-Konfiguration, battle-tested.|SEO meta description
+apache.description@en|Apache HTTP Server explained: The proven open source web server since 1995. Modular architecture, .htaccess configuration, battle-tested.|SEO meta description
+apache.license.description@de|Apache License 2.0 Erklärung: Permissive Open-Source-Lizenz für kommerzielle Nutzung. Die beliebteste Wahl für moderne Software-Projekte.|SEO meta description
+apache.license.description@en|Apache License 2.0 explained: Permissive open source license for commercial use. The most popular choice for modern software projects.|SEO meta description
+apache.license.title@de|Apache License 2.0: Der Open-Source-Standard - Vivian Voss|SEO page title
+apache.license.title@en|Apache License 2.0: The Open Source Standard - Vivian Voss|SEO page title
+apache.title@de|Apache HTTP Server: Der Web-Veteran - Vivian Voss|SEO page title
+apache.title@en|Apache HTTP Server: The Web Veteran - Vivian Voss|SEO page title
+api.description@de|APIs definieren, wie Programme kommunizieren. REST, GraphQL, gRPC - die Schnittstellen des modernen Internets verstehen und richtig einsetzen.|SEO meta description
+api.description@en|APIs define how programs communicate. REST, GraphQL, gRPC - understanding and properly using the interfaces of the modern internet.|SEO meta description
+api.title@de|API (Application Programming Interface): Das Web-Rückgrat - Vivian Voss|SEO page title
+api.title@en|API (Application Programming Interface): The Web Backbone - Vivian Voss|SEO page title
+bastille.description@de|Bastille für FreeBSD Jails: Echte Kernel-Isolation, native Performance, ZFS-Integration. Die bewährte Alternative zu Docker-Containern.|SEO meta description
+bastille.description@en|Bastille for FreeBSD Jails: True kernel isolation, native performance, ZFS integration. The proven alternative to Docker containers.|SEO meta description
+bastille.title@de|Bastille: FreeBSD Jail-Management - Die Docker-Alternative - Vivian Voss|SEO page title
+bastille.title@en|Bastille: FreeBSD Jail Management - The Docker Alternative - Vivian Voss|SEO page title
+blog.description@de|Blog und Artikel von Vivian Voss über Enterprise-Architektur und Software-Entwicklung|SEO meta description
+blog.description@en|Blog and articles by Vivian Voss about enterprise architecture and software development|SEO meta description
+blog.title@de|Blog - Vivian Voss|SEO page title
+blog.title@en|Blog - Vivian Voss|SEO page title
+contact.description@de|25 Jahre Erfahrung mit beidem: Was alle machen und was tatsächlich funktioniert. Enterprise-Architektur mit reduzierten Betriebskosten.|SEO meta description
+contact.description@en|25 years experience with both: what everyone does and what actually works. Enterprise architecture with reduced operational costs.|SEO meta description
+contact.title@de|Interesse an einem fachlichen Austausch? - Vivian Voss|SEO page title
+contact.title@en|Interested in a technical exchange? - Vivian Voss|SEO page title
+geo.description@de|GEO optimiert für generative KI-Modelle wie ChatGPT, Claude, Gemini. Topical Authority, Entitäten-Optimierung und E-E-A-T für KI-Zitate.|SEO meta description
+geo.description@en|GEO optimizes for generative AI models like ChatGPT, Claude, Gemini. Topical authority, entity optimization and E-E-A-T for AI citations.|SEO meta description
+geo.title@de|GEO (Generative Engine Optimization): KI-Optimierung für die Zukunft - Vivian Voss|SEO page title
+geo.title@en|GEO (Generative Engine Optimization): AI Optimization for the Future - Vivian Voss|SEO page title
+impressum.description@de|Rechtliche Informationen und Impressum von vvoss.dev|SEO meta description
+impressum.description@en|Legal information and imprint for vvoss.dev|SEO meta description
+impressum.title@de|Impressum - Vivian Voss|SEO page title
+impressum.title@en|Legal Notice - Vivian Voss|SEO page title
+knowledge.description@de|Fachbegriffe und Konzepte der modernen Softwarearchitektur verständlich erklärt|SEO meta description
+knowledge.description@en|Technical terms and concepts of modern software architecture clearly explained|SEO meta description
+knowledge.title@de|Technisches Wissen |SEO page title
+knowledge.title@en|Technical Knowledge |SEO page title
+landing.description@de|Enterprise-Architektur-Lösungen mit TCO-Optimierung und Vendor-Independence|SEO meta description
+landing.description@en|Enterprise Architecture Solutions with TCO Optimisation and Vendor Independence|SEO meta description
+landing.title@de|Vivian Voss - Principal Software Architect|SEO page title
+landing.title@en|Vivian Voss - Principal Software Architect|SEO page title
+lost.in.the.middle.description@de|Lost in the Middle Phänomen: LLMs verarbeiten Informationen in der Mitte langer Kontexte schlecht. U-förmige Aufmerksamkeitskurve verstehen.|SEO meta description
+lost.in.the.middle.description@en|Lost in the Middle phenomenon: LLMs process information poorly in the middle of long contexts. Understanding the U-shaped attention curve.|SEO meta description
+lost.in.the.middle.title@de|Lost in the Middle: KI-Limitation bei langen Kontexten - Vivian Voss|SEO page title
+lost.in.the.middle.title@en|Lost in the Middle: AI Limitation with Long Contexts - Vivian Voss|SEO page title
+page.description@de|Praktische Lösungen für komplexe Software-Probleme. Rust, FreeBSD, Performance-Optimierung|SEO meta description
+page.description@en|Practical solutions for complex software problems. Rust, FreeBSD, performance optimization|SEO meta description
+page.title@de|vvoss.dev - Effektive Software-Architektur|SEO page title
+page.title@en|vvoss.dev - Effective Software Architecture|SEO page title
+portfolio.description@de|Projektportfolio und Referenzen von Principal Software Architect Vivian Voss|SEO meta description
+portfolio.description@en|Project portfolio and references from Principal Software Architect Vivian Voss|SEO meta description
+portfolio.title@de|Portfolio - Vivian Voss|SEO page title
+portfolio.title@en|Portfolio - Vivian Voss|SEO page title
+seo.description@de|Traditionelles SEO stirbt. Die Zukunft: AEO (Answer Engine Optimization) und GEO (Generative Engine Optimization) für AI Visibility.|SEO meta description
+seo.description@en|Traditional SEO is dying. The future: AEO (Answer Engine Optimization) and GEO (Generative Engine Optimization) for AI Visibility.|SEO meta description
+seo.title@de|SEO ist tot, es lebe AI Visibility (AEO & GEO) - Vivian Voss|SEO page title
+seo.title@en|SEO is Dead, Long Live AI Visibility (AEO & GEO) - Vivian Voss|SEO page title

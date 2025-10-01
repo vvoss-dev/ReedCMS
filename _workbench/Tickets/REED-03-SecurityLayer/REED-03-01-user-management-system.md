@@ -37,9 +37,9 @@ Implement comprehensive user management with Argon2 password hashing, extended p
 
 ### User Matrix CSV Structure
 ```csv
-username;password;roles;firstname;lastname;street;city;postcode;region;country;email;mobile;twitter;facebook;tiktok;insta;youtube;whatsapp;desc;created_at;updated_at;last_login;is_active
-admin;$argon2id$hash;admin;Admin;User;Main St 1;London;SW1A 1AA;London;UK;admin@example.com;+44123456789;;;;;;;System Administrator;1640995200;1640995200;;true
-editor;$argon2id$hash;editor;Jane;Doe;High St 42;Manchester;M1 1AA;Manchester;UK;jane@example.com;+44987654321;@jane_editor;jane.doe;;;;Content Editor;1640995200;1640995200;1640999800;true
+username|password|roles|firstname|lastname|street|city|postcode|region|country|email|mobile|twitter|facebook|tiktok|insta|youtube|whatsapp|desc|created_at|updated_at|last_login|is_active
+admin|$argon2id$hash|admin|Admin|User|Main St 1|London|SW1A 1AA|London|UK|admin@example.com|+44123456789|||||||System Administrator|1640995200|1640995200||true
+editor|$argon2id$hash|editor|Jane|Doe|High St 42|Manchester|M1 1AA|Manchester|UK|jane@example.com|+44987654321|@jane_editor|jane.doe||||Content Editor|1640995200|1640995200|1640999800|true
 ```
 
 ### Implementation Files

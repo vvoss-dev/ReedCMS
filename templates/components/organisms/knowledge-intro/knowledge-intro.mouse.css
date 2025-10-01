@@ -1,0 +1,56 @@
+/* Knowledge Intro Organism - Mouse interaction mode */
+/* Simplified introduction section for knowledge pages */
+
+@layer mouse {
+    /* Main intro section styling */
+    .section.intro {
+        /* Subtle background to distinguish intro section */
+        background-color: var(--color-surface-subtle);
+        border-radius: 0.5rem;
+        transition: background-color 0.2s ease;
+    }
+
+    .section.intro:hover {
+        /* Subtle hover effect for mouse interaction */
+        background-color: var(--color-surface-hover);
+    }
+
+    /* Section header enhancements */
+    .section.intro .section-header h1 {
+        /* Primary color for main heading */
+        color: var(--color-primary);
+        font-weight: 600;
+        transition: color 0.2s ease;
+    }
+
+    .section.intro .section-header h1:hover {
+        /* Subtle color enhancement on hover */
+        color: var(--color-primary-emphasis);
+    }
+
+    /* Description text styling */
+    .section.intro .column p {
+        /* Enhanced readability with proper spacing */
+        line-height: 1.6;
+        color: var(--color-text-default);
+        font-size: 1rem;
+        max-width: 65ch;
+        transition: color 0.2s ease;
+    }
+
+    .section.intro .column p:hover {
+        /* Subtle emphasis on hover for mouse precision */
+        color: var(--color-text-emphasis);
+    }
+
+    /* Responsive typography for larger screens */
+    @media (min-width: 768px) {
+        .section.intro .section-header h1 {
+            font-size: 2.5rem;
+        }
+
+        .section.intro .column p {
+            font-size: 1.1rem;
+        }
+    }
+}

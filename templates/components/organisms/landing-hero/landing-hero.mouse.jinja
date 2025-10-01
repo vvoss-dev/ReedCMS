@@ -1,0 +1,37 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Landing Hero Organism - Consolidated from device-specific templates #}
+
+<section class="section hero padding-y-5 padding-x-4">
+    <article class="breakbox grid-2">
+        <div class="hero-content grid-1 gap-y-2">
+            {# Badges #}
+            <div class="hero-badges flex-x gap-1">
+                <span class="badge time padding-1">{{ 'LANDING_HERO_BADGE_EXPERIENCE' | text('auto') }}</span>
+                <span class="badge audience padding-1">{{ 'LANDING_HERO_BADGE_AUDIENCE' | text('auto') }}</span>
+                <span class="badge topic padding-1">{{ 'LANDING_HERO_BADGE_TOPIC' | text('auto') }}</span>
+            </div>
+
+            {# Headline #}
+            <h1>{{ 'LANDING_HERO_HEADLINE' | text('auto') }}</h1>
+
+            {# Subtitle #}
+            <p class="hero-subtitle">
+                {{ 'LANDING_HERO_SUBTITLE' | text('auto') }}
+            </p>
+
+            {# Description #}
+            <p class="hero-description body-large">
+                {{ 'LANDING_HERO_DESCRIPTION' | text('auto') }}
+            </p>
+
+            {# CTA #}
+            <a href="#contact" class="cta padding-y-1 padding-x-2">
+                {{ 'LANDING_HERO_CTA_PRIMARY' | text('auto') }}
+            </a>
+        </div>
+
+        <div class="hero-side">
+            {# Optional: Space for image or additional content #}
+        </div>
+    </article>
+</section>

@@ -279,10 +279,22 @@ reed build:release
 ## Project-Specific Notes
 
 ### CSV Format
-- Delimiter: semicolon (`;`)
-- Format: `key;value;description`
-- All files in `.reed/` directory
-- Automatic backups before modifications
+- **Delimiter**: pipe (`|`)
+- **Format**: `key|value|description`
+- **All files in `.reed/` directory**
+- **Automatic backups before modifications**
+
+### Key Nomenclature (MANDATORY)
+- **Dot-notation**: `lowercase.with.dots` (NOT `UPPERCASE_WITH_UNDERSCORES`)
+- **Sub-layouts**: Flat structure (`agility.title`, NOT `knowledge.agility.title`)
+- **Global components**: With namespace (`page-header.logo.title`)
+- **Nesting depth**: Optimal 4, maximum 8 levels
+- **Language suffix**: Lowercase after key (`@de`, `@en`, NOT `@DE`, `@EN`)
+
+### CSV File Separation
+- **`.reed/text.csv`**: All content text
+- **`.reed/routes.csv`**: All URL routing (central, not in component files)
+- **`.reed/meta.csv`**: All SEO metadata (title, description) and technical meta (cache, access)
 
 ### Environment Suffixes
 - `@dev` - Development environment

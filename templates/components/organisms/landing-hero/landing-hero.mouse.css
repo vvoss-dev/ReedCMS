@@ -1,0 +1,50 @@
+/* Landing Hero Organism - Mouse interaction mode */
+/* Optimized for precise mouse interaction and hover effects */
+
+@layer mouse {
+    /* Hero section mouse-specific styling */
+    .section.hero {
+        /* Desktop spacing for mouse precision */
+        padding: 5rem 4rem;
+    }
+
+    /* Hero badges hover effects */
+    .hero-badges .badge:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* CTA button hover effects for mouse */
+    .hero-content .cta:hover {
+        background-color: var(--color-primary-hover);
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Hero content grid optimizations for desktop */
+    .hero-content {
+        max-width: 600px;
+    }
+
+    /* Hero headline mouse-specific styling */
+    .hero-content h1 {
+        font-size: 3.5rem;
+        line-height: 1.1;
+    }
+
+    /* Hero subtitle for desktop readability */
+    .hero-subtitle {
+        font-size: 1.4rem;
+        color: var(--color-text-muted);
+        margin: 1rem 0;
+    }
+
+    /* Hero description for desktop */
+    .hero-description {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin: 2rem 0;
+    }
+}

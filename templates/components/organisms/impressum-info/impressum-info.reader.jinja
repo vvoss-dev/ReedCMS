@@ -1,0 +1,69 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Impressum info section - Reader/Bot mode #}
+
+<section class="section info">
+    <article>
+        <section>
+            <h3>{{ 'IMPRESSUM_INFO_TECHNICAL_TITLE' | text('auto') }}</h3>
+
+            <h4>{{ 'IMPRESSUM_INFO_TECHNICAL_CO2_TITLE' | text('auto') }}</h4>
+            <p>
+                {{ 'IMPRESSUM_INFO_TECHNICAL_CO2_HOSTING' | text('auto') }}<br>
+                <span style="color: var(--color-success);">{{ 'IMPRESSUM_INFO_TECHNICAL_CO2_ENERGY' | text('auto') }}</span><br>
+                {{ 'IMPRESSUM_INFO_TECHNICAL_CO2_ISO' | text('auto') }}<br>
+                {{ 'IMPRESSUM_INFO_TECHNICAL_CO2_DSGVO' | text('auto') }}
+            </p>
+
+            <h4>{{ 'IMPRESSUM_INFO_TECHNICAL_ACCESSIBILITY_TITLE' | text('auto') }}</h4>
+            <p>{{ 'IMPRESSUM_INFO_TECHNICAL_ACCESSIBILITY_TEXT' | text('auto') }}</p>
+
+            <h4>{{ 'IMPRESSUM_INFO_TECHNICAL_BROWSERS_TITLE' | text('auto') }}</h4>
+            <p>
+                {{ 'IMPRESSUM_INFO_TECHNICAL_BROWSERS_MODERN' | text('auto') }}<br><br>
+                {{ 'IMPRESSUM_INFO_TECHNICAL_BROWSERS_COMPATIBILITY' | text('auto') }}<br>
+                {{ 'IMPRESSUM_INFO_TECHNICAL_BROWSERS_WEBKIT' | text('auto') }}<br>
+                {{ 'IMPRESSUM_INFO_TECHNICAL_BROWSERS_BLINK' | text('auto') }}<br>
+                {{ 'IMPRESSUM_INFO_TECHNICAL_BROWSERS_QUANTUM' | text('auto') }}
+            </p>
+        </section>
+
+        <section>
+            <h3>{{ 'IMPRESSUM_INFO_LEGAL_TITLE' | text('auto') }}</h3>
+
+            <h4>{{ 'IMPRESSUM_INFO_LEGAL_LIABILITY_TITLE' | text('auto') }}</h4>
+            <p>{{ 'IMPRESSUM_INFO_LEGAL_LIABILITY_TEXT' | text('auto') }}</p>
+
+            <h4>{{ 'IMPRESSUM_INFO_LEGAL_LINKS_TITLE' | text('auto') }}</h4>
+            <p>{{ 'IMPRESSUM_INFO_LEGAL_LINKS_TEXT' | text('auto') }}</p>
+
+            <h4>{{ 'IMPRESSUM_INFO_LEGAL_ODR_TITLE' | text('auto') }}</h4>
+            <p>
+                {{ 'IMPRESSUM_INFO_LEGAL_ODR_TEXT' | text('auto') }}
+                <a href="https://ec.europa.eu/consumers/odr/">https://ec.europa.eu/consumers/odr/</a>
+            </p>
+            <p>{{ 'IMPRESSUM_INFO_LEGAL_ODR_PARTICIPATION' | text('auto') }}</p>
+        </section>
+
+        <section>
+            <h3>{{ 'IMPRESSUM_INFO_MISC_TITLE' | text('auto') }}</h3>
+
+            <h4>{{ 'IMPRESSUM_INFO_TECHNICAL_COOKIES_TITLE' | text('auto') }}</h4>
+            <p>{{ 'IMPRESSUM_INFO_TECHNICAL_COOKIES_TEXT' | text('auto') }}</p>
+
+            <h4>{{ 'IMPRESSUM_INFO_MISC_DETECTION_TITLE' | text('auto') }}</h4>
+            <dl>
+                <dt>{{ 'IMPRESSUM_INFO_MISC_DETECTION_LANGUAGE' | text('auto') }}</dt>
+                <dd>{{ client.lang }}</dd>
+                <dt>{{ 'IMPRESSUM_INFO_MISC_DETECTION_MONITOR' | text('auto') }}</dt>
+                <dd>{{ client.device_type }} {% if client.viewport_width %}({{ client.viewport_width }}×{{ client.viewport_height }}){% endif %}</dd>
+                {% if client.dpr %}
+                <dt>{{ 'IMPRESSUM_INFO_MISC_DETECTION_PIXELRATIO' | text('auto') }}</dt>
+                <dd>{{ client.dpr }}</dd>
+                {% endif %}
+            </dl>
+
+            <h4>{{ 'IMPRESSUM_INFO_MISC_UPDATE_TITLE' | text('auto') }}</h4>
+            <p>{{ page.latest_update or ('IMPRESSUM_INFO_MISC_UPDATE_FALLBACK' | text('auto')) }}</p>
+        </section>
+    </article>
+</section>

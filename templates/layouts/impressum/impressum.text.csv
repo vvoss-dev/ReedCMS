@@ -1,0 +1,28 @@
+key|value|comment
+impressum.title@de|Impressum|German impressum page title
+impressum.title@en|Legal Notice|English impressum page title
+impressum.responsible.title@de|Verantwortlich für den Inhalt|German responsibility section title
+impressum.responsible.title@en|Responsible for content|English responsibility section title
+impressum.responsible.name@de|Vivian Voss|Responsible person name German
+impressum.responsible.name@en|Vivian Voss|Responsible person name English
+impressum.responsible.street@de|Musterstraße 123|German street address
+impressum.responsible.street@en|Sample Street 123|English street address
+impressum.responsible.city@de|12345 Musterstadt|German city
+impressum.responsible.city@en|12345 Sample City|English city
+impressum.responsible.country@de|Deutschland|German country
+impressum.responsible.country@en|Germany|English country
+impressum.contact.title@de|Kontakt|German contact section title
+impressum.contact.title@en|Contact|English contact section title
+impressum.contact.email.label@de|E-Mail|German email label
+impressum.contact.email.label@en|Email|English email label
+impressum.contact.email.value|hello@vvoss.dev|Contact email address
+impressum.contact.web.label@de|Internet|German web label
+impressum.contact.web.label@en|Website|English web label
+impressum.legal.title@de|Rechtliche Hinweise|German legal section title
+impressum.legal.title@en|Legal Information|English legal section title
+impressum.legal.disclaimer@de|Die Inhalte dieser Seiten wurden mit größter Sorgfalt erstellt.|German legal disclaimer
+impressum.legal.disclaimer@en|The contents of these pages have been created with the utmost care.|English legal disclaimer
+impressum.privacy.title@de|Datenschutz|German privacy section title
+impressum.privacy.title@en|Privacy|English privacy section title
+impressum.privacy.text@de|Diese Website verwendet keine Cookies oder Tracking-Technologien.|German privacy text
+impressum.privacy.text@en|This website does not use cookies or tracking technologies.|English privacy text

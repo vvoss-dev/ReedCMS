@@ -1,0 +1,63 @@
+key|value|comment
+ai-visibility.title@de|AI Visibility|Content text for de locale
+ai-visibility.title@en|AI Visibility|Content text for en locale
+ai-visibility.category.label@de|Kategorie|Content text for de locale
+ai-visibility.category.label@en|Category|Content text for en locale
+ai-visibility.category.value@de|Marketing-Strategie|Content text for de locale
+ai-visibility.category.value@en|Marketing Strategy|Content text for en locale
+ai-visibility.stable.label@de|Status|Content text for de locale
+ai-visibility.stable.label@en|Status|Content text for en locale
+ai-visibility.stable.value@de|Emergierend|Content text for de locale
+ai-visibility.stable.value@en|Emerging|Content text for en locale
+ai-visibility.creator.label@de|Geprägt von|Content text for de locale
+ai-visibility.creator.label@en|Coined by|Content text for en locale
+ai-visibility.creator.value@de|Marketing-Experten (2023)|Content text for de locale
+ai-visibility.creator.value@en|Marketing Experts (2023)|Content text for en locale
+ai-visibility.project.label@de|Umfasst|Content text for de locale
+ai-visibility.project.label@en|Encompasses|Content text for en locale
+ai-visibility.project.value@de|"<a href=""{{ 'knowledge.seo' | route(lang='auto') }}"" class=""link"">AEO & GEO</a>"|Content text for de locale
+ai-visibility.project.value@en|"<a href=""{{ 'knowledge.seo' | route(lang='auto') }}"" class=""link"">AEO & GEO</a>"|Content text for en locale
+ai-visibility.description@de|AI Visibility ist der Überbegriff für Strategien, um Inhalte in KI-gestützten Plattformen sichtbar zu machen: ChatGPT, Claude, Gemini, Perplexity und KI-Browser wie Comet. Es geht nicht mehr um traditionelle Suchergebnisse, sondern um Präsenz in KI-generierten Antworten und konversationellen Schnittstellen. AEO (Answer Engine Optimization) optimiert für Featured Snippets und direkte Antworten mit FAQ-Schemas. GEO (Generative Engine Optimization) zielt darauf, dass KIs deine Inhalte als vertrauenswürdige Quelle zitieren. Der Rich-get-Richer-Effekt ist bereits sichtbar.|Content text for de locale
+ai-visibility.description@en|AI Visibility is the umbrella term for strategies to make content visible in AI-powered platforms: ChatGPT, Claude, Gemini, Perplexity, and AI browsers like Comet. It's no longer about traditional search results, but about presence in AI-generated answers and conversational interfaces. AEO (Answer Engine Optimization) optimizes for featured snippets and direct answers with FAQ schemas. GEO (Generative Engine Optimization) aims for AIs to cite your content as a trusted source. The rich-get-richer effect is already visible.|Content text for en locale
+ai-visibility.enterprise@de|Stand Q3 2025: 84% der Google-Suchen zeigen bereits KI-Overviews. Featured Snippets machen 35% der Klicks aus. KI-Browser fassen Webseiten in Echtzeit zusammen - ohne dass Nutzer die Originalseite besuchen. Wer jetzt nicht auf AI Visibility setzt, wird in 2-3 Jahren unsichtbar sein. Die Investition in Topical Authority, strukturierte Daten und Entitäten-Optimierung entscheidet über digitale Existenz. Unternehmen müssen JETZT handeln oder verschwinden.|Content text for de locale
+ai-visibility.enterprise@en|As of Q3 2025: 84% of Google searches already show AI overviews. Featured snippets account for 35% of clicks. AI browsers summarize websites in real-time - without users visiting the original page. Those not investing in AI Visibility now will be invisible in 2-3 years. Investment in topical authority, structured data, and entity optimization determines digital existence. Companies must act NOW or disappear.|Content text for en locale
+ai-visibility.syntax.label@de|Methoden|Content text for de locale
+ai-visibility.syntax.label@en|Methods|Content text for en locale
+ai-visibility.syntax.value@de|Schema-Markup, FAQ-Struktur, Entitäten|Content text for de locale
+ai-visibility.syntax.value@en|Schema Markup, FAQ Structure, Entities|Content text for en locale
+ai-visibility.security.label@de|Kontrolle|Content text for de locale
+ai-visibility.security.label@en|Control|Content text for en locale
+ai-visibility.security.value@de|Minimal - KIs entscheiden autonom|Content text for de locale
+ai-visibility.security.value@en|Minimal - AIs decide autonomously|Content text for en locale
+ai-visibility.performance.label@de|Wirkung|Content text for de locale
+ai-visibility.performance.label@en|Impact|Content text for en locale
+ai-visibility.performance.value@de|Exponentiell wachsend|Content text for de locale
+ai-visibility.performance.value@en|Exponentially growing|Content text for en locale
+ai-visibility.compare.title@de|Bewertung|Content text for de locale
+ai-visibility.compare.title@en|Assessment|Content text for en locale
+ai-visibility.compare.subtitle@de|Ehrliche Einschätzung der Strategie|Content text for de locale
+ai-visibility.compare.subtitle@en|Honest assessment of the strategy|Content text for en locale
+ai-visibility.cons.title@de|Herausforderungen|Content text for de locale
+ai-visibility.cons.title@en|Challenges|Content text for en locale
+ai-visibility.cons.1@de|Keine direkte Kontrolle über KI-Interpretation|Content text for de locale
+ai-visibility.cons.1@en|No direct control over AI interpretation|Content text for en locale
+ai-visibility.cons.2@de|Ständig ändernde KI-Algorithmen|Content text for de locale
+ai-visibility.cons.2@en|Constantly changing AI algorithms|Content text for en locale
+ai-visibility.cons.3@de|Hoher initialer Aufwand für Umstrukturierung|Content text for de locale
+ai-visibility.cons.3@en|High initial effort for restructuring|Content text for en locale
+ai-visibility.cons.4@de|Wenige etablierte Best Practices|Content text for de locale
+ai-visibility.cons.4@en|Few established best practices|Content text for en locale
+ai-visibility.cons.5@de|ROI schwer messbar|Content text for de locale
+ai-visibility.cons.5@en|ROI difficult to measure|Content text for en locale
+ai-visibility.pros.title@de|Chancen|Content text for de locale
+ai-visibility.pros.title@en|Opportunities|Content text for en locale
+ai-visibility.pros.1@de|First-Mover-Advantage noch möglich|Content text for de locale
+ai-visibility.pros.1@en|First-mover advantage still possible|Content text for en locale
+ai-visibility.pros.2@de|Qualität wird endlich belohnt|Content text for de locale
+ai-visibility.pros.2@en|Quality finally rewarded|Content text for en locale
+ai-visibility.pros.3@de|Langfristige Autorität aufbaubar|Content text for de locale
+ai-visibility.pros.3@en|Long-term authority buildable|Content text for en locale
+ai-visibility.pros.4@de|Zukunftssichere Strategie|Content text for de locale
+ai-visibility.pros.4@en|Future-proof strategy|Content text for en locale
+ai-visibility.pros.5@de|Weniger Konkurrenz als bei SEO|Content text for de locale
+ai-visibility.pros.5@en|Less competition than SEO|Content text for en locale

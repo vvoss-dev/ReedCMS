@@ -1,0 +1,14 @@
+@layer mouse {
+    /* Landing page mouse-specific styling */
+    /* Landing layout uses organisms for all content - minimal layout-specific CSS */
+
+    /* Landing specific layout adjustments for mouse interaction */
+    .landing-layout {
+        /* Landing-specific layout styles if needed */
+    }
+
+    /* Landing organism spacing and coordination for mouse */
+    .landing-layout .section + .section {
+        margin-top: 0; /* Organisms handle their own spacing */
+    }
+}

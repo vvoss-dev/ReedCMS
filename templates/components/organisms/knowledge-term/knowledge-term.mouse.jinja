@@ -1,0 +1,92 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Knowledge Term Organism - Reusable template for ALL knowledge terms #}
+{#
+   This organism consolidates 25+ device-specific knowledge-term templates
+   into one reusable component following CMS pattern recognition.
+
+   Content is injected via the calling layout's .text.csv file.
+   Generic labels come from this organism's .text.csv file.
+#}
+
+{# Intro Section - Technical details and metadata #}
+<section class="section intro padding-y-3 padding-x-4">
+    <article class="breakbox grid-1 gap-3">
+        <div class="section-header padding-left-2">
+            <h1>{{ (topic ~ '_TITLE') | text('auto') }}</h1>
+        </div>
+
+        {# Two-column layout for desktop #}
+        <div class="impressum grid-2 gap-3">
+            <div class="column grid-1 gap-y-1">
+                <h2>{{ (topic ~ '_TITLE') | text('auto') }}</h2>
+                <p>
+                    <strong>{{ (topic ~ '_CATEGORY_LABEL') | text('auto') }}:</strong> {{ (topic ~ '_CATEGORY_VALUE') | text('auto') }}<br>
+                    <strong>{{ (topic ~ '_STABLE_LABEL') | text('auto') }}:</strong> {{ (topic ~ '_STABLE_VALUE') | text('auto') }}<br>
+                    <strong>{{ (topic ~ '_CREATOR_LABEL') | text('auto') }}:</strong> {{ (topic ~ '_CREATOR_VALUE') | text('auto') }}<br>
+                    <strong>{{ (topic ~ '_PROJECT_LABEL') | text('auto') }}:</strong> {{ (topic ~ '_PROJECT_VALUE') | text('auto') | safe }}
+                </p>
+
+                <h3>{{ (topic ~ '_SYNTAX_LABEL') | text('auto') }}</h3>
+                <p>{{ (topic ~ '_SYNTAX_VALUE') | text('auto') }}</p>
+
+                <h3>{{ (topic ~ '_SECURITY_LABEL') | text('auto') }}</h3>
+                <p>{{ (topic ~ '_SECURITY_VALUE') | text('auto') }}</p>
+
+                <h3>{{ (topic ~ '_PERFORMANCE_LABEL') | text('auto') }}</h3>
+                <p>{{ (topic ~ '_PERFORMANCE_VALUE') | text('auto') }}</p>
+            </div>
+
+            <div class="column grid-1 gap-y-1">
+                <h2>{{ 'KNOWLEDGE_TERM_DESCRIPTION_LABEL' | text('auto') or 'Beschreibung' }}</h2>
+                <p>{{ (topic ~ '_DESCRIPTION') | text('auto') }}</p>
+                <hr>
+                <p>{{ (topic ~ '_ENTERPRISE') | text('auto') }}</p>
+            </div>
+        </div>
+    </article>
+</section>
+
+{# Compare Section - Pros vs Cons evaluation #}
+<section class="section compare padding-y-5 padding-x-4">
+    <article class="breakbox grid-1">
+        <div class="section-header padding-left-2 margin-bottom-1">
+            <h2>{{ (topic ~ '_COMPARE_TITLE') | text('auto') }}</h2>
+            <p class="description">{{ (topic ~ '_COMPARE_SUBTITLE') | text('auto') }}</p>
+        </div>
+
+        {# Responsive grid layout based on client breakpoint #}
+        {% set grid_classes = "grid-1 gap-y-3" %}
+
+        {% if client.breakpoint == "tablet" %}
+            {% set grid_classes = "grid-2 gap-x-1" %}
+        {% elif client.breakpoint == "screen" or client.breakpoint == "wide" %}
+            {% set grid_classes = "grid-2 gap-x-2" %}
+        {% endif %}
+
+        <div class="compare-grid {{ grid_classes }}">
+            {# NO column (cons) #}
+            <div class="compare-column no padding-2">
+                <h3 class="padding-bottom-2 margin-bottom-2">{{ (topic ~ '_CONS_TITLE') | text('auto') }}</h3>
+                <ul class="compare-list">
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_CONS_1') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_CONS_2') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_CONS_3') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_CONS_4') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_CONS_5') | text('auto') }}</li>
+                </ul>
+            </div>
+
+            {# YES column (pros) #}
+            <div class="compare-column yes padding-2">
+                <h3 class="padding-bottom-2 margin-bottom-2">{{ (topic ~ '_PROS_TITLE') | text('auto') }}</h3>
+                <ul class="compare-list">
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_PROS_1') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_PROS_2') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_PROS_3') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_PROS_4') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_PROS_5') | text('auto') }}</li>
+                </ul>
+            </div>
+        </div>
+    </article>
+</section>

@@ -1,0 +1,19 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Landing Hero Organism - Reader/bot mode - simplified semantic structure #}
+
+<section class="hero">
+    <h1>{{ 'LANDING_HERO_HEADLINE' | text('auto') }}</h1>
+
+    <p>{{ 'LANDING_HERO_SUBTITLE' | text('auto') }}</p>
+
+    <p>{{ 'LANDING_HERO_DESCRIPTION' | text('auto') }}</p>
+
+    {# Badges as simple text list for screen readers #}
+    <ul>
+        <li>{{ 'LANDING_HERO_BADGE_EXPERIENCE' | text('auto') }}</li>
+        <li>{{ 'LANDING_HERO_BADGE_AUDIENCE' | text('auto') }}</li>
+        <li>{{ 'LANDING_HERO_BADGE_TOPIC' | text('auto') }}</li>
+    </ul>
+
+    <a href="#contact">{{ 'LANDING_HERO_CTA_PRIMARY' | text('auto') }}</a>
+</section>

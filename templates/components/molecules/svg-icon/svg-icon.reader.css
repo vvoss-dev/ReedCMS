@@ -1,0 +1,43 @@
+/* SVG-Icon Molecule - Screen Reader & Accessibility Styling */
+
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  /* High contrast and clear focus */
+  outline-offset: 2px;
+}
+
+.icon:focus {
+  outline: 3px solid var(--focus-color, #005fcc);
+  outline-offset: 2px;
+}
+
+/* Enhanced contrast */
+.icon {
+  stroke-width: 2.5;
+  filter: contrast(1.2);
+}
+
+/* Size variants - clear and readable */
+.icon.icon-small { width: 18px; height: 18px; stroke-width: 2; }
+.icon.icon-medium { width: 26px; height: 26px; stroke-width: 2.5; }
+.icon.icon-large { width: 34px; height: 34px; stroke-width: 3; }
+
+/* Context-specific accessibility */
+.icon.nav-icon {
+  stroke-width: 2.5;
+  filter: contrast(1.3);
+}
+
+.icon.button-icon {
+  margin-right: 0.75rem;
+  stroke-width: 3;
+}
+
+/* Screen reader specific */
+@media speech {
+  .icon {
+    /* Icons are fully described by aria-label */
+    speak: none;
+  }
+}

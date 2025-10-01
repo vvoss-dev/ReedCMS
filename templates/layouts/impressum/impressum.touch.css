@@ -1,0 +1,48 @@
+/* Impressum Layout - Touch interaction mode */
+
+@layer touch {
+
+.section.intro {
+    /* Increased padding for touch */
+    padding: 2rem 1rem;
+}
+
+.impressum.grid-2 {
+    /* Single column layout for touch devices */
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+.impressum .column h2 {
+    /* Larger headings for touch readability */
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.impressum .column h3 {
+    /* Touch-friendly section headings */
+    font-size: 1.2rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.impressum .column p {
+    /* Enhanced readability */
+    line-height: 1.6;
+    font-size: 1.05rem;
+    margin-bottom: 1.5rem;
+}
+
+.email-link {
+    /* Touch-friendly email links */
+    color: var(--color-primary);
+    text-decoration: underline;
+    padding: 0.2rem 0.4rem;
+    margin: 0 -0.4rem;
+    min-height: 44px;
+    display: inline-block;
+    line-height: 1.4;
+}
+
+}

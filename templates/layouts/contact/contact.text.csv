@@ -1,0 +1,9 @@
+key|value|comment
+contact.title@de|Interesse an einem fachlichen Austausch?|German contact title
+contact.title@en|Interested in a technical exchange?|English contact title
+contact.subtitle@de|25 Jahre Erfahrung mit beidem: Was alle machen und was tatsächlich funktioniert|German contact subtitle
+contact.subtitle@en|25 years experience with both: what everyone does and what actually works|English contact subtitle
+contact.email@de|ask+42@vvoss.dev|German contact email
+contact.email@en|ask+42@vvoss.dev|English contact email
+contact.availability@de|"25+ Jahre Polyglot-Entwicklung: Rust, PHP, Python, Java, Javascript/Typescript und mehr. Von FreeBSD über Linux bis macOS. Spezialisiert auf Enterprise-Architektur mit messbar reduzierten Betriebskosten und eliminierten Vendor-Dependencies. You say Docker! I say <a href=""/de/wissen/bastille-jail-verwaltung"">Jail</a>!"|German availability text
+contact.availability@en|"25+ years polyglot development: Rust, PHP, Python, Java, Javascript/Typescript and more. From FreeBSD through Linux to macOS. Specialised in enterprise architecture with measurably reduced operational costs and eliminated vendor dependencies. You say Docker! I say <a href=""/en/knowledge/bastille-jail-management"">Jail</a>!"|English availability text

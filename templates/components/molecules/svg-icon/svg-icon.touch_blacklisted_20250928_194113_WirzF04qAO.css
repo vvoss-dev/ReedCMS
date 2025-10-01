@@ -1,0 +1,47 @@
+/* SVG-Icon Molecule - Touch Input Styling */
+
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  /* Larger minimum touch targets */
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.icon:active {
+  transform: scale(0.95);
+  opacity: 0.7;
+}
+
+/* Size variants - adjusted for touch */
+.icon.icon-small {
+  width: 20px;
+  height: 20px;
+  min-width: 44px;
+  min-height: 44px;
+}
+.icon.icon-medium {
+  width: 28px;
+  height: 28px;
+  min-width: 48px;
+  min-height: 48px;
+}
+.icon.icon-large {
+  width: 36px;
+  height: 36px;
+  min-width: 52px;
+  min-height: 52px;
+}
+
+/* Context-specific styling */
+.icon.nav-icon {
+  stroke-width: 2;
+  padding: 12px;
+}
+
+.icon.button-icon {
+  margin-right: 0.75rem;
+  stroke-width: 2.5;
+}

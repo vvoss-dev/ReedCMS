@@ -1,0 +1,64 @@
+/* Copyright (c) 2025 Vivian Voss - All rights reserved */
+/* Impressum Info Organism - Reader/bot interaction styles */
+
+.section.info {
+  /* Minimal, semantic layout for bots/readers */
+  padding: 0;
+}
+
+.section.info article {
+  /* Clean article structure */
+  max-width: none;
+}
+
+.section.info section {
+  /* Clear section boundaries */
+  margin-bottom: 2rem;
+}
+
+.section.info h3 {
+  /* Primary headings */
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--color-text-primary);
+}
+
+.section.info h4 {
+  /* Secondary headings */
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.section.info p {
+  /* Body text */
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.section.info dl {
+  /* Definition lists for structured data */
+  margin-bottom: 1rem;
+}
+
+.section.info dt {
+  /* Definition terms */
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-top: 0.5rem;
+}
+
+.section.info dd {
+  /* Definition descriptions */
+  margin-left: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.section.info a {
+  /* Simple, accessible links */
+  color: var(--color-link);
+  text-decoration: underline;
+}

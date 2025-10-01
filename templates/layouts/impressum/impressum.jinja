@@ -1,0 +1,23 @@
+{% extends layout("page") %}
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Impressum page - orchestrator for mode-specific sections #}
+
+{# Page configuration via pageconf() - replaces system.csv metadata #}
+{{ pageconf("pagekey", "impressum") }}
+{{ pageconf("pageroute", "impressum") }}
+{{ pageconf("pagetitle", "IMPRESSUM_META_TITLE") }}
+{{ pageconf("pagedescription", "IMPRESSUM_META_DESCRIPTION") }}
+
+{% block content %}
+    {# Intro Section with legal information #}
+    {% include organism("impressum-intro") %}
+
+    {# Info Section (Technical, ODR, Misc) #}
+    {% include organism("impressum-info") %}
+
+    {# Licenses Section #}
+    {% include organism("impressum-licenses") %}
+
+    {# Page License Section - Full width license text #}
+    {% include organism("impressum-page-license") %}
+{% endblock %}

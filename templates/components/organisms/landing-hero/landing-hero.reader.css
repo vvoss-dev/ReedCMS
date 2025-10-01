@@ -1,0 +1,73 @@
+/* Landing Hero Organism - Reader/Screen reader mode */
+/* Optimized for accessibility and high contrast */
+
+@layer reader {
+    /* Hero section accessibility enhancements */
+    .section.hero {
+        border: 2px solid var(--color-border-strong);
+        margin: 2rem 0;
+    }
+
+    /* Hero badges accessibility */
+    .hero-badges .badge {
+        border: 2px solid var(--color-border-default);
+        background-color: var(--color-bg-subtle);
+        color: var(--color-text-high-contrast);
+        font-weight: bold;
+        padding: 0.75rem 1rem;
+    }
+
+    /* CTA button high contrast */
+    .hero-content .cta {
+        border: 3px solid var(--color-primary);
+        background-color: var(--color-primary);
+        color: var(--color-bg-default);
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .hero-content .cta:focus {
+        outline: 3px solid var(--color-focus);
+        outline-offset: 2px;
+    }
+
+    /* Hero headline high contrast */
+    .hero-content h1 {
+        color: var(--color-text-high-contrast);
+        font-weight: bold;
+        font-size: 2.8rem;
+        line-height: 1.3;
+    }
+
+    /* Hero subtitle high contrast */
+    .hero-subtitle {
+        color: var(--color-text-high-contrast);
+        font-size: 1.3rem;
+        line-height: 1.5;
+        font-weight: 500;
+    }
+
+    /* Hero description accessibility */
+    .hero-description {
+        color: var(--color-text-high-contrast);
+        line-height: 1.8;
+        font-size: 1.1rem;
+    }
+
+    /* Screen reader enhancements */
+    .hero-badges::before {
+        content: "Professional credentials: ";
+        position: absolute;
+        left: -10000px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+    }
+
+    /* Focus indicators for all interactive elements */
+    .hero-badges .badge:focus,
+    .hero-content .cta:focus {
+        outline: 3px solid var(--color-focus);
+        outline-offset: 2px;
+    }
+}

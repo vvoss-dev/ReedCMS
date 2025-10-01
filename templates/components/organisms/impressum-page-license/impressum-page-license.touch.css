@@ -1,0 +1,16 @@
+@layer touch {
+  .section.page-license .license-block {
+    background: var(--color-surface-elevated);
+    padding: var(--space-2);
+    border-radius: var(--border-radius-md);
+    margin-bottom: var(--space-2);
+    border-left: 3px solid var(--color-primary);
+  }
+
+  .section.page-license .license-block h3 {
+    color: var(--color-primary);
+    font-weight: 600;
+    margin-bottom: var(--space-1);
+    font-size: 1.1rem;
+  }
+}

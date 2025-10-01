@@ -1,0 +1,35 @@
+key|value|comment
+page-header.main.label@de|Hauptnavigation|Main navigation aria label
+page-header.main.label@en|Main navigation|Main navigation aria label
+page-header.home.label@de|Startseite|Home link aria label
+page-header.home.label@en|Home|Home link aria label
+page-header.logo.title@de|Effektive Software-Architektur|Logo subtitle/tagline text
+page-header.logo.title@en|Effective Software Architecture|Logo subtitle/tagline text
+page-header.logo.name@de|vvoss.dev|Logo name
+page-header.logo.name@en|vvoss.dev|Logo name
+page-header.knowledge.label@de|Technisches Wissen|Knowledge navigation label
+page-header.knowledge.label@en|Technical Knowledge|Knowledge navigation label
+page-header.knowledge.text@de|Wissen|Knowledge navigation text
+page-header.knowledge.text@en|Knowledge|Knowledge navigation text
+page-header.portfolio.label@de|Portfolio und Projekte|Portfolio navigation label
+page-header.portfolio.label@en|Portfolio and Projects|Portfolio navigation label
+page-header.portfolio.text@de|Portfolio|Portfolio navigation text
+page-header.portfolio.text@en|Portfolio|Portfolio navigation text
+page-header.blog.label@de|Blog und Artikel|Blog navigation label
+page-header.blog.label@en|Blog and Articles|Blog navigation label
+page-header.blog.text@de|Blog|Blog navigation text
+page-header.blog.text@en|Blog|Blog navigation text
+page-header.impressum.label@de|Impressum und rechtliche Hinweise|Impressum navigation label
+page-header.impressum.label@en|Imprint and Legal|Impressum navigation label
+page-header.impressum.text@de|Impressum|Impressum navigation text
+page-header.impressum.text@en|Imprint|Impressum navigation text
+page-header.menu.knowledge@de|Wissen|Knowledge menu text
+page-header.menu.knowledge@en|Knowledge|Knowledge menu text
+page-header.menu.portfolio@de|Portfolio|Portfolio menu text
+page-header.menu.portfolio@en|Portfolio|Portfolio menu text
+page-header.menu.blog@de|Blog|Blog menu text
+page-header.menu.blog@en|Blog|Blog menu text
+page-header.menu.impressum@de|Impressum|Impressum menu text
+page-header.menu.impressum@en|Imprint|Impressum menu text
+page-header.lang.switch@de|Sprache wechseln|Language switch aria label
+page-header.lang.switch@en|Switch language|Language switch aria label

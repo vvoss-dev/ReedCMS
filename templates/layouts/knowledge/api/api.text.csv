@@ -1,0 +1,63 @@
+key|value|comment
+api.title@de|API (Application Programming Interface)|Content text for de locale
+api.title@en|API (Application Programming Interface)|Content text for en locale
+api.category.label@de|Kategorie|Content text for de locale
+api.category.label@en|Category|Content text for en locale
+api.category.value@de|Software-Architektur|Content text for de locale
+api.category.value@en|Software Architecture|Content text for en locale
+api.stable.label@de|Konzept seit|Content text for de locale
+api.stable.label@en|Concept since|Content text for en locale
+api.stable.value@de|1960er Jahre|Content text for de locale
+api.stable.value@en|1960s|Content text for en locale
+api.creator.label@de|Ursprung|Content text for de locale
+api.creator.label@en|Origin|Content text for en locale
+api.creator.value@de|IBM System/360|Content text for de locale
+api.creator.value@en|IBM System/360|Content text for en locale
+api.project.label@de|Standards|Content text for de locale
+api.project.label@en|Standards|Content text for en locale
+api.project.value@de|"<a href=""https://www.openapis.org"" target=""_blank"">OpenAPI Specification</a>"|Content text for de locale
+api.project.value@en|"<a href=""https://www.openapis.org"" target=""_blank"">OpenAPI Specification</a>"|Content text for en locale
+api.description@de|API - die drei Buchstaben, die das moderne Internet zusammenhalten. Eine Schnittstelle definiert, wie Programme miteinander sprechen, ohne ihre Innereien zu kennen. Wie eine Steckdose: Du musst nicht wissen, wie Strom erzeugt wird, nur dass 230V rauskommen. REST-APIs dominieren das Web: GET /users/42 holt einen Nutzer, POST /users erstellt einen neuen. GraphQL versucht es eleganter, gRPC macht es binär und schneller. Die Realität: Die meisten APIs sind ein Chaos aus inkonsistenten Endpunkten, fehlender Dokumentation und Breaking Changes ohne Versionierung. Swagger/OpenAPI hilft, aber nur wenn Entwickler es pflegen. Diese Webseite hat bewusst keine öffentliche API - manchmal ist keine API die beste API.|Content text for de locale
+api.description@en|API - the three letters that hold the modern internet together. An interface defines how programs talk to each other without knowing their internals. Like a power outlet: you don't need to know how electricity is generated, just that 230V comes out. REST APIs dominate the web: GET /users/42 fetches a user, POST /users creates a new one. GraphQL tries to be more elegant, gRPC does it binary and faster. The reality: most APIs are a chaos of inconsistent endpoints, missing documentation, and breaking changes without versioning. Swagger/OpenAPI helps, but only if developers maintain it. This website deliberately has no public API - sometimes no API is the best API.|Content text for en locale
+api.enterprise@de|Jedes moderne Unternehmen hat APIs: Stripe (Payments), Twilio (SMS), AWS (Cloud), Google Maps (Geolocation). Die API-Economy ist Milliarden schwer. Ironisch: Die erfolgreichsten APIs (POSIX, Win32) sind die ältesten und stabilsten.|Content text for de locale
+api.enterprise@en|Every modern company has APIs: Stripe (Payments), Twilio (SMS), AWS (Cloud), Google Maps (Geolocation). The API economy is worth billions. Ironically: the most successful APIs (POSIX, Win32) are the oldest and most stable.|Content text for en locale
+api.compare.title@de|Bewertung|Content text for de locale
+api.compare.title@en|Assessment|Content text for en locale
+api.compare.subtitle@de|Ehrliche Einschätzung des Konzepts|Content text for de locale
+api.compare.subtitle@en|Honest assessment of the concept|Content text for en locale
+api.cons.title@de|Nachteile|Content text for de locale
+api.cons.title@en|Disadvantages|Content text for en locale
+api.cons.1@de|Versionierung ist die Hölle|Content text for de locale
+api.cons.1@en|Versioning is hell|Content text for en locale
+api.cons.2@de|Breaking Changes zerstören alles|Content text for de locale
+api.cons.2@en|Breaking changes destroy everything|Content text for en locale
+api.cons.3@de|Dokumentation meist veraltet|Content text for de locale
+api.cons.3@en|Documentation usually outdated|Content text for en locale
+api.cons.4@de|Rate Limiting nervt legitime Nutzer|Content text for de locale
+api.cons.4@en|Rate limiting annoys legitimate users|Content text for en locale
+api.cons.5@de|REST vs GraphQL vs gRPC Religionskriege|Content text for de locale
+api.cons.5@en|REST vs GraphQL vs gRPC religious wars|Content text for en locale
+api.pros.title@de|Vorteile|Content text for de locale
+api.pros.title@en|Advantages|Content text for en locale
+api.pros.1@de|Entkopplung von Systemen|Content text for de locale
+api.pros.1@en|Decoupling of systems|Content text for en locale
+api.pros.2@de|Plattformunabhängigkeit|Content text for de locale
+api.pros.2@en|Platform independence|Content text for en locale
+api.pros.3@de|Skalierbarkeit durch Instanzierung|Content text for de locale
+api.pros.3@en|Scalability through instantiation|Content text for en locale
+api.pros.4@de|Monetarisierung möglich|Content text for de locale
+api.pros.4@en|Monetization possible|Content text for en locale
+api.pros.5@de|Ökosystem-Bildung|Content text for de locale
+api.pros.5@en|Ecosystem formation|Content text for en locale
+api.syntax.label@de|Typen|Content text for de locale
+api.syntax.label@en|Types|Content text for en locale
+api.syntax.value@de|REST, GraphQL, gRPC, SOAP|Content text for de locale
+api.syntax.value@en|REST, GraphQL, gRPC, SOAP|Content text for en locale
+api.security.label@de|Sicherheit|Content text for de locale
+api.security.label@en|Security|Content text for en locale
+api.security.value@de|OAuth2, API Keys, JWT|Content text for de locale
+api.security.value@en|OAuth2, API Keys, JWT|Content text for en locale
+api.performance.label@de|Performance|Content text for de locale
+api.performance.label@en|Performance|Content text for en locale
+api.performance.value@de|Abhängig von Implementation|Content text for de locale
+api.performance.value@en|Depends on implementation|Content text for en locale

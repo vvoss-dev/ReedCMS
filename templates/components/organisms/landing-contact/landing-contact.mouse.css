@@ -1,0 +1,53 @@
+/* Landing Contact Organism - Mouse interaction mode */
+/* Contact section with hover effects */
+
+@layer mouse {
+    /* Contact section styling */
+    .section.contact {
+        padding: 5rem 4rem;
+        text-align: center;
+    }
+
+    /* Contact info hover effects */
+    .contact-info {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        margin: 2rem 0;
+        padding: 2rem;
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+    }
+
+    .contact-info:hover {
+        background-color: var(--color-bg-subtle);
+    }
+
+    /* Email styling */
+    .contact-info span {
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    /* Section header */
+    .section-header h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .section-header .description {
+        font-size: 1.2rem;
+        color: var(--color-text-muted);
+        margin-bottom: 2rem;
+    }
+
+    /* Contact details */
+    .contact-details {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: var(--color-text-muted);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+}

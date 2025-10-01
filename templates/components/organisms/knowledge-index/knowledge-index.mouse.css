@@ -1,0 +1,64 @@
+/* Knowledge Index Organism - Mouse interaction mode */
+/* Alphabetical glossary with hover effects */
+
+@layer mouse {
+    /* Knowledge index layout */
+    .knowledge-index {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Index group styling */
+    .index-group {
+        margin-bottom: 2rem;
+    }
+
+    .index-letter {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--color-primary);
+        margin-bottom: 1rem;
+        border-bottom: 2px solid var(--color-primary);
+        padding-bottom: 0.5rem;
+    }
+
+    /* Index terms */
+    .index-terms {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .index-term {
+        padding: 0.5rem 0.75rem;
+        text-decoration: none;
+        color: var(--color-text-default);
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        font-size: 0.95rem;
+    }
+
+    .index-term:hover {
+        background-color: var(--color-bg-hover);
+        color: var(--color-primary);
+        padding-left: 1rem;
+        transform: translateX(4px);
+    }
+
+    /* Desktop-specific grid layout */
+    @media (min-width: 1200px) {
+        .knowledge-index {
+            grid-template-columns: repeat(6, 1fr);
+        }
+    }
+
+    @media (max-width: 900px) {
+        .knowledge-index {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+    }
+}

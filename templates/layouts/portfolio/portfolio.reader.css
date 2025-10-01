@@ -1,0 +1,18 @@
+/* Portfolio Layout - Reader/Screen reader mode */
+
+@layer reader {
+
+.section-header h1 {
+    /* High contrast and screen reader optimization */
+    color: var(--color-text-high-contrast);
+    font-weight: bold;
+    font-size: 1.6rem;
+}
+
+.section-header h1:focus {
+    /* Keyboard navigation focus */
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+}
+
+}

@@ -1,0 +1,59 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Page Header Organism - Touch interaction mode #}
+
+{% set pages = ["knowledge", "portfolio", "blog", "impressum"] %}
+
+<!-- This site renders different HTML based on your interaction mode -->
+<!-- Touch? Mouse? Bot? You get tailored DOM, not just CSS tricks -->
+<!-- Curious about the architecture? Check vvoss.dev/blog/clean-templates -->
+<section class="section header grid-1 padding-y-1 padding-x-1">
+    <nav class="nav-content breakbox grid-1 gap-y-1"
+         role="navigation"
+         aria-label="{{ 'PAGE_HEADER_MAIN_LABEL' | text('auto') or ('Main navigation') }}">
+
+        <div class="logo-wrapper grid-2 gap-x-1">
+            {# Logo with red dots #}
+            <a href="/{{ client.lang }}/" class="logo-container flex-x gap-1" aria-label="{{ 'PAGE_HEADER_HOME_LABEL' | text('auto') or ('Home') }} - {{ 'PAGE_HEADER_LOGO_TITLE' | text('auto') }}">
+                <div class="logo-dots flex-x" aria-hidden="true">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+                <div class="logo-text grid-1">
+                    <span class="logo-name">{{ 'PAGE_HEADER_LOGO_NAME' | text('auto') }}</span>
+                    <span class="subtitle">{{ 'PAGE_HEADER_LOGO_TITLE' | text('auto') }}</span>
+                </div>
+            </a>
+
+            {# Language switcher touch only #}
+            {% if client.lang == "en" %}
+                <a class="lang-switch" href="/de/{% if reed.pageroute %}{{ reed.pageroute }}{% endif %}" aria-label="{{ 'PAGE_HEADER_LANG_SWITCH' | text('auto') }}" lang="de">
+                    DE
+                </a>
+            {% else %}
+                <a class="lang-switch" href="/en/{% if reed.pageroute %}{{ reed.pageroute }}{% endif %}" aria-label="{{ 'PAGE_HEADER_LANG_SWITCH' | text('auto') }}" lang="en">
+                    EN
+                </a>
+            {% endif %}
+        </div>
+
+        <details class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+            <summary class="nav-toggle-title">
+                {{ icon("menu", 24, 2, "menu-icon") | safe }}
+            </summary>
+
+            {# Navigation menu - modernized with route filter #}
+            <ul class="nav-links grid-1 gap-y-0">
+                {% for pagekey in pages %}
+                    <li class="nav-link">
+                        <a href="/{{ client.lang }}/{% if pagekey != 'landing' %}{{ reed['pageroute@' + pagekey] }}/{% endif %}"
+                            class="grid-2 gap-x-1"
+                            {% if current_pagekey == pagekey %}aria-current="page"{% endif %}>
+                            {{ icon("chevrons-right", 16, 2, "nav-chevron") | safe }}
+                            <span>{{ ("PAGE_HEADER_" ~ pagekey.upper() ~ "_TEXT") | text('auto') }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </details>
+    </nav>
+</section>

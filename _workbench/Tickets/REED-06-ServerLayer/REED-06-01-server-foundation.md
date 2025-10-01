@@ -37,9 +37,9 @@ Implement Actix-Web HTTP server foundation with Unix socket support, request han
 
 ### Unix Socket Configuration (.reed/server.csv)
 ```csv
-service;bind_type;bind_address;socket_path;permissions;user;group
-api;unix;/var/run/reedcms/api.sock;;660;reedcms;www-data
-web;unix;/var/run/reedcms/web.sock;;660;reedcms;www-data
+service|bind_type|bind_address|socket_path|permissions|user|group
+api|unix|/var/run/reedcms/api.sock||660|reedcms|www-data
+web|unix|/var/run/reedcms/web.sock||660|reedcms|www-data
 ```
 
 ### Implementation Files

@@ -1,0 +1,68 @@
+/* Copyright (c) 2025 Vivian Voss - All rights reserved */
+/* Impressum Info Organism - Touch interaction styles */
+
+.section.info {
+  /* Touch-optimized spacing */
+  --section-padding-x: var(--space-2);
+  --section-padding-y: var(--space-2);
+}
+
+.section.info .grid-3,
+.section.info .grid-1 {
+  /* Responsive grid spacing */
+  gap: var(--space-2);
+}
+
+.section.info .separator {
+  /* Visual separation for phone layout */
+  height: 1px;
+  background: var(--color-border);
+  margin: var(--space-2) 0;
+}
+
+.section.info .odr-highlight {
+  /* Highlighted legal section */
+  background: var(--color-surface-elevated);
+  padding: var(--space-2);
+  border-radius: var(--border-radius-md);
+  border-left: 3px solid var(--color-primary);
+}
+
+.section.info h3 {
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+  font-size: 1.25rem;
+}
+
+.section.info h4 {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  margin-bottom: var(--space-1);
+  margin-top: var(--space-2);
+  font-size: 1.1rem;
+}
+
+.section.info p {
+  line-height: 1.6;
+  margin-bottom: var(--space-1);
+  font-size: 0.95rem;
+}
+
+.section.info a.touch-target {
+  /* Touch-optimized link target */
+  color: var(--color-link);
+  text-decoration: none;
+  padding: var(--space-1);
+  margin: calc(-1 * var(--space-1));
+  border-radius: var(--border-radius-sm);
+  transition: background-color 0.2s ease;
+  display: inline-block;
+  min-height: 44px;
+  line-height: 1.4;
+}
+
+.section.info a.touch-target:hover,
+.section.info a.touch-target:focus {
+  background: var(--color-surface-elevated);
+}

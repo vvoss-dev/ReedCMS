@@ -1,0 +1,63 @@
+key|value|comment
+agility.title@de|Agilität|Content text for de locale
+agility.title@en|Agility|Content text for en locale
+agility.category.label@de|Kategorie|Content text for de locale
+agility.category.label@en|Category|Content text for en locale
+agility.category.value@de|Projektmanagement-Methodik|Content text for de locale
+agility.category.value@en|Project Management Methodology|Content text for en locale
+agility.stable.label@de|Etabliert seit|Content text for de locale
+agility.stable.label@en|Established since|Content text for en locale
+agility.stable.value@de|2001 (Agile Manifesto)|Content text for de locale
+agility.stable.value@en|2001 (Agile Manifesto)|Content text for en locale
+agility.creator.label@de|Begründer|Content text for de locale
+agility.creator.label@en|Founders|Content text for en locale
+agility.creator.value@de|Kent Beck, Martin Fowler u.a.|Content text for de locale
+agility.creator.value@en|Kent Beck, Martin Fowler et al.|Content text for en locale
+agility.project.label@de|Ressource|Content text for de locale
+agility.project.label@en|Resource|Content text for en locale
+agility.project.value@de|"<a href=""https://agilemanifesto.org"" target=""_blank"">Agile Manifesto</a>"|Content text for de locale
+agility.project.value@en|"<a href=""https://agilemanifesto.org"" target=""_blank"">Agile Manifesto</a>"|Content text for en locale
+agility.description@de|"Agilität war ursprünglich die Antwort von Ingenieuren auf schwerfällige Wasserfallmodelle. Das Agile Manifesto (2001) forderte funktionierende Software über Dokumentation und technische Exzellenz als Grundlage. Was daraus wurde: Scrum-Bürokratie mit Daily Standups, Sprint Planning, Reviews und Retrospektiven - über 150 Stunden Meetings pro Jahr über ""Agilität"". Moderne Teams bewegen sich wie Marionetten an den Fäden des Prozess-Theaters, nicht wie bewegliche Kämpfer. Die Ironie: Mini-Wasserfälle mit kohärenten Arbeitspaketen sind oft agiler als fragmentierte Sprint-Entwicklung. Diese Webseite entstand bewusst nicht in Sprints, sondern als durchdachtes Gesamtsystem - erst komplett designen, dann sauber implementieren, gründlich testen, dann ausliefern."|Content text for de locale
+agility.description@en|"Agility was originally engineers' answer to cumbersome waterfall models. The Agile Manifesto (2001) demanded working software over documentation and technical excellence as foundation. What it became: Scrum bureaucracy with daily standups, sprint planning, reviews and retrospectives - over 150 hours of meetings per year about ""agility"". Modern teams move like marionettes on process theater strings, not like agile fighters. The irony: mini-waterfalls with coherent work packages are often more agile than fragmented sprint development. This website was deliberately not built in sprints, but as a well-thought-out complete system - first fully design, then cleanly implement, thoroughly test, then deliver."|Content text for en locale
+agility.enterprise@de|"Ironischerweise sind die erfolgreichsten Tech-Unternehmen (Netflix, Amazon) intern weniger ""agil"" als sie nach außen behaupten. Sie nutzen kohärente Arbeitspakete, langfristige Planung und stabile Systeme. Der wahre Grund ihres Erfolgs: Technische Exzellenz über Prozess-Compliance. Aber das verkauft sich schlecht auf Konferenzen."|Content text for de locale
+agility.enterprise@en|"Ironically, the most successful tech companies (Netflix, Amazon) are internally less ""agile"" than they claim externally. They use coherent work packages, long-term planning, and stable systems. The real reason for their success: technical excellence over process compliance. But that doesn't sell well at conferences."|Content text for en locale
+agility.compare.title@de|Bewertung|Content text for de locale
+agility.compare.title@en|Assessment|Content text for en locale
+agility.compare.subtitle@de|Ehrliche Einschätzung der Methodik|Content text for de locale
+agility.compare.subtitle@en|Honest assessment of the methodology|Content text for en locale
+agility.cons.title@de|Nachteile|Content text for de locale
+agility.cons.title@en|Disadvantages|Content text for en locale
+agility.cons.1@de|Meeting-Overhead statt Entwicklungszeit|Content text for de locale
+agility.cons.1@en|Meeting overhead instead of development time|Content text for en locale
+agility.cons.2@de|Fragmentierte Features statt kohärente Systeme|Content text for de locale
+agility.cons.2@en|Fragmented features instead of coherent systems|Content text for en locale
+agility.cons.3@de|Velocity-Metriken über technische Qualität|Content text for de locale
+agility.cons.3@en|Velocity metrics over technical quality|Content text for en locale
+agility.cons.4@de|Prozess-Theater statt echte Beweglichkeit|Content text for de locale
+agility.cons.4@en|Process theater instead of real agility|Content text for en locale
+agility.cons.5@de|Sprint-Commitment verhindert gründliches Debugging|Content text for de locale
+agility.cons.5@en|Sprint commitment prevents thorough debugging|Content text for en locale
+agility.pros.title@de|Vorteile|Content text for de locale
+agility.pros.title@en|Advantages|Content text for en locale
+agility.pros.1@de|Ursprüngliche Idee war gut gemeint|Content text for de locale
+agility.pros.1@en|Original idea was well-intentioned|Content text for en locale
+agility.pros.2@de|Kanban besser als reines Scrum|Content text for de locale
+agility.pros.2@en|Kanban better than pure Scrum|Content text for en locale
+agility.pros.3@de|"Management fühlt sich ""in control"""|Content text for de locale
+agility.pros.3@en|"Management feels ""in control"""|Content text for en locale
+agility.pros.4@de|Viele bunte Metriken für Reports|Content text for de locale
+agility.pros.4@en|Many colorful metrics for reports|Content text for en locale
+agility.pros.5@de|Consulting-Industrie liebt es|Content text for de locale
+agility.pros.5@en|Consulting industry loves it|Content text for en locale
+agility.syntax.label@de|Methoden|Content text for de locale
+agility.syntax.label@en|Methods|Content text for en locale
+agility.syntax.value@de|Scrum, Kanban, SAFe (und zu viele Meetings)|Content text for de locale
+agility.syntax.value@en|Scrum, Kanban, SAFe (and too many meetings)|Content text for en locale
+agility.security.label@de|Stabilität|Content text for de locale
+agility.security.label@en|Stability|Content text for en locale
+agility.security.value@de|MVP meist instabil und buggy|Content text for de locale
+agility.security.value@en|MVP usually unstable and buggy|Content text for en locale
+agility.performance.label@de|Effizienz|Content text for de locale
+agility.performance.label@en|Efficiency|Content text for en locale
+agility.performance.value@de|150+ Stunden Meetings pro Jahr|Content text for de locale
+agility.performance.value@en|150+ hours of meetings per year|Content text for en locale

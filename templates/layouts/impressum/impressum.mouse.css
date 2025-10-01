@@ -1,0 +1,37 @@
+/* Impressum Layout - Mouse interaction mode */
+
+@layer mouse {
+
+/* Impressum-specific styling within mouse layer */
+.section.intro .impressum.grid-2 {
+    /* Two-column layout for desktop */
+    gap: 2rem;
+}
+
+.impressum .column h3 {
+    /* Section headings styling */
+    color: var(--color-primary);
+    margin-top: 1.5rem;
+}
+
+.email-link {
+    /* Email link hover effects */
+    color: var(--color-primary);
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.email-link:hover {
+    color: var(--color-primary-hover);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .impressum.grid-2 {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
+}

@@ -1,0 +1,50 @@
+/* Copyright (c) 2025 Vivian Voss - All rights reserved */
+/* Impressum Info Organism - Mouse interaction styles */
+
+.section.info {
+  /* Enhanced spacing for mouse precision */
+  --section-padding-x: var(--space-4);
+  --section-padding-y: var(--space-3);
+}
+
+.section.info .grid-3 {
+  /* Optimal column spacing for mouse navigation */
+  gap: var(--space-3);
+}
+
+.section.info .odr-highlight {
+  /* Visual emphasis for legal section */
+  background: var(--color-surface-elevated);
+  padding: var(--space-2);
+  border-radius: var(--border-radius-md);
+  border-left: 3px solid var(--color-primary);
+}
+
+.section.info h3 {
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+}
+
+.section.info h4 {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  margin-bottom: var(--space-1);
+  margin-top: var(--space-2);
+}
+
+.section.info p {
+  line-height: 1.6;
+  margin-bottom: var(--space-1);
+}
+
+.section.info a {
+  color: var(--color-link);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.section.info a:hover {
+  border-bottom-color: var(--color-link);
+}

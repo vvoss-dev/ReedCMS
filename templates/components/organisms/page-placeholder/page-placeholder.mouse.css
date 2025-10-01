@@ -1,0 +1,36 @@
+@layer mouse {
+    /* Page placeholder organism mouse-specific styling */
+
+    .placeholder-content {
+        max-width: 600px;
+    }
+
+    .contact-email {
+        font-size: 1.1em;
+        padding: 1rem;
+        background: var(--background-secondary, #f5f5f5);
+        border-radius: 4px;
+    }
+
+    .availability-info {
+        line-height: 1.6;
+    }
+
+    .availability-info a {
+        color: var(--color-primary, #007acc);
+        text-decoration: underline;
+    }
+
+    .availability-info a:hover {
+        color: var(--color-primary-dark, #005a9e);
+    }
+
+    .placeholder-message {
+        padding: 2rem;
+        background: var(--background-secondary, #f5f5f5);
+        border-radius: 4px;
+        text-align: center;
+        color: var(--color-muted, #666);
+        font-style: italic;
+    }
+}

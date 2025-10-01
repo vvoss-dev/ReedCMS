@@ -1,0 +1,64 @@
+/* Landing Hero Organism - Touch interaction mode */
+/* Optimized for touch devices with larger targets and spacing */
+
+@layer touch {
+    /* Hero section touch-specific styling */
+    .section.hero {
+        /* Mobile-friendly spacing */
+        padding: 2rem 1rem;
+    }
+
+    /* Hero badges touch-friendly sizing */
+    .hero-badges .badge {
+        padding: 0.75rem 1rem;
+        margin-right: 0.75rem;
+        margin-bottom: 0.5rem;
+        min-height: 3rem;
+        font-size: 1rem;
+    }
+
+    /* CTA button touch optimization */
+    .hero-content .cta {
+        padding: 1.25rem 2rem;
+        font-size: 1.1rem;
+        min-height: 3.5rem;
+        display: block;
+        text-align: center;
+        margin-top: 2rem;
+    }
+
+    /* Hero content stack for mobile */
+    .hero .breakbox {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    /* Hero headline touch-specific sizing */
+    .hero-content h1 {
+        font-size: 2.5rem;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+    }
+
+    /* Hero subtitle for mobile readability */
+    .hero-subtitle {
+        font-size: 1.2rem;
+        line-height: 1.4;
+        margin: 1rem 0;
+    }
+
+    /* Hero description for mobile */
+    .hero-description {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        margin: 1.5rem 0;
+    }
+
+    /* Hero badges flex wrap for mobile */
+    .hero-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+}

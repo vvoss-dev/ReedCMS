@@ -1,0 +1,60 @@
+/* Copyright (c) 2025 Vivian Voss - All rights reserved */
+/* Impressum Intro Organism - Reader/bot interaction styles */
+
+@layer reader {
+  .section.intro {
+    padding: 0;
+  }
+
+  .section.intro article {
+    max-width: none;
+  }
+
+  .section.intro section {
+    margin-bottom: 2rem;
+  }
+
+  .section.intro h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--color-text-primary);
+  }
+
+  .section.intro h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--color-text-primary);
+  }
+
+  .section.intro p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .section.intro address {
+    font-style: normal;
+    line-height: 1.6;
+  }
+
+  .section.intro dl {
+    margin-bottom: 1rem;
+  }
+
+  .section.intro dt {
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    margin-top: 0.5rem;
+  }
+
+  .section.intro dd {
+    margin-left: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .section.intro a {
+    color: var(--color-link);
+    text-decoration: underline;
+  }
+}

@@ -1,0 +1,14 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Knowledge Sub-Page Layout #}
+
+{% extends layout("page") %}
+
+{# Page configuration via pageconf() - replaces system.csv metadata #}
+{{ pageconf("pagekey", "ai-visibility") }}
+{{ pageconf("pageroute", "wissen/ai-sichtbarkeit") }}
+{{ pageconf("pagetitle", "AI_VISIBILITY_META_TITLE") }}
+{{ pageconf("pagedescription", "AI_VISIBILITY_META_DESCRIPTION") }}
+
+{% block content %}
+    {% include organism("knowledge-term") %}
+{% endblock %}

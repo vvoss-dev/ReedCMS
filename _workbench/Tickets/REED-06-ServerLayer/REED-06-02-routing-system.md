@@ -37,11 +37,11 @@ Implement URL resolution system that maps incoming URLs to layout + language com
 
 ### Routes Configuration (.reed/routes.csv)
 ```csv
-route;layout;language;description
-wissen;knowledge;de;German route for knowledge layout
-knowledge;knowledge;en;English route for knowledge layout
-blog;blog;de;German blog
-blog;blog;en;English blog
+route|layout|language|description
+wissen|knowledge|de|German route for knowledge layout
+knowledge|knowledge|en|English route for knowledge layout
+blog|blog|de|German blog
+blog|blog|en|English blog
 ```
 
 ### Implementation (`src/reedcms/routing/resolver.rs`)

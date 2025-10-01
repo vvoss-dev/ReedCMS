@@ -1,0 +1,67 @@
+/* Knowledge Intro Organism - Touch interaction mode */
+/* Optimized for touch devices and mobile interaction */
+
+@layer touch {
+    /* Main intro section optimizations */
+    .section.intro {
+        /* Increased padding for touch-friendly spacing */
+        padding: 2rem 1.5rem;
+        border-radius: 0.75rem;
+    }
+
+    /* Section header touch optimizations */
+    .section.intro .section-header {
+        /* Additional spacing for touch readability */
+        margin-bottom: 1.5rem;
+    }
+
+    .section.intro .section-header h1 {
+        /* Larger heading for touch devices */
+        font-size: 2rem;
+        line-height: 1.3;
+        color: var(--color-primary);
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    /* Description text touch optimizations */
+    .section.intro .column {
+        /* Enhanced spacing for touch navigation */
+        padding: 0.5rem 0;
+    }
+
+    .section.intro .column p {
+        /* Touch-friendly text sizing and spacing */
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: var(--color-text-default);
+        margin-bottom: 1rem;
+    }
+
+    /* Mobile-first responsive adjustments */
+    @media (max-width: 768px) {
+        .section.intro {
+            /* Reduced padding on very small screens */
+            padding: 1.5rem 1rem;
+        }
+
+        .section.intro .section-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .section.intro .column p {
+            font-size: 1rem;
+        }
+    }
+
+    /* Tablet optimizations */
+    @media (min-width: 768px) and (max-width: 1024px) {
+        .section.intro .section-header h1 {
+            font-size: 2.2rem;
+        }
+
+        .section.intro .column p {
+            font-size: 1.15rem;
+        }
+    }
+}

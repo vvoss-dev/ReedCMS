@@ -1,0 +1,63 @@
+key|value|comment
+geo.title@de|GEO|Content text for de locale
+geo.title@en|GEO|Content text for en locale
+geo.category.label@de|Kategorie|Content text for de locale
+geo.category.label@en|Category|Content text for en locale
+geo.category.value@de|Fortgeschrittene Optimierung|Content text for de locale
+geo.category.value@en|Advanced Optimization|Content text for en locale
+geo.stable.label@de|Status|Content text for de locale
+geo.stable.label@en|Status|Content text for en locale
+geo.stable.value@de|Kritisch wichtig|Content text for de locale
+geo.stable.value@en|Critically important|Content text for en locale
+geo.creator.label@de|Entstanden|Content text for de locale
+geo.creator.label@en|Emerged|Content text for en locale
+geo.creator.value@de|2023 (ChatGPT-Boom)|Content text for de locale
+geo.creator.value@en|2023 (ChatGPT boom)|Content text for en locale
+geo.project.label@de|Teil von|Content text for de locale
+geo.project.label@en|Part of|Content text for en locale
+geo.project.value@de|"<a href=""{{ 'knowledge.ai-visibility' | route(lang='auto') }}"" class=""link"">AI Visibility</a>"|Content text for de locale
+geo.project.value@en|"<a href=""{{ 'knowledge.ai-visibility' | route(lang='auto') }}"" class=""link"">AI Visibility</a>"|Content text for en locale
+geo.description@de|GEO (Generative Engine Optimization) geht über AEO hinaus: Es optimiert für generative KI-Modelle wie ChatGPT, Claude, Gemini oder Bing Copilot, die Inhalte nicht nur anzeigen, sondern zusammenfassen und neu generieren. Ziel: Als vertrauenswürdige Quelle in KI-Antworten zitiert werden. Strategien: Topical Authority durch Themen-Cluster aufbauen, Entitäten-Optimierung (Personen, Orte, Konzepte), Multimedia mit Alt-Texten und Transkripten. Der Rich-get-Richer-Effekt ist brutal - KIs bevorzugen wenige Quellen.|Content text for de locale
+geo.description@en|GEO (Generative Engine Optimization) goes beyond AEO: It optimizes for generative AI models like ChatGPT, Claude, Gemini, or Bing Copilot that don't just display content but summarize and regenerate it. Goal: Being cited as a trusted source in AI answers. Strategies: Building topical authority through topic clusters, entity optimization (people, places, concepts), multimedia with alt texts and transcripts. The rich-get-richer effect is brutal - AIs prefer few sources.|Content text for en locale
+geo.enterprise@de|Die Herausforderung ist existenziell: KI-Modelle entscheiden autonom, welche Quellen sie zitieren. Ohne etablierte Autorität in den Trainingsdaten verschwindest du. Die Investition ist massiv: Komplette Content-Architekturen müssen neu gedacht werden. Semantische Beziehungen zwischen Inhalten werden wichtiger als Keywords. Unternehmen müssen JETZT ihre Expertise in KI-Trainingsdaten verankern - in 12 Monaten ist es zu spät. Der Markt wird sich auf wenige autoritäre Quellen konzentrieren.|Content text for de locale
+geo.enterprise@en|The challenge is existential: AI models autonomously decide which sources to cite. Without established authority in training data, you disappear. The investment is massive: Complete content architectures must be rethought. Semantic relationships between content become more important than keywords. Companies must anchor their expertise in AI training data NOW - in 12 months it will be too late. The market will concentrate on few authoritative sources.|Content text for en locale
+geo.syntax.label@de|Kernstrategien|Content text for de locale
+geo.syntax.label@en|Core Strategies|Content text for en locale
+geo.syntax.value@de|Themen-Cluster, Entitäten, E-E-A-T|Content text for de locale
+geo.syntax.value@en|Topic Clusters, Entities, E-E-A-T|Content text for en locale
+geo.security.label@de|Vorhersagbarkeit|Content text for de locale
+geo.security.label@en|Predictability|Content text for en locale
+geo.security.value@de|Null - KIs sind Black Boxes|Content text for de locale
+geo.security.value@en|Zero - AIs are black boxes|Content text for en locale
+geo.performance.label@de|Erfolgschance|Content text for de locale
+geo.performance.label@en|Success Rate|Content text for en locale
+geo.performance.value@de|Nur für Top 1% der Autoritäten|Content text for de locale
+geo.performance.value@en|Only for top 1% of authorities|Content text for en locale
+geo.compare.title@de|Bewertung|Content text for de locale
+geo.compare.title@en|Assessment|Content text for en locale
+geo.compare.subtitle@de|Brutale Wahrheit über GEO|Content text for de locale
+geo.compare.subtitle@en|Brutal truth about GEO|Content text for en locale
+geo.cons.title@de|Risiken|Content text for de locale
+geo.cons.title@en|Risks|Content text for en locale
+geo.cons.1@de|Keine Kontrolle über KI-Entscheidungen|Content text for de locale
+geo.cons.1@en|No control over AI decisions|Content text for en locale
+geo.cons.2@de|Massive Investition ohne Garantie|Content text for de locale
+geo.cons.2@en|Massive investment without guarantee|Content text for en locale
+geo.cons.3@de|Rich-get-Richer-Effekt verstärkt sich|Content text for de locale
+geo.cons.3@en|Rich-get-richer effect intensifies|Content text for en locale
+geo.cons.4@de|Trainingsdaten-Updates unvorhersehbar|Content text for de locale
+geo.cons.4@en|Training data updates unpredictable|Content text for en locale
+geo.cons.5@de|99% werden scheitern|Content text for de locale
+geo.cons.5@en|99% will fail|Content text for en locale
+geo.pros.title@de|Chancen|Content text for de locale
+geo.pros.title@en|Opportunities|Content text for en locale
+geo.pros.1@de|Direkte Präsenz in KI-Antworten|Content text for de locale
+geo.pros.1@en|Direct presence in AI answers|Content text for en locale
+geo.pros.2@de|Umgeht traditionelle Suchmaschinen|Content text for de locale
+geo.pros.2@en|Bypasses traditional search engines|Content text for en locale
+geo.pros.3@de|Etabliert dauerhafte Autorität|Content text for de locale
+geo.pros.3@en|Establishes lasting authority|Content text for en locale
+geo.pros.4@de|First-Mover können dominieren|Content text for de locale
+geo.pros.4@en|First movers can dominate|Content text for en locale
+geo.pros.5@de|Zukunft der digitalen Präsenz|Content text for de locale
+geo.pros.5@en|Future of digital presence|Content text for en locale

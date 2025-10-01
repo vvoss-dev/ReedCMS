@@ -1,0 +1,63 @@
+key|value|comment
+bastille.title@de|Bastille|Content text for de locale
+bastille.title@en|Bastille|Content text for en locale
+bastille.category.label@de|Kategorie|Content text for de locale
+bastille.category.label@en|Category|Content text for en locale
+bastille.category.value@de|Jail-Verwaltung|Content text for de locale
+bastille.category.value@en|Jail Management|Content text for en locale
+bastille.stable.label@de|Stabil seit|Content text for de locale
+bastille.stable.label@en|Stable since|Content text for en locale
+bastille.stable.value@de|2020|Content text for de locale
+bastille.stable.value@en|2020|Content text for en locale
+bastille.creator.label@de|Erschaffer|Content text for de locale
+bastille.creator.label@en|Creator|Content text for en locale
+bastille.creator.value@de|Christer Edwards|Content text for de locale
+bastille.creator.value@en|Christer Edwards|Content text for en locale
+bastille.project.label@de|Projekt|Content text for de locale
+bastille.project.label@en|Project|Content text for en locale
+bastille.project.value@de|"<a href=""https://github.com/BastilleBSD/bastille"" target=""_blank"">GitHub-Projekt von Bastille</a>"|Content text for de locale
+bastille.project.value@en|"<a href=""https://github.com/BastilleBSD/bastille"" target=""_blank"">Bastille GitHub Project</a>"|Content text for en locale
+bastille.description@de|Bastille ist ein modernes Management-System für FreeBSD Jails, das die bewährte BSD-Jail-Technologie mit einer benutzerfreundlichen Oberfläche verbindet. Im Gegensatz zu Docker-Containern, die auf Linux-Namespaces basieren, nutzt Bastille echte Kernel-Level-Isolation durch FreeBSD Jails. Dies bedeutet höhere Sicherheit und native Performance ohne Virtualisierungs-Overhead. Das System automatisiert komplexe Jail-Verwaltungsaufgaben wie Netzwerkkonfiguration, Template-Management und Ressourcenzuweisung. Besonders attraktiv: ZFS-Snapshots und -Clones sind nahtlos integriert, was blitzschnelle Backups und Rollbacks ermöglicht. Mit nur wenigen Shell-Befehlen lassen sich produktionsreife Umgebungen erstellen, die jahrelang wartungsfrei laufen. Für Entwickler und Systemadministratoren, die Wert auf Stabilität und Sicherheit legen, bietet Bastille eine ausgereifte Alternative zu containerisierten Lösungen.|Content text for de locale
+bastille.description@en|Bastille is a modern management system for FreeBSD Jails that combines proven BSD jail technology with a user-friendly interface. Unlike Docker containers, which rely on Linux namespaces, Bastille uses true kernel-level isolation through FreeBSD Jails. This means higher security and native performance without virtualization overhead. The system automates complex jail management tasks like network configuration, template management, and resource allocation. Particularly attractive: ZFS snapshots and clones are seamlessly integrated, enabling lightning-fast backups and rollbacks. With just a few shell commands, you can create production-ready environments that run maintenance-free for years. For developers and system administrators who value stability and security, Bastille offers a mature alternative to containerized solutions.|Content text for en locale
+bastille.enterprise@de|Eingesetzt von Netflix (CDN-Infrastruktur), WhatsApp (Messaging-Backend), Sony PlayStation Network, Juniper Networks und weiteren Fortune-500-Unternehmen, die auf FreeBSD und dessen überlegene Jail-Technologie vertrauen.|Content text for de locale
+bastille.enterprise@en|Used by Netflix (CDN infrastructure), WhatsApp (messaging backend), Sony PlayStation Network, Juniper Networks and other Fortune 500 companies that trust FreeBSD and its superior jail technology.|Content text for en locale
+bastille.compare.title@de|Bewertung|Content text for de locale
+bastille.compare.title@en|Assessment|Content text for en locale
+bastille.compare.subtitle@de|Ehrliche Einschätzung der Technologie|Content text for de locale
+bastille.compare.subtitle@en|Honest assessment of the technology|Content text for en locale
+bastille.cons.title@de|Nachteile|Content text for de locale
+bastille.cons.title@en|Disadvantages|Content text for en locale
+bastille.cons.1@de|Nur auf FreeBSD/BSD verfügbar|Content text for de locale
+bastille.cons.1@en|Only available on FreeBSD/BSD|Content text for en locale
+bastille.cons.2@de|Weniger Marketing und Hype|Content text for de locale
+bastille.cons.2@en|Less marketing and hype|Content text for en locale
+bastille.cons.3@de|Weniger vorgefertigte Templates|Content text for de locale
+bastille.cons.3@en|Fewer pre-built templates|Content text for en locale
+bastille.cons.4@de|Erfordert Erfahrung mit Linux/Unix Shell und deren man pages|Content text for de locale
+bastille.cons.4@en|Requires experience with Linux/Unix shell and their man pages|Content text for en locale
+bastille.cons.5@de|Komplexe Netzwerk-Konfiguration|Content text for de locale
+bastille.cons.5@en|Complex network configuration|Content text for en locale
+bastille.pros.title@de|Vorteile|Content text for de locale
+bastille.pros.title@en|Advantages|Content text for en locale
+bastille.pros.1@de|Native Performance ohne Overhead|Content text for de locale
+bastille.pros.1@en|Native performance without overhead|Content text for en locale
+bastille.pros.2@de|Echte Kernel-Level Isolation|Content text for de locale
+bastille.pros.2@en|True kernel-level isolation|Content text for en locale
+bastille.pros.3@de|ZFS-Integration out-of-the-box|Content text for de locale
+bastille.pros.3@en|ZFS integration out-of-the-box|Content text for en locale
+bastille.pros.4@de|Von Netflix und WhatsApp in Produktion eingesetzt|Content text for de locale
+bastille.pros.4@en|Used in production by Netflix and WhatsApp|Content text for en locale
+bastille.pros.5@de|Sehr sicher durch BSD-Architektur|Content text for de locale
+bastille.pros.5@en|Very secure through BSD architecture|Content text for en locale
+bastille.syntax.label@de|Syntax|Content text for de locale
+bastille.syntax.label@en|Syntax|Content text for en locale
+bastille.syntax.value@de|Einfache Shell-Befehle|Content text for de locale
+bastille.syntax.value@en|Simple shell commands|Content text for en locale
+bastille.security.label@de|Sicherheit|Content text for de locale
+bastille.security.label@en|Security|Content text for en locale
+bastille.security.value@de|Sehr sicher (BSD Jail-Technologie)|Content text for de locale
+bastille.security.value@en|Very secure (BSD jail technology)|Content text for en locale
+bastille.performance.label@de|Performance|Content text for de locale
+bastille.performance.label@en|Performance|Content text for en locale
+bastille.performance.value@de|Native Geschwindigkeit|Content text for de locale
+bastille.performance.value@en|Native speed|Content text for en locale

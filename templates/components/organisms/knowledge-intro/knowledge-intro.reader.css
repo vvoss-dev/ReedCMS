@@ -1,0 +1,96 @@
+/* Knowledge Intro Organism - Reader/Screen reader mode */
+/* Optimized for accessibility, high contrast, and screen readers */
+
+@layer reader {
+    /* Enhanced accessibility for intro section */
+    .section.intro {
+        /* High contrast border for clear section definition */
+        border: 2px solid var(--color-border-strong);
+        border-radius: 0.5rem;
+        background-color: var(--color-surface-high-contrast);
+        margin: 2rem 0;
+    }
+
+    /* Section header accessibility enhancements */
+    .section.intro .section-header {
+        /* Clear visual separation */
+        border-bottom: 2px solid var(--color-border-default);
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .section.intro .section-header h1 {
+        /* High contrast heading for screen readers */
+        color: var(--color-text-high-contrast);
+        font-weight: bold;
+        font-size: 2rem;
+        line-height: 1.4;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Description text accessibility */
+    .section.intro .column {
+        /* Enhanced structure for screen readers */
+        padding: 1rem 0;
+    }
+
+    .section.intro .column p {
+        /* Optimized readability for accessibility */
+        color: var(--color-text-high-contrast);
+        font-size: 1.2rem;
+        line-height: 1.8;
+        font-weight: normal;
+        margin-bottom: 1.5rem;
+        max-width: 70ch;
+    }
+
+    /* Focus indicators for keyboard navigation */
+    .section.intro:focus-within {
+        /* Clear focus indication for the entire section */
+        outline: 3px solid var(--color-focus);
+        outline-offset: 2px;
+    }
+
+    .section.intro .section-header h1:focus {
+        /* Keyboard navigation support */
+        outline: 3px solid var(--color-focus);
+        outline-offset: 2px;
+    }
+
+    /* Enhanced contrast mode */
+    @media (prefers-contrast: high) {
+        .section.intro {
+            border-width: 3px;
+            background-color: var(--color-surface-ultra-contrast);
+        }
+
+        .section.intro .section-header h1 {
+            font-weight: 900;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .section.intro .column p {
+            font-weight: 500;
+        }
+    }
+
+    /* Reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+        .section.intro,
+        .section.intro .section-header h1,
+        .section.intro .column p {
+            transition: none;
+        }
+    }
+
+    /* Large text support */
+    @media (min-width: 1200px) {
+        .section.intro .section-header h1 {
+            font-size: 2.5rem;
+        }
+
+        .section.intro .column p {
+            font-size: 1.3rem;
+        }
+    }
+}

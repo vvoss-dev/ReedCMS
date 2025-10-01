@@ -1,0 +1,103 @@
+key|value|comment
+landing.compare.no.item1@de|Teams, bei denen historisch gewachsene Strukturen unter Artenschutz stehen|Content text for de locale
+landing.compare.no.item1@en|Teams where legacy structures are protected species|Content text for en locale
+landing.compare.no.item2@de|Umgebungen, in denen Code-Tradition mehr zählt als technische Überlegenheit|Content text for de locale
+landing.compare.no.item2@en|Environments where code tradition outweighs technical superiority|Content text for en locale
+landing.compare.no.item3@de|Strukturen, in denen Kompromisse wichtiger sind als Problemlösungen|Content text for de locale
+landing.compare.no.item3@en|Structures where compromises matter more than solutions|Content text for en locale
+landing.compare.no.item4@de|Kulturen, die Agilität und Meetingexzesse mit Fortschritt verwechseln|Content text for de locale
+landing.compare.no.item4@en|Cultures that confuse agility and meeting excess with progress|Content text for en locale
+landing.compare.no.item5@de|Systeme, in denen Komplexität und bunte Graphen als Kompetenznachweis gelten|Content text for de locale
+landing.compare.no.item5@en|Systems where complexity and colourful graphs count as proof of competence|Content text for en locale
+landing.compare.no.title@de|Wo ich NICHT helfen kann:|Content text for de locale
+landing.compare.no.title@en|Where I CANNOT help:|Content text for en locale
+landing.compare.subtitle@de|Wenn alle 'innovative Cloud-Native Solutions' bewundern, zeige ich auf die nackte Komplexität|Content text for de locale
+landing.compare.subtitle@en|While everyone admires 'innovative cloud-native solutions', I point at the naked complexity|Content text for en locale
+landing.compare.title@de|Für Teams, die des Kaisers neue Kleider beim Namen nennen|Content text for de locale
+landing.compare.title@en|For Teams Who Call Out the Emperor's New Clothes|Content text for en locale
+landing.compare.yes.item1@de|Bei verzwickten Architektur-Problemen die Sie schon innerlich aufgegeben haben|Content text for de locale
+landing.compare.yes.item1@en|With intricate architecture problems you've already given up on internally|Content text for en locale
+landing.compare.yes.item2@de|Teams die wirklich bereit sind bewährte Prinzipien über populäre Frameworks zu stellen|Content text for de locale
+landing.compare.yes.item2@en|Teams truly ready to put proven principles over popular frameworks|Content text for en locale
+landing.compare.yes.item3@de|Organisationen die langfristige Verlässlichkeit höher als kurzfristige Features priorisieren|Content text for de locale
+landing.compare.yes.item3@en|Organisations that prioritise long-term reliability over short-term features|Content text for en locale
+landing.compare.yes.item4@de|Bei technischen Herausforderungen mit bedeutendem konzeptionellem Umfang|Content text for de locale
+landing.compare.yes.item4@en|With technical challenges of significant conceptual scope|Content text for en locale
+landing.compare.yes.item5@de|Unternehmen die Technical Excellence belohnen|Content text for de locale
+landing.compare.yes.item5@en|Companies that reward technical excellence|Content text for en locale
+landing.compare.yes.title@de|Wo ich Lösungen biete:|Content text for de locale
+landing.compare.yes.title@en|Where I offer solutions:|Content text for en locale
+landing.contact.availability@de|"25+ Jahre Polyglot-Entwicklung: Rust, PHP, Python, Java, Javascript/Typescript und mehr. Von FreeBSD über Linux bis macOS. Spezialisiert auf Enterprise-Architektur mit messbar reduzierten Betriebskosten und eliminierten Vendor-Dependencies. You say Docker! I say <a href=""/de/wissen/bastille-jail-verwaltung"">Jail</a>!"|Content text for de locale
+landing.contact.availability@en|"25+ years polyglot development: Rust, PHP, Python, Java, Javascript/Typescript and more. From FreeBSD through Linux to macOS. Specialised in enterprise architecture with measurably reduced operational costs and eliminated vendor dependencies. You say Docker! I say <a href=""/en/knowledge/bastille-jail-management"">Jail</a>!"|Content text for en locale
+landing.contact.email@de|ask+42@vvoss.dev|Content text for de locale
+landing.contact.email@en|ask+42@vvoss.dev|Content text for en locale
+landing.contact.subtitle@de|25 Jahre Erfahrung mit beidem: Was alle machen und was tatsächlich funktioniert|Content text for de locale
+landing.contact.subtitle@en|25 years experience with both: what everyone does and what actually works|Content text for en locale
+landing.contact.title@de|Interesse an einem fachlichen Austausch?|Content text for de locale
+landing.contact.title@en|Interested in a technical exchange?|Content text for en locale
+landing.hero.badge.audience@de|Enterprise|Content text for de locale
+landing.hero.badge.audience@en|Enterprise|Content text for en locale
+landing.hero.badge.experience@de|25+ Jahre|Content text for de locale
+landing.hero.badge.experience@en|25+ Years|Content text for en locale
+landing.hero.badge.topic@de|System-Architektur|Content text for de locale
+landing.hero.badge.topic@en|System Architecture|Content text for en locale
+landing.hero.cta.primary@de|Interesse an einem fachlichen Austausch?|Content text for de locale
+landing.hero.cta.primary@en|Interested in a technical exchange?|Content text for en locale
+landing.hero.description@de|Meine Anti-Komplexitäts-Philosophie: Ockham ist mein bester Freund. Warum 47 Services, wenn einer reicht? Warum 800 KB JavaScript, wenn 12 KB genügen? Warum ein 200.000 Euro teurer Enterprise-Storage, wenn ein bewährtes FreeBSD für 200 Euro exakt das Gleiche leistet? Angst, Ihre Experten können das nicht leisten? Glauben Sie mir, die schlagen sich tagtäglich mit deutlich komplexeren Technologien herum!|Content text for de locale
+landing.hero.description@en|My anti-complexity philosophy: Ockham is my best friend. Why 47 services when one suffices? Why 800 KB JavaScript when 12 KB is enough? Why a 200,000 euro enterprise storage when proven FreeBSD delivers exactly the same for 200 euros? Afraid your experts can't handle it? Trust me, they're wrestling with far more complex technologies every day!|Content text for en locale
+landing.hero.headline@de|Entwickler mit einer notorischen Schwäche für effiziente und zugleich realistische Lösungen|Content text for de locale
+landing.hero.headline@en|Developer with a notorious weakness for efficient yet realistic solutions|Content text for en locale
+landing.hero.subtitle@de|Ich eliminiere Problemkategorien durch fundamentale Systemneugestaltung, anstatt Symptome mit noch komplexerer Technologie zu behandeln. Nach 25 Jahren Enterprise-Frustrationen zeige ich offen und ehrlich, was ohne Corporate-Politik möglich ist.|Content text for de locale
+landing.hero.subtitle@en|I eliminate problem categories through fundamental system redesign, rather than treating symptoms with even more complex technology. After 25 years of enterprise frustrations, I openly and honestly show what's possible without corporate politics.|Content text for en locale
+landing.metrics.item1.description@de|Von 15 Minuten auf 30 Sekunden und das nur durch bewährte Unix-Philosophie?! Moment: Aber dann bräuchte man ja keine 47 Kubernetes-Pods mehr, kein Docker-Sammelsurium, keine Cloud-Native-Consultants! Einfach rsync und systemd – aber das klingt ja nicht innovativ genug fürs Management.<br><br>Wie erklärt man das dem Management, das gerade Millionen in „Cloud-Native“ investiert hat?|Content text for de locale
+landing.metrics.item1.description@en|From 15 minutes to 30 seconds and that just through proven Unix philosophy?! Wait: But then you wouldn't need 47 Kubernetes pods anymore, no Docker hodgepodge, no cloud-native consultants! Just rsync and systemd – but that doesn't sound innovative enough for management.<br><br>How do you explain that to management who just invested millions in 'cloud-native'?|Content text for en locale
+landing.metrics.item1.label@de|schnellere Deployments|Content text for de locale
+landing.metrics.item1.label@en|faster deployments|Content text for en locale
+landing.metrics.item1.number@de|30×|Content text for de locale
+landing.metrics.item1.number@en|30×|Content text for en locale
+landing.metrics.item2.description@de|Queries, schneller als Ihre Nutzer klicken können! Ich sage: Direct-Access statt JOIN-Hölle! Lustig, wie alle „NoSQL“ schreien, aber dann doch wieder relationale Datenbanken falsch benutzen. MongoDB installieren, um dann Relationen nachzubauen – der Klassiker der modernen Softwareentwicklung!<br><br>Als ob das Problem die Technologie wäre und nicht das Verständnis!|Content text for de locale
+landing.metrics.item2.description@en|Queries faster than your users can click! I say: Direct access instead of JOIN hell! Funny how everyone screams 'NoSQL' but then misuses relational databases anyway. Installing MongoDB just to rebuild relations – the classic of modern software development!<br><br>As if the problem was the technology and not the understanding!|Content text for en locale
+landing.metrics.item2.label@de|Sub-Millisekunden-Queries|Content text for de locale
+landing.metrics.item2.label@en|Sub-Millisecond Queries|Content text for en locale
+landing.metrics.item2.number@de|<1ms|Content text for de locale
+landing.metrics.item2.number@en|<1ms|Content text for en locale
+landing.metrics.item3.description@de|"Ein 200.000 Euro Enterprise-Storage ersetzt durch ein 200 Euro FreeBSD mit skalierbaren <a href=""/de/wissen/bastille-jail-verwaltung"">Jails</a>. Gleiche Skalierbarkeit – Null Vendor-Lock-in! Nicht untypisch für „Enterprise Appliances“ – kratzt man die Oberfläche ab, findet man die von mir angepriesenen effektiven Lösungen mit ein paar kleinen Scripts für mehr Convenience.<br><br>Darf natürlich keiner wissen, sonst bricht das ganze Geschäftsmodell zusammen!"|Content text for de locale
+landing.metrics.item3.description@en|"A 200,000 euro enterprise storage replaced by a 200 euro FreeBSD with scalable <a href=""/en/knowledge/bastille-jail-management"">jails</a>. Same scalability – zero vendor lock-in! Not untypical for 'enterprise appliances' – scratch the surface and you'll find the effective solutions I'm advocating, plus a few little scripts for more convenience.<br><br>Nobody's supposed to know that, or the whole business model collapses!"|Content text for en locale
+landing.metrics.item3.label@de|Kostenverhältnis|Content text for de locale
+landing.metrics.item3.label@en|Cost ratio|Content text for en locale
+landing.metrics.item3.number@de|1000:1|Content text for de locale
+landing.metrics.item3.number@en|1000:1|Content text for en locale
+landing.metrics.subtitle@de|Hardware-bewusste Performance-Optimierung mit TCO-Fokus|Content text for de locale
+landing.metrics.subtitle@en|Hardware-aware performance optimisation with TCO focus|Content text for en locale
+landing.metrics.title@de|Was mit bewährten Technologien heute schon möglich ist|Content text for de locale
+landing.metrics.title@en|What's already possible today with proven technologies|Content text for en locale
+landing.philosophy.title@de|Anti-Komplexitäts-Philosophie|Philosophy section title
+landing.philosophy.title@en|Anti-Complexity Philosophy|Philosophy section title
+landing.philosophy.subtitle@de|Weniger ist mehr – besonders in der Enterprise-Softwareentwicklung|Philosophy section subtitle
+landing.philosophy.subtitle@en|Less is more – especially in enterprise software development|Philosophy section subtitle
+landing.philosophy.content@de|Enterprise-Entwickler sind Meister im Symptome-Behandeln. Performance-Problem? Mehr Server! Deployment zu langsam? Mehr Tools! Ich mache das Gegenteil: Weniger von allem. Klingt verrückt? Nur für die, die ihre Komplexität lieben gelernt haben. Zeit für Ockham's Rasiermesser.|Philosophy main content
+landing.philosophy.content@en|Enterprise developers are masters at treating symptoms. Performance problem? More servers! Deployment too slow? More tools! I do the opposite: less of everything. Sounds crazy? Only to those who've learned to love their complexity. Time for Ockham's razor.|Philosophy main content
+landing.philosophy.quote@de|Enterprise-Entwickler sind Meister im Symptome-Behandeln. Performance-Problem? Mehr Server! Deployment zu langsam? Mehr Tools! Ich mache das Gegenteil: Weniger von allem. Klingt verrückt? Nur für die, die ihre Komplexität lieben gelernt haben. Zeit für Ockham's Rasiermesser.|Content text for de locale
+landing.philosophy.quote@en|Enterprise developers are masters at treating symptoms. Performance problem? More servers! Deployment too slow? More tools! I do the opposite: less of everything. Sounds crazy? Only to those who've learned to love their complexity. Time for Ockham's razor.|Content text for en locale
+landing.problems.card1.description@de|Jedes Update ist ein Glücksspiel: Geht die CI/CD-Pipeline diesmal stabil durch? Rollbacks dauern jedes Mal zu lange und blockieren das halbe Team. Das ist Russisch Roulette – auf einer sehr kostenintensiven Ebene.<br><br>„Das ist halt modern DevOps“ — Nein, das ist kaputte Architektur.|Content text for de locale
+landing.problems.card1.description@en|Every update is a gamble: Will the CI/CD pipeline run stable this time? Rollbacks take too long every time and block half the team. That’s Russian roulette – at a very expensive level.<br><br>'That’s just modern DevOps' — No, that’s broken architecture.|Content text for en locale
+landing.problems.card1.number@de|01|Content text for de locale
+landing.problems.card1.number@en|01|Content text for en locale
+landing.problems.card1.title@de|Deployment-Roulette|Content text for de locale
+landing.problems.card1.title@en|Deployment Roulette|Content text for en locale
+landing.problems.card2.description@de|47 Services weil Node.js single-threaded ist. Der branchenübliche React+Node.js Stack hat ein Skalierungsproblem. Die „Lösung“? Hunderte kleine Services statt einem funktionierenden System. Das ist 1995er-Technologie als 2024er-Innovation verkauft.<br><br>„Aber das machen doch alle so!“ — Wenn alle aus dem Fenster springen…|Content text for de locale
+landing.problems.card2.description@en|47 services because Node.js is single-threaded. The industry-standard React+Node.js stack has a scaling problem. The 'solution'? Hundreds of tiny services instead of one functioning system. That's 1995 technology sold as 2024 innovation.<br><br>'But everyone's doing it!' — If everyone jumped out of a window…|Content text for en locale
+landing.problems.card2.number@de|02|Content text for de locale
+landing.problems.card2.number@en|02|Content text for en locale
+landing.problems.card2.title@de|Microservice-Wahnsinn|Content text for de locale
+landing.problems.card2.title@en|Microservice Madness|Content text for en locale
+landing.problems.card3.description@de|5.000 CPU-intensive JOINs für einfache Content-Abfragen. Ihre Hardware schreit. Die Performance-Berichte werden immer röter. Neue Server lösen das Problem für… 3 Monate. Dann wieder von vorne. Eine never ending Story.<br><br>„Wir brauchen mehr RAM, müssen skalieren!“ — Nein, was Sie brauchen: eine bessere Architektur.|Content text for de locale
+landing.problems.card3.description@en|5,000 CPU-intensive JOINs for simple content queries. Your hardware is screaming. Performance reports getting redder. New servers solve the problem for… 3 months. Then back to square one. A never-ending story.<br><br>'We need more RAM, we need to scale!' — No, what you need: better architecture.|Content text for en locale
+landing.problems.card3.number@de|03|Content text for de locale
+landing.problems.card3.number@en|03|Content text for en locale
+landing.problems.card3.title@de|Database-Hölle|Content text for de locale
+landing.problems.card3.title@en|Database Hell|Content text for en locale
+landing.problems.subtitle@de|Kostspielige Infrastruktur-Probleme mit versteckten TCO-Impacts|Content text for de locale
+landing.problems.subtitle@en|Costly infrastructure problems with hidden TCO impacts|Content text for en locale
+landing.problems.title@de|Enterprise-Realitäten die Sie täglich erleben|Content text for de locale
+landing.problems.title@en|Enterprise Realities You Experience Daily|Content text for en locale

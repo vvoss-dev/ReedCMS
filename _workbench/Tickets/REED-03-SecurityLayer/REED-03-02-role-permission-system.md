@@ -37,11 +37,11 @@ Implement Unix-style permission system with role inheritance, sub-millisecond ca
 
 ### Role Matrix CSV Structure
 ```csv
-rolename;permissions;inherits;desc;created_at;updated_at;is_active
-editor;text[rwx],route[rw-],content[rw-];;Standard Content Editor;1640995200;1640995200;true
-admin;*[rwx];editor;Full Admin with inheritance;1640995200;1640995200;true
-author;text[rw-],content[r--];editor;Content Author;1640995200;1640995200;true
-viewer;*[r--];;Read-only access;1640995200;1640995200;true
+rolename|permissions|inherits|desc|created_at|updated_at|is_active
+editor|text[rwx],route[rw-],content[rw-]||Standard Content Editor|1640995200|1640995200|true
+admin|*[rwx]|editor|Full Admin with inheritance|1640995200|1640995200|true
+author|text[rw-],content[r--]|editor|Content Author|1640995200|1640995200|true
+viewer|*[r--]||Read-only access|1640995200|1640995200|true
 ```
 
 ### Permission Syntax

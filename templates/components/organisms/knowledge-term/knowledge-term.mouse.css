@@ -1,0 +1,46 @@
+/* Knowledge Term Organism - Mouse interaction mode */
+/* Consolidated from 11+ knowledge-term mouse templates */
+
+@layer mouse {
+    /* Compare section enhancements for precise mouse interaction */
+    .section.compare {
+        /* Mouse-specific styling handled by specific elements below */
+    }
+
+    .compare-column.no:hover {
+        /* Subtle hover effect for disadvantages column */
+        background-color: var(--color-warning-subtle);
+        transition: background-color 0.2s ease;
+    }
+
+    .compare-column.yes:hover {
+        /* Subtle hover effect for advantages column */
+        background-color: var(--color-success-subtle);
+        transition: background-color 0.2s ease;
+    }
+
+    .compare-list li:hover {
+        /* Individual list item hover for mouse precision */
+        padding-left: 1rem;
+        transition: padding-left 0.2s ease;
+    }
+
+    /* Impressum layout specific to knowledge terms */
+    .impressum.grid-2 {
+        /* Two-column layout optimizations for mouse/desktop */
+        gap: 2rem;
+    }
+
+    .impressum .column h3 {
+        /* Technical section headings */
+        color: var(--color-primary);
+        margin-top: 1.5rem;
+    }
+
+    /* Technical metadata styling */
+    .impressum .column p strong {
+        color: var(--color-text-emphasis);
+        min-width: 8rem;
+        display: inline-block;
+    }
+}

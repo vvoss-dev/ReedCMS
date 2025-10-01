@@ -1,0 +1,5 @@
+@layer touch {
+    .section.metrics { padding: 2rem 1rem; }
+    .metrics-grid.grid-1 { gap: 2rem; }
+    .metric-number { font-size: 2.5rem; }
+}

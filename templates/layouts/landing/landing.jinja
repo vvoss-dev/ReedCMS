@@ -1,0 +1,29 @@
+{% extends layout("page") %}
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Landing page - Component-based multi-organism layout #}
+
+{# Page configuration via pageconf() - replaces system.csv metadata #}
+{{ pageconf("pagekey", "landing") }}
+{{ pageconf("pageroute", "") }}
+{{ pageconf("pagetitle", "LANDING_META_TITLE") }}
+{{ pageconf("pagedescription", "LANDING_META_DESCRIPTION") }}
+
+{% block content %}
+    {# Hero Section - First impression #}
+    {% include organism("landing-hero") %}
+
+    {# Problems Section - Problem identification #}
+    {% include organism("landing-problems") %}
+
+    {# Metrics Section - Proven results #}
+    {% include organism("landing-metrics") %}
+
+    {# Compare Section - Anti-pitch / honest assessment #}
+    {% include organism("landing-compare") %}
+
+    {# Philosophy Section - Approach explanation #}
+    {% include organism("landing-philosophy") %}
+
+    {# Contact Section - Call to action #}
+    {% include organism("landing-contact") %}
+{% endblock %}

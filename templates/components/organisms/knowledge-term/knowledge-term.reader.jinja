@@ -1,0 +1,74 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Knowledge term - Reader/Bot mode #}
+{# Universal template for any knowledge term (bastille, apache, api, etc.) #}
+
+{# Intro Section #}
+<section class="section intro">
+    <article>
+        <div>
+            <h1>{{ (topic ~ '_TITLE') | text('auto') }}</h1>
+        </div>
+
+        <div>
+            <h2>{{ (topic ~ '_TITLE') | text('auto') }}</h2>
+            <dl>
+                <dt>{{ (topic ~ '_CATEGORY_LABEL') | text('auto') }}</dt>
+                <dd>{{ (topic ~ '_CATEGORY_VALUE') | text('auto') }}</dd>
+
+                <dt>{{ (topic ~ '_STABLE_LABEL') | text('auto') }}</dt>
+                <dd>{{ (topic ~ '_STABLE_VALUE') | text('auto') }}</dd>
+
+                <dt>{{ (topic ~ '_CREATOR_LABEL') | text('auto') }}</dt>
+                <dd>{{ (topic ~ '_CREATOR_VALUE') | text('auto') }}</dd>
+
+                <dt>{{ (topic ~ '_PROJECT_LABEL') | text('auto') }}</dt>
+                <dd>{{ (topic ~ '_PROJECT_VALUE' | text('auto') | safe }}</dd>
+
+                <dt>{{ (topic ~ '_SYNTAX_LABEL') | text('auto') }}</dt>
+                <dd>{{ (topic ~ '_SYNTAX_VALUE') | text('auto') }}</dd>
+
+                <dt>{{ (topic ~ '_SECURITY_LABEL') | text('auto') }}</dt>
+                <dd>{{ (topic ~ '_SECURITY_VALUE') | text('auto') }}</dd>
+
+                <dt>{{ (topic ~ '_PERFORMANCE_LABEL') | text('auto') }}</dt>
+                <dd>{{ (topic ~ '_PERFORMANCE_VALUE') | text('auto') }}</dd>
+            </dl>
+        </div>
+
+        <div>
+            <h2>Beschreibung</h2>
+            <p>{{ (topic ~ '_DESCRIPTION') | text('auto') }}</p>
+            <hr>
+            <p>{{ (topic ~ '_ENTERPRISE') | text('auto') }}</p>
+        </div>
+    </article>
+</section>
+
+{# Compare Section - EXACT COPY from landing-compare-reader.jinja #}
+<section>
+    <h2>{{ (topic ~ '_COMPARE_TITLE') | text('auto') }}</h2>
+    <p>{{ (topic ~ '_COMPARE_SUBTITLE') | text('auto') }}</p>
+
+    {# Sequential presentation for screen readers #}
+    <div>
+        <h3>{{ (topic ~ '_CONS_TITLE') | text('auto') }}</h3>
+        <ul>
+            <li>{{ (topic ~ '_CONS_1') | text('auto') }}</li>
+            <li>{{ (topic ~ '_CONS_2') | text('auto') }}</li>
+            <li>{{ (topic ~ '_CONS_3') | text('auto') }}</li>
+            <li>{{ (topic ~ '_CONS_4') | text('auto') }}</li>
+            <li>{{ (topic ~ '_CONS_5') | text('auto') }}</li>
+        </ul>
+    </div>
+
+    <div>
+        <h3>{{ (topic ~ '_PROS_TITLE') | text('auto') }}</h3>
+        <ul>
+            <li>{{ (topic ~ '_PROS_1') | text('auto') }}</li>
+            <li>{{ (topic ~ '_PROS_2') | text('auto') }}</li>
+            <li>{{ (topic ~ '_PROS_3') | text('auto') }}</li>
+            <li>{{ (topic ~ '_PROS_4') | text('auto') }}</li>
+            <li>{{ (topic ~ '_PROS_5') | text('auto') }}</li>
+        </ul>
+    </div>
+</section>

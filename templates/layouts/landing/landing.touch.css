@@ -1,0 +1,14 @@
+@layer touch {
+    /* Landing page touch-specific styling */
+    /* Landing layout uses organisms for all content - minimal layout-specific CSS */
+
+    /* Landing specific layout adjustments for touch interaction */
+    .landing-layout {
+        /* Landing-specific touch optimizations if needed */
+    }
+
+    /* Landing organism spacing for touch devices */
+    .landing-layout .section + .section {
+        margin-top: 0; /* Organisms handle their own spacing */
+    }
+}

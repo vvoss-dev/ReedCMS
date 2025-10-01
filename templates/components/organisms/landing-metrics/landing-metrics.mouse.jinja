@@ -1,0 +1,36 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Landing Metrics Organism - Performance metrics display #}
+
+<section class="section metrics padding-y-5 padding-x-4">
+    <article class="breakbox grid-1">
+        <div class="section-header padding-left-2 margin-bottom-1">
+            <h2>{{ 'LANDING_METRICS_TITLE' | text('auto') }}</h2>
+            <p class="description">{{ 'LANDING_METRICS_SUBTITLE' | text('auto') }}</p>
+        </div>
+
+        {% set grid_classes = "grid-1 gap-y-3" %}
+        {% if client.breakpoint == "tablet" %}
+            {% set grid_classes = "grid-3 gap-x-1" %}
+        {% elif client.breakpoint == "screen" or client.breakpoint == "wide" %}
+            {% set grid_classes = "grid-3 gap-x-2" %}
+        {% endif %}
+
+        <div class="metrics-grid {{ grid_classes }}">
+            <div class="metric-item grid-1 gap-y-1">
+                <div class="metric-number">{{ 'LANDING_METRICS_ITEM3_NUMBER' | text('auto') }}</div>
+                <p class="metric-label">{{ 'LANDING_METRICS_ITEM3_LABEL' | text('auto') }}</p>
+                <p class="metric-description">{{ 'LANDING_METRICS_ITEM3_DESCRIPTION' | text('auto') }}</p>
+            </div>
+            <div class="metric-item grid-1 gap-y-1">
+                <div class="metric-number">{{ 'LANDING_METRICS_ITEM2_NUMBER' | text('auto') }}</div>
+                <p class="metric-label">{{ 'LANDING_METRICS_ITEM2_LABEL' | text('auto') }}</p>
+                <p class="metric-description">{{ 'LANDING_METRICS_ITEM2_DESCRIPTION' | text('auto') }}</p>
+            </div>
+            <div class="metric-item grid-1 gap-y-1">
+                <div class="metric-number">{{ 'LANDING_METRICS_ITEM1_NUMBER' | text('auto') }}</div>
+                <p class="metric-label">{{ 'LANDING_METRICS_ITEM1_LABEL' | text('auto') }}</p>
+                <p class="metric-description">{{ 'LANDING_METRICS_ITEM1_DESCRIPTION' | text('auto') }}</p>
+            </div>
+        </div>
+    </article>
+</section>

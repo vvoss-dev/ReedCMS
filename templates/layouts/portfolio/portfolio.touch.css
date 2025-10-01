@@ -1,0 +1,11 @@
+/* Portfolio Layout - Touch interaction mode */
+
+@layer touch {
+
+.section-header h1 {
+    /* Portfolio title optimized for touch devices */
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+}
+
+}

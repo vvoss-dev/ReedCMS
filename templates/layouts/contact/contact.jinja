@@ -1,0 +1,19 @@
+{% extends layout("page") %}
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Contact page #}
+
+{# Page configuration via pageconf() - replaces system.csv metadata #}
+{{ pageconf("pagekey", "contact") }}
+{{ pageconf("pageroute", "contact") }}
+{{ pageconf("pagetitle", "CONTACT_META_TITLE") }}
+{{ pageconf("pagedescription", "CONTACT_META_DESCRIPTION") }}
+
+{% block content %}
+<section class="section padding-y-3 padding-x-4">
+    <article class="breakbox grid-1">
+        <div class="section-header padding-left-2">
+            <h1>{{ 'CONTACT_TITLE' | text('auto') }}</h1>
+        </div>
+    </article>
+</section>
+{% endblock %}

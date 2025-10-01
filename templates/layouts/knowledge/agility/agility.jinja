@@ -1,0 +1,14 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Knowledge Sub-Page Layout #}
+
+{% extends layout("page") %}
+
+{# Page configuration via pageconf() - replaces system.csv metadata #}
+{{ pageconf("pagekey", "agility") }}
+{{ pageconf("pageroute", "wissen/agilitaet") }}
+{{ pageconf("pagetitle", "AGILITY_META_TITLE") }}
+{{ pageconf("pagedescription", "AGILITY_META_DESCRIPTION") }}
+
+{% block content %}
+    {% include organism("knowledge-term") %}
+{% endblock %}

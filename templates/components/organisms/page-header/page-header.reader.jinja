@@ -1,0 +1,43 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Page Header Organism - Reader/bot mode - simplified semantic structure #}
+
+{% set pages = ["knowledge", "portfolio", "blog", "impressum"] %}
+
+<section class="section header">
+    <nav role="navigation" aria-label="{{ 'PAGE_HEADER_MAIN_LABEL' | text('auto') or ('Main navigation') }}">
+
+        {# Simple text-based logo/title for bots and screen readers #}
+        <h1>
+            <a href="/{{ client.lang }}/">
+                {{ 'PAGE_HEADER_LOGO_NAME' | text('auto') }} - {{ 'PAGE_HEADER_LOGO_TITLE' | text('auto') }}
+            </a>
+        </h1>
+
+        {# Clean navigation list without decorative elements - modernized with route filter #}
+        <ul>
+            {% for pagekey in pages %}
+                <li>
+                    <a href="/{{ client.lang }}/{% if pagekey != 'landing' %}{{ reed['pageroute@' + pagekey] }}/{% endif %}"
+                       {% if current_pagekey == pagekey %}aria-current="page"{% endif %}>
+                        {{ ("PAGE_HEADER_" ~ pagekey.upper() ~ "_TEXT") | text('auto') }}
+                    </a>
+                </li>
+            {% endfor %}
+
+            {# Language alternatives for SEO and accessibility #}
+            {% if client.lang == "en" %}
+                <li>
+                    <a href="/de/{% if reed.pageroute %}{{ reed.pageroute }}{% endif %}" hreflang="de" lang="de">
+                        {{ 'PAGE_HEADER_LANG_DE_TEXT' | text('auto') or ('DE') }}
+                    </a>
+                </li>
+            {% else %}
+                <li>
+                    <a href="/en/{% if reed.pageroute %}{{ reed.pageroute }}{% endif %}" hreflang="en" lang="en">
+                        {{ 'PAGE_HEADER_LANG_EN_TEXT' | text('auto') or ('EN') }}
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</section>

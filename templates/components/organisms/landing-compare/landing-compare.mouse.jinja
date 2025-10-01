@@ -1,0 +1,46 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Landing Compare Organism - Anti-pitch comparison section #}
+
+<section class="section compare padding-y-5 padding-x-4">
+    <article class="breakbox grid-1">
+        <div class="section-header padding-left-2 margin-bottom-1">
+            <h2>{{ 'LANDING_COMPARE_TITLE' | text('auto') }}</h2>
+            <p class="description">{{ 'LANDING_COMPARE_SUBTITLE' | text('auto') }}</p>
+        </div>
+
+        {# Responsive grid layout based on client breakpoint #}
+        {% set grid_classes = "grid-1 gap-y-3" %}
+
+        {% if client.breakpoint == "tablet" %}
+            {% set grid_classes = "grid-2 gap-x-1" %}
+        {% elif client.breakpoint == "screen" or client.breakpoint == "wide" %}
+            {% set grid_classes = "grid-2 gap-x-2" %}
+        {% endif %}
+
+        <div class="compare-grid {{ grid_classes }}">
+            {# NO column (Traditional Approaches) #}
+            <div class="compare-column no padding-2">
+                <h3 class="padding-bottom-2 margin-bottom-2">{{ 'LANDING_COMPARE_NO_TITLE' | text('auto') }}</h3>
+                <ul class="compare-list">
+                    <li class="padding-y-1 padding-left-2">{{ 'LANDING_COMPARE_NO_ITEM1' | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ 'LANDING_COMPARE_NO_ITEM2' | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ 'LANDING_COMPARE_NO_ITEM3' | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ 'LANDING_COMPARE_NO_ITEM4' | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ 'LANDING_COMPARE_NO_ITEM5' | text('auto') }}</li>
+                </ul>
+            </div>
+
+            {# YES column (Modern Architecture) #}
+            <div class="compare-column yes padding-2">
+                <h3 class="padding-bottom-2 margin-bottom-2">{{ 'LANDING_COMPARE_YES_TITLE' | text('auto') }}</h3>
+                <ul class="compare-list">
+                    <li class="padding-y-1 padding-left-2">{{ 'LANDING_COMPARE_YES_ITEM1' | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ 'LANDING_COMPARE_YES_ITEM2' | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ 'LANDING_COMPARE_YES_ITEM3' | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ 'LANDING_COMPARE_YES_ITEM4' | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ 'LANDING_COMPARE_YES_ITEM5' | text('auto') }}</li>
+                </ul>
+            </div>
+        </div>
+    </article>
+</section>

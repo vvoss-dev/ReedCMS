@@ -1,0 +1,20 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Landing Metrics Organism - Reader interaction mode #}
+
+{% set items = ["1", "2", "3"] %}
+
+<section>
+    <h2>{{ 'LANDING_METRICS_TITLE' | text('auto') }}</h2>
+    <p>{{ 'LANDING_METRICS_SUBTITLE' | text('auto') }}</p>
+
+    {# Metrics as definition list for semantic meaning #}
+    <dl>
+        {% for item_num in items %}
+            {% set number_key = "LANDING_METRICS_ITEM" ~ item_num ~ "_NUMBER" %}
+            {% set label_key = "LANDING_METRICS_ITEM" ~ item_num ~ "_LABEL" %}
+            {% set desc_key = "LANDING_METRICS_ITEM" ~ item_num ~ "_DESCRIPTION" %}
+            <dt>{{ label_key | text('auto') }}</dt>
+            <dd>{{ number_key | text('auto') }} - {{ desc_key | text('auto') }}</dd>
+        {% endfor %}
+    </dl>
+</section>

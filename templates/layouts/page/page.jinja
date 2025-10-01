@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# vvoss.dev - Personal website #}
+
+<html lang="{{ client.lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ page_description or ('PAGE_META_DESCRIPTION' | text('auto')) }}">
+    <title>{{ page_title or ('PAGE_META_TITLE' | text('auto')) }}</title>
+    
+    {# CSS Files - Static files plus dynamic layout bundles #}
+    <link rel="stylesheet" href="/public/static/styles/layers.css?v=42">
+    <link rel="stylesheet" href="/public/static/styles/fonts.css?v=42">
+    <link rel="stylesheet" href="/public/static/styles/general.css?v=42">
+    <link rel="stylesheet" href="/public/static/styles/{{ client.interaction_mode }}.css?v=42">
+
+    {# Dynamic layout bundle CSS with session hash #}
+    {%- if layout_name %}
+    <link rel="stylesheet" href="/public/session/styles/{{ layout_name }}.{{ config.session_hash }}.{{ client.interaction_mode }}.css">
+    {%- endif %}
+    
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {# Skip to content link for keyboard navigation #}
+    <a href="#main" class="skip-link">{{ 'PAGE_SKIP_TO_CONTENT' | text('auto') or ("Skip to content") }}</a>
+    
+    <!-- 
+    No client-side framework. No 500KB of JavaScript.
+    Just clean, mode-specific HTML served exactly as you need it.
+    Server-side rendering with purpose. KISS principle in action.
+    -->
+    
+    {# Header with navigation #}
+    <header class="grid-1" role="banner">
+        {% include organism("page-header") %}
+    </header>
+    
+    <main id="main" role="main" tabindex="-1">
+        {% block content %}{% endblock %}
+    </main>
+    
+    {# Footer section #}
+    {% include organism("page-footer") %}
+    
+    {# Simple content loaded visibility #}
+    <script>
+    (function(){
+        // Always update screen info on every page load to ensure accurate detection
+        var d={
+            width:screen.width,
+            height:screen.height,
+            dpr:window.devicePixelRatio||1,
+            viewport_width:window.innerWidth||document.documentElement.clientWidth,
+            viewport_height:window.innerHeight||document.documentElement.clientHeight,
+            active_voices:window.speechSynthesis ? window.speechSynthesis.getVoices().length : null
+        };
+        
+        // Get current cookie value
+        var existingCookie = document.cookie.match(/screen_info=([^;]*)/);
+        var needsReload = false;
+        
+        if(!existingCookie){
+            // No cookie yet, set it and reload
+            needsReload = true;
+        } else {
+            try {
+                var existing = JSON.parse(decodeURIComponent(existingCookie[1]));
+                // Check if values have changed
+                if(existing.viewport_width !== d.viewport_width || 
+                   existing.viewport_height !== d.viewport_height ||
+                   existing.dpr !== d.dpr){
+                    needsReload = true;
+                }
+            } catch(e) {
+                needsReload = true;
+            }
+        }
+        
+        // Always update the cookie with current values
+        document.cookie='screen_info='+encodeURIComponent(JSON.stringify(d))+';path=/;max-age=31536000;SameSite=Lax';
+        
+        if(needsReload){
+            location.reload();
+            return; // Don't show content until reload with screen info
+        }
+        
+        // Show body when DOM is ready
+        if(document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                document.body.style.visibility = 'visible';
+                document.body.style.opacity = '1';
+            });
+        } else {
+            // DOM already loaded
+            document.body.style.visibility = 'visible';
+            document.body.style.opacity = '1';
+        }
+    })();
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

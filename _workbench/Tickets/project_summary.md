@@ -335,21 +335,21 @@ reed debug:backup cleanup              # Manual cleanup old backups
 #### Matrix CSV 4-Type Value System
 ```csv
 # Type 1: Single values
-username;status;desc
-admin;active;System Administrator
+username|status|desc
+admin|active|System Administrator
 
 # Type 2: Lists (comma-separated)
-username;roles;desc
-jane;editor,author;Multi-role user
+username|roles|desc
+jane|editor,author|Multi-role user
 
 # Type 3: Single values with modifiers
-asset;optimization;desc
-main.css;minify[prod];Main stylesheet
+asset|optimization|desc
+main.css|minify[prod]|Main stylesheet
 
 # Type 4: Lists with modifiers (currently used in roles.matrix.csv)
-rolename;permissions;desc
-editor;text[rwx],route[rw-],project[r--];Standard Editor
-admin;users[rwx],content[rwx],system[rw-];Full Administrator
+rolename|permissions|desc
+editor|text[rwx],route[rw-],project[r--]|Standard Editor
+admin|users[rwx],content[rwx],system[rw-]|Full Administrator
 ```
 
 #### Security & Permission System
@@ -358,16 +358,16 @@ ReedCMS implements a comprehensive Unix-style permission system with role inheri
 
 ```csv
 # .reed/users.matrix.csv - Extended user management with social profiles
-username;password;roles;firstname;lastname;street;city;postcode;region;country;email;mobile;twitter;facebook;tiktok;insta;youtube;whatsapp;desc;created_at;updated_at;last_login;is_active
-admin;$argon2id$hash;admin;Admin;User;Main St 1;London;SW1A 1AA;London;UK;admin@example.com;+44123456789;;;;;;;System Administrator;1640995200;1640995200;;true
-editor;$argon2id$hash;editor;Jane;Doe;High St 42;Manchester;M1 1AA;Manchester;UK;jane@example.com;+44987654321;@jane_editor;jane.doe;;;;Content Editor;1640995200;1640995200;1640999800;true
+username|password|roles|firstname|lastname|street|city|postcode|region|country|email|mobile|twitter|facebook|tiktok|insta|youtube|whatsapp|desc|created_at|updated_at|last_login|is_active
+admin|$argon2id$hash|admin|Admin|User|Main St 1|London|SW1A 1AA|London|UK|admin@example.com|+44123456789|||||||System Administrator|1640995200|1640995200||true
+editor|$argon2id$hash|editor|Jane|Doe|High St 42|Manchester|M1 1AA|Manchester|UK|jane@example.com|+44987654321|@jane_editor|jane.doe||||Content Editor|1640995200|1640995200|1640999800|true
 
 # .reed/roles.matrix.csv - Role-based permission system with inheritance
-rolename;permissions;inherits;desc;created_at;updated_at;is_active
-editor;text[rwx],route[rw-],content[rw-];;Standard Content Editor;1640995200;1640995200;true
-admin;*[rwx];editor;Full Admin with inheritance;1640995200;1640995200;true
-author;text[rw-],content[r--];editor;Content Author;1640995200;1640995200;true
-viewer;*[r--];;Read-only access;1640995200;1640995200;true
+rolename|permissions|inherits|desc|created_at|updated_at|is_active
+editor|text[rwx],route[rw-],content[rw-]||Standard Content Editor|1640995200|1640995200|true
+admin|*[rwx]|editor|Full Admin with inheritance|1640995200|1640995200|true
+author|text[rw-],content[r--]|editor|Content Author|1640995200|1640995200|true
+viewer|*[r--]||Read-only access|1640995200|1640995200|true
 ```
 
 **Enhanced User Management Features**:
@@ -402,22 +402,22 @@ ReedCMS provides a comprehensive taxonomy system for universal entity tagging:
 
 ```csv
 # .reed/taxonomie.matrix.csv - Taxonomy term definitions
-term_id;term;parent_id;category;description;color;icon;status;created_by;usage_count
-1;technology;;category;Technology related content;#2563eb;tech;active;admin;42
-2;rust;1;tag;Rust programming language;#ce422b;rust;active;admin;15
-3;cms;1;tag;Content Management System;#059669;cms;active;admin;8
-4;content-type;;category;Content type classification;#8b5cf6;type;active;admin;128
-5;blog;4;tag;Blog posts and articles;#06b6d4;blog;active;admin;89
-6;documentation;4;tag;Technical documentation;#10b981;docs;active;admin;34
+term_id|term|parent_id|category|description|color|icon|status|created_by|usage_count
+1|technology||category|Technology related content|#2563eb|tech|active|admin|42
+2|rust|1|tag|Rust programming language|#ce422b|rust|active|admin|15
+3|cms|1|tag|Content Management System|#059669|cms|active|admin|8
+4|content-type||category|Content type classification|#8b5cf6|type|active|admin|128
+5|blog|4|tag|Blog posts and articles|#06b6d4|blog|active|admin|89
+6|documentation|4|tag|Technical documentation|#10b981|docs|active|admin|34
 
 # .reed/entity_taxonomy.matrix.csv - Entity-term assignments with inheritance
-entity_type;entity_id;term_ids;assigned_by;assigned_at;context;inherited_from
-user;admin;1,4,6;system;2025-01-15T10:00:00Z;auto_assigned;
-content;blog.post.001;1,2,3,5;editor;2025-01-15T12:00:00Z;content_creation;
-template;blog.jinja;1,3,5;admin;2025-01-15T10:30:00Z;template_creation;
-route;blog@de;1,3,5;admin;2025-01-15T10:31:00Z;route_creation;
-site;main;1,4;admin;2025-01-15T09:00:00Z;site_creation;
-content;blog.post.002;1,2,5;editor;2025-01-15T14:00:00Z;inherited;site:main
+entity_type|entity_id|term_ids|assigned_by|assigned_at|context|inherited_from
+user|admin|1,4,6|system|2025-01-15T10:00:00Z|auto_assigned|
+content|blog.post.001|1,2,3,5|editor|2025-01-15T12:00:00Z|content_creation|
+template|blog.jinja|1,3,5|admin|2025-01-15T10:30:00Z|template_creation|
+route|blog@de|1,3,5|admin|2025-01-15T10:31:00Z|route_creation|
+site|main|1,4|admin|2025-01-15T09:00:00Z|site_creation|
+content|blog.post.002|1,2,5|editor|2025-01-15T14:00:00Z|inherited|site:main
 ```
 
 **Enhanced Taxonomy Management**:
@@ -487,51 +487,51 @@ timestamp,process_id,port,status,bind_address
 #### Main Data Files Examples
 ```csv
 # .reed/text.csv
-key;value;comment
-knowledge.page.title@de;Wissen;German page title
-knowledge.page.title@en;Knowledge;English page title
-knowledge.page.title@christmas;🎄 Festive Knowledge;Christmas theme
-knowledge.navigation.title@de;Hauptmenü;German menu title
-portfolio.hero.subtitle@de;Meine Arbeiten;German subtitle
+key|value|comment
+knowledge.page.title@de|Wissen|German page title
+knowledge.page.title@en|Knowledge|English page title
+knowledge.page.title@christmas|🎄 Festive Knowledge|Christmas theme
+knowledge.navigation.title@de|Hauptmenü|German menu title
+portfolio.hero.subtitle@de|Meine Arbeiten|German subtitle
 
 # .reed/routes.csv
-key;value;comment
-knowledge@de;wissen;German knowledge route
-knowledge@en;knowledge;English knowledge route
-knowledge@dev;test-route;Development route override
-portfolio@de;portfolio;German portfolio route
-portfolio@en;portfolio;English portfolio route
+key|value|comment
+knowledge@de|wissen|German knowledge route
+knowledge@en|knowledge|English knowledge route
+knowledge@dev|test-route|Development route override
+portfolio@de|portfolio|German portfolio route
+portfolio@en|portfolio|English portfolio route
 
 # .reed/meta.csv
-key;value;comment
-knowledge.cache.ttl;3600;Default cache seconds
-knowledge.cache.ttl@dev;0;No cache in development
-knowledge.access.level;public;Default access control
-portfolio.author;vivian;Portfolio author
+key|value|comment
+knowledge.cache.ttl|3600|Default cache seconds
+knowledge.cache.ttl@dev|0|No cache in development
+knowledge.access.level|public|Default access control
+portfolio.author|vivian|Portfolio author
 ```
 
 #### Registry Data Files
 ```csv
 # .reed/registry.csv
-layout;path;status;created;cli_version;last_validated
-knowledge;templates/layouts/knowledge;active;2025-01-15;1.0.0;2025-01-15
+layout|path|status|created|cli_version|last_validated
+knowledge|templates/layouts/knowledge|active|2025-01-15|1.0.0|2025-01-15
 
 # .reed/i18n.csv
-language;active;comment
-de;true;German (Standard)
-en;true;English (Standard)
-fr;false;French
+language|active|comment
+de|true|German (Standard)
+en|true|English (Standard)
+fr|false|French
 
 # .reed/a11y.csv
-feature;active;comment
-screen_reader;true;Enhanced screen reader support
-high_contrast;false;High contrast mode
-keyboard_nav;true;Keyboard navigation
+feature|active|comment
+screen_reader|true|Enhanced screen reader support
+high_contrast|false|High contrast mode
+keyboard_nav|true|Keyboard navigation
 
 # .reed/presets.csv
-name;languages;variants;cache_ttl;access_level;copyright;description;created
-default;de,en;mouse,touch,reader;3600;public;ReedCMS;Default project preset;2025-01-15
-docs;de,en,fr;mouse,reader;7200;public;ReedCMS;Documentation pages;2025-01-15
+name|languages|variants|cache_ttl|access_level|copyright|description|created
+default|de,en|mouse,touch,reader|3600|public|ReedCMS|Default project preset|2025-01-15
+docs|de,en,fr|mouse,reader|7200|public|ReedCMS|Documentation pages|2025-01-15
 ```
 
 ### Environment Override System
@@ -547,6 +547,156 @@ docs;de,en,fr;mouse,reader;7200;public;ReedCMS;Documentation pages;2025-01-15
 - ✅ Universal CSV handler with comment preservation
 - ❌ NEVER CLI management data mixed with content
 
+### Key Nomenclature Rules
+
+**MANDATORY Key Naming Standards** for all ReedCMS data files:
+
+#### 1. Dot-Notation (Not Underscores)
+```csv
+# ✅ CORRECT - Dot notation
+knowledge.page.title@de|Wissen|German page title
+page-header.logo.title@de|vvoss|Logo title
+landing.hero.headline@de|Entwickler|Hero headline
+
+# ❌ WRONG - Underscore notation
+KNOWLEDGE_PAGE_TITLE@DE
+PAGE_HEADER_LOGO_TITLE@DE
+```
+
+#### 2. Sub-Layouts: Flat Structure (No Hierarchical Parent References)
+```csv
+# ✅ CORRECT - Flat, independent keys
+agility.title@de|Agilität|Agility page title
+actix-web.title@de|Actix-Web Framework|Sub-page title
+
+# ❌ WRONG - Hierarchical parent reference
+knowledge.agility.title@de
+knowledge.actix-web.title@de
+```
+**Rationale**: Syntactic stringency, taxonomy-based associations, no unnecessary dependencies.
+
+#### 3. Routes: Only in `.reed/routes.csv` (Central Aggregation)
+```csv
+# .reed/routes.csv
+knowledge@de|wissen|German knowledge route
+portfolio@de|portfolio|German portfolio route
+agility@de|agilitaet|German agility route
+
+# ❌ NEVER in component text.csv files:
+# page-header.url.knowledge@de
+```
+**Rationale**: Type-separated files for performance, central route management.
+
+#### 4. SEO Meta: In `.reed/meta.csv` (Separated from Content)
+```csv
+# .reed/meta.csv
+landing.title@de|Vivian Voss - Principal Software Architect|SEO page title
+landing.description@de|Enterprise-Architektur-Lösungen|SEO meta description
+agility.title@de|Agilität: Prozess-Theater|SEO page title
+agility.description@de|Kritische Analyse|SEO meta description
+
+# ❌ NOT in text.csv:
+# landing.meta.title@de
+```
+**Rationale**: SEO separated from content and routes.
+
+#### 5. Global Components: With Component Namespace
+```csv
+# ✅ CORRECT - Component name as namespace
+page-header.logo.title@de|vvoss|Logo title
+page-header.menu.knowledge@de|Wissen|Menu text
+page-footer.copyright@de|© 2025 Vivian Voss|Footer copyright
+
+# ❌ WRONG - No namespace
+logo.title@de
+menu.knowledge@de
+```
+**Rationale**: Clear origin identification, collision prevention.
+
+#### 6. Nesting Depth: Optimal 4, Maximum 8 Levels
+```csv
+# ✅ OPTIMAL (4 levels)
+landing.hero.badge.audience@de|Enterprise|Badge text
+
+# ✅ ACCEPTABLE (up to 8 levels when necessary)
+component.section.subsection.element.variant.state.detail.info@de|Value|Comment
+
+# ⚠️  AVOID if possible - Keep it simple (KISS principle)
+```
+**Rationale**: Readability, maintainability, KISS principle.
+
+#### 7. Component Names: Hyphens Allowed
+```csv
+# ✅ CORRECT - Hyphens in component names
+page-header.logo.title@de
+landing-hero.headline@de
+knowledge-intro.title@de
+
+# ✅ ALSO CORRECT - Without hyphens if simpler
+pageheader.logo.title@de
+```
+**Rationale**: Compatibility with file system naming conventions.
+
+#### 8. Environment Suffixes: After Complete Key
+```csv
+# ✅ CORRECT - Environment suffix at end
+knowledge.page.title@de|Wissen|German title
+knowledge.page.title@christmas|🎄 Festive Knowledge|Christmas theme
+landing.hero.headline@dev|[DEV] Headline|Development version
+
+# ✅ CORRECT - Fallback chain
+key@christmas → key@de → key (if not found)
+```
+
+#### 9. CSV File Types and Their Content
+
+**`.reed/text.csv`** - All content text:
+```csv
+page-header.logo.title@de|vvoss|Logo title
+landing.hero.headline@de|Entwickler|Hero headline
+agility.description@de|Kritische Analyse|Page content
+```
+
+**`.reed/routes.csv`** - All URL routing:
+```csv
+knowledge@de|wissen|German knowledge route
+portfolio@en|portfolio|English portfolio route
+```
+
+**`.reed/meta.csv`** - All SEO metadata:
+```csv
+landing.title@de|Vivian Voss - Principal Software Architect|SEO title
+landing.description@de|Enterprise-Architektur-Lösungen|SEO description
+landing.cache.ttl|3600|Cache seconds (technical meta)
+landing.access.level|public|Access control (technical meta)
+```
+
+#### 10. Migration from Underscore Legacy Format
+
+**Old Format (vvoss.dev legacy):**
+```csv
+PAGE_HEADER_LOGO_TITLE@DE|vvoss|Logo title
+LANDING_HERO_HEADLINE@DE|Entwickler|Hero headline
+AGILITY_META_TITLE@DE|Agilität|Page title
+```
+
+**New Format (ReedCMS):**
+```csv
+# In .reed/text.csv
+page-header.logo.title@de|vvoss|Logo title
+landing.hero.headline@de|Entwickler|Hero headline
+
+# In .reed/meta.csv
+agility.title@de|Agilität|SEO page title
+```
+
+**Conversion Rules:**
+1. Convert `UPPERCASE_WITH_UNDERSCORES` to `lowercase.with.dots`
+2. Move `*_URL_*` keys to `.reed/routes.csv`
+3. Move `*_META_TITLE` and `*_META_DESCRIPTION` to `.reed/meta.csv`
+4. Keep all other content in `.reed/text.csv`
+5. Preserve `@DE/@EN` language suffixes as `@de/@en` (lowercase)
+
 ### Initial Configuration Structure
 
 **ReedCMS is a ground-up reimplementation** - inspired by vvoss.dev concepts but built from scratch with clean architecture.
@@ -560,28 +710,28 @@ docs;de,en,fr;mouse,reader;7200;public;ReedCMS;Documentation pages;2025-01-15
 
 #### Server Configuration Keys (.reed/server.csv)
 ```csv
-key;value;comment
-server.auth.enabled;true;Enable HTTP Basic Authentication
-server.auth.username;admin;Authentication username
-server.auth.password;$argon2id$hash;Hashed authentication password
-server.endpoint;127.0.0.1:8080;Server bind address and port
-server.workers;4;Number of worker threads
-server.logging.level;info;Logging verbosity level
+key|value|comment
+server.auth.enabled|true|Enable HTTP Basic Authentication
+server.auth.username|admin|Authentication username
+server.auth.password|$argon2id$hash|Hashed authentication password
+server.endpoint|127.0.0.1:8080|Server bind address and port
+server.workers|4|Number of worker threads
+server.logging.level|info|Logging verbosity level
 ```
 
 #### Project Configuration Keys (.reed/project.csv)
 ```csv
-key;value;comment
-project.languages;de,en;Active languages for project
-project.template.path;templates/;Template directory path
-project.layout.path;templates/layouts/;Layout directory path
-project.atoms.path;templates/components/atoms/;Atoms directory path
-project.molecules.path;templates/components/molecules/;Molecules directory path
-project.organisms.path;templates/components/organisms/;Organisms directory path
-project.index;landing;Default landing page layout
-project.template.cache;true;Enable template caching
-project.public.path;public/;Static files directory
-project.public.cache.max_age;3600;Cache max age in seconds
+key|value|comment
+project.languages|de,en|Active languages for project
+project.template.path|templates/|Template directory path
+project.layout.path|templates/layouts/|Layout directory path
+project.atoms.path|templates/components/atoms/|Atoms directory path
+project.molecules.path|templates/components/molecules/|Molecules directory path
+project.organisms.path|templates/components/organisms/|Organisms directory path
+project.index|landing|Default landing page layout
+project.template.cache|true|Enable template caching
+project.public.path|public/|Static files directory
+project.public.cache.max_age|3600|Cache max age in seconds
 ```
 
 ---
@@ -893,19 +1043,19 @@ The API layer uses Matrix CSV files for comprehensive security control:
 
 ```csv
 # .reed/api.matrix.csv - Command validation rules
-rule_type;patterns;permissions;description;environments;rate_limit
-whitelist;user,role,taxonomy,get,set;api[rwx];Core API commands allowed;@prod,@dev;1000
-blacklist;server,debug,build;api[---];Server commands blocked from API;@prod,@dev;0
-restricted;delete,remove,cleanup;api[rw-:confirm];Destructive operations need confirmation;@prod;10
-admin_only;flow,backup,migration;admin[rwx];Admin-only dangerous operations;@prod,@dev;5
-dev_only;debug,trace,profile;dev[rwx];Development commands only;@dev;unlimited
+rule_type|patterns|permissions|description|environments|rate_limit
+whitelist|user,role,taxonomy,get,set|api[rwx]|Core API commands allowed|@prod,@dev|1000
+blacklist|server,debug,build|api[---]|Server commands blocked from API|@prod,@dev|0
+restricted|delete,remove,cleanup|api[rw-:confirm]|Destructive operations need confirmation|@prod|10
+admin_only|flow,backup,migration|admin[rwx]|Admin-only dangerous operations|@prod,@dev|5
+dev_only|debug,trace,profile|dev[rwx]|Development commands only|@dev|unlimited
 
 # .reed/api_auth.matrix.csv - Token-based authentication
-token_type;pattern;permissions;expires_in;rate_limit;description
-bearer;api_*;user[r--],content[rw-];3600;100;Standard API access
-admin;admin_*;*[rwx];7200;1000;Full admin access
-readonly;ro_*;*[r--];;unlimited;Read-only access for monitoring
-service;svc_*;get[rwx],set[rw-];unlimited;10000;Service-to-service communication
+token_type|pattern|permissions|expires_in|rate_limit|description
+bearer|api_*|user[r--],content[rw-]|3600|100|Standard API access
+admin|admin_*|*[rwx]|7200|1000|Full admin access
+readonly|ro_*|*[r--]||unlimited|Read-only access for monitoring
+service|svc_*|get[rwx],set[rw-]|unlimited|10000|Service-to-service communication
 ```
 
 **Advanced Security Features**:
@@ -1565,13 +1715,13 @@ layouts/knowledge/actix-web/actix-web.text.csv
 **To centralised ReedCMS data**:
 ```csv
 # .reed/text.csv
-key;value;comment
-page-header.logo.title@de;vvoss;Page header logo title
-page-header.logo.title@en;vvoss;Page header logo title
-landing-hero.title@de;Willkommen;Landing hero title
-landing-hero.subtitle@de;Digitale Lösungen;Landing hero subtitle
-knowledge.page.title@de;Wissen;Knowledge main page title
-actix-web.page.title@de;Actix-Web Framework;Knowledge sub-page title
+key|value|comment
+page-header.logo.title@de|vvoss|Page header logo title
+page-header.logo.title@en|vvoss|Page header logo title
+landing-hero.title@de|Willkommen|Landing hero title
+landing-hero.subtitle@de|Digitale Lösungen|Landing hero subtitle
+knowledge.page.title@de|Wissen|Knowledge main page title
+actix-web.page.title@de|Actix-Web Framework|Knowledge sub-page title
 ```
 
 ### Backward Compatibility
@@ -1652,10 +1802,10 @@ server {
 
 # ReedCMS server configuration
 # .reed/server.csv
-service;bind_type;bind_address;socket_path;permissions;user;group
-api;unix;/var/run/reedcms/api.sock;;660;reedcms;www-data
-web;unix;/var/run/reedcms/web.sock;;660;reedcms;www-data
-monitor;tcp;127.0.0.1:9090;;;reedcms;reedcms
+service|bind_type|bind_address|socket_path|permissions|user|group
+api|unix|/var/run/reedcms/api.sock||660|reedcms|www-data
+web|unix|/var/run/reedcms/web.sock||660|reedcms|www-data
+monitor|tcp|127.0.0.1:9090|||reedcms|reedcms
 ```
 
 **Unix Socket Features**:

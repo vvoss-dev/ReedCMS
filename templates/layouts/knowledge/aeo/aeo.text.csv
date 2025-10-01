@@ -1,0 +1,63 @@
+key|value|comment
+aeo.title@de|AEO|Content text for de locale
+aeo.title@en|AEO|Content text for en locale
+aeo.category.label@de|Kategorie|Content text for de locale
+aeo.category.label@en|Category|Content text for en locale
+aeo.category.value@de|Optimierungsstrategie|Content text for de locale
+aeo.category.value@en|Optimization Strategy|Content text for en locale
+aeo.stable.label@de|Status|Content text for de locale
+aeo.stable.label@en|Status|Content text for en locale
+aeo.stable.value@de|Wachsend|Content text for de locale
+aeo.stable.value@en|Growing|Content text for en locale
+aeo.creator.label@de|Entstanden|Content text for de locale
+aeo.creator.label@en|Emerged|Content text for en locale
+aeo.creator.value@de|2020 (Featured Snippets)|Content text for de locale
+aeo.creator.value@en|2020 (Featured Snippets)|Content text for en locale
+aeo.project.label@de|Teil von|Content text for de locale
+aeo.project.label@en|Part of|Content text for en locale
+aeo.project.value@de|"<a href=""{{ 'knowledge.ai-visibility' | route(lang='auto') }}"" class=""link"">AI Visibility</a>"|Content text for de locale
+aeo.project.value@en|"<a href=""{{ 'knowledge.ai-visibility' | route(lang='auto') }}"" class=""link"">AI Visibility</a>"|Content text for en locale
+aeo.description@de|"AEO fokussiert darauf, Inhalte so zu strukturieren, dass sie von KI-Systemen als direkte Antworten ausgewählt werden. Besonders wichtig für Featured Snippets, Sprachsuchen und Google AI Overviews. Die Strategie: Frage-basierte Struktur (""Was ist...?"", ""Wie funktioniert...?""), FAQ- und How-To-Schema-Markup, kurze klare Absätze und Listenformate. Stand Q3 2025: 84% der Google-Suchen zeigen bereits KI-Overviews, Featured Snippets machen 35% der Klicks aus. AEO ist der erste Schritt weg vom traditionellen SEO."|Content text for de locale
+aeo.description@en|"AEO focuses on structuring content to be selected by AI systems as direct answers. Especially important for featured snippets, voice searches, and Google AI Overviews. The strategy: Question-based structure (""What is...?"", ""How does...?""), FAQ and How-To schema markup, short clear paragraphs and list formats. As of Q3 2025: 84% of Google searches already show AI overviews, featured snippets account for 35% of clicks. AEO is the first step away from traditional SEO."|Content text for en locale
+aeo.enterprise@de|Die praktische Umsetzung erfordert radikales Umdenken: Weg von Keyword-Density, hin zu präzisen Antworten. Jeder Absatz muss eine spezifische Frage beantworten. Strukturierte Daten werden Pflicht, nicht Option. Unternehmen müssen ihre gesamte Content-Architektur überarbeiten. Der Aufwand ist enorm, aber die Alternative ist digitale Irrelevanz. AEO ist nur der Einstieg - die wahre Schlacht findet in KI-Chats statt, wo Nutzer gar keine Suchergebnisseiten mehr sehen.|Content text for de locale
+aeo.enterprise@en|Practical implementation requires radical rethinking: Away from keyword density, towards precise answers. Every paragraph must answer a specific question. Structured data becomes mandatory, not optional. Companies must overhaul their entire content architecture. The effort is enormous, but the alternative is digital irrelevance. AEO is just the entry point - the real battle happens in AI chats, where users don't even see search result pages anymore.|Content text for en locale
+aeo.syntax.label@de|Techniken|Content text for de locale
+aeo.syntax.label@en|Techniques|Content text for en locale
+aeo.syntax.value@de|FAQ-Schema, How-To-Markup, Q&A-Format|Content text for de locale
+aeo.syntax.value@en|FAQ Schema, How-To Markup, Q&A Format|Content text for en locale
+aeo.security.label@de|Messbarkeit|Content text for de locale
+aeo.security.label@en|Measurability|Content text for en locale
+aeo.security.value@de|Featured Snippet Tracking möglich|Content text for de locale
+aeo.security.value@en|Featured snippet tracking possible|Content text for en locale
+aeo.performance.label@de|Erfolgsrate|Content text for de locale
+aeo.performance.label@en|Success Rate|Content text for en locale
+aeo.performance.value@de|15-30% bei richtiger Implementierung|Content text for de locale
+aeo.performance.value@en|15-30% with proper implementation|Content text for en locale
+aeo.compare.title@de|Bewertung|Content text for de locale
+aeo.compare.title@en|Assessment|Content text for en locale
+aeo.compare.subtitle@de|Praktische Einschätzung der Methode|Content text for de locale
+aeo.compare.subtitle@en|Practical assessment of the method|Content text for en locale
+aeo.cons.title@de|Nachteile|Content text for de locale
+aeo.cons.title@en|Disadvantages|Content text for en locale
+aeo.cons.1@de|Komplette Content-Umstrukturierung nötig|Content text for de locale
+aeo.cons.1@en|Complete content restructuring needed|Content text for en locale
+aeo.cons.2@de|Keine Garantie für Featured Snippets|Content text for de locale
+aeo.cons.2@en|No guarantee for featured snippets|Content text for en locale
+aeo.cons.3@de|Google ändert Kriterien ständig|Content text for de locale
+aeo.cons.3@en|Google constantly changes criteria|Content text for en locale
+aeo.cons.4@de|Sehr technische Implementierung|Content text for de locale
+aeo.cons.4@en|Very technical implementation|Content text for en locale
+aeo.cons.5@de|Hohe initiale Investition|Content text for de locale
+aeo.cons.5@en|High initial investment|Content text for en locale
+aeo.pros.title@de|Vorteile|Content text for de locale
+aeo.pros.title@en|Advantages|Content text for en locale
+aeo.pros.1@de|Position Zero erreichbar|Content text for de locale
+aeo.pros.1@en|Position Zero achievable|Content text for en locale
+aeo.pros.2@de|Perfekt für Sprachsuchen|Content text for de locale
+aeo.pros.2@en|Perfect for voice searches|Content text for en locale
+aeo.pros.3@de|Höhere Click-Through-Rate|Content text for de locale
+aeo.pros.3@en|Higher click-through rate|Content text for en locale
+aeo.pros.4@de|Zukunftssicherer als SEO|Content text for de locale
+aeo.pros.4@en|More future-proof than SEO|Content text for en locale
+aeo.pros.5@de|Messbare Ergebnisse|Content text for de locale
+aeo.pros.5@en|Measurable results|Content text for en locale

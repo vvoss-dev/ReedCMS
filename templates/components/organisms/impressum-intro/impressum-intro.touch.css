@@ -1,0 +1,60 @@
+/* Copyright (c) 2025 Vivian Voss - All rights reserved */
+/* Impressum Intro Organism - Touch interaction styles */
+
+@layer touch {
+  .section.intro {
+    --section-padding-x: var(--space-2);
+    --section-padding-y: var(--space-2);
+  }
+
+  .section.intro .separator {
+    height: 1px;
+    background: var(--color-border);
+    margin: var(--space-2) 0;
+  }
+
+  .section.intro h1 {
+    color: var(--color-primary);
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+  }
+
+  .section.intro h2 {
+    color: var(--color-text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+  }
+
+  .section.intro h3 {
+    color: var(--color-text-secondary);
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: var(--space-1);
+    margin-top: var(--space-2);
+  }
+
+  .section.intro p {
+    line-height: 1.6;
+    margin-bottom: var(--space-1);
+    font-size: 0.95rem;
+  }
+
+  .section.intro .touch-target {
+    color: var(--color-link);
+    text-decoration: none;
+    padding: var(--space-1);
+    margin: calc(-1 * var(--space-1));
+    border-radius: var(--border-radius-sm);
+    transition: background-color 0.2s ease;
+    display: inline-block;
+    min-height: 44px;
+    line-height: 1.4;
+  }
+
+  .section.intro .touch-target:hover,
+  .section.intro .touch-target:focus {
+    background: var(--color-surface-elevated);
+  }
+}

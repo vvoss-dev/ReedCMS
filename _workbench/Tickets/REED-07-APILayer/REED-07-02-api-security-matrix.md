@@ -38,17 +38,17 @@ Implement comprehensive API security system with permission-based access control
 ### Security Matrix (.reed/api.security.csv)
 
 ```csv
-resource;operation;required_permission;required_role;rate_limit
-text;read;text.read;user;100/min
-text;write;text.write;editor;50/min
-route;read;route.read;user;100/min
-route;write;route.write;admin;20/min
-meta;read;meta.read;user;100/min
-meta;write;meta.write;admin;20/min
-config;read;config.read;admin;50/min
-config;write;config.write;admin;10/min
-batch;read;batch.read;user;10/min
-batch;write;batch.write;editor;5/min
+resource|operation|required_permission|required_role|rate_limit
+text|read|text.read|user|100/min
+text|write|text.write|editor|50/min
+route|read|route.read|user|100/min
+route|write|route.write|admin|20/min
+meta|read|meta.read|user|100/min
+meta|write|meta.write|admin|20/min
+config|read|config.read|admin|50/min
+config|write|config.write|admin|10/min
+batch|read|batch.read|user|10/min
+batch|write|batch.write|editor|5/min
 ```
 
 ### Implementation (`src/reedcms/api/security/matrix.rs`)

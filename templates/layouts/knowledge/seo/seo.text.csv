@@ -1,0 +1,59 @@
+key|value|comment
+seo.title@de|SEO|Content text for de locale
+seo.title@en|SEO|Content text for en locale
+seo.category.label@de|Kategorie|Content text for de locale
+seo.category.label@en|Category|Content text for en locale
+seo.category.value@de|Marketing-Konzept|Content text for de locale
+seo.category.value@en|Marketing Concept|Content text for en locale
+seo.stable.label@de|Status|Content text for de locale
+seo.stable.label@en|Status|Content text for en locale
+seo.stable.value@de|Am Sterben|Content text for de locale
+seo.stable.value@en|Dying|Content text for en locale
+seo.creator.label@de|Begründer|Content text for de locale
+seo.creator.label@en|Founder|Content text for en locale
+seo.creator.value@de|Google PageRank (1996)|Content text for de locale
+seo.creator.value@en|Google PageRank (1996)|Content text for en locale
+seo.project.label@de|Nachfolger|Content text for de locale
+seo.project.label@en|Successor|Content text for en locale
+seo.project.value@de|"<a href=""#"" class=""link"">AI-Antwort-Optimierung</a>"|Content text for de locale
+seo.project.value@en|"<a href=""#"" class=""link"">AI Answer Optimization</a>"|Content text for en locale
+seo.description@de|Traditionelles SEO stirbt. Die Ära des Keyword-Stuffings und Link-Farmings endet. Stand Q3 2025: 84% der Google-Suchen zeigen bereits KI-gestützte Overviews. Die Zukunft gehört AEO (Answer Engine Optimization): Inhalte werden für Featured Snippets und direkte KI-Antworten strukturiert - mit FAQ-Schema, klaren Absätzen und Frage-basierten Formaten. Parallel dazu entsteht GEO (Generative Engine Optimization): Die Optimierung dafür, dass ChatGPT, Claude und andere KIs deine Inhalte als vertrauenswürdige Quelle zitieren. Der Rich-get-Richer-Effekt verstärkt sich - wer jetzt nicht handelt, wird unsichtbar.|Content text for de locale
+seo.description@en|Traditional SEO is dying. The era of keyword stuffing and link farming is ending. As of Q3 2025: 84% of Google searches already show AI-powered overviews. The future belongs to AEO (Answer Engine Optimization): Content structured for featured snippets and direct AI answers - with FAQ schema, clear paragraphs and question-based formats. Simultaneously, GEO (Generative Engine Optimization) emerges: Optimizing for ChatGPT, Claude and other AIs to cite your content as a trusted source. The rich-get-richer effect intensifies - those who don't act now will become invisible.|Content text for en locale
+seo.enterprise@de|Die SEO-Industrie mit ihrem Milliardenmarkt an Beratern, Tools und Agenturen steht vor dem Kollaps. Unternehmen, die weiterhin in traditionelles SEO investieren, verschwenden Ressourcen. Die Zukunft heißt AI Visibility: Die Sichtbarkeit in KI-gestützten Plattformen wie ChatGPT, Claude, Gemini oder Perplexity - und in KI-Browsern wie Comet, die Webseiten in Echtzeit zusammenfassen und umschreiben. AI Visibility umfasst AEO (Answer Engine Optimization) und GEO (Generative Engine Optimization) - die Optimierung dafür, wie KI-Systeme Inhalte interpretieren und in ihre Antworten integrieren. Die Gewinner werden jene sein, die ihre Autorität in AI-Trainingsdaten etablieren.|Content text for de locale
+seo.enterprise@en|The SEO industry with its billion-dollar market of consultants, tools, and agencies faces collapse. Companies continuing to invest in traditional SEO are wasting resources. The future is AI Visibility: Being visible in AI-powered platforms like ChatGPT, Claude, Gemini, or Perplexity - and in AI browsers like Comet that summarize and rewrite websites in real-time. AI Visibility encompasses AEO (Answer Engine Optimization) and GEO (Generative Engine Optimization) - optimizing for how AI systems interpret content and integrate it into their answers. The winners will be those who establish their authority in AI training data.|Content text for en locale
+seo.syntax.label@de|Methodik|Content text for de locale
+seo.syntax.label@en|Methodology|Content text for en locale
+seo.syntax.value@de|Keywords, Backlinks, Meta-Tags (veraltet)|Content text for de locale
+seo.syntax.value@en|Keywords, Backlinks, Meta Tags (obsolete)|Content text for en locale
+seo.security.label@de|Manipulationsrisiko|Content text for de locale
+seo.security.label@en|Manipulation Risk|Content text for en locale
+seo.security.value@de|Extrem hoch (Black Hat SEO)|Content text for de locale
+seo.security.value@en|Extremely high (Black Hat SEO)|Content text for en locale
+seo.performance.label@de|ROI|Content text for de locale
+seo.performance.label@en|ROI|Content text for en locale
+seo.performance.value@de|Rapide sinkend|Content text for de locale
+seo.performance.value@en|Rapidly declining|Content text for en locale
+seo.cons.title@de|Nachteile traditionelles SEO|Content text for de locale
+seo.cons.title@en|Traditional SEO Disadvantages|Content text for en locale
+seo.cons.1@de|Google zeigt Antworten direkt, keine Klicks mehr|Content text for de locale
+seo.cons.1@en|Google shows answers directly, no more clicks|Content text for en locale
+seo.cons.2@de|AI-Systeme ignorieren SEO-Tricks komplett|Content text for de locale
+seo.cons.2@en|AI systems completely ignore SEO tricks|Content text for en locale
+seo.cons.3@de|Ranking-Algorithmen ändern sich ständig|Content text for de locale
+seo.cons.3@en|Ranking algorithms constantly changing|Content text for en locale
+seo.cons.4@de|Massive Konkurrenz um gleiche Keywords|Content text for de locale
+seo.cons.4@en|Massive competition for same keywords|Content text for en locale
+seo.cons.5@de|Zero-Click-Searches dominieren bereits|Content text for de locale
+seo.cons.5@en|Zero-click searches already dominate|Content text for en locale
+seo.pros.title@de|Vorteile AI-Optimierung|Content text for de locale
+seo.pros.title@en|AI Optimization Advantages|Content text for en locale
+seo.pros.1@de|Expertise wird direkt belohnt|Content text for de locale
+seo.pros.1@en|Expertise directly rewarded|Content text for en locale
+seo.pros.2@de|Qualität schlägt Quantität|Content text for de locale
+seo.pros.2@en|Quality beats quantity|Content text for en locale
+seo.pros.3@de|Langfristige Autorität aufbaubar|Content text for de locale
+seo.pros.3@en|Long-term authority buildable|Content text for en locale
+seo.pros.4@de|Weniger Manipulation möglich|Content text for de locale
+seo.pros.4@en|Less manipulation possible|Content text for en locale
+seo.pros.5@de|Direkte Integration in AI-Antworten|Content text for de locale
+seo.pros.5@en|Direct integration in AI answers|Content text for en locale

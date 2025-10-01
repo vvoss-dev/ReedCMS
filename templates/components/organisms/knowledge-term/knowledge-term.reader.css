@@ -1,0 +1,83 @@
+/* Knowledge Term Organism - Reader/Screen reader mode */
+/* Optimized for accessibility and high contrast */
+
+@layer reader {
+    /* Enhanced contrast and accessibility */
+    .section.compare {
+        /* High contrast border for section separation */
+        border: 2px solid var(--color-border-strong);
+        margin: 2rem 0;
+    }
+
+    .compare-column {
+        /* Clear visual separation and high contrast */
+        border: 2px solid var(--color-border-default);
+        margin-bottom: 2rem;
+    }
+
+    .compare-column.no {
+        /* Strong visual indication for disadvantages */
+        border-left: 5px solid var(--color-warning-strong);
+        background-color: var(--color-warning-bg);
+    }
+
+    .compare-column.yes {
+        /* Strong visual indication for advantages */
+        border-left: 5px solid var(--color-success-strong);
+        background-color: var(--color-success-bg);
+    }
+
+    .compare-column h3 {
+        /* High contrast headings */
+        color: var(--color-text-high-contrast);
+        font-weight: bold;
+        font-size: 1.4rem;
+    }
+
+    .compare-list li {
+        /* Enhanced readability for screen readers */
+        padding: 1rem;
+        margin-bottom: 1rem;
+        line-height: 1.8;
+        font-size: 1.1rem;
+        color: var(--color-text-high-contrast);
+    }
+
+    /* Impressum accessibility enhancements */
+    .impressum .column h2 {
+        /* Screen reader friendly headings */
+        color: var(--color-text-high-contrast);
+        font-size: 1.6rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .impressum .column h3 {
+        /* Clear hierarchy for screen readers */
+        color: var(--color-text-high-contrast);
+        font-size: 1.3rem;
+        margin: 2rem 0 1rem 0;
+        font-weight: bold;
+    }
+
+    /* Technical metadata with enhanced structure */
+    .impressum .column p strong {
+        /* Clear emphasis for screen readers */
+        font-weight: bold;
+        color: var(--color-text-high-contrast);
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .impressum .column p {
+        /* Enhanced readability */
+        line-height: 1.8;
+        color: var(--color-text-high-contrast);
+    }
+
+    /* Focus indicators for keyboard navigation */
+    .compare-column:focus,
+    .compare-list li:focus {
+        outline: 3px solid var(--color-focus);
+        outline-offset: 2px;
+    }
+}

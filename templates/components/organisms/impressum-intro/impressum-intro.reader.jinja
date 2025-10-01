@@ -1,0 +1,39 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Impressum intro section - Reader/Bot mode #}
+
+<section class="section intro" role="contentinfo">
+    <article>
+        <h1>{{ 'IMPRESSUM_TITLE' | text('auto') }}</h1>
+
+        <section>
+            <h2>{{ 'IMPRESSUM_RESPONSIBLE_TITLE' | text('auto') }}</h2>
+            <address>
+                {{ 'IMPRESSUM_RESPONSIBLE_NAME' | text('auto') }}<br>
+                {{ 'IMPRESSUM_RESPONSIBLE_STREET' | text('auto') }}<br>
+                {{ 'IMPRESSUM_RESPONSIBLE_CITY' | text('auto') }}<br>
+                {{ 'IMPRESSUM_RESPONSIBLE_COUNTRY' | text('auto') }}
+            </address>
+        </section>
+
+        <section>
+            <h2>{{ 'IMPRESSUM_CONTACT_TITLE' | text('auto') }}</h2>
+            <dl>
+                <dt>{{ 'IMPRESSUM_CONTACT_EMAIL_LABEL' | text('auto') }}</dt>
+                <dd><a href="mailto:{{ 'IMPRESSUM_CONTACT_EMAIL_VALUE' | text('auto') }}">{{ 'IMPRESSUM_CONTACT_EMAIL_VALUE' | text('auto') }}</a></dd>
+
+                <dt>{{ 'IMPRESSUM_CONTACT_WEB_LABEL' | text('auto') }}</dt>
+                <dd><a href="https://vvoss.dev">vvoss.dev</a></dd>
+            </dl>
+        </section>
+
+        <section>
+            <h2>{{ 'IMPRESSUM_LEGAL_TITLE' | text('auto') }}</h2>
+            <p>{{ 'IMPRESSUM_LEGAL_DISCLAIMER' | text('auto') }}</p>
+        </section>
+
+        <section>
+            <h2>{{ 'IMPRESSUM_PRIVACY_TITLE' | text('auto') }}</h2>
+            <p>{{ 'IMPRESSUM_PRIVACY_TEXT' | text('auto') }}</p>
+        </section>
+    </article>
+</section>

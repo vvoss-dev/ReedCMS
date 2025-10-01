@@ -1,0 +1,27 @@
+key|value|comment
+page-footer.tech.description@de|Minimalistisch, schnell und ohne JavaScript-Bloat. Gebaut für Leistung und Lesbarkeit|Footer tech description
+page-footer.tech.description@en|Minimalist, fast and without JavaScript bloat. Built for performance and readability|Footer tech description
+page-footer.copyright.text@de|Alle Rechte vorbehalten|Copyright text part (after name)
+page-footer.copyright.text@en|All rights reserved|Copyright text part (after name)
+page-footer.impressum@de|Impressum|Impressum link text
+page-footer.impressum@en|Imprint|Impressum link text
+page-footer.email@de|hello@vvoss.dev|Contact email
+page-footer.email@en|hello@vvoss.dev|Contact email
+page-footer.contact@de|Kontakt|Contact link text
+page-footer.contact@en|Contact|Contact link text
+page-footer.dev.info.title@de|Client Info|Dev mode debug info title
+page-footer.dev.info.title@en|Client Info|Dev mode debug info title
+page-footer.dev.language@de|Sprache|Dev mode language label
+page-footer.dev.language@en|Language|Dev mode language label
+page-footer.dev.device@de|Gerät|Dev mode device label
+page-footer.dev.device@en|Device|Dev mode device label
+page-footer.dev.breakpoint@de|Breakpoint|Dev mode breakpoint label
+page-footer.dev.breakpoint@en|Breakpoint|Dev mode breakpoint label
+page-footer.dev.mode@de|Modus|Dev mode interaction label
+page-footer.dev.mode@en|Mode|Dev mode interaction label
+page-footer.dev.screen@de|Bildschirm|Dev mode screen label
+page-footer.dev.screen@en|Screen|Dev mode screen label
+page-footer.dev.viewport@de|Viewport|Dev mode viewport label
+page-footer.dev.viewport@en|Viewport|Dev mode viewport label
+page-footer.dev.dpr@de|DPR|Dev mode device pixel ratio label
+page-footer.dev.dpr@en|DPR|Dev mode device pixel ratio label

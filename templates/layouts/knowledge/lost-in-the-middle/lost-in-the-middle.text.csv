@@ -1,0 +1,63 @@
+key|value|comment
+lost.in.the.middle.title@de|Lost in the Middle|Content text for de locale
+lost.in.the.middle.title@en|Lost in the Middle|Content text for en locale
+lost.in.the.middle.category.label@de|Kategorie|Content text for de locale
+lost.in.the.middle.category.label@en|Category|Content text for en locale
+lost.in.the.middle.category.value@de|KI-Limitation|Content text for de locale
+lost.in.the.middle.category.value@en|AI Limitation|Content text for en locale
+lost.in.the.middle.stable.label@de|Status|Content text for de locale
+lost.in.the.middle.stable.label@en|Status|Content text for en locale
+lost.in.the.middle.stable.value@de|Bestätigt|Content text for de locale
+lost.in.the.middle.stable.value@en|Confirmed|Content text for en locale
+lost.in.the.middle.creator.label@de|Entdeckt von|Content text for de locale
+lost.in.the.middle.creator.label@en|Discovered by|Content text for en locale
+lost.in.the.middle.creator.value@de|Stanford (2023)|Content text for de locale
+lost.in.the.middle.creator.value@en|Stanford (2023)|Content text for en locale
+lost.in.the.middle.project.label@de|Betrifft|Content text for de locale
+lost.in.the.middle.project.label@en|Affects|Content text for en locale
+lost.in.the.middle.project.value@de|Alle LLMs|Content text for de locale
+lost.in.the.middle.project.value@en|All LLMs|Content text for en locale
+lost.in.the.middle.description@de|Lost in the Middle ist das Phänomen, dass Large Language Models (LLMs) Informationen in der Mitte langer Kontexte schlechter verarbeiten als am Anfang oder Ende. Studien zeigen: Bei 128k Token Kontext sinkt die Retrieval-Genauigkeit in der Mitte auf unter 20%. Das betrifft alle modernen KIs - GPT-4, Claude, Gemini. Die U-förmige Aufmerksamkeitskurve ist universal. Kritische Informationen gehören ans Ende oder den Anfang, niemals in die Mitte.|Content text for de locale
+lost.in.the.middle.description@en|Lost in the Middle is the phenomenon where Large Language Models (LLMs) process information in the middle of long contexts worse than at the beginning or end. Studies show: With 128k token context, retrieval accuracy in the middle drops below 20%. This affects all modern AIs - GPT-4, Claude, Gemini. The U-shaped attention curve is universal. Critical information belongs at the end or beginning, never in the middle.|Content text for en locale
+lost.in.the.middle.enterprise@de|Die Implikationen sind massiv: Lange Dokumentationen, umfangreiche Prompts und Context-Stuffing funktionieren nicht wie erwartet. Unternehmen, die KI-Systeme mit riesigen Kontexten füttern, verschenken Genauigkeit. Die Lösung: Strukturierung in kleinere Chunks, wichtigste Informationen ans Ende, iterative Verarbeitung statt Mega-Prompts. Wer das ignoriert, erhält unzuverlässige KI-Outputs. Die 200k-Token-Versprechen der Anbieter sind Marketing-Bluff.|Content text for de locale
+lost.in.the.middle.enterprise@en|The implications are massive: Long documentation, extensive prompts, and context stuffing don't work as expected. Companies feeding AI systems with huge contexts are sacrificing accuracy. The solution: Structure into smaller chunks, most important information at the end, iterative processing instead of mega-prompts. Those who ignore this get unreliable AI outputs. The 200k token promises from providers are marketing bluff.|Content text for en locale
+lost.in.the.middle.syntax.label@de|Betroffener Bereich|Content text for de locale
+lost.in.the.middle.syntax.label@en|Affected Range|Content text for en locale
+lost.in.the.middle.syntax.value@de|20-80% des Kontexts|Content text for de locale
+lost.in.the.middle.syntax.value@en|20-80% of context|Content text for en locale
+lost.in.the.middle.security.label@de|Schweregrad|Content text for de locale
+lost.in.the.middle.security.label@en|Severity|Content text for en locale
+lost.in.the.middle.security.value@de|Kritisch für lange Dokumente|Content text for de locale
+lost.in.the.middle.security.value@en|Critical for long documents|Content text for en locale
+lost.in.the.middle.performance.label@de|Performance-Verlust|Content text for de locale
+lost.in.the.middle.performance.label@en|Performance Loss|Content text for en locale
+lost.in.the.middle.performance.value@de|Bis zu 80% Genauigkeitsverlust|Content text for de locale
+lost.in.the.middle.performance.value@en|Up to 80% accuracy loss|Content text for en locale
+lost.in.the.middle.compare.title@de|Bewertung|Content text for de locale
+lost.in.the.middle.compare.title@en|Assessment|Content text for en locale
+lost.in.the.middle.compare.subtitle@de|Praktische Auswirkungen verstehen|Content text for de locale
+lost.in.the.middle.compare.subtitle@en|Understanding practical impacts|Content text for en locale
+lost.in.the.middle.cons.title@de|Probleme|Content text for de locale
+lost.in.the.middle.cons.title@en|Problems|Content text for en locale
+lost.in.the.middle.cons.1@de|Lange Kontexte sind unzuverlässig|Content text for de locale
+lost.in.the.middle.cons.1@en|Long contexts are unreliable|Content text for en locale
+lost.in.the.middle.cons.2@de|Marketing-Versprechen sind irreführend|Content text for de locale
+lost.in.the.middle.cons.2@en|Marketing promises are misleading|Content text for en locale
+lost.in.the.middle.cons.3@de|Keine Lösung in Sicht|Content text for de locale
+lost.in.the.middle.cons.3@en|No solution in sight|Content text for en locale
+lost.in.the.middle.cons.4@de|Betrifft alle Modelle|Content text for de locale
+lost.in.the.middle.cons.4@en|Affects all models|Content text for en locale
+lost.in.the.middle.cons.5@de|Verschlechtert sich mit Kontextlänge|Content text for de locale
+lost.in.the.middle.cons.5@en|Worsens with context length|Content text for en locale
+lost.in.the.middle.pros.title@de|Workarounds|Content text for de locale
+lost.in.the.middle.pros.title@en|Workarounds|Content text for en locale
+lost.in.the.middle.pros.1@de|Wichtiges ans Ende platzieren|Content text for de locale
+lost.in.the.middle.pros.1@en|Place important at the end|Content text for en locale
+lost.in.the.middle.pros.2@de|Kleinere Chunks verwenden|Content text for de locale
+lost.in.the.middle.pros.2@en|Use smaller chunks|Content text for en locale
+lost.in.the.middle.pros.3@de|Iterative Verarbeitung|Content text for de locale
+lost.in.the.middle.pros.3@en|Iterative processing|Content text for en locale
+lost.in.the.middle.pros.4@de|Redundanz einbauen|Content text for de locale
+lost.in.the.middle.pros.4@en|Build in redundancy|Content text for en locale
+lost.in.the.middle.pros.5@de|Zusammenfassungen nutzen|Content text for de locale
+lost.in.the.middle.pros.5@en|Use summaries|Content text for en locale

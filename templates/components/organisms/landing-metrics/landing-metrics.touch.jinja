@@ -1,0 +1,33 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Landing Metrics Organism - Touch interaction mode #}
+
+{% set items = ["1", "2", "3"] %}
+
+<section class="section metrics padding-y-2 padding-x-1">
+    <article class="breakbox grid-1">
+        <div class="section-header padding-left-2 margin-bottom-1">
+            <h2>{{ 'LANDING_METRICS_TITLE' | text('auto') }}</h2>
+            <p class="description">{{ 'LANDING_METRICS_SUBTITLE' | text('auto') }}</p>
+        </div>
+
+        {# Touch mode typically has phone/tablet breakpoints #}
+        {% set grid_classes = "grid-1 gap-y-3" %}
+
+        {% if client.breakpoint == "tablet" %}
+            {% set grid_classes = "grid-3 gap-x-1" %}
+        {% endif %}
+
+        <div class="metrics-grid {{ grid_classes }}">
+            {% for item_num in items %}
+                {% set number_key = "LANDING_METRICS_ITEM" ~ item_num ~ "_NUMBER" %}
+                {% set label_key = "LANDING_METRICS_ITEM" ~ item_num ~ "_LABEL" %}
+                {% set desc_key = "LANDING_METRICS_ITEM" ~ item_num ~ "_DESCRIPTION" %}
+                <div class="metric-item grid-1 gap-y-1">
+                    <div class="metric-number">{{ number_key | text('auto') }}</div>
+                    <p class="metric-label">{{ label_key | text('auto') }}</p>
+                    <p class="metric-description">{{ desc_key | text('auto') }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </article>
+</section>

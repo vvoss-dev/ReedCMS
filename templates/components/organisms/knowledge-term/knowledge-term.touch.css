@@ -1,0 +1,59 @@
+/* Knowledge Term Organism - Touch interaction mode */
+/* Optimized for touch devices, larger touch targets */
+
+@layer touch {
+    /* Compare section optimizations for touch */
+    .section.compare {
+        /* Increased spacing for touch interaction */
+        padding: 2rem 1rem;
+    }
+
+    .compare-column {
+        /* Larger touch-friendly padding */
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        min-height: 200px;
+    }
+
+    .compare-column h3 {
+        /* Larger headings for touch readability */
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+
+    .compare-list li {
+        /* Touch-friendly list items */
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        min-height: 3rem;
+        line-height: 1.6;
+        font-size: 1.1rem;
+    }
+
+    /* Impressum layout adaptations for touch */
+    .impressum.grid-2 {
+        /* Single column on touch devices */
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .impressum .column h3 {
+        /* Larger technical headings for touch */
+        font-size: 1.3rem;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Technical metadata for touch readability */
+    .impressum .column p {
+        line-height: 1.7;
+        font-size: 1.05rem;
+    }
+
+    .impressum .column p strong {
+        display: block;
+        margin-bottom: 0.3rem;
+        color: var(--color-text-emphasis);
+    }
+}

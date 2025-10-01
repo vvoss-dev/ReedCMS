@@ -1,38 +1,38 @@
-ticket_id;title;layer;priority;status;complexity;depends_on;summary_reference;description
-REED-01-01;Foundation Communication System;Foundation;Critical;Open;High;;ReedStream (Line 589-731);Implement ReedStream universal communication interface with ReedRequest, ReedResponse, ReedResult, ReedError types and ReedModule trait
-REED-01-02;Foundation Error System;Foundation;Critical;Open;Medium;REED-01-01;ReedError Types (Line 602-624);Implement comprehensive ReedError enum with all error variants and conversion patterns
-REED-02-01;ReedBase Core Services;Data Layer;Critical;Open;High;REED-01-01,REED-01-02;ReedBase Dispatcher (Line 746-749);Implement ReedBase dispatcher with get/set/init operations and O(1) HashMap performance
-REED-02-02;CSV Handler System;Data Layer;Critical;Open;High;REED-01-01;CSV Handler Services (Line 973-976);Implement universal CSV reader/writer for .reed/ file management with atomic operations
-REED-02-03;Environment Fallback System;Data Layer;High;Open;Medium;REED-02-01;Environment Override (Line 537-542);Implement key@dev ’ key fallback logic with environment resolution
-REED-02-04;Backup System;Data Layer;High;Open;Medium;REED-02-02;XZ Backup System (Line 308-333);Implement automatic XZ compression backup before CSV modifications with 32-backup retention
-REED-03-01;User Management System;Security Layer;High;Open;High;REED-02-01,REED-02-02;Users Matrix CSV (Line 360-378);Implement user management with Argon2 password hashing and extended profile data
-REED-03-02;Role Permission System;Security Layer;High;Open;High;REED-03-01;Roles Matrix CSV (Line 367-396);Implement role-based permissions with Unix-style syntax and inheritance with circular detection
-REED-03-03;Taxonomy System;Security Layer;Medium;Open;High;REED-02-01,REED-02-02;Universal Taxonomy (Line 399-450);Implement hierarchical taxonomy system with universal entity tagging and usage analytics
-REED-04-01;CLI Command Foundation;CLI Layer;Critical;Open;High;REED-01-01;CLI Architecture (Line 1032-1111);Implement CLI command parser with colon notation and command routing system
-REED-04-02;CLI Data Commands;CLI Layer;High;Open;Medium;REED-04-01,REED-02-01;CLI Data Management (Line 1042-1050);Implement set:text, set:route, set:meta, get:text, get:route, list:text commands
-REED-04-03;CLI Layout Commands;CLI Layer;High;Open;High;REED-04-01,REED-02-01;Layout Management (Line 1052-1055);Implement init:layout with interactive prompts, preset support and registry management
-REED-04-04;CLI User Commands;CLI Layer;Medium;Open;Medium;REED-04-01,REED-03-01,REED-03-02;User Management CLI (Line 1082-1090);Implement user:create, user:list, user:update, user:delete, user:passwd, user:roles commands
-REED-04-05;CLI Role Commands;CLI Layer;Medium;Open;Medium;REED-04-01,REED-03-02;Role Management CLI (Line 1091-1098);Implement role:create, role:list, role:update, role:delete, role:permissions commands
-REED-04-06;CLI Taxonomy Commands;CLI Layer;Medium;Open;Medium;REED-04-01,REED-03-03;Taxonomy CLI (Line 1099-1109);Implement taxonomy:create, taxonomy:list, taxonomy:search, taxonomy:assign commands
-REED-04-07;CLI Migration Commands;CLI Layer;Medium;Open;Medium;REED-04-01,REED-02-01;Migration Commands (Line 1056-1059);Implement migrate:text and validate:routes commands for bulk operations
-REED-04-08;CLI Build Commands;CLI Layer;Medium;Open;High;REED-04-01;Build System CLI (Line 1063-1067);Implement build:kernel, build:public, build:complete, build:watch commands
-REED-04-09;CLI Server Commands;CLI Layer;High;Open;Medium;REED-04-01;Server Management CLI (Line 1068-1076);Implement server:io, server:start, server:stop, server:restart, server:status, server:logs commands
-REED-05-01;Template Filter System;Template Layer;High;Open;High;REED-02-01;Template Filters (Line 1256-1289);Implement MiniJinja filters for text, route, meta, config with type-specific access
-REED-05-02;Template Engine Setup;Template Layer;High;Open;Medium;REED-05-01;MiniJinja Setup (Line 992-995);Implement MiniJinja environment configuration with template loader and hot-reload
-REED-05-03;Template Context Builder;Template Layer;Medium;Open;Medium;REED-05-01,REED-02-01;Context Builder (Line 994);Implement template context building with ReedBase data integration
-REED-06-01;Server Foundation;Server Layer;Critical;Open;High;REED-01-01;Server Services (Line 964-966);Implement Actix-Web HTTP server with socket support and request handling
-REED-06-02;Routing System;Server Layer;High;Open;High;REED-06-01,REED-02-01;Request Router (Line 987-990);Implement URL ’ Layout + Language resolution via .reed/routes.csv
-REED-06-03;Authentication Middleware;Server Layer;High;Open;Medium;REED-06-01,REED-03-01;Authentication (Line 978);Implement HTTP Basic Auth validation with user verification
-REED-06-04;Response Builder;Server Layer;Medium;Open;Medium;REED-06-01,REED-05-02;Response Builder (Line 1002-1008);Implement HTML generation with headers, cache control, security headers
-REED-07-01;ReedAPI HTTP Interface;API Layer;Medium;Open;High;REED-06-01,REED-04-01;ReedAPI Layer (Line 875-954);Implement single-endpoint API with CLI command execution bridge
-REED-07-02;API Security Matrix;API Layer;Medium;Open;Medium;REED-07-01,REED-03-02;API Security (Line 890-933);Implement command validation, token authentication, rate limiting via api.matrix.csv
-REED-08-01;CSS Bundler;Asset Layer;Medium;Open;Medium;REED-02-01;CSS Bundler (Line 998);Implement CSS compilation per session hash with component discovery
-REED-08-02;JS Bundler;Asset Layer;Low;Open;Medium;REED-08-01;JS Bundler (Line 999);Implement JavaScript bundling service with component asset discovery
-REED-08-03;Static File Server;Asset Layer;Medium;Open;Low;REED-06-01;Static Files (Line 1001);Implement static file serving with cache headers
-REED-09-01;Binary Compiler;Build Layer;High;Open;High;REED-04-08;Binary Compiler (Line 1010);Implement ReedCMS binary compilation with cargo integration
-REED-09-02;Asset Pipeline;Build Layer;Medium;Open;Medium;REED-08-01,REED-08-02,REED-09-01;Asset Pipeline (Line 1011);Implement asset pipeline integration for CSS/JS bundling during build
-REED-09-03;File Watcher;Build Layer;Medium;Open;Medium;REED-09-01;File Watcher (Line 1012);Implement file change detection for hot-reload and watch mode
-REED-10-01;ReedMonitor Foundation;Monitor Layer;High;Open;High;REED-01-01;ReedMonitor System (Line 786-870);Implement FreeBSD-style logging with metrics collection and configurable output modes
-REED-10-02;Performance Profiler;Monitor Layer;Medium;Open;Medium;REED-10-01;Performance Profiling (Line 842-870);Implement automatic benchmark collection with p50/p95/p99 tracking
-REED-10-03;Debug Tools;Monitor Layer;Low;Open;Medium;REED-10-01,REED-05-02;Debug Services (Line 967-969);Implement template trace, performance profiler, error context, hot reload debug tools
-REED-10-04;Backup Recovery CLI;Monitor Layer;Medium;Open;Low;REED-04-01,REED-02-04;Backup Recovery (Line 1077-1079);Implement debug:backup list, restore, cleanup commands for XZ backup management
+ticket_id|title|layer|priority|status|complexity|depends_on|summary_reference|description
+REED-01-01|Foundation Communication System|Foundation|Critical|Open|High||ReedStream (Line 589-731)|Implement ReedStream universal communication interface with ReedRequest, ReedResponse, ReedResult, ReedError types and ReedModule trait
+REED-01-02|Foundation Error System|Foundation|Critical|Open|Medium|REED-01-01|ReedError Types (Line 602-624)|Implement comprehensive ReedError enum with all error variants and conversion patterns
+REED-02-01|ReedBase Core Services|Data Layer|Critical|Open|High|REED-01-01,REED-01-02|ReedBase Dispatcher (Line 746-749)|Implement ReedBase dispatcher with get/set/init operations and O(1) HashMap performance
+REED-02-02|CSV Handler System|Data Layer|Critical|Open|High|REED-01-01|CSV Handler Services (Line 973-976)|Implement universal CSV reader/writer for .reed/ file management with atomic operations
+REED-02-03|Environment Fallback System|Data Layer|High|Open|Medium|REED-02-01|Environment Override (Line 537-542)|Implement key@dev ’ key fallback logic with environment resolution
+REED-02-04|Backup System|Data Layer|High|Open|Medium|REED-02-02|XZ Backup System (Line 308-333)|Implement automatic XZ compression backup before CSV modifications with 32-backup retention
+REED-03-01|User Management System|Security Layer|High|Open|High|REED-02-01,REED-02-02|Users Matrix CSV (Line 360-378)|Implement user management with Argon2 password hashing and extended profile data
+REED-03-02|Role Permission System|Security Layer|High|Open|High|REED-03-01|Roles Matrix CSV (Line 367-396)|Implement role-based permissions with Unix-style syntax and inheritance with circular detection
+REED-03-03|Taxonomy System|Security Layer|Medium|Open|High|REED-02-01,REED-02-02|Universal Taxonomy (Line 399-450)|Implement hierarchical taxonomy system with universal entity tagging and usage analytics
+REED-04-01|CLI Command Foundation|CLI Layer|Critical|Open|High|REED-01-01|CLI Architecture (Line 1032-1111)|Implement CLI command parser with colon notation and command routing system
+REED-04-02|CLI Data Commands|CLI Layer|High|Open|Medium|REED-04-01,REED-02-01|CLI Data Management (Line 1042-1050)|Implement set:text, set:route, set:meta, get:text, get:route, list:text commands
+REED-04-03|CLI Layout Commands|CLI Layer|High|Open|High|REED-04-01,REED-02-01|Layout Management (Line 1052-1055)|Implement init:layout with interactive prompts, preset support and registry management
+REED-04-04|CLI User Commands|CLI Layer|Medium|Open|Medium|REED-04-01,REED-03-01,REED-03-02|User Management CLI (Line 1082-1090)|Implement user:create, user:list, user:update, user:delete, user:passwd, user:roles commands
+REED-04-05|CLI Role Commands|CLI Layer|Medium|Open|Medium|REED-04-01,REED-03-02|Role Management CLI (Line 1091-1098)|Implement role:create, role:list, role:update, role:delete, role:permissions commands
+REED-04-06|CLI Taxonomy Commands|CLI Layer|Medium|Open|Medium|REED-04-01,REED-03-03|Taxonomy CLI (Line 1099-1109)|Implement taxonomy:create, taxonomy:list, taxonomy:search, taxonomy:assign commands
+REED-04-07|CLI Migration Commands|CLI Layer|Medium|Open|Medium|REED-04-01,REED-02-01|Migration Commands (Line 1056-1059)|Implement migrate:text and validate:routes commands for bulk operations
+REED-04-08|CLI Build Commands|CLI Layer|Medium|Open|High|REED-04-01|Build System CLI (Line 1063-1067)|Implement build:kernel, build:public, build:complete, build:watch commands
+REED-04-09|CLI Server Commands|CLI Layer|High|Open|Medium|REED-04-01|Server Management CLI (Line 1068-1076)|Implement server:io, server:start, server:stop, server:restart, server:status, server:logs commands
+REED-05-01|Template Filter System|Template Layer|High|Open|High|REED-02-01|Template Filters (Line 1256-1289)|Implement MiniJinja filters for text, route, meta, config with type-specific access
+REED-05-02|Template Engine Setup|Template Layer|High|Open|Medium|REED-05-01|MiniJinja Setup (Line 992-995)|Implement MiniJinja environment configuration with template loader and hot-reload
+REED-05-03|Template Context Builder|Template Layer|Medium|Open|Medium|REED-05-01,REED-02-01|Context Builder (Line 994)|Implement template context building with ReedBase data integration
+REED-06-01|Server Foundation|Server Layer|Critical|Open|High|REED-01-01|Server Services (Line 964-966)|Implement Actix-Web HTTP server with socket support and request handling
+REED-06-02|Routing System|Server Layer|High|Open|High|REED-06-01,REED-02-01|Request Router (Line 987-990)|Implement URL ’ Layout + Language resolution via .reed/routes.csv
+REED-06-03|Authentication Middleware|Server Layer|High|Open|Medium|REED-06-01,REED-03-01|Authentication (Line 978)|Implement HTTP Basic Auth validation with user verification
+REED-06-04|Response Builder|Server Layer|Medium|Open|Medium|REED-06-01,REED-05-02|Response Builder (Line 1002-1008)|Implement HTML generation with headers, cache control, security headers
+REED-07-01|ReedAPI HTTP Interface|API Layer|Medium|Open|High|REED-06-01,REED-04-01|ReedAPI Layer (Line 875-954)|Implement single-endpoint API with CLI command execution bridge
+REED-07-02|API Security Matrix|API Layer|Medium|Open|Medium|REED-07-01,REED-03-02|API Security (Line 890-933)|Implement command validation, token authentication, rate limiting via api.matrix.csv
+REED-08-01|CSS Bundler|Asset Layer|Medium|Open|Medium|REED-02-01|CSS Bundler (Line 998)|Implement CSS compilation per session hash with component discovery
+REED-08-02|JS Bundler|Asset Layer|Low|Open|Medium|REED-08-01|JS Bundler (Line 999)|Implement JavaScript bundling service with component asset discovery
+REED-08-03|Static File Server|Asset Layer|Medium|Open|Low|REED-06-01|Static Files (Line 1001)|Implement static file serving with cache headers
+REED-09-01|Binary Compiler|Build Layer|High|Open|High|REED-04-08|Binary Compiler (Line 1010)|Implement ReedCMS binary compilation with cargo integration
+REED-09-02|Asset Pipeline|Build Layer|Medium|Open|Medium|REED-08-01,REED-08-02,REED-09-01|Asset Pipeline (Line 1011)|Implement asset pipeline integration for CSS/JS bundling during build
+REED-09-03|File Watcher|Build Layer|Medium|Open|Medium|REED-09-01|File Watcher (Line 1012)|Implement file change detection for hot-reload and watch mode
+REED-10-01|ReedMonitor Foundation|Monitor Layer|High|Open|High|REED-01-01|ReedMonitor System (Line 786-870)|Implement FreeBSD-style logging with metrics collection and configurable output modes
+REED-10-02|Performance Profiler|Monitor Layer|Medium|Open|Medium|REED-10-01|Performance Profiling (Line 842-870)|Implement automatic benchmark collection with p50/p95/p99 tracking
+REED-10-03|Debug Tools|Monitor Layer|Low|Open|Medium|REED-10-01,REED-05-02|Debug Services (Line 967-969)|Implement template trace, performance profiler, error context, hot reload debug tools
+REED-10-04|Backup Recovery CLI|Monitor Layer|Medium|Open|Low|REED-04-01,REED-02-04|Backup Recovery (Line 1077-1079)|Implement debug:backup list, restore, cleanup commands for XZ backup management

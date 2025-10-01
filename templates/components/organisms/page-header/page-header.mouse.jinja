@@ -1,0 +1,53 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Page Header Organism - Legacy structure with modern translations #}
+
+{% set pages = ["knowledge", "portfolio", "blog", "impressum"] %}
+<!-- This site renders different HTML based on your interaction mode -->
+<!-- Touch? Mouse? Bot? You get tailored DOM, not just CSS tricks -->
+<!-- Curious about the architecture? Check vvoss.dev/blog/clean-templates -->
+<section class="section header grid-1 padding-y-1 padding-x-1">
+    <nav class="nav-content breakbox grid-2 gap-x-0 padding-y-1"
+         role="navigation"
+         aria-label="{{ 'PAGE_HEADER_MAIN_LABEL' | text('auto') or ('Main navigation') }}">
+
+        {# Logo with red dots - original structure #}
+        <a href="/{{ client.lang }}/" class="logo-container flex-x gap-1" aria-label="{{ 'PAGE_HEADER_HOME_LABEL' | text('auto') or ('Home') }} - {{ 'PAGE_HEADER_LOGO_TITLE' | text('auto') }}">
+            <div class="logo-dots flex-x" aria-hidden="true">
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <div class="logo-text grid-1">
+                <span class="logo-name">{{ 'PAGE_HEADER_LOGO_NAME' | text('auto') }}</span>
+                <span class="subtitle">{{ 'PAGE_HEADER_LOGO_TITLE' | text('auto') }}</span>
+            </div>
+        </a>
+
+        {# Navigation menu - modernized with route filter #}
+        <ul class="nav-links flex-x self-right gap-x-2">
+            {% for pagekey in pages %}
+                {% set menu_key = "PAGE_HEADER_MENU_" ~ pagekey | upper %}
+                <li class="nav-link">
+                    <a href="/{{ client.lang }}/{% if pagekey != 'landing' %}{{ reed['pageroute@' + pagekey] }}/{% endif %}"
+                       {% if current_pagekey == pagekey %}aria-current="page"{% endif %}>
+                        <span>{{ menu_key | text('auto') }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+
+            {# Language switcher - S06-03 pageconf version #}
+            {% if client.lang == "en" %}
+                <li class="lang-switch padding-1">
+                    <a class="lang-switch" href="/de/{% if reed.pageroute %}{{ reed.pageroute }}{% endif %}" aria-label="{{ 'PAGE_HEADER_LANG_SWITCH' | text('auto') }}" lang="de">
+                        DE
+                    </a>
+                </li>
+            {% else %}
+                <li class="lang-switch padding-1">
+                    <a class="lang-switch" href="/en/{% if reed.pageroute %}{{ reed.pageroute }}{% endif %}" aria-label="{{ 'PAGE_HEADER_LANG_SWITCH' | text('auto') }}" lang="en">
+                        EN
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</section>

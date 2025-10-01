@@ -1,0 +1,28 @@
+@layer reader {
+    /* Page placeholder organism reader-specific styling */
+
+    .placeholder-content {
+        /* Screen reader optimized structure */
+    }
+
+    .contact-email {
+        /* Ensure email is clearly announced */
+        speak: literal-punctuation;
+    }
+
+    .availability-info a {
+        /* Ensure links are clearly identified */
+        speak-as: spell-out;
+    }
+
+    .placeholder-message {
+        /* Ensure placeholder message is clearly announced */
+        speak: normal;
+    }
+
+    /* Focus indicators for keyboard navigation */
+    .availability-info a:focus {
+        outline: 2px solid var(--color-focus, #005a9e);
+        outline-offset: 2px;
+    }
+}

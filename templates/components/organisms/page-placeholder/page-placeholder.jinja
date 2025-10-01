@@ -1,0 +1,31 @@
+{# Page placeholder organism - Generic placeholder content #}
+<section class="section padding-y-3 padding-x-4">
+    <article class="breakbox grid-1">
+        <div class="section-header padding-left-2">
+            <h1>{{ 'PAGE_PLACEHOLDER_TITLE' | text('auto') }}</h1>
+            {% if 'SUBTITLE_DE' | text('auto') %}
+            <p class="subtitle">{{ 'PAGE_PLACEHOLDER_SUBTITLE' | text('auto') }}</p>
+            {% endif %}
+        </div>
+
+        <div class="placeholder-content padding-2">
+            {% if 'EMAIL_DE' | text('auto') %}
+            {# Contact-specific content #}
+            <div class="contact-email">
+                <strong>Email:</strong> {{ 'PAGE_PLACEHOLDER_EMAIL' | text('auto') }}
+            </div>
+
+            {% if 'PAGE_PLACEHOLDER_AVAILABILITY_DE' | text('auto') %}
+            <div class="availability-info margin-top-2">
+                <p>{{ 'PAGE_PLACEHOLDER_AVAILABILITY_DE' | text('auto') | safe }}</p>
+            </div>
+            {% endif %}
+            {% else %}
+            {# Generic placeholder content #}
+            <div class="placeholder-message">
+                <p>{{ 'PAGE_PLACEHOLDER_MESSAGE' | text('auto') }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </article>
+</section>

@@ -1,0 +1,9 @@
+/* Portfolio Layout - Mouse interaction mode */
+
+@layer mouse {
+
+.section-header h1 {
+    /* Portfolio-specific title styling if needed */
+}
+
+}

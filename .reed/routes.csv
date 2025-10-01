@@ -1,0 +1,13 @@
+key|value|comment
+actix-web@de|actix-web-framework|German actix-web route
+actix-web@en|actix-web-framework|English actix-web route
+agility@de|agilitaet|German agility route
+agility@en|agility|English agility route
+apache.license@de|apache-lizenz|German apache license route
+apache.license@en|apache-license|English apache license route
+apache@de|apache-webserver|German apache route
+apache@en|apache-webserver|English apache route
+api@de|api|German api route
+api@en|api|English api route
+bastille@de|bastille-jail-verwaltung|German bastille route
+bastille@en|bastille-jail-management|English bastille route

@@ -1,0 +1,20 @@
+{# Copyright (c) 2025 Vivian Voss - All rights reserved #}
+{# Landing Contact Organism - Contact information section #}
+
+<section class="section contact padding-y-5 padding-x-4" id="contact">
+    <article class="breakbox grid-1">
+        <div class="section-header" style="text-align: center; border: none; padding: 0;">
+            <h2>{{ 'LANDING_CONTACT_TITLE' | text('auto') }}</h2>
+            <p class="description">{{ 'LANDING_CONTACT_SUBTITLE' | text('auto') }}</p>
+        </div>
+
+        <div class="contact-info">
+            {{ icon("mail", 32, 2, "") | safe }}
+            <span>{{ 'LANDING_CONTACT_EMAIL' | text('auto') }}</span>
+        </div>
+
+        <p class="contact-details">
+            {{ 'LANDING_CONTACT_AVAILABILITY' | text('auto') }}
+        </p>
+    </article>
+</section>
