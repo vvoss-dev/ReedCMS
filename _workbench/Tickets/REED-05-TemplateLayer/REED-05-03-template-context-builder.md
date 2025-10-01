@@ -52,6 +52,8 @@ Implement template context building system that prepares all necessary data for 
 /// - variant: Template variant (mouse/touch/reader)
 /// - request: Request information (URL, method, headers)
 /// - globals: Global configuration values
+/// - asset_css: Bundled CSS path with session hash
+/// - asset_js: Bundled JS path with session hash
 ///
 /// ## Performance
 /// - Context building: < 5ms
@@ -73,6 +75,9 @@ pub fn build_context(
     ctx.insert("environment", environment);
     ctx.insert("variant", variant);
 
+    // Asset bundle paths (REED-08-01 integration)
+    add_asset_paths(&mut ctx, layout, variant)?;
+
     // Add globals
     add_globals(&mut ctx)?;
 
@@ -85,6 +90,54 @@ pub fn build_context(
     }
 
     Ok(ctx)
+}
+
+/// Adds asset bundle paths to context.
+///
+/// ## Process
+/// 1. Get session hash from .reed/project.csv
+/// 2. Ensure bundles exist for layout (generate if missing)
+/// 3. Construct bundle paths with session hash
+/// 4. Insert into context: asset_css, asset_js
+///
+/// ## Integration with REED-08-01
+/// - Calls `ensure_bundles_exist(layout, session_hash)`
+/// - On-demand generation if bundles missing
+/// - < 1ms if bundles cached, < 100ms if generated
+///
+/// ## Output Paths
+/// - asset_css: `/public/session/styles/{layout}.{hash}.{variant}.css`
+/// - asset_js: `/public/session/scripts/{layout}.{hash}.js`
+///
+/// ## Example
+/// ```rust
+/// // For layout="landing", variant="mouse", hash="a3f5b2c8"
+/// ctx.insert("asset_css", "/public/session/styles/landing.a3f5b2c8.mouse.css");
+/// ctx.insert("asset_js", "/public/session/scripts/landing.a3f5b2c8.js");
+/// ```
+pub fn add_asset_paths(ctx: &mut Context, layout: &str, variant: &str) -> ReedResult<()> {
+    // 1. Get session hash from project config
+    let session_hash = get_config_value("project.session_hash")?;
+    
+    // 2. Ensure bundles exist (generate on-demand if missing)
+    // This is handled by REED-08-01 CSS bundler
+    ensure_bundles_exist(layout, &session_hash)?;
+    
+    // 3. Construct bundle paths
+    let asset_css = format!(
+        "/public/session/styles/{}.{}.{}.css",
+        layout, session_hash, variant
+    );
+    let asset_js = format!(
+        "/public/session/scripts/{}.{}.js",
+        layout, session_hash
+    );
+    
+    // 4. Insert into context
+    ctx.insert("asset_css", asset_css);
+    ctx.insert("asset_js", asset_js);
+    
+    Ok(())
 }
 
 /// Adds global variables to context.
