@@ -496,3 +496,99 @@ fn test_reed_error_clone() {
         _ => panic!("Clone failed"),
     }
 }
+
+// == REED-01-02: ERROR SYSTEM TESTS ==
+
+#[test]
+fn test_with_context_on_not_found() {
+    let err = not_found("missing.key").with_context("CSV lookup failed");
+
+    match err {
+        ReedError::NotFound { resource, context } => {
+            assert_eq!(resource, "missing.key");
+            assert_eq!(context, Some("CSV lookup failed".to_string()));
+        }
+        _ => panic!("Wrong error variant"),
+    }
+}
+
+#[test]
+fn test_with_context_on_other_error_ignored() {
+    let err = validation_error("field", "value", "constraint").with_context("ignored");
+
+    // with_context only affects NotFound, should remain unchanged
+    match err {
+        ReedError::ValidationError { .. } => {
+            // Success - error unchanged
+        }
+        _ => panic!("Error variant changed unexpectedly"),
+    }
+}
+
+#[test]
+fn test_from_io_error() {
+    use std::io;
+
+    let io_err = io::Error::new(io::ErrorKind::NotFound, "file not found");
+    let reed_err: ReedError = io_err.into();
+
+    match reed_err {
+        ReedError::IoError {
+            operation,
+            path,
+            reason,
+        } => {
+            assert_eq!(operation, "io");
+            assert_eq!(path, "unknown");
+            assert!(reason.contains("file not found"));
+        }
+        _ => panic!("Wrong error variant"),
+    }
+}
+
+#[test]
+fn test_from_csv_error() {
+    use csv::ReaderBuilder;
+    use std::io::Cursor;
+
+    // Create invalid CSV to trigger csv::Error
+    let invalid_csv = "header1|header2\nvalue1";
+    let cursor = Cursor::new(invalid_csv);
+    let mut reader = ReaderBuilder::new().delimiter(b'|').from_reader(cursor);
+
+    let csv_err = reader.records().next().unwrap().unwrap_err();
+    let reed_err: ReedError = csv_err.into();
+
+    match reed_err {
+        ReedError::CsvError {
+            file_type,
+            operation,
+            reason,
+        } => {
+            assert_eq!(file_type, "unknown");
+            assert_eq!(operation, "csv");
+            assert!(!reason.is_empty());
+        }
+        _ => panic!("Wrong error variant"),
+    }
+}
+
+#[test]
+fn test_question_mark_operator_with_io_error() {
+    use std::fs::File;
+
+    fn read_file() -> ReedResult<String> {
+        let _file = File::open("/nonexistent/path/file.txt")?; // io::Error auto-converts
+        Ok("success".to_string())
+    }
+
+    let result = read_file();
+    assert!(result.is_err());
+
+    match result.unwrap_err() {
+        ReedError::IoError { .. } => {
+            // Success - automatic conversion worked
+        }
+        _ => panic!("Wrong error variant"),
+    }
+}

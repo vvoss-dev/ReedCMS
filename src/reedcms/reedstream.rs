@@ -322,3 +322,53 @@ pub fn parse_error(input: impl Into<String>, reason: impl Into<String>) -> ReedE
         reason: reason.into(),
     }
 }
+
+// == ERROR TRAIT IMPLEMENTATIONS ==
+
+impl ReedError {
+    /// Adds context to NotFound errors.
+    ///
+    /// ## Input
+    /// - `self`: The error to enhance
+    /// - `context`: Additional context information
+    ///
+    /// ## Output
+    /// - `Self`: Error with context added (only affects NotFound variant)
+    ///
+    /// ## Example Usage
+    /// ```rust
+    /// let err = not_found("key").with_context("CSV lookup");
+    /// ```
+    pub fn with_context(mut self, context: impl Into<String>) -> Self {
+        if let ReedError::NotFound {
+            context: ref mut ctx,
+            ..
+        } = self
+        {
+            *ctx = Some(context.into());
+        }
+        self
+    }
+}
+
+/// Automatic conversion from std::io::Error to ReedError.
+impl From<std::io::Error> for ReedError {
+    fn from(err: std::io::Error) -> Self {
+        ReedError::IoError {
+            operation: "io".to_string(),
+            path: "unknown".to_string(),
+            reason: err.to_string(),
+        }
+    }
+}
+
+/// Automatic conversion from csv::Error to ReedError.
+impl From<csv::Error> for ReedError {
+    fn from(err: csv::Error) -> Self {
+        ReedError::CsvError {
+            file_type: "unknown".to_string(),
+            operation: "csv".to_string(),
+            reason: err.to_string(),
+        }
+    }
+}
