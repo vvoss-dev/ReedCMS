@@ -5,6 +5,7 @@
 
 pub mod backup;
 pub mod csv;
+pub mod matrix;
 pub mod reed;
 pub mod reedbase;
 pub mod reedstream;
