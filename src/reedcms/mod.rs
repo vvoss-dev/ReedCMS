@@ -3,6 +3,7 @@
 
 //! ReedCMS module organisation.
 
+pub mod backup;
 pub mod csv;
 pub mod reedstream;
 
