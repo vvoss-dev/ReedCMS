@@ -223,64 +223,58 @@ pub fn add_layout_data(
         ctx.insert("cache_ttl", ttl);
     }
 
-    // Navigation items
-    if let Ok(nav_items) = build_navigation(layout, language) {
-        ctx.insert("navigation", nav_items);
-    }
+    // Navigation items (taxonomy-based, REED-03-03 integration)
+    // NOTE: Navigation is now handled via taxonomy filter in templates
+    // Templates use: {% for item in taxonomy('navigation') %}
+    // This provides more flexibility and Drupal-style menu management
 
     Ok(())
 }
 
-/// Builds navigation items for layout.
+/// Navigation is handled via taxonomy filter (REED-03-03).
 ///
-/// ## Navigation Structure
-/// ```rust
-/// vec![
-///     NavigationItem {
-///         key: "home",
-///         label: "Home",
-///         url: "/",
-///         active: false,
-///     },
-///     NavigationItem {
-///         key: "knowledge",
-///         label: "Knowledge",
-///         url: "/knowledge",
-///         active: true,
-///     }
-/// ]
+/// ## Taxonomy-Based Navigation
+/// Navigation items are now managed through the taxonomy system:
+/// - Stored in `.reed/entity_taxonomy.matrix.csv`
+/// - Term: "navigation" (or "footer-legal", etc.)
+/// - Properties: weight[int],enabled[bool]
+///
+/// ## Template Usage
+/// ```jinja
+/// {# Main navigation #}
+/// <nav>
+///   <ul>
+///     {% for item in taxonomy('navigation') %}
+///       <li class="{% if item.entity_id == layout %}active{% endif %}">
+///         <a href="/{{ client.lang }}/{{ item.entity_id | route('auto') }}/">
+///           {{ item.entity_id | text('auto') }}
+///         </a>
+///       </li>
+///     {% endfor %}
+///   </ul>
+/// </nav>
+///
+/// {# Footer navigation (different taxonomy term) #}
+/// <footer>
+///   {% for link in taxonomy('footer-legal') %}
+///     <a href="/{{ client.lang }}/{{ link.entity_id | route('auto') }}/">
+///       {{ link.entity_id | text('auto') }}
+///     </a>
+///   {% endfor %}
+/// </footer>
 /// ```
-pub fn build_navigation(
-    layout: &str,
-    language: &str
-) -> ReedResult<Vec<NavigationItem>> {
-    let nav_keys = get_navigation_keys()?;
-    let mut nav_items = Vec::new();
-
-    for key in nav_keys {
-        let label_key = format!("nav.{}", key);
-        let label = get_text_value(&label_key, language)?;
-        let url = get_route_value(&key, language)?;
-
-        nav_items.push(NavigationItem {
-            key: key.clone(),
-            label,
-            url: format!("/{}", url),
-            active: key == layout,
-        });
-    }
-
-    Ok(nav_items)
-}
-
-/// Navigation item structure
-#[derive(Debug, Clone, Serialize)]
-pub struct NavigationItem {
-    pub key: String,
-    pub label: String,
-    pub url: String,
-    pub active: bool,
-}
+///
+/// ## Benefits
+/// - Drupal-style flexibility
+/// - Multiple menu locations (navigation, footer, sidebar)
+/// - Weight-based ordering
+/// - Easy enable/disable per item
+/// - No hardcoded arrays in templates
+/// - Dynamic menu management via taxonomy CLI commands
+///
+/// ## Taxonomy Filter Integration
+/// The `taxonomy()` filter is provided by REED-03-03 and registered
+/// in the MiniJinja environment setup (REED-05-02)
 
 /// Gets text value from ReedBase.
 fn get_text_value(key: &str, language: &str) -> ReedResult<String> {

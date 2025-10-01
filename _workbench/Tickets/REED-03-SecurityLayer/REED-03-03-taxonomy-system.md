@@ -35,165 +35,285 @@ Implement hierarchical taxonomy system for universal entity tagging with usage a
 
 ## Requirements
 
-### Taxonomy Matrix CSV
+### Taxonomy Matrix CSV (Matrix Type 4)
+
+ReedCMS uses **Matrix Type 4 syntax** for taxonomy: `key[modifier],key[modifier]` format for properties.
+
 ```csv
-term_id|term|parent_id|category|description|color|icon|status|created_by|usage_count
-1|technology||category|Technology related content|#2563eb|tech|active|admin|42
-2|rust|1|tag|Rust programming language|#ce422b|rust|active|admin|15
-3|cms|1|tag|Content Management System|#059669|cms|active|admin|8
-4|content-type||category|Content type classification|#8b5cf6|type|active|admin|128
-5|blog|4|tag|Blog posts and articles|#06b6d4|blog|active|admin|89
+# .reed/taxonomie.matrix.csv
+term_id|vocabulary|properties|desc
+navigation|menu|weight[0],parent[],enabled[true]|Main Navigation Container
+slider-rosengarten|media|weight[0],parent[],enabled[true]|Rosengarten Slider Collection
+footer-legal|menu|weight[0],parent[],enabled[true]|Footer Legal Links
+technology|category|weight[0],parent[],enabled[true],color[#2563eb],icon[tech]|Technology Category
+rust|category|weight[10],parent[technology],enabled[true],color[#ce422b],icon[rust]|Rust Language
+cms|category|weight[20],parent[technology],enabled[true],color[#059669],icon[cms]|CMS Technology
 ```
 
-### Entity Assignment CSV
+**Property Modifiers** (Type 4 List):
+- `weight[int]` - Sort order (0-999)
+- `parent[term_id]` - Parent term for hierarchy (empty = root)
+- `enabled[bool]` - Visibility flag
+- `color[hex]` - UI color code (optional)
+- `icon[name]` - Icon identifier (optional)
+
+### Entity Assignment Matrix CSV (Matrix Type 4)
+
 ```csv
-entity_type|entity_id|term_ids|assigned_by|assigned_at|context|inherited_from
-user|admin|1,4,6|system|2025-01-15T10:00:00Z|auto_assigned|
-content|blog.post.001|1,2,3,5|editor|2025-01-15T12:00:00Z|content_creation|
-template|blog.jinja|1,3,5|admin|2025-01-15T10:30:00Z|template_creation|
-route|blog@de|1,3,5|admin|2025-01-15T10:31:00Z|route_creation|
-site|main|1,4|admin|2025-01-15T09:00:00Z|site_creation|
-content|blog.post.002|1,2,5|editor|2025-01-15T14:00:00Z|inherited|site:main
+# .reed/entity_taxonomy.matrix.csv
+entity_id|term_id|properties|desc
+knowledge|navigation|weight[10],enabled[true]|Main navigation entry
+portfolio|navigation|weight[20],enabled[true]|Main navigation entry
+blog|navigation|weight[30],enabled[true]|Main navigation entry
+impressum|footer-legal|weight[10],enabled[true]|Footer link
+image-rose-01|slider-rosengarten|weight[1],enabled[true],assigned_by[admin],assigned_at[1640995200]|Slider image
+image-rose-02|slider-rosengarten|weight[2],enabled[true],assigned_by[admin],assigned_at[1640995200]|Slider image
+blog.post.001|technology|weight[0],enabled[true],assigned_by[editor],context[manual]|Blog post tagging
+blog.post.001|rust|weight[0],enabled[true],assigned_by[editor],context[manual]|Blog post tagging
 ```
+
+**Assignment Property Modifiers**:
+- `weight[int]` - Sort order within term
+- `enabled[bool]` - Assignment active flag
+- `assigned_by[username]` - Who created assignment (optional)
+- `assigned_at[timestamp]` - Unix timestamp (optional)
+- `context[type]` - Assignment context: manual, auto, inherited (optional)
 
 ### Implementation Files
 
 #### Term Management (`src/reedcms/taxonomy/terms.rs`)
 
 ```rust
-/// Creates new taxonomy term.
+/// Creates new taxonomy term with Matrix Type 4 properties.
 ///
 /// ## Input
-/// - `req.term`: Term name
-/// - `req.parent_id`: Optional parent term ID
-/// - `req.category`: Term category (category, tag, system, custom)
-/// - `req.description`: Term description
-/// - `req.color`: Hex color code for UI
-/// - `req.icon`: Icon identifier
+/// - `req.term_id`: Term identifier (string, e.g., "navigation", "slider-rosengarten")
+/// - `req.vocabulary`: Vocabulary name (e.g., "menu", "media", "category")
+/// - `req.properties`: Type 4 properties string (e.g., "weight[10],parent[],enabled[true]")
+/// - `req.desc`: Term description
 ///
 /// ## Validation
-/// - Term uniqueness within same parent
+/// - Term ID uniqueness
 /// - Parent term existence check
 /// - Circular hierarchy detection
-/// - Color format validation (hex)
+/// - Properties syntax validation
 pub fn create_term(req: &ReedRequest) -> ReedResult<ReedResponse<TaxonomyTerm>>
 
-/// Retrieves term with full hierarchy path.
-pub fn get_term(term_id: u32) -> ReedResult<ReedResponse<TaxonomyTerm>>
+/// Retrieves term with parsed properties.
+pub fn get_term(term_id: &str) -> ReedResult<ReedResponse<TaxonomyTerm>>
 
-/// Lists all terms (optionally filtered).
-pub fn list_terms(filter: Option<TermFilter>) -> ReedResult<ReedResponse<Vec<TaxonomyTerm>>>
+/// Lists all terms (optionally filtered by vocabulary).
+pub fn list_terms(vocabulary: Option<&str>) -> ReedResult<ReedResponse<Vec<TaxonomyTerm>>>
 
-/// Updates term properties.
-pub fn update_term(term_id: u32, updates: TermUpdate) -> ReedResult<ReedResponse<TaxonomyTerm>>
+/// Updates term properties (merges with existing).
+pub fn update_term(term_id: &str, updates: TermUpdate) -> ReedResult<ReedResponse<TaxonomyTerm>>
 
 /// Deletes term (requires no entity assignments).
-pub fn delete_term(term_id: u32, confirm: bool) -> ReedResult<ReedResponse<()>>
+pub fn delete_term(term_id: &str, confirm: bool) -> ReedResult<ReedResponse<()>>
 
 /// Taxonomy term structure
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TaxonomyTerm {
-    pub term_id: u32,
-    pub term: String,
-    pub parent_id: Option<u32>,
-    pub category: TermCategory,
-    pub description: String,
-    pub color: String,
-    pub icon: String,
-    pub status: TermStatus,
-    pub created_by: String,
-    pub usage_count: u32,
+    pub term_id: String,
+    pub vocabulary: String,
+    pub properties: TermProperties,  // Parsed from Matrix Type 4
+    pub desc: String,
     pub hierarchy_path: Vec<String>,  // Full path from root
 }
 
+/// Parsed term properties from Matrix Type 4 string
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum TermCategory {
-    Category,
-    Tag,
-    System,
-    Custom,
+pub struct TermProperties {
+    pub weight: i32,
+    pub parent: Option<String>,
+    pub enabled: bool,
+    pub color: Option<String>,
+    pub icon: Option<String>,
+    pub custom: HashMap<String, String>,  // Additional properties
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum TermStatus {
-    Active,
-    Deprecated,
-    Hidden,
-    Pending,
-}
+/// Parses Matrix Type 4 properties string.
+///
+/// ## Input Example
+/// "weight[10],parent[navigation],enabled[true],color[#ff0000]"
+///
+/// ## Output
+/// TermProperties { weight: 10, parent: Some("navigation"), enabled: true, ... }
+pub fn parse_properties(properties_str: &str) -> ReedResult<TermProperties>
+
+/// Serializes properties back to Matrix Type 4 string.
+pub fn serialize_properties(props: &TermProperties) -> String
 ```
 
 #### Hierarchy Management (`src/reedcms/taxonomy/hierarchy.rs`)
 
 ```rust
-/// Builds complete term hierarchy tree.
+/// Builds complete term hierarchy tree for vocabulary.
 ///
 /// ## Output
 /// - Tree structure with parent-child relationships
 /// - Unlimited depth support
-pub fn build_hierarchy_tree() -> ReedResult<Vec<TermNode>>
+/// - Sorted by weight property
+pub fn build_hierarchy_tree(vocabulary: &str) -> ReedResult<Vec<TermNode>>
 
 /// Resolves full hierarchy path for term.
 ///
 /// ## Example
-/// - term_id: 2 (rust)
+/// - term_id: "rust"
 /// - Output: ["technology", "rust"]
-pub fn get_hierarchy_path(term_id: u32) -> ReedResult<Vec<String>>
+pub fn get_hierarchy_path(term_id: &str) -> ReedResult<Vec<String>>
 
 /// Checks for circular hierarchy.
-pub fn has_circular_hierarchy(term_id: u32, parent_id: u32) -> ReedResult<bool>
+pub fn has_circular_hierarchy(term_id: &str, parent_id: &str) -> ReedResult<bool>
 
 /// Gets all child terms (recursive).
-pub fn get_all_children(term_id: u32) -> ReedResult<Vec<u32>>
+pub fn get_all_children(term_id: &str) -> ReedResult<Vec<String>>
+
+/// Gets all entities assigned to term (with hierarchy).
+///
+/// ## Example
+/// If term "technology" has children "rust" and "cms",
+/// returns entities tagged with technology, rust, or cms.
+pub fn get_entities_in_hierarchy(term_id: &str, include_children: bool) -> ReedResult<Vec<EntityAssignment>>
 
 /// Term tree node structure
 #[derive(Debug, Clone)]
 pub struct TermNode {
     pub term: TaxonomyTerm,
     pub children: Vec<TermNode>,
+    pub entity_count: usize,  // Number of entities tagged with this term
 }
 ```
 
 #### Entity Assignments (`src/reedcms/taxonomy/assignments.rs`)
 
 ```rust
-/// Assigns terms to entity.
-///
-/// ## Supported Entity Types
-/// - content: Blog posts, pages, media files
-/// - users: Staff, authors, administrators
-/// - roles: Permission groups
-/// - templates: Layout files and components
-/// - routes: URL mappings
-/// - sites: Multi-site configurations
-/// - projects: Project-level organisation
-/// - assets: Media and file categorisation
+/// Assigns term to entity with Matrix Type 4 properties.
 ///
 /// ## Input
-/// - `entity_type`: Entity type
-/// - `entity_id`: Entity identifier
-/// - `term_ids`: Vector of term IDs to assign
-/// - `context`: Assignment context (manual, auto, inherited, etc.)
-pub fn assign_terms(entity_type: &str, entity_id: &str, term_ids: Vec<u32>, context: &str) -> ReedResult<()>
+/// - `entity_id`: Entity identifier (e.g., "knowledge", "blog.post.001", "image-rose-01")
+/// - `term_id`: Term identifier (e.g., "navigation", "slider-rosengarten")
+/// - `properties`: Type 4 properties string (e.g., "weight[10],enabled[true]")
+///
+/// ## Example
+/// assign_term("knowledge", "navigation", "weight[10],enabled[true]")
+pub fn assign_term(entity_id: &str, term_id: &str, properties: &str) -> ReedResult<()>
 
-/// Removes term assignments from entity.
-pub fn unassign_terms(entity_type: &str, entity_id: &str, term_ids: Vec<u32>) -> ReedResult<()>
+/// Removes term assignment from entity.
+pub fn unassign_term(entity_id: &str, term_id: &str) -> ReedResult<()>
 
-/// Gets all terms assigned to entity.
-pub fn get_entity_terms(entity_type: &str, entity_id: &str) -> ReedResult<Vec<TaxonomyTerm>>
+/// Gets all terms assigned to entity (sorted by weight).
+pub fn get_entity_terms(entity_id: &str) -> ReedResult<Vec<EntityAssignment>>
+
+/// Gets all entities assigned to term (sorted by weight).
+pub fn get_term_entities(term_id: &str) -> ReedResult<Vec<EntityAssignment>>
 
 /// Bulk assigns terms to multiple entities.
 pub fn bulk_assign_terms(assignments: Vec<BulkAssignment>) -> ReedResult<BulkResult>
 
-/// Assignment context types
-#[derive(Debug, Clone)]
-pub enum AssignmentContext {
-    Manual,        // Manually assigned by user
-    Automatic,     // Auto-assigned by system
-    Inherited,     // Inherited from parent entity
-    Templated,     // Applied via template
-    Migrated,      // Migrated from old system
+/// Entity assignment structure
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EntityAssignment {
+    pub entity_id: String,
+    pub term_id: String,
+    pub properties: AssignmentProperties,
+    pub desc: String,
 }
+
+/// Parsed assignment properties from Matrix Type 4 string
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AssignmentProperties {
+    pub weight: i32,
+    pub enabled: bool,
+    pub assigned_by: Option<String>,
+    pub assigned_at: Option<u64>,
+    pub context: Option<String>,  // manual, auto, inherited
+    pub custom: HashMap<String, String>,
+}
+```
+
+#### Template Integration (`src/reedcms/filters/taxonomy.rs`)
+
+```rust
+/// MiniJinja filter for taxonomy queries.
+///
+/// ## Usage in Templates
+/// ```jinja
+/// {# Get all entities in navigation term #}
+/// {% for item in taxonomy('navigation') %}
+///   <a href="/{{ client.lang }}/{{ item.entity_id | route('auto') }}/">
+///     {{ item.entity_id | text('auto') }}
+///   </a>
+/// {% endfor %}
+///
+/// {# Get slider images #}
+/// {% for image in taxonomy('slider-rosengarten') %}
+///   <img src="{{ image.entity_id | asset }}">
+/// {% endfor %}
+/// ```
+///
+/// ## Implementation
+/// - Queries entity_taxonomy.matrix.csv for term_id
+/// - Returns entities sorted by weight property
+/// - Filters by enabled[true]
+/// - Zero allocations for cached data
+pub fn make_taxonomy_filter() -> impl minijinja::filters::Filter + Send + Sync + 'static {
+    |term_id: &str| -> Result<Vec<EntityAssignment>, minijinja::Error> {
+        let assignments = get_term_entities(term_id)
+            .map_err(|e| minijinja::Error::new(
+                minijinja::ErrorKind::InvalidOperation,
+                format!("Taxonomy query failed: {}", e)
+            ))?;
+        
+        // Filter enabled, sort by weight
+        let mut enabled: Vec<_> = assignments.into_iter()
+            .filter(|a| a.properties.enabled)
+            .collect();
+        enabled.sort_by_key(|a| a.properties.weight);
+        
+        Ok(enabled)
+    }
+}
+```
+
+**Context Builder Integration** (REED-05-03):
+```rust
+/// Adds taxonomy filter to MiniJinja environment.
+pub fn add_taxonomy_filter(env: &mut minijinja::Environment) {
+    env.add_filter("taxonomy", make_taxonomy_filter());
+}
+```
+
+**Template Examples**:
+```jinja
+{# Navigation menu with Drupal-style taxonomy #}
+<nav>
+  <ul>
+    {% for item in taxonomy('navigation') %}
+      <li>
+        <a href="/{{ client.lang }}/{{ item.entity_id | route('auto') }}/">
+          {{ item.entity_id | text('auto') }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</nav>
+
+{# Footer navigation (separate taxonomy term) #}
+<footer>
+  {% for link in taxonomy('footer-legal') %}
+    <a href="/{{ client.lang }}/{{ link.entity_id | route('auto') }}/">
+      {{ link.entity_id | text('auto') }}
+    </a>
+  {% endfor %}
+</footer>
+
+{# Image slider with weighted ordering #}
+<div class="slider">
+  {% for slide in taxonomy('slider-rosengarten') %}
+    <img src="/assets/{{ slide.entity_id }}.jpg" alt="{{ slide.desc }}">
+  {% endfor %}
+</div>
 ```
 
 #### Term Search (`src/reedcms/taxonomy/search.rs`)
