@@ -1,7 +1,7 @@
 # ReedCMS Template Integration - Project TODO
 
 **Main Task**: Complete Template System Integration Analysis
-**Status**: In Progress - Question G (7/9 resolved)
+**Status**: In Progress - Question H (8/9 resolved)
 **Date**: 2025-01-30
 
 ---
@@ -322,30 +322,80 @@ pub struct ClientInfo {
 - `svg-icon.mouse.css` (already exists)
 - `svg-icon.reader.css` (already exists)
 
----
----
-
 ### G) Navigation: Hardcoded vs. Registry.csv
+**Status**: ✅ Resolved - Taxonomy-Based Navigation (Drupal-Style)
 
-**Template Usage** (current):
-```jinja
-{% set pages = ["knowledge", "portfolio", "blog", "impressum"] %}
-{% for pagekey in pages %}
-    <li><a href="/{{ client.lang }}/{{ pagekey | route('auto') }}/">
-{% endfor %}
-```
+**Decision**:
+- **Use taxonomy system (REED-03-03)** for navigation management
+- **Matrix Type 4 syntax** for flexible menu configuration
+- **Multiple menu locations** via different taxonomy terms
 
-**Tickets Mention**: REED-05-03 mentions `registry.csv` for navigation:
+**Implementation**:
+
+**1. Taxonomy Configuration** (`.reed/entity_taxonomy.matrix.csv`):
 ```csv
-knowledge|layout|true|10||Knowledge base layout
-portfolio|layout|true|20||Portfolio layout
+entity_id|term_id|properties|desc
+knowledge|navigation|weight[10],enabled[true]|Main navigation entry
+portfolio|navigation|weight[20],enabled[true]|Main navigation entry
+blog|navigation|weight[30],enabled[true]|Main navigation entry
+impressum|footer-legal|weight[10],enabled[true]|Footer link
+datenschutz|footer-legal|weight[20],enabled[true]|Footer link
 ```
 
-**Missing Specification**:
-- How does `registry.csv` → template context?
-- Filter: enabled=false layouts?
-- Order by `order` field?
-- Exclude sub-layouts (parent != null)?
+**2. Template Usage**:
+```jinja
+{# Main navigation #}
+<nav>
+  <ul>
+    {% for item in taxonomy('navigation') %}
+      <li class="{% if item.entity_id == layout %}active{% endif %}">
+        <a href="/{{ client.lang }}/{{ item.entity_id | route('auto') }}/">
+          {{ item.entity_id | text('auto') }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</nav>
+
+{# Footer navigation (different taxonomy term) #}
+<footer>
+  {% for link in taxonomy('footer-legal') %}
+    <a href="/{{ client.lang }}/{{ link.entity_id | route('auto') }}/">
+      {{ link.entity_id | text('auto') }}
+    </a>
+  {% endfor %}
+</footer>
+```
+
+**3. Taxonomy Filter** (REED-03-03):
+- Filter: `taxonomy(term_id)` returns entities assigned to term
+- Sorted by `weight` property
+- Filtered by `enabled[true]`
+- Registered in MiniJinja environment (REED-05-02)
+
+**Benefits**:
+- ✅ **Drupal-style flexibility** - Multiple menu locations
+- ✅ **Weight-based ordering** - Control display order
+- ✅ **Easy enable/disable** - Toggle visibility per item
+- ✅ **No hardcoded arrays** - Dynamic from taxonomy
+- ✅ **CLI management** - `taxonomy:assign`, `taxonomy:list` commands
+- ✅ **Hierarchical support** - Parent/child menus with `parent[term_id]`
+
+**Migration Path**:
+```bash
+# From hardcoded template arrays to taxonomy
+reed taxonomy:assign knowledge navigation weight[10],enabled[true]
+reed taxonomy:assign portfolio navigation weight[20],enabled[true]
+reed taxonomy:assign blog navigation weight[30],enabled[true]
+```
+
+**Files Updated**:
+- ✅ REED-03-03: Matrix Type 4 taxonomy specification
+- ✅ REED-03-03: Template filter integration
+- ✅ REED-05-03: Removed hardcoded build_navigation()
+- ✅ REED-05-03: Documentation for taxonomy-based navigation
+
+---
 
 **Question**: Should context builder auto-populate navigation list, or should templates query registry manually?
 
