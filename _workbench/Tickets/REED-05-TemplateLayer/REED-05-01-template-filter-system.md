@@ -248,35 +248,84 @@ pub fn make_text_filter(current_lang: String) -> impl Filter + Send + Sync + 'st
 ///
 /// ## Usage
 /// {{ "layout_key" | route("lang") }}
+/// {{ "layout_key" | route("auto") }}
 ///
 /// ## Arguments
-/// - key: Layout key (e.g., "knowledge", "blog")
-/// - language: Language code
+/// - key: Layout key (e.g., "knowledge", "blog", "landing")
+/// - language: Language code or "auto" for context detection
 ///
 /// ## Output
-/// - Route URL (e.g., "/knowledge", "/wissen")
+/// - Route path segment (e.g., "wissen", "portfolio")
+/// - Empty string for landing page (root)
+///
+/// ## Empty Route Handling
+/// Landing page routes are stored as empty values in routes.csv:
+/// - landing@de||German homepage route (empty = root)
+/// - landing@en||English homepage route (empty = root)
+///
+/// Filter returns empty string for landing, allowing templates to use:
+/// <a href="/{{ client.lang }}/{{ pagekey | route('auto') }}/">
+///
+/// Results:
+/// - landing → /de/ (empty route)
+/// - knowledge → /de/wissen/
+/// - portfolio → /de/portfolio/
 ///
 /// ## Performance
 /// - O(1) HashMap lookup
 /// - < 100μs per filter call
-pub fn make_route_filter() -> impl Filter {
-    |key: String, lang: Option<String>| -> Result<String, Error> {
-        let language = lang.unwrap_or_else(|| detect_language_from_context().unwrap_or_else(|_| "en".to_string()));
+pub fn make_route_filter(current_lang: String) -> impl Filter + Send + Sync + 'static {
+    move |key: &str, lang_param: Option<&str>| -> Result<String, minijinja::Error> {
+        // Resolve 'auto' to current request language (from URL)
+        let resolved_lang = match lang_param {
+            Some("auto") => &current_lang,      // Use URL language
+            Some(explicit) => explicit,          // Explicit override
+            None => &current_lang,               // Default to URL language
+        };
 
         let req = ReedRequest {
-            key: key.clone(),
-            language: Some(language.clone()),
+            key: key.to_string(),
+            language: Some(resolved_lang.to_string()),
             environment: get_current_environment(),
             context: None,
+            value: None,
+            description: None,
         };
 
         match reedbase::get::route(&req) {
-            Ok(response) => Ok(format!("/{}", response.data)),
-            Err(e) => Err(convert_reed_error_to_jinja(e, "route", &key))
+            Ok(response) => {
+                // Handle empty route (landing page) - return empty string
+                // Template will construct: /de/ + "" + / → /de/
+                if response.data.is_empty() {
+                    Ok(String::new())
+                } else {
+                    // Return route segment only (no leading/trailing slashes)
+                    // Template will construct: /de/ + "wissen" + / → /de/wissen/
+                    Ok(response.data)
+                }
+            }
+            Err(err) => Err(convert_reed_error_to_jinja(err, "route", key)),
         }
     }
 }
 ```
+
+**Template Usage Simplification:**
+
+Templates no longer need conditional logic for landing pages:
+
+```jinja
+{# OLD (complex) #}
+<a href="/{{ client.lang }}/{% if pagekey != 'landing' %}{{ pagekey | route('auto') }}/{% endif %}">
+
+{# NEW (simple) #}
+<a href="/{{ client.lang }}/{{ pagekey | route('auto') }}/">
+```
+
+Both produce correct URLs:
+- `landing` → `/de/` (empty route segment)
+- `knowledge` → `/de/wissen/`
+- `portfolio` → `/de/portfolio/`
 
 #### Meta Filter (`src/reedcms/filters/meta.rs`)
 

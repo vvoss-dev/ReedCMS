@@ -17,7 +17,7 @@
         <ul>
             {% for pagekey in pages %}
                 <li>
-                    <a href="/{{ client.lang }}/{% if pagekey != 'landing' %}{{ pagekey | route('auto') }}/{% endif %}"
+                    <a href="/{{ client.lang }}/{{ pagekey | route('auto') }}/"
                        {% if current_pagekey == pagekey %}aria-current="page"{% endif %}>
                         {{ ("page.header." ~ pagekey ~ ".text") | text('auto') }}
                     </a>

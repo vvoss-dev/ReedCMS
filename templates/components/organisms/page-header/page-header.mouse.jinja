@@ -27,7 +27,7 @@
             {% for pagekey in pages %}
                 {% set menu_key = "page.header.menu." ~ pagekey %}
                 <li class="nav-link">
-                    <a href="/{{ client.lang }}/{% if pagekey != 'landing' %}{{ pagekey | route('auto') }}/{% endif %}"
+                    <a href="/{{ client.lang }}/{{ pagekey | route('auto') }}/"
                        {% if current_pagekey == pagekey %}aria-current="page"{% endif %}>
                         <span>{{ menu_key | text('auto') }}</span>
                     </a>
