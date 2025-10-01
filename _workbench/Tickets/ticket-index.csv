@@ -3,7 +3,7 @@ REED-01-01|Foundation Communication System|Foundation|Critical|Open|High||ReedSt
 REED-01-02|Foundation Error System|Foundation|Critical|Open|Medium|REED-01-01|ReedError Types (Line 602-624)|Implement comprehensive ReedError enum with all error variants and conversion patterns
 REED-02-01|ReedBase Core Services|Data Layer|Critical|Open|High|REED-01-01,REED-01-02|ReedBase Dispatcher (Line 746-749)|Implement ReedBase dispatcher with get/set/init operations and O(1) HashMap performance
 REED-02-02|CSV Handler System|Data Layer|Critical|Open|High|REED-01-01|CSV Handler Services (Line 973-976)|Implement universal CSV reader/writer for .reed/ file management with atomic operations
-REED-02-03|Environment Fallback System|Data Layer|High|Open|Medium|REED-02-01|Environment Override (Line 537-542)|Implement key@dev ’ key fallback logic with environment resolution
+REED-02-03|Environment Fallback System|Data Layer|High|Open|Medium|REED-02-01|Environment Override (Line 537-542)|Implement key@dev â€™ key fallback logic with environment resolution
 REED-02-04|Backup System|Data Layer|High|Open|Medium|REED-02-02|XZ Backup System (Line 308-333)|Implement automatic XZ compression backup before CSV modifications with 32-backup retention
 REED-03-01|User Management System|Security Layer|High|Open|High|REED-02-01,REED-02-02|Users Matrix CSV (Line 360-378)|Implement user management with Argon2 password hashing and extended profile data
 REED-03-02|Role Permission System|Security Layer|High|Open|High|REED-03-01|Roles Matrix CSV (Line 367-396)|Implement role-based permissions with Unix-style syntax and inheritance with circular detection
@@ -21,7 +21,7 @@ REED-05-01|Template Filter System|Template Layer|High|Open|High|REED-02-01|Templ
 REED-05-02|Template Engine Setup|Template Layer|High|Open|Medium|REED-05-01|MiniJinja Setup (Line 992-995)|Implement MiniJinja environment configuration with template loader and hot-reload
 REED-05-03|Template Context Builder|Template Layer|Medium|Open|Medium|REED-05-01,REED-02-01|Context Builder (Line 994)|Implement template context building with ReedBase data integration
 REED-06-01|Server Foundation|Server Layer|Critical|Open|High|REED-01-01|Server Services (Line 964-966)|Implement Actix-Web HTTP server with socket support and request handling
-REED-06-02|Routing System|Server Layer|High|Open|High|REED-06-01,REED-02-01|Request Router (Line 987-990)|Implement URL ’ Layout + Language resolution via .reed/routes.csv
+REED-06-02|Routing System|Server Layer|High|Open|High|REED-06-01,REED-02-01|Request Router (Line 987-990)|Implement URL â€™ Layout + Language resolution via .reed/routes.csv
 REED-06-03|Authentication Middleware|Server Layer|High|Open|Medium|REED-06-01,REED-03-01|Authentication (Line 978)|Implement HTTP Basic Auth validation with user verification
 REED-06-04|Response Builder|Server Layer|Medium|Open|Medium|REED-06-01,REED-05-02|Response Builder (Line 1002-1008)|Implement HTML generation with headers, cache control, security headers
 REED-07-01|ReedAPI HTTP Interface|API Layer|Medium|Open|High|REED-06-01,REED-04-01|ReedAPI Layer (Line 875-954)|Implement single-endpoint API with CLI command execution bridge
