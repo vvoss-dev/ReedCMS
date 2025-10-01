@@ -54,42 +54,74 @@ reed validate:references
 ### Implementation (`src/reedcms/cli/migration_commands.rs`)
 
 ```rust
-/// Migrates text content from CSV files.
+/// Migrates text content from component/layout CSV files to central .reed/text.csv.
 ///
 /// ## Arguments
-/// - args[0]: Path to CSV file or directory
+/// - args[0]: Path to .text.csv file or directory containing .text.csv files
 ///
 /// ## Flags
 /// - --recursive: Process directories recursively
 /// - --dry-run: Preview changes without applying
-/// - --backup: Create backup before migration
+/// - --backup: Create backup before migration (default: true)
 ///
-/// ## CSV Format Expected
+/// ## CSV Format Expected (Component/Layout Format)
 /// ```csv
-/// key;language;value;description
-/// knowledge.title;en;Knowledge Base;Main page title
-/// knowledge.title;de;Wissensdatenbank;Hauptseitentitel
+/// key|value|comment
+/// page-header.logo.title@de|Effektive Software-Architektur|Logo subtitle text
+/// page-header.logo.title@en|Effective Software Architecture|Logo subtitle text
+/// knowledge.intro.title@de|Technisches Glossar|Intro title German
+/// knowledge.intro.title@en|Technical Glossary|Intro title English
+/// ```
+///
+/// **IMPORTANT**: Keys MUST include full namespace and @language suffix:
+/// - Component keys: `{component}.{subkey}@{lang}` (e.g., `page-header.logo.title@de`)
+/// - Layout keys: `{layout}.{subkey}@{lang}` (e.g., `knowledge.intro.title@de`)
+/// - NO auto-prefixing performed
+/// - Keys without `@lang` suffix will be rejected
+///
+/// ## Target Format (.reed/text.csv)
+/// ```csv
+/// key|value|desc
+/// page-header.logo.title@de|Effektive Software-Architektur|Logo subtitle text
+/// page-header.logo.title@en|Effective Software Architecture|Logo subtitle text
 /// ```
 ///
 /// ## Process
-/// 1. Validate CSV structure
-/// 2. Check for duplicates
-/// 3. Create backup (if --backup)
-/// 4. Import entries
-/// 5. Update cache
+/// 1. Discover .text.csv files in path
+/// 2. Validate CSV structure (pipe-delimited)
+/// 3. Validate keys have @lang suffix and full namespace
+/// 4. Check for duplicates in target .reed/text.csv
+/// 5. Create backup (XZ-compressed)
+/// 6. Append entries to .reed/text.csv
+/// 7. Update ReedBase cache
 ///
 /// ## Output
-/// 📦 Migrating text from: path/to/text.csv
-/// ✓ Validated 150 entries
+/// 📦 Migrating text from: templates/components/organisms/page-header/
+/// ✓ Found 1 .text.csv file
+/// ✓ Validated 34 entries
+/// ✓ All keys have @lang suffix
+/// ✓ All keys have full namespace
 /// ✓ Backup created: .reed/backups/text.1704067200.csv.xz
-/// ✓ Imported 148 entries
-/// ⚠ Skipped 2 duplicates
+/// ✓ Imported 34 entries
 ///
 /// Summary:
-/// - Total entries: 150
-/// - Imported: 148
-/// - Skipped: 2
-/// - Duration: 1.2s
+/// - Files processed: 1
+/// - Total entries: 34
+/// - Imported: 34
+/// - Skipped: 0
+/// - Duration: 0.8s
+///
+/// ## Example Usage
+/// ```bash
+/// # Migrate single component
+/// reed migrate:text templates/components/organisms/page-header/
+///
+/// # Migrate all components
+/// reed migrate:text templates/components/ --recursive
+///
+/// # Dry run to preview
+/// reed migrate:text templates/layouts/knowledge/ --dry-run
+/// ```
 pub fn migrate_text(args: &[String], flags: &HashMap<String, String>) -> ReedResult<ReedResponse<String>>
 
 /// Migrates route definitions from CSV.
