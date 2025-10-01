@@ -22,28 +22,28 @@
             </div>
         </a>
 
-        {# Navigation menu - modernized with route filter #}
+        {# Navigation menu - ReedCMS route filter #}
         <ul class="nav-links flex-x self-right gap-x-2">
             {% for pagekey in pages %}
                 {% set menu_key = "page.header.menu." ~ pagekey %}
                 <li class="nav-link">
-                    <a href="/{{ client.lang }}/{% if pagekey != 'landing' %}{{ reed['pageroute@' + pagekey] }}/{% endif %}"
+                    <a href="/{{ client.lang }}/{% if pagekey != 'landing' %}{{ pagekey | route('auto') }}/{% endif %}"
                        {% if current_pagekey == pagekey %}aria-current="page"{% endif %}>
                         <span>{{ menu_key | text('auto') }}</span>
                     </a>
                 </li>
             {% endfor %}
 
-            {# Language switcher - S06-03 pageconf version #}
+            {# Language switcher - ReedCMS route filter #}
             {% if client.lang == "en" %}
                 <li class="lang-switch padding-1">
-                    <a class="lang-switch" href="/de/{% if reed.pageroute %}{{ reed.pageroute }}{% endif %}" aria-label="{{ 'page.header.lang.switch' | text('auto') }}" lang="de">
+                    <a class="lang-switch" href="/de/{% if current_pagekey %}{{ current_pagekey | route('de') }}{% endif %}" aria-label="{{ 'page.header.lang.switch' | text('auto') }}" lang="de">
                         DE
                     </a>
                 </li>
             {% else %}
                 <li class="lang-switch padding-1">
-                    <a class="lang-switch" href="/en/{% if reed.pageroute %}{{ reed.pageroute }}{% endif %}" aria-label="{{ 'page.header.lang.switch' | text('auto') }}" lang="en">
+                    <a class="lang-switch" href="/en/{% if current_pagekey %}{{ current_pagekey | route('en') }}{% endif %}" aria-label="{{ 'page.header.lang.switch' | text('auto') }}" lang="en">
                         EN
                     </a>
                 </li>

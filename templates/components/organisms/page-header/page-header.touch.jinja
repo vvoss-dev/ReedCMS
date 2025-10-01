@@ -24,13 +24,13 @@
                 </div>
             </a>
 
-            {# Language switcher touch only #}
+            {# Language switcher touch only - ReedCMS route filter #}
             {% if client.lang == "en" %}
-                <a class="lang-switch" href="/de/{% if reed.pageroute %}{{ reed.pageroute }}{% endif %}" aria-label="{{ 'page.header.lang.switch' | text('auto') }}" lang="de">
+                <a class="lang-switch" href="/de/{% if current_pagekey %}{{ current_pagekey | route('de') }}{% endif %}" aria-label="{{ 'page.header.lang.switch' | text('auto') }}" lang="de">
                     DE
                 </a>
             {% else %}
-                <a class="lang-switch" href="/en/{% if reed.pageroute %}{{ reed.pageroute }}{% endif %}" aria-label="{{ 'page.header.lang.switch' | text('auto') }}" lang="en">
+                <a class="lang-switch" href="/en/{% if current_pagekey %}{{ current_pagekey | route('en') }}{% endif %}" aria-label="{{ 'page.header.lang.switch' | text('auto') }}" lang="en">
                     EN
                 </a>
             {% endif %}
@@ -41,11 +41,11 @@
                 {{ icon("menu", 24, 2, "menu-icon") | safe }}
             </summary>
 
-            {# Navigation menu - modernized with route filter #}
+            {# Navigation menu - ReedCMS route filter #}
             <ul class="nav-links grid-1 gap-y-0">
                 {% for pagekey in pages %}
                     <li class="nav-link">
-                        <a href="/{{ client.lang }}/{% if pagekey != 'landing' %}{{ reed['pageroute@' + pagekey] }}/{% endif %}"
+                        <a href="/{{ client.lang }}/{% if pagekey != 'landing' %}{{ pagekey | route('auto') }}/{% endif %}"
                             class="grid-2 gap-x-1"
                             {% if current_pagekey == pagekey %}aria-current="page"{% endif %}>
                             {{ icon("chevrons-right", 16, 2, "nav-chevron") | safe }}
