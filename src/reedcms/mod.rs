@@ -5,6 +5,8 @@
 
 pub mod backup;
 pub mod csv;
+pub mod reed;
+pub mod reedbase;
 pub mod reedstream;
 
 #[cfg(test)]
