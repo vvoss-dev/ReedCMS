@@ -1,13 +1,9 @@
 {# Copyright (c) 2025 Vivian Voss - All rights reserved #}
-{# Knowledge Sub-Page Layout #}
+{# Knowledge Sub-Page Layout: SEO #}
+
+{% set pagekey = "seo" %}
 
 {% extends layout("page") %}
-
-{# Page configuration via pageconf() - replaces system.csv metadata #}
-{{ pageconf("pagekey", "seo") }}
-{{ pageconf("pageroute", "wissen/seo") }}
-{{ pageconf("pagetitle", "SEO_META_TITLE") }}
-{{ pageconf("pagedescription", "SEO_META_DESCRIPTION") }}
 
 {% block content %}
     {% include organism("knowledge-term") %}

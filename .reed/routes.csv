@@ -1,13 +1,35 @@
 key|value|comment
-actix-web@de|actix-web-framework|German actix-web route
-actix-web@en|actix-web-framework|English actix-web route
-agility@de|agilitaet|German agility route
-agility@en|agility|English agility route
-apache.license@de|apache-lizenz|German apache license route
-apache.license@en|apache-license|English apache license route
-apache@de|apache-webserver|German apache route
-apache@en|apache-webserver|English apache route
-api@de|api|German api route
-api@en|api|English api route
-bastille@de|bastille-jail-verwaltung|German bastille route
-bastille@en|bastille-jail-management|English bastille route
+landing@de||German homepage route (landing/root)
+landing@en||English homepage route (landing/root)
+portfolio@de|portfolio|German portfolio route
+portfolio@en|portfolio|English portfolio route
+knowledge@de|wissen|German knowledge section route
+knowledge@en|knowledge|English knowledge section route
+blog@de|blog|German blog section route
+blog@en|blog|English blog section route
+contact@de|contact|German contact route
+contact@en|contact|English contact route
+impressum@de|impressum|German legal notice route
+impressum@en|impressum|English legal notice route
+actix-web@de|wissen/actix-web-framework|German Actix Web knowledge article
+actix-web@en|knowledge/actix-web-framework|English Actix Web knowledge article
+aeo@de|wissen/answer-engine-optimization|German AEO knowledge article
+aeo@en|knowledge/answer-engine-optimization|English AEO knowledge article
+agility@de|wissen/agilitaet|German agility knowledge article
+agility@en|knowledge/agility|English agility knowledge article
+ai-visibility@de|wissen/ai-visibility|German AI visibility knowledge article
+ai-visibility@en|knowledge/ai-visibility|English AI visibility knowledge article
+apache@de|wissen/apache-webserver|German Apache knowledge article
+apache@en|knowledge/apache-webserver|English Apache knowledge article
+apache-license@de|wissen/apache-lizenz|German Apache License knowledge article
+apache-license@en|knowledge/apache-license|English Apache License knowledge article
+api@de|wissen/api|German API knowledge article
+api@en|knowledge/api|English API knowledge article
+bastille@de|wissen/bastille-jail-verwaltung|German Bastille jail knowledge article
+bastille@en|knowledge/bastille-jail-management|English Bastille jail knowledge article
+geo@de|wissen/generative-engine-optimization|German GEO knowledge article
+geo@en|knowledge/generative-engine-optimization|English GEO knowledge article
+lost-in-the-middle@de|wissen/lost-in-the-middle|German Lost in the Middle knowledge article
+lost-in-the-middle@en|knowledge/lost-in-the-middle|English Lost in the Middle knowledge article
+seo@de|wissen/suchmaschinenoptimierung|German SEO knowledge article
+seo@en|knowledge/search-engine-optimization|English SEO knowledge article

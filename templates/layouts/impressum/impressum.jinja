@@ -1,12 +1,9 @@
-{% extends layout("page") %}
 {# Copyright (c) 2025 Vivian Voss - All rights reserved #}
 {# Impressum page - orchestrator for mode-specific sections #}
 
-{# Page configuration via pageconf() - replaces system.csv metadata #}
-{{ pageconf("pagekey", "impressum") }}
-{{ pageconf("pageroute", "impressum") }}
-{{ pageconf("pagetitle", "IMPRESSUM_META_TITLE") }}
-{{ pageconf("pagedescription", "IMPRESSUM_META_DESCRIPTION") }}
+{% set pagekey = "impressum" %}
+
+{% extends layout("page") %}
 
 {% block content %}
     {# Intro Section with legal information #}

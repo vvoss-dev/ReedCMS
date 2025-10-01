@@ -1,12 +1,9 @@
-{% extends layout("page") %}
 {# Copyright (c) 2025 Vivian Voss - All rights reserved #}
 {# Blog page #}
 
-{# Page configuration via pageconf() - replaces system.csv metadata #}
-{{ pageconf("pagekey", "blog") }}
-{{ pageconf("pageroute", "blog") }}
-{{ pageconf("pagetitle", "BLOG_META_TITLE") }}
-{{ pageconf("pagedescription", "BLOG_META_DESCRIPTION") }}
+{% set pagekey = "blog" %}
+
+{% extends layout("page") %}
 
 {% block content %}
 <section class="section padding-y-3 padding-x-4">

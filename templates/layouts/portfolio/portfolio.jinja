@@ -1,12 +1,9 @@
-{% extends layout("page") %}
 {# Copyright (c) 2025 Vivian Voss - All rights reserved #}
 {# Portfolio Layout - Component-based simple layout #}
 
-{# Page configuration via pageconf() - replaces system.csv metadata #}
-{{ pageconf("pagekey", "portfolio") }}
-{{ pageconf("pageroute", "portfolio") }}
-{{ pageconf("pagetitle", "PORTFOLIO_META_TITLE") }}
-{{ pageconf("pagedescription", "PORTFOLIO_META_DESCRIPTION") }}
+{% set pagekey = "portfolio" %}
+
+{% extends layout("page") %}
 
 {% block content %}
 <section class="section padding-y-3 padding-x-4">

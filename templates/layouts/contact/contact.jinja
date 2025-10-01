@@ -1,12 +1,9 @@
-{% extends layout("page") %}
 {# Copyright (c) 2025 Vivian Voss - All rights reserved #}
 {# Contact page #}
 
-{# Page configuration via pageconf() - replaces system.csv metadata #}
-{{ pageconf("pagekey", "contact") }}
-{{ pageconf("pageroute", "contact") }}
-{{ pageconf("pagetitle", "CONTACT_META_TITLE") }}
-{{ pageconf("pagedescription", "CONTACT_META_DESCRIPTION") }}
+{% set pagekey = "contact" %}
+
+{% extends layout("page") %}
 
 {% block content %}
 <section class="section padding-y-3 padding-x-4">

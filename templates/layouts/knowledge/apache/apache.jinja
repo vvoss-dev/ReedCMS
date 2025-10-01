@@ -1,13 +1,9 @@
 {# Copyright (c) 2025 Vivian Voss - All rights reserved #}
-{# Knowledge Sub-Page Layout #}
+{# Knowledge Sub-Page Layout: Apache #}
+
+{% set pagekey = "apache" %}
 
 {% extends layout("page") %}
-
-{# Page configuration via pageconf() - replaces system.csv metadata #}
-{{ pageconf("pagekey", "apache") }}
-{{ pageconf("pageroute", "wissen/apache") }}
-{{ pageconf("pagetitle", "APACHE_META_TITLE") }}
-{{ pageconf("pagedescription", "APACHE_META_DESCRIPTION") }}
 
 {% block content %}
     {% set topic = "APACHE" %}

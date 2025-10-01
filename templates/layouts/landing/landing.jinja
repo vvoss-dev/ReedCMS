@@ -1,12 +1,9 @@
-{% extends layout("page") %}
 {# Copyright (c) 2025 Vivian Voss - All rights reserved #}
 {# Landing page - Component-based multi-organism layout #}
 
-{# Page configuration via pageconf() - replaces system.csv metadata #}
-{{ pageconf("pagekey", "landing") }}
-{{ pageconf("pageroute", "") }}
-{{ pageconf("pagetitle", "LANDING_META_TITLE") }}
-{{ pageconf("pagedescription", "LANDING_META_DESCRIPTION") }}
+{% set pagekey = "landing" %}
+
+{% extends layout("page") %}
 
 {% block content %}
     {# Hero Section - First impression #}

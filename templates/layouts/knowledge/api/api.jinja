@@ -1,13 +1,9 @@
 {# Copyright (c) 2025 Vivian Voss - All rights reserved #}
-{# Knowledge Sub-Page Layout #}
+{# Knowledge Sub-Page Layout: API #}
+
+{% set pagekey = "api" %}
 
 {% extends layout("page") %}
-
-{# Page configuration via pageconf() - replaces system.csv metadata #}
-{{ pageconf("pagekey", "api") }}
-{{ pageconf("pageroute", "wissen/api") }}
-{{ pageconf("pagetitle", "API_META_TITLE") }}
-{{ pageconf("pagedescription", "API_META_DESCRIPTION") }}
 
 {% block content %}
     {% set topic = "API" %}

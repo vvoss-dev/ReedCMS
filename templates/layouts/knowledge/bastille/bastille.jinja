@@ -1,17 +1,11 @@
 {# Copyright (c) 2025 Vivian Voss - All rights reserved #}
 {# Knowledge Sub-Page Layout: Bastille #}
-{# Uses knowledge-term organism for consistent rendering #}
+
+{% set pagekey = "bastille" %}
 
 {% extends layout("page") %}
 
-{# Page configuration via pageconf() - replaces system.csv metadata #}
-{{ pageconf("pagekey", "bastille") }}
-{{ pageconf("pageroute", "wissen/bastille-jail-verwaltung") }}
-{{ pageconf("pagetitle", "BASTILLE_META_TITLE") }}
-{{ pageconf("pagedescription", "BASTILLE_META_DESCRIPTION") }}
-
 {% block content %}
     {% set topic = "BASTILLE" %}
-    {# Include knowledge-term organism with Bastille-specific content #}
     {% include organism("knowledge-term") %}
 {% endblock %}

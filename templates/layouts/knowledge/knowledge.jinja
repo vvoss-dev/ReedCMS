@@ -1,11 +1,7 @@
 {# Copyright (c) 2025 Vivian Voss - All rights reserved #}
 {# Knowledge Main Layout - Overview page with intro and index #}
 
-{# Page configuration via pageconf() - replaces system.csv metadata #}
-{{ pageconf("pagekey", "knowledge") }}
-{{ pageconf("pageroute", "wissen") }}
-{{ pageconf("pagetitle", "KNOWLEDGE_META_TITLE") }}
-{{ pageconf("pagedescription", "KNOWLEDGE_META_DESCRIPTION") }}
+{% set pagekey = "knowledge" %}
 
 {% extends layout("page") %}
 

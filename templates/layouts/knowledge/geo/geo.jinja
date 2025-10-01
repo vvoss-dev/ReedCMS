@@ -1,13 +1,9 @@
 {# Copyright (c) 2025 Vivian Voss - All rights reserved #}
-{# Knowledge Sub-Page Layout #}
+{# Knowledge Sub-Page Layout: GEO #}
+
+{% set pagekey = "geo" %}
 
 {% extends layout("page") %}
-
-{# Page configuration via pageconf() - replaces system.csv metadata #}
-{{ pageconf("pagekey", "geo") }}
-{{ pageconf("pageroute", "wissen/geo") }}
-{{ pageconf("pagetitle", "GEO_META_TITLE") }}
-{{ pageconf("pagedescription", "GEO_META_DESCRIPTION") }}
 
 {% block content %}
     {% include organism("knowledge-term") %}

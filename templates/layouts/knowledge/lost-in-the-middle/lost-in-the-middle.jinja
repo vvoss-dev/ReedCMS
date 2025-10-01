@@ -1,13 +1,9 @@
 {# Copyright (c) 2025 Vivian Voss - All rights reserved #}
-{# Knowledge Sub-Page Layout #}
+{# Knowledge Sub-Page Layout: Lost in the Middle #}
+
+{% set pagekey = "lost-in-the-middle" %}
 
 {% extends layout("page") %}
-
-{# Page configuration via pageconf() - replaces system.csv metadata #}
-{{ pageconf("pagekey", "lost-in-the-middle") }}
-{{ pageconf("pageroute", "wissen/lost-in-the-middle") }}
-{{ pageconf("pagetitle", "LOST_IN_THE_MIDDLE_META_TITLE") }}
-{{ pageconf("pagedescription", "LOST_IN_THE_MIDDLE_META_DESCRIPTION") }}
 
 {% block content %}
     {% include organism("knowledge-term") %}

@@ -1,13 +1,9 @@
 {# Copyright (c) 2025 Vivian Voss - All rights reserved #}
-{# Knowledge Sub-Page Layout #}
+{# Knowledge Sub-Page Layout: Apache License #}
+
+{% set pagekey = "apache-license" %}
 
 {% extends layout("page") %}
-
-{# Page configuration via pageconf() - replaces system.csv metadata #}
-{{ pageconf("pagekey", "apache-license") }}
-{{ pageconf("pageroute", "wissen/apache-license") }}
-{{ pageconf("pagetitle", "APACHE_LICENSE_META_TITLE") }}
-{{ pageconf("pagedescription", "APACHE_LICENSE_META_DESCRIPTION") }}
 
 {% block content %}
     {% set topic = "APACHE_LICENSE" %}

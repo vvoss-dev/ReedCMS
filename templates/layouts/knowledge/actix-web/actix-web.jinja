@@ -1,13 +1,9 @@
 {# Copyright (c) 2025 Vivian Voss - All rights reserved #}
-{# Knowledge Sub-Page Layout #}
+{# Knowledge Sub-Page Layout: Actix Web #}
+
+{% set pagekey = "actix-web" %}
 
 {% extends layout("page") %}
-
-{# Page configuration via pageconf() - replaces system.csv metadata #}
-{{ pageconf("pagekey", "actix-web") }}
-{{ pageconf("pageroute", "wissen/actix-web") }}
-{{ pageconf("pagetitle", "ACTIX_WEB_META_TITLE") }}
-{{ pageconf("pagedescription", "ACTIX_WEB_META_DESCRIPTION") }}
 
 {% block content %}
     {% set topic = "ACTIX_WEB" %}
