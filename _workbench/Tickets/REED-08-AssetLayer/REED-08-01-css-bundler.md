@@ -31,9 +31,226 @@
 - **Key Concepts**: CSS bundling, minification, source maps, variant-specific bundles
 
 ## Objective
-Implement CSS bundler that combines multiple CSS files per layout variant, minifies output, generates source maps for debugging, and produces optimised bundles for production deployment.
+Implement CSS bundler that combines multiple CSS files per layout variant with session hash for cache-busting, minifies output, generates source maps for debugging, and produces optimised bundles for production deployment.
 
 ## Requirements
+
+### Session Hash Strategy
+
+**Purpose**: Cache-busting and bundle versioning  
+**Implementation**: MD5 hash over all CSS/JS source files in project
+
+**Hash Generation** (at build time or server startup):
+```rust
+/// Generates session hash for asset bundling.
+///
+/// ## Process
+/// 1. Discover all CSS/JS files in templates/
+/// 2. Read and concatenate file contents
+/// 3. Generate MD5 hash
+/// 4. Store in .reed/project.csv → project.session_hash
+///
+/// ## Performance
+/// - Hash generation: < 50ms for 100 files
+/// - Cached in project.csv for server runtime
+///
+/// ## Output
+/// - `a3f5b2c8` (8-character hex string)
+pub fn generate_session_hash() -> ReedResult<String> {
+    let mut hasher = md5::Context::new();
+    
+    // Collect all CSS/JS files
+    let css_files = discover_css_files("templates/")?;
+    let js_files = discover_js_files("templates/")?;
+    
+    // Hash all file contents
+    for file in css_files.iter().chain(js_files.iter()) {
+        let content = std::fs::read(file)?;
+        hasher.consume(&content);
+    }
+    
+    // Generate 8-character hash
+    let hash = format!("{:x}", hasher.compute());
+    Ok(hash[..8].to_string())
+}
+```
+
+**Storage**:
+```csv
+# .reed/project.csv
+key|value|comment
+project.session_hash|a3f5b2c8|Current asset bundle session hash
+```
+
+**Bundle Naming Convention**:
+```
+{layout}.{session_hash}.{variant}.css
+{layout}.{session_hash}.js
+
+Examples:
+landing.a3f5b2c8.mouse.css
+landing.a3f5b2c8.touch.css
+landing.a3f5b2c8.reader.css
+landing.a3f5b2c8.js
+
+knowledge.a3f5b2c8.mouse.css
+knowledge.a3f5b2c8.js
+```
+
+**Cleanup Strategy**:
+- On new bundle generation, remove old bundles with different session hash
+- Keeps `/public/session/` directory clean
+- Only current session bundles remain
+
+### Component Discovery and Asset Collection
+
+**Purpose**: Automatic discovery of all CSS/JS files required for a layout
+
+**Discovery Process**:
+```rust
+/// Discovers all assets required for a layout.
+///
+/// ## Process
+/// 1. Parse layout template ({layout}.jinja)
+/// 2. Extract {% include organism("...") %} statements
+/// 3. Recursively discover organism dependencies (molecules, atoms)
+/// 4. Collect all CSS/JS files from components
+/// 5. Return ordered list of asset paths
+///
+/// ## Order
+/// 1. Layout CSS/JS
+/// 2. Organism CSS/JS (in inclusion order)
+/// 3. Molecule CSS/JS (recursive dependencies)
+/// 4. Atom CSS/JS (recursive dependencies)
+///
+/// ## Example
+/// Layout: landing.jinja
+/// Includes:
+/// - organism("landing-hero")
+///   → landing-hero.mouse.css
+///   → landing-hero.mouse.js (if exists)
+/// - organism("landing-problems")
+///   → landing-problems.mouse.css
+///   
+/// Result: [
+///   "templates/layouts/landing/landing.mouse.css",
+///   "templates/components/organisms/landing-hero/landing-hero.mouse.css",
+///   "templates/components/organisms/landing-problems/landing-problems.mouse.css",
+/// ]
+pub fn discover_layout_assets(layout: &str, variant: &str) -> ReedResult<LayoutAssets> {
+    let template_path = format!("templates/layouts/{}/{}.jinja", layout, layout);
+    let template_content = std::fs::read_to_string(&template_path)?;
+    
+    let mut css_files = Vec::new();
+    let mut js_files = Vec::new();
+    
+    // 1. Add layout CSS/JS
+    css_files.push(format!("templates/layouts/{}/{}.{}.css", layout, layout, variant));
+    if let Some(js) = find_layout_js(layout) {
+        js_files.push(js);
+    }
+    
+    // 2. Extract organism includes
+    let organisms = extract_organisms(&template_content)?;
+    
+    for organism in organisms {
+        // Add organism assets
+        css_files.push(format!(
+            "templates/components/organisms/{}/{}.{}.css",
+            organism, organism, variant
+        ));
+        if let Some(js) = find_organism_js(&organism) {
+            js_files.push(js);
+        }
+        
+        // 3. Recursively discover dependencies (molecules, atoms)
+        let deps = discover_component_dependencies(&organism, variant)?;
+        css_files.extend(deps.css_files);
+        js_files.extend(deps.js_files);
+    }
+    
+    Ok(LayoutAssets { css_files, js_files })
+}
+
+#[derive(Debug, Clone)]
+pub struct LayoutAssets {
+    pub css_files: Vec<String>,
+    pub js_files: Vec<String>,
+}
+```
+
+**Template Parsing**:
+```rust
+/// Extracts organism names from template content.
+///
+/// ## Pattern Matching
+/// Matches: {% include organism("landing-hero") %}
+/// Extracts: "landing-hero"
+fn extract_organisms(template_content: &str) -> ReedResult<Vec<String>> {
+    use regex::Regex;
+    
+    let re = Regex::new(r#"\{%\s*include\s+organism\("([^"]+)"\)\s*%\}"#)?;
+    let mut organisms = Vec::new();
+    
+    for cap in re.captures_iter(template_content) {
+        organisms.push(cap[1].to_string());
+    }
+    
+    Ok(organisms)
+}
+```
+
+### On-Demand Bundle Generation
+
+**Strategy**: Bundles are generated on first request per layout  
+**Performance**: < 100ms first request, < 1ms cached requests
+
+**Request Flow**:
+```
+1. Request: GET /de/wissen
+2. Route resolver: knowledge layout + de language
+3. Template context builder checks: 
+   - Does /public/session/styles/knowledge.a3f5b2c8.mouse.css exist?
+4. If NO:
+   - Discover assets for knowledge layout
+   - Bundle CSS (all variants: mouse/touch/reader)
+   - Bundle JS
+   - Write to /public/session/
+5. If YES:
+   - Use existing bundle
+6. Populate template context:
+   - asset_css = "/public/session/styles/knowledge.a3f5b2c8.mouse.css"
+   - asset_js = "/public/session/scripts/knowledge.a3f5b2c8.js"
+7. Render template with asset paths
+```
+
+**Bundle Check**:
+```rust
+/// Checks if bundles exist for layout, generates if missing.
+///
+/// ## Performance
+/// - Check: < 1ms (filesystem stat)
+/// - Generation: < 100ms (first request only)
+/// - Subsequent requests: Cached, no generation
+pub fn ensure_bundles_exist(layout: &str, session_hash: &str) -> ReedResult<()> {
+    let variants = ["mouse", "touch", "reader"];
+    
+    for variant in &variants {
+        let css_path = format!(
+            "public/session/styles/{}.{}.{}.css",
+            layout, session_hash, variant
+        );
+        
+        if !std::path::Path::new(&css_path).exists() {
+            // Generate bundles for all variants at once
+            generate_layout_bundles(layout, session_hash)?;
+            break; // All variants generated together
+        }
+    }
+    
+    Ok(())
+}
+```
 
 ### CSS Directory Structure
 ```
@@ -59,14 +276,53 @@ assets/css/
 
 ### Output Structure
 ```
-public/css/
-├── knowledge.mouse.css      # Bundled and minified
-├── knowledge.mouse.css.map  # Source map
-├── knowledge.touch.css
-├── knowledge.touch.css.map
-├── blog.mouse.css
-└── blog.mouse.css.map
+public/session/
+├── styles/
+│   ├── landing.a3f5b2c8.mouse.css       # Bundled and minified
+│   ├── landing.a3f5b2c8.mouse.css.map   # Source map
+│   ├── landing.a3f5b2c8.touch.css
+│   ├── landing.a3f5b2c8.touch.css.map
+│   ├── landing.a3f5b2c8.reader.css
+│   ├── landing.a3f5b2c8.reader.css.map
+│   ├── knowledge.a3f5b2c8.mouse.css
+│   └── knowledge.a3f5b2c8.mouse.css.map
+└── scripts/
+    ├── landing.a3f5b2c8.js
+    ├── landing.a3f5b2c8.js.map
+    ├── knowledge.a3f5b2c8.js
+    └── knowledge.a3f5b2c8.js.map
 ```
+
+### Template Integration
+
+**Context Variables** (populated by context builder in REED-05-03):
+```rust
+// In template context
+context.insert("asset_css", asset_css_path);
+context.insert("asset_js", asset_js_path);
+
+// Example values:
+// asset_css = "/public/session/styles/landing.a3f5b2c8.mouse.css"
+// asset_js = "/public/session/scripts/landing.a3f5b2c8.js"
+```
+
+**Template Usage**:
+```jinja
+<!DOCTYPE html>
+<html lang="{{ client.lang }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ "page.title" | text(client.lang) }}</title>
+    <link rel="stylesheet" href="{{ asset_css }}">
+</head>
+<body>
+    <!-- Content -->
+    <script src="{{ asset_js }}" defer></script>
+</body>
+</html>
+```
+
+**Benefit**: Simple template usage, automatic variant resolution, cache-busting via session hash
 
 ### Implementation (`src/reedcms/assets/css/bundler.rs`)
 
