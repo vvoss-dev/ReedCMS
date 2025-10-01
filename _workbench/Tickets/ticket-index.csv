@@ -24,6 +24,7 @@ REED-06-01|Server Foundation|Server Layer|Critical|Open|High|REED-01-01|Server S
 REED-06-02|Routing System|Server Layer|High|Open|High|REED-06-01,REED-02-01|Request Router (Line 987-990)|Implement URL ’ Layout + Language resolution via .reed/routes.csv
 REED-06-03|Authentication Middleware|Server Layer|High|Open|Medium|REED-06-01,REED-03-01|Authentication (Line 978)|Implement HTTP Basic Auth validation with user verification
 REED-06-04|Response Builder|Server Layer|Medium|Open|Medium|REED-06-01,REED-05-02|Response Builder (Line 1002-1008)|Implement HTML generation with headers, cache control, security headers
+REED-06-05|Client Detection Service|Server Layer|Medium|Open|Medium|REED-06-01|Client Detection|Implement comprehensive client detection from screen_info cookie with ClientInfo structure, device detection, interaction mode resolution, and User-Agent fallback
 REED-07-01|ReedAPI HTTP Interface|API Layer|Medium|Open|High|REED-06-01,REED-04-01|ReedAPI Layer (Line 875-954)|Implement single-endpoint API with CLI command execution bridge
 REED-07-02|API Security Matrix|API Layer|Medium|Open|Medium|REED-07-01,REED-03-02|API Security (Line 890-933)|Implement command validation, token authentication, rate limiting via api.matrix.csv
 REED-08-01|CSS Bundler|Asset Layer|Medium|Open|Medium|REED-02-01|CSS Bundler (Line 998)|Implement CSS compilation per session hash with component discovery
