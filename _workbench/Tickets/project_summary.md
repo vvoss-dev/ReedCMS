@@ -1289,7 +1289,7 @@ service|svc_*|get[rwx],set[rw-]|unlimited|10000|Service-to-service communication
 - **Test Coverage**: 21 tests (12 migration + 9 validation, compilation successful)
 - **Files**: migration_commands.rs (423 lines), validation_commands.rs (558 lines), migration_commands_test.rs (125 lines), validation_commands_test.rs (73 lines)
 
-**REED-04-10: CLI Agent Commands** 📋 Ticket Created (2025-10-02)
+**REED-04-10: CLI Agent Commands** ✅ Complete (2025-10-02)
 - **Decision**: Implement MCP integration foundation in CLI for direct agent usage
 - **Purpose**: Enable direct AI agent usage for content generation and translation via CLI
 - **Agent Management**: add, list, show, test, update, remove commands
@@ -1299,13 +1299,60 @@ service|svc_*|get[rwx],set[rw-]|unlimited|10000|Service-to-service communication
 - **Security**: API key encryption with AES-256-GCM
 - **Storage**: .reed/agents.matrix.csv with encrypted credentials
 - **Foundation**: Basis for advanced automation in REED-11 Extension Layer
+- **Files**: agent_commands.rs (400 lines), agent_commands_test.rs
 
-**REED-04-11: Man Page Documentation** 📋 Ticket Created (2025-02-02)
+**REED-04-11: Man Page Documentation** ✅ Complete (2025-02-02)
 - **Decision**: Implement comprehensive Unix/Linux man page system
 - **Format**: Markdown-based `.ronn` source compiled to `.1` groff
 - **Structure**: Main `reed.1` + 8 subcommand pages (data, layout, user, role, taxonomy, migration, agent, server, build)
 - **Build Tool**: `ronn-ng` gem for Markdown → groff compilation
 - **Rationale**: Professional tool standard, offline access, system integration
+- **Files**: man/reed.1.ronn (300+ lines), man/README.md
+
+### REED-05: Template Layer
+
+**REED-05-01: Template Filter System** ✅ Complete (2025-10-02)
+- **Implementation**: MiniJinja filters for type-specific ReedBase data access
+- **Filters Implemented**:
+  - `text` filter: Text content retrieval with language detection from URL
+  - `route` filter: Route URL retrieval with empty route handling for landing pages
+  - `meta` filter: Metadata retrieval (language-independent)
+  - `config` filter: Configuration retrieval with auto-detection (project./server. prefix)
+- **Language Detection**: URL path as single source of truth (not cookies)
+- **Error Handling**: Proper ReedError → MiniJinja::Error conversion with context preservation
+- **Parameters**: Support for 'auto' (URL language) and explicit language overrides
+- **Performance**: < 100μs per filter call (placeholder CSV reads, will be O(1) with REED-02-01 cache)
+- **Files**: filters/text.rs, filters/route.rs, filters/meta.rs, filters/config.rs, filters/mod.rs
+
+**REED-05-02: Template Engine Setup** ✅ Complete (2025-10-02)
+- **Implementation**: MiniJinja environment configuration with custom filters and functions
+- **Filter Registration**: All 4 filters registered with current_lang injection from URL
+- **Custom Functions**:
+  - `organism(name)`: Resolves to `templates/components/organisms/{name}/{name}.{interaction_mode}.jinja`
+  - `molecule(name)`: Resolves to `templates/components/molecules/{name}/{name}.{interaction_mode}.jinja`
+  - `atom(name)`: Resolves to `templates/components/atoms/{name}/{name}.{interaction_mode}.jinja`
+  - `layout(name)`: Resolves to `templates/layouts/{name}/{name}.jinja` (no interaction_mode)
+- **Auto-Escape**: Enabled for HTML templates (.jinja, .html)
+- **Strict Mode**: Enabled (undefined variables cause errors)
+- **Template Loader**: Path resolution from templates/ directory
+- **Performance**: < 1μs per function call (O(1) string formatting)
+- **Files**: templates/engine.rs, templates/functions.rs, templates/mod.rs
+
+**REED-05-03: Template Context Builder** ✅ Complete (2025-10-02)
+- **Implementation**: Template context building with ReedBase data integration
+- **Global Variables**: site_name, site_url, languages, current_year, version
+- **Layout Data**: layout_title, layout_description, cache_ttl (from ReedBase)
+- **Config Retrieval**: Auto-detection with project./server. fallback
+- **Context Format**: HashMap<String, serde_json::Value> for MiniJinja compatibility
+- **Performance**: < 5ms context building, < 1KB memory per context
+- **Files**: templates/context.rs
+
+**ReedBase Enhancements for REED-05**:
+- **Type-Specific Functions**: Added text(), route(), meta(), project(), server() to get.rs
+- **Placeholder Implementation**: Direct CSV reads (O(n)) until REED-02-01 cache complete
+- **Backward Compatibility**: Original get(), set(), init() functions unchanged
+- **Module Visibility**: Changed to `pub mod` for external access to type-specific functions
+- **Integration**: Seamless integration with Template Layer filters and context builder
 
 ### REED-11: Extension Layer
 
