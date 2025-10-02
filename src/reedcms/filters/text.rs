@@ -5,7 +5,7 @@
 //!
 //! Retrieves text content from ReedBase with language support.
 
-use crate::reedcms::reedstream::{ReedError, ReedRequest, ReedResponse, ReedResult};
+use crate::reedcms::reedstream::{ReedError, ReedRequest};
 
 /// Creates text filter for MiniJinja.
 ///

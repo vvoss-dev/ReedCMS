@@ -12,6 +12,9 @@
 //! - server:logs - View server logs
 
 use crate::reedcms::reedstream::{ReedError, ReedResponse, ReedResult};
+use crate::reedcms::server::config::load_server_config;
+use crate::reedcms::server::http_server::start_http_server;
+use crate::reedcms::server::socket_server::start_socket_server;
 use std::collections::HashMap;
 use std::fs;
 use std::process::{Command, Stdio};
@@ -31,44 +34,52 @@ use std::process::{Command, Stdio};
 /// - Port already in use
 /// - Socket path invalid
 /// - Configuration invalid
-///
-/// ## Note
-/// Full server implementation requires REED-06-01 (Server Foundation).
-/// This is a placeholder that validates command structure.
 pub fn server_io(
     _args: &[String],
     flags: &HashMap<String, String>,
 ) -> ReedResult<ReedResponse<String>> {
-    let mut output = String::new();
-    output.push_str("🚀 Starting ReedCMS server...\n\n");
+    // Load server configuration from .reed/server.csv
+    let config = load_server_config()?;
 
-    // Determine server mode
-    let (mode, bind_address) = if let Some(socket_path) = flags.get("socket") {
-        ("Unix socket".to_string(), socket_path.clone())
+    // Override with command-line flags
+    let socket_path = flags.get("socket").cloned().or(config.socket_path);
+    let port = flags
+        .get("port")
+        .and_then(|p| p.parse::<u16>().ok())
+        .or_else(|| {
+            config
+                .bind_address
+                .as_ref()
+                .and_then(|addr| addr.split(':').last())
+                .and_then(|p| p.parse::<u16>().ok())
+        })
+        .unwrap_or(8333);
+    let workers = flags
+        .get("workers")
+        .and_then(|w| w.parse::<usize>().ok())
+        .or(config.workers);
+
+    // Start server based on configuration
+    if let Some(socket) = socket_path {
+        // Start Unix socket server
+        tokio::runtime::Runtime::new()
+            .map_err(|e| ReedError::ServerError {
+                component: "server_io".to_string(),
+                reason: format!("Failed to create Tokio runtime: {}", e),
+            })?
+            .block_on(async { start_socket_server(&socket, workers).await })?;
     } else {
-        let port = flags.get("port").map(|s| s.as_str()).unwrap_or("8333");
-        ("HTTP".to_string(), format!("127.0.0.1:{}", port))
-    };
-
-    let workers = flags.get("workers").map(|s| s.as_str()).unwrap_or("4");
-
-    output.push_str(&format!("✓ Configuration validated\n"));
-    output.push_str(&format!("✓ Mode: {}\n", mode));
-    output.push_str(&format!("✓ Address: {}\n", bind_address));
-    output.push_str(&format!("✓ Workers: {}\n\n", workers));
-
-    output.push_str("⚠ Server implementation not yet ready (requires REED-06-01)\n");
-    output.push_str(
-        "   Full HTTP/Socket server will be available when server foundation is complete.\n\n",
-    );
-
-    output.push_str("Would start server with:\n");
-    output.push_str(&format!("- Mode: {}\n", mode));
-    output.push_str(&format!("- Bind: {}\n", bind_address));
-    output.push_str(&format!("- Workers: {}\n", workers));
+        // Start HTTP server
+        tokio::runtime::Runtime::new()
+            .map_err(|e| ReedError::ServerError {
+                component: "server_io".to_string(),
+                reason: format!("Failed to create Tokio runtime: {}", e),
+            })?
+            .block_on(async { start_http_server(port, workers).await })?;
+    }
 
     Ok(ReedResponse {
-        data: output,
+        data: "Server stopped.".to_string(),
         source: "cli::server_io".to_string(),
         cached: false,
         timestamp: std::time::SystemTime::now()

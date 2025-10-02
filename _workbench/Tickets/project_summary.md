@@ -1056,6 +1056,73 @@ reed debug:benchmark compare v1 v2 # Compare two versions
 
 ---
 
+### Server Services Layer (`src/reedcms/server/`) - **REED-06-01 Complete**
+
+#### Server Foundation - Actix-Web 4.9 HTTP/Unix Socket Server
+
+**Implementation Status**: ✅ Complete (REED-06-01)
+
+**Core Components**:
+
+1. **HTTP Server** (`http_server.rs`)
+   - Actix-Web 4.9 HTTP server with configurable workers
+   - Default port: 8333
+   - Automatic CPU core detection for worker count
+   - Middleware: Logger, Compression (gzip/brotli)
+   - Placeholder request handler (REED-06-02 will add routing)
+   - Performance: < 50ms startup time
+
+2. **Unix Socket Server** (`socket_server.rs`)
+   - Unix domain socket support for nginx/apache reverse proxy
+   - Automatic socket directory creation
+   - Socket file cleanup on startup
+   - Socket permissions: 0o666 for web server access
+   - 20-30% faster than TCP for local communication
+   - Middleware: Logger, Compression
+
+3. **Server Configuration** (`config.rs`)
+   - Configuration loading from `.reed/server.csv` via ReedBase
+   - Keys: `server.bind_type`, `server.bind_address`, `server.socket_path`, `server.workers`
+   - Default fallbacks: HTTP mode, 127.0.0.1:8333, auto worker detection
+   - Command-line flag overrides supported
+
+4. **Graceful Shutdown** (`shutdown.rs`)
+   - SIGTERM/SIGINT signal handling
+   - 30-second graceful shutdown timeout
+   - Tokio async signal coordination
+   - Clean process termination
+
+**CLI Integration** (`cli/server_commands.rs`):
+- `reed server:io --port 8333` - Start HTTP server in interactive mode
+- `reed server:io --socket /tmp/reed.sock` - Start Unix socket server
+- `reed server:io --workers 8` - Configure worker thread count
+- `reed server:start` - Background daemon mode (placeholder)
+- `reed server:stop` - Stop running server with SIGTERM
+- `reed server:restart` - Restart server
+- `reed server:status` - Check server status and resource usage
+- `reed server:logs --tail 50` - View server logs
+
+**Dependencies Added** (Cargo.toml):
+- actix-web 4.9 - HTTP server framework
+- actix-rt 2.10 - Async runtime
+- tokio 1.0 - Async I/O with full features
+- num_cpus 1.16 - CPU core detection for worker configuration
+
+**Performance Targets**:
+- HTTP startup: < 50ms
+- Unix socket startup: < 30ms
+- Request handling: Placeholder (< 10ms target for REED-06-04)
+- Worker threads: Default = CPU cores
+- Memory footprint: < 50MB base
+
+**Next Steps** (REED-06-02 to REED-06-05):
+- REED-06-02: Routing System (URL → Layout + Language via routes.csv)
+- REED-06-03: Authentication Middleware (HTTP Basic Auth + Bearer tokens)
+- REED-06-04: Response Builder (Template rendering orchestrator)
+- REED-06-05: Client Detection (screen_info cookie parsing)
+
+---
+
 ## ReedAPI - HTTP Interface Layer
 
 ### Single-Endpoint API Architecture

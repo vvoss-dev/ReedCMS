@@ -12,6 +12,7 @@ pub mod reed;
 pub mod reedbase;
 pub mod reedstream;
 pub mod security;
+pub mod server;
 pub mod taxonomy;
 pub mod templates;
 
