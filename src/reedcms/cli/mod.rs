@@ -3,6 +3,7 @@
 
 //! CLI Layer module organisation.
 
+pub mod agent_commands;
 pub mod build_commands;
 pub mod data_commands;
 pub mod help;

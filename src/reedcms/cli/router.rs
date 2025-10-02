@@ -249,5 +249,16 @@ pub fn create_router() -> Router {
     router.register("server", "status", server_commands::server_status);
     router.register("server", "logs", server_commands::server_logs);
 
+    // REED-04-10: Agent commands
+    use super::agent_commands;
+    router.register("agent", "add", agent_commands::add);
+    router.register("agent", "list", agent_commands::list);
+    router.register("agent", "show", agent_commands::show);
+    router.register("agent", "test", agent_commands::test);
+    router.register("agent", "update", agent_commands::update);
+    router.register("agent", "remove", agent_commands::remove);
+    router.register("agent", "generate", agent_commands::generate);
+    router.register("agent", "translate", agent_commands::translate);
+
     router
 }

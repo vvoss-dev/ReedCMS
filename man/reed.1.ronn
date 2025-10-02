@@ -1,0 +1,253 @@
+# reed(1) -- ReedCMS command-line interface
+
+## SYNOPSIS
+
+`reed` [<options>] <command>:<action> [<args>] [<flags>]
+
+## DESCRIPTION
+
+**reed** is the unified command-line interface for ReedCMS, a high-performance headless Content Management System built in Rust. It provides comprehensive content management, layout creation, user administration, and server lifecycle management through a consistent colon-notation syntax.
+
+## OPTIONS
+
+  * `-h`, `--help`:
+    Display general help or command-specific help
+
+  * `-v`, `--version`:
+    Display ReedCMS version information
+
+## COMMANDS
+
+### Data Management Commands
+
+  * `reed set:text` <key> <value> `--desc` <description>:
+    Set text entry in .reed/text.csv
+
+  * `reed set:route` <key> <route> `--desc` <description>:
+    Set route mapping in .reed/routes.csv
+
+  * `reed set:meta` <key> <value> `--desc` <description>:
+    Set metadata entry in .reed/meta.csv
+
+  * `reed get:text` <key>:
+    Get text value for key
+
+  * `reed get:route` <key>:
+    Get route mapping for key
+
+  * `reed get:meta` <key>:
+    Get metadata value for key
+
+  * `reed list:text` [<pattern>]:
+    List all text keys matching pattern (* for all)
+
+  * `reed list:route` [<pattern>]:
+    List all route keys matching pattern
+
+  * `reed list:meta` [<pattern>]:
+    List all meta keys matching pattern
+
+### Layout Management Commands
+
+  * `reed init:layout` <name> [`--languages` <langs>] [`--variants` <variants>] [`--routes` <routes>]:
+    Create new layout with templates and CSS files
+
+### User Management Commands
+
+  * `reed user:create` <username> `--email` <email> `--password` <pass> [`--roles` <roles>]:
+    Create new user with encrypted password
+
+  * `reed user:list` [`--format` table|json|csv]:
+    List all users
+
+  * `reed user:show` <username>:
+    Show detailed user information
+
+  * `reed user:update` <username> [`--email` <email>] [`--roles` <roles>]:
+    Update user details
+
+  * `reed user:delete` <username> `--force`:
+    Delete user (requires --force)
+
+  * `reed user:passwd` <username>:
+    Change user password
+
+  * `reed user:roles` <username> [`--add` <role>] [`--remove` <role>]:
+    Manage user roles
+
+### Role Management Commands
+
+  * `reed role:create` <rolename> `--permissions` <perms> [`--inherit` <parent>]:
+    Create new role with permissions
+
+  * `reed role:list` [`--show-permissions`]:
+    List all roles
+
+  * `reed role:show` <rolename>:
+    Show role details with inherited permissions
+
+  * `reed role:update` <rolename> [`--inherit` <parent>]:
+    Update role configuration
+
+  * `reed role:delete` <rolename> `--force`:
+    Delete role (requires --force)
+
+  * `reed role:permissions` <rolename> [`--add` <perm>] [`--remove` <perm>]:
+    Manage role permissions
+
+### Taxonomy Commands
+
+  * `reed taxonomy:create` <term> `--category` <cat> [`--parent` <id>]:
+    Create new taxonomy term
+
+  * `reed taxonomy:list` [`--tree`]:
+    List all taxonomy terms
+
+  * `reed taxonomy:search` <query>:
+    Search taxonomy terms
+
+  * `reed taxonomy:assign` <entity> `--terms` <term_ids>:
+    Assign terms to entity
+
+  * `reed taxonomy:entities` <term_id>:
+    List entities tagged with term
+
+### Migration & Validation Commands
+
+  * `reed migrate:text` <path> [`--recursive`] [`--dry-run`]:
+    Import text from .text.csv files
+
+  * `reed migrate:routes` <path>:
+    Import route definitions
+
+  * `reed validate:routes`:
+    Validate route consistency
+
+  * `reed validate:consistency`:
+    Validate complete system consistency
+
+  * `reed validate:text` `--language` <lang>:
+    Validate language-specific text
+
+  * `reed validate:references`:
+    Validate layout and route references
+
+### Build Commands
+
+  * `reed build:kernel` [`--release`] [`--target` <target>]:
+    Compile ReedCMS binary with cargo
+
+  * `reed build:public` [`--minify`]:
+    Build public assets (CSS, JS)
+
+  * `reed build:complete` [`--debug` <logfile>]:
+    Run complete build pipeline
+
+  * `reed build:watch`:
+    Start development watch mode
+
+### Server Commands
+
+  * `reed server:io` [`--port` <port>] [`--socket` <path>]:
+    Start server in interactive mode
+
+  * `reed server:start` [`--environment` <env>]:
+    Start server in background (daemon)
+
+  * `reed server:stop`:
+    Stop running server
+
+  * `reed server:restart`:
+    Restart server
+
+  * `reed server:status`:
+    Check server status
+
+  * `reed server:logs` [`--tail` <n>] [`--follow`]:
+    View server logs
+
+### Agent Commands
+
+  * `reed agent:add` <agent_id> `--provider` <provider> `--api-key` <key> `--model` <model>:
+    Add AI agent to registry
+
+  * `reed agent:list` [`--format` table|json|csv]:
+    List registered agents
+
+  * `reed agent:test` <agent_id>:
+    Test agent connection
+
+  * `reed agent:generate` <output_key> `--prompt` <text> `--agent` <id>:
+    Generate content with AI
+
+  * `reed agent:translate` <source_key> `--to` <langs> `--agent` <id>:
+    Translate content with AI
+
+## EXAMPLES
+
+Create a new layout:
+
+    $ reed init:layout blog --languages de,en --variants mouse,touch
+
+Set text content:
+
+    $ reed set:text blog.title@de "Mein Blog" --desc "Blog page title"
+
+Create a user:
+
+    $ reed user:create editor --email editor@example.com --password secret123 --roles editor
+
+Start server:
+
+    $ reed server:io --port 8080
+
+Build release binary:
+
+    $ reed build:kernel --release
+
+## FILES
+
+  * `.reed/text.csv`:
+    Content text data (pipe-delimited)
+
+  * `.reed/routes.csv`:
+    URL routing definitions
+
+  * `.reed/meta.csv`:
+    SEO and technical metadata
+
+  * `.reed/server.csv`:
+    Server configuration
+
+  * `.reed/project.csv`:
+    Project settings
+
+  * `.reed/registry.csv`:
+    Layout registry
+
+  * `.reed/users.matrix.csv`:
+    User management data
+
+  * `.reed/roles.matrix.csv`:
+    Role-based permissions
+
+## ENVIRONMENT
+
+  * `REED_ENV`:
+    Environment name (DEV, PROD) for key@env resolution
+
+## SEE ALSO
+
+reed-set(1), reed-get(1), reed-init(1), reed-server(1), reed-build(1)
+
+## AUTHOR
+
+Vivian Voss <ask@vvoss.dev>
+
+## COPYRIGHT
+
+Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
+
+## BUGS
+
+Report bugs at <https://github.com/vvoss-dev/reedcms/issues>
