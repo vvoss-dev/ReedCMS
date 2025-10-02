@@ -4,6 +4,7 @@
 //! ReedCMS module organisation.
 
 pub mod backup;
+pub mod cli;
 pub mod csv;
 pub mod matrix;
 pub mod reed;

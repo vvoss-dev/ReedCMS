@@ -9,7 +9,7 @@ REED-02-05|Complete|Matrix CSV Handler System|Data Layer|High|High|REED-02-02|Ma
 REED-02-06|Complete|Taxonomy System|Data Layer|Medium|High|REED-02-01,REED-02-02,REED-02-05|Universal Taxonomy (Line 399-450)|Implement hierarchical taxonomy system with universal entity tagging and usage analytics
 REED-03-01|Complete|User Management System|Security Layer|High|High|REED-02-01,REED-02-05|Users Matrix CSV (Line 360-378)|Implement user management with Argon2 password hashing and extended profile data
 REED-03-02|Complete|Role Permission System|Security Layer|High|High|REED-03-01|Roles Matrix CSV (Line 367-396)|Implement role-based permissions with Unix-style syntax and inheritance with circular detection
-REED-04-01|Open|CLI Command Foundation|CLI Layer|Critical|High|REED-01-01|CLI Architecture (Line 1032-1111)|Implement CLI command parser with colon notation and command routing system
+REED-04-01|Complete|CLI Command Foundation|CLI Layer|Critical|High|REED-01-01|CLI Architecture (Line 1032-1111)|Implement CLI command parser with colon notation and command routing system
 REED-04-02|Open|CLI Data Commands|CLI Layer|High|Medium|REED-04-01,REED-02-01|CLI Data Management (Line 1042-1050)|Implement set:text, set:route, set:meta, get:text, get:route, list:text commands
 REED-04-03|Open|CLI Layout Commands|CLI Layer|High|High|REED-04-01,REED-02-01|Layout Management (Line 1052-1055)|Implement init:layout with interactive prompts, preset support and registry management
 REED-04-04|Open|CLI User Commands|CLI Layer|Medium|Medium|REED-04-01,REED-03-01,REED-03-02|User Management CLI (Line 1082-1090)|Implement user:create, user:list, user:update, user:delete, user:passwd, user:roles commands
@@ -18,6 +18,7 @@ REED-04-06|Open|CLI Taxonomy Commands|CLI Layer|Medium|Medium|REED-04-01,REED-03
 REED-04-07|Open|CLI Migration Commands|CLI Layer|Medium|Medium|REED-04-01,REED-02-01|Migration Commands (Line 1056-1059)|Implement migrate:text and validate:routes commands for bulk operations
 REED-04-08|Open|CLI Build Commands|CLI Layer|Medium|High|REED-04-01|Build System CLI (Line 1063-1067)|Implement build:kernel, build:public, build:complete, build:watch commands
 REED-04-09|Open|CLI Server Commands|CLI Layer|High|Medium|REED-04-01|Server Management CLI (Line 1068-1076)|Implement server:io, server:start, server:stop, server:restart, server:status, server:logs commands
+REED-04-10|Open|CLI Man Page Documentation|CLI Layer|Medium|Low|REED-04-01,REED-04-02,REED-04-03,REED-04-04,REED-04-05,REED-04-06,REED-04-07,REED-04-08,REED-04-09|Man Page System (Line 1032-1228)|Create comprehensive Unix/Linux man page documentation for reed CLI with ronn-based build system
 REED-05-01|Open|Template Filter System|Template Layer|High|High|REED-02-01|Template Filters (Line 1256-1289)|Implement MiniJinja filters for text, route, meta, config with type-specific access
 REED-05-02|Open|Template Engine Setup|Template Layer|High|Medium|REED-05-01|MiniJinja Setup (Line 992-995)|Implement MiniJinja environment configuration with template loader and hot-reload
 REED-05-03|Open|Template Context Builder|Template Layer|Medium|Medium|REED-05-01,REED-02-01|Context Builder (Line 994)|Implement template context building with ReedBase data integration

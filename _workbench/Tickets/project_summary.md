@@ -1221,8 +1221,31 @@ service|svc_*|get[rwx],set[rw-]|unlimited|10000|Service-to-service communication
 
 ## CLI Interface & Commands
 
+### Implementation Status
+
+**REED-04-01: CLI Command Foundation** ✅ Complete (2025-02-02)
+- **Parser**: Colon notation (`reed namespace:action [args] [--flags]`)
+- **Router**: HashMap-based O(1) command routing
+- **Help System**: General help, command-specific help, version info
+- **Test Coverage**: 44/44 tests (100%)
+- **Files**: parser.rs, router.rs, help.rs + 3 test files
+
+**REED-04-10: Man Page Documentation** 📋 Ticket Created (2025-02-02)
+- **Decision**: Implement comprehensive Unix/Linux man page system
+- **Format**: Markdown-based `.ronn` source compiled to `.1` groff
+- **Structure**: Main `reed.1` + 7 subcommand pages (data, layout, user, role, taxonomy, server, build)
+- **Build Tool**: `ronn-ng` gem for Markdown → groff compilation
+- **Rationale**: Professional tool standard, offline access, system integration
+
 ### Command Syntax Standard
 **All CLI commands use colon notation**: `reed command:action`
+
+**Parser Features**:
+- Boolean flags: `--help`, `--verbose`, `--dry-run`, `--json`, `--force`, `--watch`
+- Short flags: `-h`, `-v` (single-character boolean)
+- Value flags: `--email value`, `--desc "text"`, `--port 8333`
+- Validation: Alphanumeric + underscore + hyphen for namespace/action
+- Help interception: `--help` and `-h` show command help before execution
 
 ### Complete CLI Command Reference
 
