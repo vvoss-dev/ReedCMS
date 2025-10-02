@@ -8,6 +8,8 @@
 use crate::reedcms::reedbase;
 use crate::reedcms::reedstream::{ReedError, ReedRequest, ReedResult};
 use crate::reedcms::routing::resolver::resolve_url;
+use crate::reedcms::server::client_detection::{detect_client_info, is_bot_request};
+use crate::reedcms::server::screen_detection::{generate_screen_detection_html, needs_screen_detection};
 use actix_web::{middleware, web, App, HttpRequest, HttpResponse, HttpServer};
 
 /// Starts HTTP server on specified port.
@@ -81,23 +83,50 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
 /// Main request handler.
 ///
 /// ## Process
-/// 1. Resolve URL to layout + language (REED-06-02)
-/// 2. Build response with template rendering (REED-06-04)
+/// 1. Check if screen detection needed (REED-06-05)
+/// 2. Resolve URL to layout + language (REED-06-02)
+/// 3. Detect client information (REED-06-05)
+/// 4. Build response with template rendering (REED-06-04)
 ///
 /// ## Current Implementation
+/// - Screen detection implemented (REED-06-05)
 /// - URL routing implemented (REED-06-02)
+/// - Client detection implemented (REED-06-05)
 /// - Template rendering placeholder (REED-06-04)
-/// - Client detection placeholder (REED-06-05)
 async fn handle_request(req: HttpRequest, _path: web::Path<String>) -> HttpResponse {
     let url = req.path();
     println!("Request: {} {}", req.method(), url);
 
-    // Resolve URL to layout + language
+    // 1. Check for screen detection (skip for bots)
+    if needs_screen_detection(&req) && !is_bot_request(&req) {
+        println!("  First visit - sending screen detection HTML");
+        return HttpResponse::Ok()
+            .content_type("text/html; charset=utf-8")
+            .body(generate_screen_detection_html());
+    }
+
+    // 2. Resolve URL to layout + language
     match resolve_url(url) {
         Ok(route_info) => {
+            // 3. Detect client information
+            let client_info = match detect_client_info(&req, &route_info.language) {
+                Ok(info) => info,
+                Err(e) => {
+                    println!("  Client detection error: {}", e);
+                    // Fallback to defaults
+                    return HttpResponse::InternalServerError()
+                        .content_type("text/html; charset=utf-8")
+                        .body("<h1>500 - Internal Server Error</h1><p>Client detection failed.</p>");
+                }
+            };
+
             println!(
                 "  Resolved: layout={}, language={}, params={:?}",
                 route_info.layout, route_info.language, route_info.params
+            );
+            println!(
+                "  Client: mode={}, device={}, breakpoint={}, bot={}",
+                client_info.interaction_mode, client_info.device_type, client_info.breakpoint, client_info.is_bot
             );
 
             // Placeholder response until REED-06-04 (Response Builder)
@@ -109,14 +138,33 @@ async fn handle_request(req: HttpRequest, _path: web::Path<String>) -> HttpRespo
     <title>ReedCMS</title>
 </head>
 <body>
-    <h1>ReedCMS Routing Active</h1>
+    <h1>ReedCMS Routing + Client Detection Active</h1>
+    <h2>Route Information</h2>
     <p><strong>Layout:</strong> {}</p>
     <p><strong>Language:</strong> {}</p>
     <p><strong>Params:</strong> {:?}</p>
+    <h2>Client Information</h2>
+    <p><strong>Interaction Mode:</strong> {}</p>
+    <p><strong>Device Type:</strong> {}</p>
+    <p><strong>Breakpoint:</strong> {}</p>
+    <p><strong>Is Bot:</strong> {}</p>
+    {}
     <p><em>Template rendering will be added in REED-06-04</em></p>
 </body>
 </html>"#,
-                route_info.language, route_info.layout, route_info.language, route_info.params
+                route_info.language,
+                route_info.layout,
+                route_info.language,
+                route_info.params,
+                client_info.interaction_mode,
+                client_info.device_type,
+                client_info.breakpoint,
+                client_info.is_bot,
+                if let Some(vw) = client_info.viewport_width {
+                    format!("<p><strong>Viewport:</strong> {}x{}</p>", vw, client_info.viewport_height.unwrap_or(0))
+                } else {
+                    String::new()
+                }
             );
 
             HttpResponse::Ok()

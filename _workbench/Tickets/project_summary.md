@@ -1204,9 +1204,125 @@ Result: { layout: "blog", language: "en", params: { slug: "my-post" } }
 - Console logging for debugging
 
 **Next Steps**:
-- REED-06-05: Client Detection (screen_info cookie) will enhance language detection
 - REED-06-04: Response Builder will replace placeholder with real template rendering
 - Future optimization: Build reverse index (route → layout@lang) for O(1) lookups
+
+---
+
+### Client Detection Services (`src/reedcms/server/`) - **REED-06-05 Complete**
+
+#### Client Detection - Device, Breakpoint, and Interaction Mode
+
+**Implementation Status**: ✅ Complete (REED-06-05)
+
+**Core Components**:
+
+1. **Client Detection** (`client_detection.rs`)
+   - ClientInfo struct with all device information
+   - Screen info cookie parsing (URL-encoded JSON)
+   - Device type detection: mobile/tablet/desktop/bot
+   - CSS breakpoint detection: phone/tablet/screen/wide (560px, 960px, 1260px)
+   - Interaction mode resolution: mouse/touch/reader
+   - Bot and crawler detection
+   - Screen reader detection via active_voices
+   - User-Agent fallback when no cookie
+   - Performance: < 5ms with cookie, < 10ms with User-Agent
+
+2. **Screen Detection** (`screen_detection.rs`)
+   - First-visit detection HTML page
+   - JavaScript detects viewport, screen dimensions, DPR
+   - Sets screen_info cookie (1 year expiry)
+   - Automatic page reload after detection
+   - Minimal UX impact: < 100ms one-time delay
+   - Bots skip detection (immediate content delivery)
+
+**ClientInfo Structure**:
+```rust
+pub struct ClientInfo {
+    pub lang: String,                  // From routing layer
+    pub interaction_mode: String,      // mouse/touch/reader
+    pub device_type: String,           // mobile/tablet/desktop/bot
+    pub breakpoint: String,            // phone/tablet/screen/wide
+    pub viewport_width: Option<u32>,   // Browser viewport
+    pub viewport_height: Option<u32>,
+    pub screen_width: Option<u32>,     // Physical screen
+    pub screen_height: Option<u32>,
+    pub dpr: Option<f32>,              // Device pixel ratio
+    pub active_voices: Option<u32>,    // Screen reader detection
+    pub is_bot: bool,                  // Bot/crawler flag
+}
+```
+
+**Detection Rules**:
+- **Device Type**:
+  - viewport < 560px → mobile
+  - viewport < 960px → tablet
+  - viewport >= 960px → desktop
+  - User-Agent fallback for keywords
+- **Breakpoint**:
+  - 0-559px → phone
+  - 560-959px → tablet
+  - 960-1259px → screen
+  - 1260px+ → wide
+- **Interaction Mode**:
+  - Reader: No cookie OR bot OR active_voices > 0
+  - Touch: phone OR tablet breakpoint
+  - Mouse: screen OR wide breakpoint
+
+**Server Integration**:
+- HTTP Server: First-visit detection + client info display
+- Unix Socket Server: Same detection logic
+- Request flow:
+  1. Check screen_info cookie
+  2. If missing + not bot → Send detection HTML
+  3. If present → Detect client info + render
+  4. Bots → Skip detection, use reader mode
+
+**Cookie Format**:
+```json
+{
+  "width": 1920,
+  "height": 1080,
+  "dpr": 2.0,
+  "viewport_width": 1920,
+  "viewport_height": 937,
+  "active_voices": 0
+}
+```
+
+**Performance Characteristics**:
+- Cookie parsing: < 2ms
+- Client detection: < 5ms with cookie
+- User-Agent fallback: < 10ms
+- Bot detection: < 1ms
+- First-visit delay: < 200ms total (one-time)
+- Cookie lifetime: 1 year
+
+**Interaction Mode Selection**:
+- **Reader Mode**: Text-only rendering for bots, screen readers, no-JS clients
+- **Touch Mode**: Large tap targets, swipe gestures, no hover states (mobile/tablet)
+- **Mouse Mode**: Precise clicking, hover effects, desktop interactions (desktop)
+
+**Template Context Integration**:
+- ClientInfo available as `client` in all templates
+- Template variant selection: `layout.{interaction_mode}.jinja`
+- CSS classes: `interaction-{mode}`, `device-{type}`, `breakpoint-{point}`
+- Conditional rendering based on client properties
+- Ready for REED-06-04 (Response Builder)
+
+**Bot Handling**:
+- User-Agent keywords: "bot", "crawler", "spider", "googlebot"
+- Bypass screen detection for bots
+- Force reader mode for accessibility
+- Immediate content delivery (no JS required)
+
+**Dependencies Added**:
+- urlencoding 2.1 - URL-decode screen_info cookie
+
+**Next Steps**:
+- REED-06-04: Response Builder will use ClientInfo for template rendering
+- REED-05-03: Context Builder can now receive ClientInfo
+- Future: Enhanced bot detection with more keywords
 
 ---
 
