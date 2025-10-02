@@ -11,6 +11,7 @@ pub mod matrix;
 pub mod reed;
 pub mod reedbase;
 pub mod reedstream;
+pub mod routing;
 pub mod security;
 pub mod server;
 pub mod taxonomy;

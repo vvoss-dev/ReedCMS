@@ -1115,11 +1115,98 @@ reed debug:benchmark compare v1 v2 # Compare two versions
 - Worker threads: Default = CPU cores
 - Memory footprint: < 50MB base
 
-**Next Steps** (REED-06-02 to REED-06-05):
-- REED-06-02: Routing System (URL → Layout + Language via routes.csv)
+**Next Steps** (REED-06-03 to REED-06-05):
 - REED-06-03: Authentication Middleware (HTTP Basic Auth + Bearer tokens)
 - REED-06-04: Response Builder (Template rendering orchestrator)
 - REED-06-05: Client Detection (screen_info cookie parsing)
+
+---
+
+### Routing Services Layer (`src/reedcms/routing/`) - **REED-06-02 Complete**
+
+#### URL Routing System - Layout + Language Resolution
+
+**Implementation Status**: ✅ Complete (REED-06-02)
+
+**Core Components**:
+
+1. **URL Resolver** (`resolver.rs`)
+   - Resolves incoming URLs to layout + language combinations
+   - Route format: `layout@lang|route` in `.reed/routes.csv`
+   - Example: `knowledge@de|wissen` → `/wissen` routes to `knowledge` layout with `de` language
+   - Landing page: Empty route (`landing@de||`) maps to root `/`
+   - O(n) linear scan through routes (future: reverse index optimization)
+   - 404 handling with configurable error texts
+   - Performance: < 5ms per resolution
+
+2. **Language Detection** (`language.rs`)
+   - Multi-stage language detection:
+     1. URL path prefix (e.g., `/en/page` → `en`)
+     2. Accept-Language HTTP header parsing
+     3. Default language from `project.default_language` config
+   - Supported languages from `project.languages` config
+   - Validation against configured language list
+   - Performance: < 1ms per detection
+
+3. **Pattern Matching** (`patterns.rs`)
+   - Pattern syntax for dynamic routes:
+     - `:param` - Named parameter extraction
+     - `*` - Wildcard segment
+     - Literal - Exact match
+   - Example: `/blog/:slug` matches `/blog/my-post` → `{ slug: "my-post" }`
+   - Segment count validation
+   - Pattern validation helper
+   - Unit tests included
+
+**Integration**:
+- HTTP Server (`http_server.rs`): URL resolution with 404 handling
+- Unix Socket Server (`socket_server.rs`): Same routing logic
+- Configurable error texts via ReedBase:
+  - `error.404.title@en` → "404 - Not Found"
+  - `error.404.message@en` → "The requested page does not exist."
+  - Hardcoded English fallbacks if text.csv missing
+- Placeholder response with layout/language/params display (REED-06-04 will add template rendering)
+
+**Route Resolution Examples**:
+```
+URL: /wissen
+Routes.csv: knowledge@de|wissen
+Result: { layout: "knowledge", language: "de", params: {} }
+
+URL: /
+Routes.csv: landing@de||
+Result: { layout: "landing", language: "de", params: {} }
+
+URL: /blog/my-post (future pattern matching)
+Routes.csv: blog@en|blog/:slug
+Result: { layout: "blog", language: "en", params: { slug: "my-post" } }
+```
+
+**Performance Characteristics**:
+- URL resolution: O(n) linear scan through routes.csv
+- Language detection: O(1) with config cache
+- Pattern matching: O(n×m) where n=patterns, m=segments
+- Target resolution time: < 5ms
+
+**CSV Integration**:
+- Reads `.reed/routes.csv` directly via `csv::read_csv()`
+- Format: `key|value|comment` where key=`layout@lang`, value=`route`
+- CLI commands already implemented (REED-04-02):
+  - `reed set:route layout@lang "route"` - Add/update route
+  - `reed get:route layout@lang` - Get route
+  - `reed list:route pattern` - List matching routes
+  - `reed validate:routes` - Validate route consistency (REED-04-07)
+
+**Error Handling**:
+- 404 responses with configurable multilingual error messages
+- Hardcoded English fallbacks ensure error pages work even if text.csv corrupted
+- Graceful degradation: Routes to 404 instead of server error
+- Console logging for debugging
+
+**Next Steps**:
+- REED-06-05: Client Detection (screen_info cookie) will enhance language detection
+- REED-06-04: Response Builder will replace placeholder with real template rendering
+- Future optimization: Build reverse index (route → layout@lang) for O(1) lookups
 
 ---
 

@@ -30,7 +30,9 @@
 //! }
 //! ```
 
-use crate::reedcms::reedstream::{ReedError, ReedResult};
+use crate::reedcms::reedbase;
+use crate::reedcms::reedstream::{ReedError, ReedRequest, ReedResult};
+use crate::reedcms::routing::resolver::resolve_url;
 use actix_web::{middleware, web, App, HttpRequest, HttpResponse, HttpServer};
 use std::fs;
 use std::os::unix::fs::PermissionsExt;
@@ -57,12 +59,75 @@ fn configure_routes(cfg: &mut web::ServiceConfig) {
 /// - HTTP response
 ///
 /// ## Implementation Note
-/// This is a placeholder. REED-06-04 will implement proper response building.
-async fn handle_request(_req: HttpRequest, _path: web::Path<String>) -> HttpResponse {
-    println!("Request: {} {}", _req.method(), _req.path());
-    HttpResponse::Ok()
-        .content_type("text/plain; charset=utf-8")
-        .body("ReedCMS Server Foundation Active (Unix Socket)")
+/// URL routing implemented (REED-06-02).
+/// Template rendering will be added in REED-06-04.
+async fn handle_request(req: HttpRequest, _path: web::Path<String>) -> HttpResponse {
+    let url = req.path();
+    println!("Request: {} {}", req.method(), url);
+
+    // Resolve URL to layout + language
+    match resolve_url(url) {
+        Ok(route_info) => {
+            println!(
+                "  Resolved: layout={}, language={}, params={:?}",
+                route_info.layout, route_info.language, route_info.params
+            );
+
+            // Placeholder response until REED-06-04 (Response Builder)
+            let html = format!(
+                r#"<!DOCTYPE html>
+<html lang="{}">
+<head>
+    <meta charset="utf-8">
+    <title>ReedCMS</title>
+</head>
+<body>
+    <h1>ReedCMS Routing Active (Unix Socket)</h1>
+    <p><strong>Layout:</strong> {}</p>
+    <p><strong>Language:</strong> {}</p>
+    <p><strong>Params:</strong> {:?}</p>
+    <p><em>Template rendering will be added in REED-06-04</em></p>
+</body>
+</html>"#,
+                route_info.language, route_info.layout, route_info.language, route_info.params
+            );
+
+            HttpResponse::Ok()
+                .content_type("text/html; charset=utf-8")
+                .body(html)
+        }
+        Err(e) => {
+            println!("  Route not found: {}", e);
+
+            // Try to get 404 texts from ReedBase, fallback to hardcoded English
+            // Hardcoded fallback ensures error pages work even if text.csv is broken
+            let lang = "en"; // TODO: REED-06-05 will detect language from Accept-Language
+            let title = get_error_text("error.404.title", lang)
+                .unwrap_or_else(|| "404 - Not Found".to_string());
+            let message = get_error_text("error.404.message", lang)
+                .unwrap_or_else(|| "The requested page does not exist.".to_string());
+
+            // 404 response
+            let html = format!(
+                r#"<!DOCTYPE html>
+<html lang="{}">
+<head>
+    <meta charset="utf-8">
+    <title>{}</title>
+</head>
+<body>
+    <h1>{}</h1>
+    <p>{}</p>
+</body>
+</html>"#,
+                lang, title, title, message
+            );
+
+            HttpResponse::NotFound()
+                .content_type("text/html; charset=utf-8")
+                .body(html)
+        }
+    }
 }
 
 /// Sets Unix socket file permissions.
@@ -93,6 +158,29 @@ fn set_socket_permissions(socket_path: &str) -> ReedResult<()> {
 
     Ok(())
 }
+
+/// Gets error text from ReedBase.
+///
+/// ## Arguments
+/// - key: Text key (e.g., "error.404.title")
+/// - lang: Language code (e.g., "en", "de")
+///
+/// ## Returns
+/// - Some(text) if found in ReedBase
+/// - None if not found (caller should use fallback)
+fn get_error_text(key: &str, lang: &str) -> Option<String> {
+    let req = ReedRequest {
+        key: format!("{}@{}", key, lang),
+        language: Some(lang.to_string()),
+        environment: None,
+        context: Some("socket_server".to_string()),
+        value: None,
+        description: None,
+    };
+
+    reedbase::get::text(&req).ok().map(|r| r.data)
+}
+
 
 /// Starts Unix socket server.
 ///
