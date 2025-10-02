@@ -49,8 +49,8 @@ impressum.title@de|Impressum - Vivian Voss|SEO page title
 impressum.title@en|Legal Notice - Vivian Voss|SEO page title
 knowledge.description@de|Fachbegriffe und Konzepte der modernen Softwarearchitektur verständlich erklärt|SEO meta description
 knowledge.description@en|Technical terms and concepts of modern software architecture clearly explained|SEO meta description
-knowledge.title@de|Technisches Wissen |SEO page title
-knowledge.title@en|Technical Knowledge |SEO page title
+knowledge.title@de|Technisches Wissen|SEO page title
+knowledge.title@en|Technical Knowledge|SEO page title
 landing.description@de|Enterprise-Architektur-Lösungen mit TCO-Optimierung und Vendor-Independence|SEO meta description
 landing.description@en|Enterprise Architecture Solutions with TCO Optimisation and Vendor Independence|SEO meta description
 landing.title@de|Vivian Voss - Principal Software Architect|SEO page title

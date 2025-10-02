@@ -166,7 +166,8 @@ pub fn create_router() -> Router {
     });
 
     // REED-04-03: Layout commands
-    // router.register("init", "layout", layout_commands::init_layout);
+    use super::layout_commands;
+    router.register("init", "layout", layout_commands::init_layout);
 
     // REED-04-04: User commands
     // router.register("user", "create", user_commands::create_user);
