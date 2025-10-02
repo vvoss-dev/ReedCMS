@@ -170,8 +170,18 @@ pub fn create_router() -> Router {
     router.register("init", "layout", layout_commands::init_layout);
 
     // REED-04-04: User commands
-    // router.register("user", "create", user_commands::create_user);
-    // router.register("user", "list", user_commands::list_users);
+    use super::user_commands;
+    router.register("user", "create", user_commands::create_user);
+    router.register("user", "list", |_args, flags| {
+        user_commands::list_users(flags)
+    });
+    router.register("user", "show", |args, _flags| {
+        user_commands::show_user(args)
+    });
+    router.register("user", "update", user_commands::update_user);
+    router.register("user", "delete", user_commands::delete_user);
+    router.register("user", "passwd", user_commands::change_password);
+    router.register("user", "roles", user_commands::manage_roles);
 
     // REED-04-05: Role commands
     // router.register("role", "create", role_commands::create_role);
