@@ -7,6 +7,7 @@ pub mod data_commands;
 pub mod help;
 pub mod layout_commands;
 pub mod parser;
+pub mod role_commands;
 pub mod router;
 pub mod user_commands;
 
@@ -18,6 +19,8 @@ mod help_test;
 mod layout_commands_test;
 #[cfg(test)]
 mod parser_test;
+#[cfg(test)]
+mod role_commands_test;
 #[cfg(test)]
 mod router_test;
 #[cfg(test)]

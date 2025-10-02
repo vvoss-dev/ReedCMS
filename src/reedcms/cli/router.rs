@@ -184,8 +184,17 @@ pub fn create_router() -> Router {
     router.register("user", "roles", user_commands::manage_roles);
 
     // REED-04-05: Role commands
-    // router.register("role", "create", role_commands::create_role);
-    // router.register("role", "list", role_commands::list_roles);
+    use super::role_commands;
+    router.register("role", "create", role_commands::create_role);
+    router.register("role", "list", |_args, flags| {
+        role_commands::list_roles(flags)
+    });
+    router.register("role", "show", |args, _flags| {
+        role_commands::show_role(args)
+    });
+    router.register("role", "update", role_commands::update_role);
+    router.register("role", "delete", role_commands::delete_role);
+    router.register("role", "permissions", role_commands::manage_permissions);
 
     // REED-04-06: Taxonomy commands
     // router.register("taxonomy", "create", taxonomy_commands::create_term);
