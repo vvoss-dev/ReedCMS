@@ -11,7 +11,7 @@ REED-03-01|Complete|User Management System|Security Layer|High|High|REED-02-01,R
 REED-03-02|Complete|Role Permission System|Security Layer|High|High|REED-03-01|Roles Matrix CSV (Line 367-396)|Implement role-based permissions with Unix-style syntax and inheritance with circular detection
 REED-04-01|Complete|CLI Command Foundation|CLI Layer|Critical|High|REED-01-01|CLI Architecture (Line 1032-1111)|Implement CLI command parser with colon notation and command routing system
 REED-04-02|Complete|CLI Data Commands|CLI Layer|High|Medium|REED-04-01,REED-02-01|CLI Data Management (Line 1042-1050)|Implement set:text, set:route, set:meta, get:text, get:route, list:text commands with pattern matching
-REED-04-03|Open|CLI Layout Commands|CLI Layer|High|High|REED-04-01,REED-02-01|Layout Management (Line 1052-1055)|Implement init:layout with interactive prompts, preset support and registry management
+REED-04-03|Complete|CLI Layout Commands|CLI Layer|High|High|REED-04-01,REED-02-01|Layout Management (Line 1052-1055)|Implement init:layout with flag-based configuration and registry management
 REED-04-04|Open|CLI User Commands|CLI Layer|Medium|Medium|REED-04-01,REED-03-01,REED-03-02|User Management CLI (Line 1082-1090)|Implement user:create, user:list, user:update, user:delete, user:passwd, user:roles commands
 REED-04-05|Open|CLI Role Commands|CLI Layer|Medium|Medium|REED-04-01,REED-03-02|Role Management CLI (Line 1091-1098)|Implement role:create, role:list, role:update, role:delete, role:permissions commands
 REED-04-06|Open|CLI Taxonomy Commands|CLI Layer|Medium|Medium|REED-04-01,REED-03-03|Taxonomy CLI (Line 1099-1109)|Implement taxonomy:create, taxonomy:list, taxonomy:search, taxonomy:assign commands

@@ -1237,6 +1237,15 @@ service|svc_*|get[rwx],set[rw-]|unlimited|10000|Service-to-service communication
 - **Test Coverage**: 18/18 tests (100%)
 - **Files**: data_commands.rs, data_commands_test.rs
 
+**REED-04-03: CLI Layout Commands** ✅ Complete (2025-10-02)
+- **Flag-Based**: No interactive prompts, all via --languages, --variants, --routes, --parent
+- **Template Generation**: Automatic Jinja + CSS file creation for all variants
+- **Registry Management**: Automatic updates to .reed/registry.csv
+- **Default Content**: Auto-generated routes, text, meta entries
+- **Multi-Layout**: Batch creation support (init:layout a b c)
+- **Test Coverage**: 21/21 tests (100%)
+- **Files**: layout_commands.rs (425 lines), layout_commands_test.rs
+
 **REED-04-10: Man Page Documentation** 📋 Ticket Created (2025-02-02)
 - **Decision**: Implement comprehensive Unix/Linux man page system
 - **Format**: Markdown-based `.ronn` source compiled to `.1` groff
