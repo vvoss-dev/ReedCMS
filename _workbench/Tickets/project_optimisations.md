@@ -972,7 +972,96 @@ target/man/
 ⏳ REED-04-07 (Migration) - Ready to implement
 ⏳ REED-04-08 (Build) - Blocked by REED-08-01, REED-08-02
 ⏳ REED-04-09 (Server) - Blocked by REED-06-01
-⏳ REED-04-10 (Man Pages) - Blocked by all REED-04 tickets
+⏳ REED-04-10 (Agent Commands) - Ready to implement
+⏳ REED-04-11 (Man Pages) - Blocked by all REED-04 tickets
+```
+
+---
+
+## §20. Third-Party Integration Layer (2025-10-02)
+
+### REED-20: IDE Extensions and MCP Integration
+
+**Tickets Created**: 4 tickets (REED-20-01 through REED-20-04)  
+**Status**: Planning complete, ready for implementation  
+**Foundation**: REED-04-10 (CLI Agent Commands) provides MCP integration base
+
+#### Decision: Separate REED-20 Chapter for Third-Party Tools
+
+**Rationale**:
+- REED-11 focuses on **internal** ReedCMS extensions (hooks, workflows)
+- REED-20 focuses on **external** tools consuming ReedCMS (IDEs, AI assistants)
+- Clear separation between "ReedCMS extends itself" vs "External tools integrate ReedCMS"
+
+**Architecture**:
+```
+REED-20-01: MCP Server Library (Foundation)
+    ├── REED-20-02: VS Code Extension
+    ├── REED-20-03: Zed Extension
+    └── REED-20-04: JetBrains Extension
+```
+
+#### REED-20-01: MCP Server Library
+**Package**: `reed-mcp-server` (separate crate)  
+**Purpose**: Standalone MCP protocol server exposing all ReedCMS CLI commands as tools
+
+**Key Features**:
+- Stdio-based MCP communication
+- All CLI commands as MCP tools (reed_set_text, reed_get_text, reed_init_layout, etc.)
+- Resources API (project config, layout registry, content stats)
+- Claude Desktop integration via `claude_desktop_config.json`
+
+**Distribution**: crates.io, npm (optional wrapper), Homebrew, MCP directory
+
+#### REED-20-02: VS Code Extension
+**Package**: `reedcms-vscode` (TypeScript/JavaScript)  
+**Purpose**: Full-featured VS Code integration with visual editing
+
+**Key Features**:
+- Sidebar panel (project/layout/content views)
+- Custom CSV table editor with inline editing
+- IntelliSense for ReedCMS keys and languages
+- Live preview panel with hot reload
+- AI content generation via MCP
+
+**Distribution**: VS Code Marketplace
+
+#### REED-20-03: Zed Extension
+**Package**: `reedcms-zed` (Rust)  
+**Purpose**: Lightweight, performance-first Zed integration
+
+**Key Features**:
+- Native Zed MCP support (built-in protocol)
+- Custom LSP for auto-completion and diagnostics
+- Vim-mode commands (`:ReedSet`, `:ReedGet`)
+- Minimal overhead (<10ms startup, <5MB memory)
+
+**Distribution**: Zed Extensions Marketplace
+
+#### REED-20-04: JetBrains Extension
+**Package**: `reedcms-jetbrains` (Kotlin/Java)  
+**Purpose**: Enterprise-grade plugin for entire JetBrains ecosystem
+
+**Key Features**:
+- Tool window with visual CSV editor
+- Advanced refactoring (rename key across project)
+- Code inspections and quick fixes
+- Multi-IDE support (IntelliJ, WebStorm, PyCharm, PhpStorm, etc.)
+
+**Distribution**: JetBrains Marketplace
+
+#### Ticket Statistics
+
+**Total Tickets**: 4  
+**Status**: All Open (planning complete)  
+**Implementation Priority**: Post-REED-11 (after internal extensions)
+
+**Dependency Chain**:
+```
+REED-04-10 (Agent Commands) → REED-20-01 (MCP Server)
+    ├→ REED-20-02 (VS Code)
+    ├→ REED-20-03 (Zed)
+    └→ REED-20-04 (JetBrains)
 ```
 
 ---
