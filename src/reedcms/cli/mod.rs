@@ -9,6 +9,7 @@ pub mod layout_commands;
 pub mod parser;
 pub mod role_commands;
 pub mod router;
+pub mod taxonomy_commands;
 pub mod user_commands;
 
 #[cfg(test)]
@@ -23,6 +24,8 @@ mod parser_test;
 mod role_commands_test;
 #[cfg(test)]
 mod router_test;
+#[cfg(test)]
+mod taxonomy_commands_test;
 #[cfg(test)]
 mod user_commands_test;
 

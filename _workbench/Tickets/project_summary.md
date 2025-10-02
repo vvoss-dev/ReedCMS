@@ -1265,6 +1265,17 @@ service|svc_*|get[rwx],set[rw-]|unlimited|10000|Service-to-service communication
 - **Test Coverage**: 25 tests (compilation successful)
 - **Files**: role_commands.rs (515 lines), role_commands_test.rs
 
+**REED-04-06: CLI Taxonomy Commands** ✅ Complete (2025-10-02)
+- **Taxonomy API Integration**: Direct function calls to terms, entities, hierarchy APIs
+- **Commands**: taxonomy:create, taxonomy:list, taxonomy:show, taxonomy:search, taxonomy:update, taxonomy:delete, taxonomy:assign, taxonomy:unassign, taxonomy:entities, taxonomy:usage
+- **Hierarchical Support**: Parent-child relationships, depth tracking, tree visualization
+- **Entity Assignment**: Assign terms to 8 entity types (user, content, template, route, site, project, asset, role)
+- **Usage Statistics**: Track usage_count, entity breakdown by type
+- **Output Formats**: Table (default), JSON, CSV
+- **Search**: Fuzzy matching across term name, category, description
+- **Test Coverage**: 43 tests (compilation successful)
+- **Files**: taxonomy_commands.rs (742 lines), taxonomy_commands_test.rs (315 lines)
+
 **REED-04-10: Man Page Documentation** 📋 Ticket Created (2025-02-02)
 - **Decision**: Implement comprehensive Unix/Linux man page system
 - **Format**: Markdown-based `.ronn` source compiled to `.1` groff

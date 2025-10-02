@@ -6,9 +6,7 @@
 //! Routes parsed commands to appropriate handler functions.
 
 use crate::reedcms::cli::parser::Command;
-use crate::reedcms::reedstream::{
-    current_timestamp, ReedError, ReedResponse, ReedResult, ResponseMetrics,
-};
+use crate::reedcms::reedstream::{ReedError, ReedResponse, ReedResult, ResponseMetrics};
 use std::collections::HashMap;
 
 /// Command handler function type.
@@ -197,8 +195,25 @@ pub fn create_router() -> Router {
     router.register("role", "permissions", role_commands::manage_permissions);
 
     // REED-04-06: Taxonomy commands
-    // router.register("taxonomy", "create", taxonomy_commands::create_term);
-    // router.register("taxonomy", "list", taxonomy_commands::list_terms);
+    use super::taxonomy_commands;
+    router.register("taxonomy", "create", taxonomy_commands::create);
+    router.register("taxonomy", "list", |_args, flags| {
+        taxonomy_commands::list(flags)
+    });
+    router.register("taxonomy", "show", |args, _flags| {
+        taxonomy_commands::show(args)
+    });
+    router.register("taxonomy", "search", taxonomy_commands::search);
+    router.register("taxonomy", "update", taxonomy_commands::update);
+    router.register("taxonomy", "delete", taxonomy_commands::delete);
+    router.register("taxonomy", "assign", taxonomy_commands::assign);
+    router.register("taxonomy", "unassign", |args, _flags| {
+        taxonomy_commands::unassign(args)
+    });
+    router.register("taxonomy", "entities", taxonomy_commands::entities);
+    router.register("taxonomy", "usage", |args, _flags| {
+        taxonomy_commands::usage(args)
+    });
 
     // REED-04-07: Migration commands
     // router.register("migrate", "text", migration_commands::migrate_text);
