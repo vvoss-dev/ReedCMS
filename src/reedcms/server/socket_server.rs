@@ -30,6 +30,7 @@
 //! }
 //! ```
 
+use crate::reedcms::auth::SiteProtection;
 use crate::reedcms::reedbase;
 use crate::reedcms::reedstream::{ReedError, ReedRequest, ReedResult};
 use crate::reedcms::routing::resolver::resolve_url;
@@ -291,6 +292,7 @@ pub async fn start_socket_server(socket_path: &str, workers: Option<usize>) -> R
         App::new()
             .wrap(middleware::Logger::default())
             .wrap(middleware::Compress::default())
+            .wrap(SiteProtection::new())  // Simple htaccess-style site protection
             .configure(configure_routes)
     })
     .workers(worker_count)

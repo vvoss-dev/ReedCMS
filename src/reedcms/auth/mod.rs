@@ -9,10 +9,12 @@ pub mod credentials;
 pub mod errors;
 pub mod middleware;
 pub mod rate_limit;
+pub mod site_protection;
 pub mod verification;
 
 pub use credentials::{extract_auth_credentials, AuthCredentials};
 pub use errors::{create_forbidden_error, create_unauthorized_error};
 pub use middleware::{AuthMiddleware, AuthMiddlewareService};
 pub use rate_limit::{clear_failed_logins, is_rate_limited, record_failed_login};
+pub use site_protection::{SiteProtection, SiteProtectionService};
 pub use verification::{verify_credentials, AuthenticatedUser};

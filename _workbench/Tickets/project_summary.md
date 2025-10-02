@@ -1216,11 +1216,12 @@ Result: { layout: "blog", language: "en", params: { slug: "my-post" } }
 **Implementation Status**: ✅ Complete (REED-06-03)
 
 **Core Components**:
-- `middleware.rs` - Actix-Web authentication middleware
+- `middleware.rs` - Actix-Web authentication middleware (CMS user auth)
 - `credentials.rs` - Authorization header parsing (Basic Auth, Bearer Token)
 - `verification.rs` - Credential verification with Argon2
 - `rate_limit.rs` - Progressive rate limiting (1min, 5min, 30min lockout)
 - `errors.rs` - Standardised 401/403 HTTP error responses
+- `site_protection.rs` - Simple htaccess-style site-wide protection
 
 **Authentication Methods**:
 1. **HTTP Basic Auth**: `Authorization: Basic base64(username:password)`
@@ -1391,6 +1392,94 @@ curl -i -u wrong:wrong http://localhost:8333/api/data
 - [ ] Two-factor authentication (TOTP)
 - [ ] IP-based rate limiting in addition to username-based
 - [ ] Persistent rate limit store (currently in-memory)
+
+#### Simple Site Protection (htaccess-style)
+
+**Purpose**: Protect entire website with single username/password (not multi-user CMS auth)
+
+**Configuration** (`.reed/server.csv`):
+```csv
+key|value|comment
+server.auth.enabled|true|Enable site-wide protection
+server.auth.username|vvoss|Site access username
+server.auth.password|$argon2id$...|Argon2 hashed password
+```
+
+**Setting Up Site Protection**:
+```bash
+# 1. Enable site protection
+reed set:server auth.enabled true --desc "Enable site protection"
+
+# 2. Set username
+reed set:server auth.username vvoss --desc "Site access username"
+
+# 3. Set password (will be hashed with Argon2)
+reed user:passwd vvoss PalimPalim  # Uses same password hashing as CMS users
+```
+
+**Usage in Server**:
+```rust
+use actix_web::{App, HttpServer};
+use reedcms::auth::SiteProtection;
+
+HttpServer::new(|| {
+    App::new()
+        .wrap(SiteProtection::new())  // Protects entire site
+        .route("/", web::get().to(index))
+})
+```
+
+**Behaviour**:
+- **Enabled (`auth.enabled = true`)**: All requests require HTTP Basic Auth with configured credentials
+- **Disabled (`auth.enabled = false` or missing)**: Site is publicly accessible
+- **Authentication Flow**:
+  1. Check if `server.auth.enabled = true`
+  2. If disabled: Allow all requests (bypass)
+  3. If enabled: Extract `Authorization: Basic` header
+  4. Verify username matches `server.auth.username`
+  5. Verify password with Argon2 against `server.auth.password`
+  6. Return 401 if invalid or missing
+
+**Use Cases**:
+- Staging servers (e.g., staging.example.com protected with single password)
+- Development environments (prevent indexing by search engines)
+- Preview deployments (share with clients using simple password)
+- Beta testing access (single password for all testers)
+
+**Difference from CMS User Auth**:
+| Feature | Site Protection | CMS User Auth |
+|---------|----------------|---------------|
+| Purpose | Protect entire site | Protect admin/API routes |
+| Users | Single username/password | Multiple users in `.reed/users.matrix.csv` |
+| Roles | No roles | Role-based access control |
+| Permissions | No permissions | Unix-style permissions (`text[rwx]`) |
+| Rate Limiting | No (simple check) | Yes (progressive lockout) |
+| Scope | Site-wide | Per-route via middleware |
+
+**Performance**:
+- Config check: < 1ms (ReedBase cached lookup)
+- Auth verification: ~100ms (Argon2 intentional slowdown)
+- Bypass when disabled: < 1μs (immediate passthrough)
+
+**Security**:
+- Constant-time password comparison via Argon2
+- Same Argon2id parameters as CMS users (64MB, 3 iterations)
+- No rate limiting (simple site-wide lock, not per-user)
+- Uses standard HTTP Basic Auth (browser will cache credentials)
+
+**Testing**:
+```bash
+# Test without credentials (should return 401)
+curl -i http://localhost:8333/
+
+# Test with correct credentials
+curl -i -u vvoss:PalimPalim http://localhost:8333/
+
+# Test with wrong credentials
+curl -i -u wrong:wrong http://localhost:8333/
+```
+
+**Integration**: Automatically applied to both HTTP and Unix socket servers in `server/http_server.rs` and `server/socket_server.rs`.
 
 ---
 

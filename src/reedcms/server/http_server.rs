@@ -5,6 +5,7 @@
 //!
 //! Provides HTTP server foundation with configurable workers and port binding.
 
+use crate::reedcms::auth::SiteProtection;
 use crate::reedcms::reedbase;
 use crate::reedcms::reedstream::{ReedError, ReedRequest, ReedResult};
 use crate::reedcms::routing::resolver::resolve_url;
@@ -47,6 +48,7 @@ pub async fn start_http_server(port: u16, workers: Option<usize>) -> ReedResult<
         App::new()
             .wrap(middleware::Logger::default())
             .wrap(middleware::Compress::default())
+            .wrap(SiteProtection::new())  // Simple htaccess-style site protection
             .configure(configure_routes)
     })
     .workers(worker_count)
