@@ -234,12 +234,20 @@ pub fn create_router() -> Router {
     });
 
     // REED-04-08: Build commands
-    // router.register("build", "kernel", build_commands::build_kernel);
-    // router.register("build", "complete", build_commands::build_complete);
+    use super::build_commands;
+    router.register("build", "kernel", build_commands::build_kernel);
+    router.register("build", "public", build_commands::build_public);
+    router.register("build", "complete", build_commands::build_complete);
+    router.register("build", "watch", build_commands::build_watch);
 
     // REED-04-09: Server commands
-    // router.register("server", "io", server_commands::server_io);
-    // router.register("server", "start", server_commands::server_start);
+    use super::server_commands;
+    router.register("server", "io", server_commands::server_io);
+    router.register("server", "start", server_commands::server_start);
+    router.register("server", "stop", server_commands::server_stop);
+    router.register("server", "restart", server_commands::server_restart);
+    router.register("server", "status", server_commands::server_status);
+    router.register("server", "logs", server_commands::server_logs);
 
     router
 }

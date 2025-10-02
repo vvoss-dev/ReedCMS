@@ -3,6 +3,7 @@
 
 //! CLI Layer module organisation.
 
+pub mod build_commands;
 pub mod data_commands;
 pub mod help;
 pub mod layout_commands;
@@ -10,6 +11,7 @@ pub mod migration_commands;
 pub mod parser;
 pub mod role_commands;
 pub mod router;
+pub mod server_commands;
 pub mod taxonomy_commands;
 pub mod user_commands;
 pub mod validation_commands;
