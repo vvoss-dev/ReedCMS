@@ -1,4 +1,4 @@
-# REED-04-10: CLI Man Page Documentation
+# REED-04-11: CLI Man Page Documentation
 
 ## MANDATORY Development Standards
 
@@ -14,13 +14,13 @@
 - **Avoid**: Generic file names like `handler.rs`, `middleware.rs`, `utils.rs`
 
 ## Ticket Information
-- **ID**: REED-04-10
+- **ID**: REED-04-11
 - **Title**: CLI Man Page Documentation
 - **Layer**: CLI Layer (REED-04)
 - **Priority**: Medium
 - **Status**: Open
 - **Complexity**: Low
-- **Dependencies**: REED-04-01, REED-04-02, REED-04-03, REED-04-04, REED-04-05, REED-04-06, REED-04-07, REED-04-08, REED-04-09
+- **Dependencies**: REED-04-01, REED-04-02, REED-04-03, REED-04-04, REED-04-05, REED-04-06, REED-04-07, REED-04-08, REED-04-09, REED-04-10
 
 ## Summary Reference
 - **Section**: CLI Interface & Commands

@@ -1289,12 +1289,67 @@ service|svc_*|get[rwx],set[rw-]|unlimited|10000|Service-to-service communication
 - **Test Coverage**: 21 tests (12 migration + 9 validation, compilation successful)
 - **Files**: migration_commands.rs (423 lines), validation_commands.rs (558 lines), migration_commands_test.rs (125 lines), validation_commands_test.rs (73 lines)
 
-**REED-04-10: Man Page Documentation** 📋 Ticket Created (2025-02-02)
+**REED-04-10: CLI Agent Commands** 📋 Ticket Created (2025-10-02)
+- **Decision**: Implement MCP integration foundation in CLI for direct agent usage
+- **Purpose**: Enable direct AI agent usage for content generation and translation via CLI
+- **Agent Management**: add, list, show, test, update, remove commands
+- **Content Generation**: agent:generate for creating content with prompts
+- **Translation**: agent:translate for multi-language content translation
+- **Providers**: Anthropic Claude, OpenAI GPT support
+- **Security**: API key encryption with AES-256-GCM
+- **Storage**: .reed/agents.matrix.csv with encrypted credentials
+- **Foundation**: Basis for advanced automation in REED-11 Extension Layer
+
+**REED-04-11: Man Page Documentation** 📋 Ticket Created (2025-02-02)
 - **Decision**: Implement comprehensive Unix/Linux man page system
 - **Format**: Markdown-based `.ronn` source compiled to `.1` groff
-- **Structure**: Main `reed.1` + 7 subcommand pages (data, layout, user, role, taxonomy, server, build)
+- **Structure**: Main `reed.1` + 8 subcommand pages (data, layout, user, role, taxonomy, migration, agent, server, build)
 - **Build Tool**: `ronn-ng` gem for Markdown → groff compilation
 - **Rationale**: Professional tool standard, offline access, system integration
+
+### REED-11: Extension Layer
+
+**REED-11-01: Hook System** 📋 Ticket Created (2025-10-02)
+- **Purpose**: Event-driven automation with triggers (after_set, after_create, before_set, etc.)
+- **Use Cases**: Auto-post to social media after blog creation, auto-translate content, validate before save
+- **Configuration**: .reed/hooks.csv with trigger, condition, action, agent, parameters
+- **Triggers**: Data events (after_set, before_set, after_create, after_update, after_delete)
+- **Actions**: post_to_mastodon, post_to_twitter, translate_content, validate_content, notify_email
+- **Conditions**: Pattern matching (key starts with, layout =, language =)
+- **Integration**: Hooks fire automatically from CLI commands, use agents from REED-04-10
+- **Foundation**: Basis for REED-11-02 workflow engine
+
+**REED-11-02: Workflow Engine** 📋 Ticket Created (2025-10-02)
+- **Purpose**: Multi-step automation with YAML-based workflow definitions
+- **Format**: YAML files in .reed/workflows/ with steps, variables, conditions, loops
+- **Features**: Conditional execution, parallel steps, error handling, retry logic
+- **Actions**: agent:generate, agent:translate, set:text, post_to_mastodon, http_request, loop, condition
+- **Variables**: Context (${context.key}), workflow (${workflow.step_name}), environment (${env.VAR})
+- **Control Flow**: Loops, conditionals, parallel execution, wait states
+- **Use Case**: Complete blog publishing pipeline (validate → translate → generate summary → post to social → notify)
+- **CLI**: workflow:list, workflow:run, workflow:validate, workflow:create
+
+**REED-11-03: External API Bridges** 📋 Ticket Created (2025-10-02)
+- **Purpose**: Bidirectional social media integration for automatic posting
+- **Platforms**: Mastodon, Twitter/X, LinkedIn
+- **Features**: Post text, post threads, upload media, test connection
+- **Configuration**: .reed/integrations.csv with encrypted access tokens
+- **Security**: Access token encryption with system key
+- **Actions**: post_text, post_thread, upload_media for each platform
+- **CLI**: integration:add, integration:list, integration:test, integration:post, integration:remove
+- **Hook Integration**: Used by hooks and workflows for automatic posting
+- **Trait System**: Common SocialIntegration trait for all platforms
+
+**REED-11-04: Scheduled Tasks** 📋 Ticket Created (2025-10-02)
+- **Purpose**: Cron-compatible task scheduling for automated workflow execution
+- **Format**: Standard cron expressions (minute hour day month weekday)
+- **Special Values**: @hourly, @daily, @weekly, @monthly, @yearly
+- **Configuration**: .reed/schedules.csv with cron expression, workflow, parameters, timezone
+- **Scheduler Engine**: Background thread checking schedules every minute
+- **Timezone Support**: Per-schedule timezone configuration
+- **Use Cases**: Daily backups, weekly reports, hourly social media sync
+- **CLI**: schedule:add, schedule:list, schedule:enable, schedule:disable, schedule:run
+- **Integration**: Runs as part of ReedCMS server
 
 ### Command Syntax Standard
 **All CLI commands use colon notation**: `reed command:action`
