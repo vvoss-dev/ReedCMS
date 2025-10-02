@@ -45,3 +45,6 @@ REED-11-02|Open|Workflow Engine|Extension Layer|Medium|High|REED-11-01|Workflow 
 REED-11-03|Open|External API Bridges|Extension Layer|Low|Medium|REED-11-01,REED-04-10|Social Media Integration|Implement bidirectional bridges for Mastodon, Twitter/X, LinkedIn with automatic posting
 REED-11-04|Open|Scheduled Tasks|Extension Layer|Low|Medium|REED-11-02|Cron-Style Scheduling|Implement cron-compatible task scheduling for automated workflows and maintenance tasks
 REED-20-01|Open|MCP Server Library|Third-Party Integration|Medium|High|REED-04-10|MCP Protocol Implementation|Implement standalone MCP server library (reed-mcp-server) exposing ReedCMS as MCP tool provider for Claude Desktop, VS Code, and IDEs
+REED-20-02|Open|VS Code Extension|Third-Party Integration|Medium|High|REED-20-01|VS Code Integration|Develop Visual Studio Code extension with sidebar panel, CSV editor, IntelliSense, AI integration, and live preview
+REED-20-03|Open|Zed Extension|Third-Party Integration|Low|Medium|REED-20-01|Zed Editor Integration|Develop Zed editor extension with LSP support, Vim-mode commands, and performance-first architecture
+REED-20-04|Open|JetBrains Extension|Third-Party Integration|Low|High|REED-20-01|JetBrains Platform Plugin|Develop JetBrains plugin for IntelliJ IDEA, WebStorm, PyCharm with tool window, refactoring, and visual CSV editor

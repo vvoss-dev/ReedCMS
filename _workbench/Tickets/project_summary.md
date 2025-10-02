@@ -1362,8 +1362,38 @@ service|svc_*|get[rwx],set[rw-]|unlimited|10000|Service-to-service communication
 - **Resources**: Project configuration, layout registry, content statistics
 - **Claude Desktop**: Direct integration via claude_desktop_config.json
 - **Distribution**: crates.io, npm (optional JS wrapper), Homebrew formula, MCP directory listing
-- **Future Extensions**: VS Code Extension (REED-20-02), GitHub Actions (REED-20-03), Zapier/Make (REED-20-04)
 - **Benefits**: IDE integration, AI-assisted content creation, workflow automation, cross-platform compatibility
+
+**REED-20-02: VS Code Extension** 📋 Ticket Created (2025-10-02)
+- **Purpose**: Native Visual Studio Code integration for ReedCMS content management
+- **Package**: reedcms-vscode (TypeScript/JavaScript extension)
+- **Features**: Sidebar panel (project/layout/content views), custom CSV table editor, IntelliSense for keys/languages
+- **AI Integration**: Claude content generation via MCP, inline translation assistance
+- **Live Preview**: WebView-based layout preview with hot reload and variant switching
+- **Command Palette**: All ReedCMS CLI commands accessible (set:text, create:layout, validate:project)
+- **Syntax Highlighting**: Custom .csv and Jinja template highlighting
+- **Distribution**: VS Code Marketplace
+- **Benefits**: Professional IDE experience, visual editing, AI-assisted workflows
+
+**REED-20-03: Zed Extension** 📋 Ticket Created (2025-10-02)
+- **Purpose**: Lightweight Zed editor integration optimised for performance
+- **Package**: reedcms-zed (Rust-based extension)
+- **Architecture**: Native Zed MCP support, custom Language Server Protocol implementation
+- **Features**: Inline commands, Vim-mode integration (:ReedSet, :ReedGet), keyboard-centric workflow
+- **LSP Features**: Auto-completion, hover information, diagnostics, code actions
+- **Performance**: <10ms startup, <5ms completion, <20ms LSP response, <5MB memory
+- **Distribution**: Zed Extensions Marketplace
+- **Benefits**: Minimal overhead, native Rust performance, keyboard-first UX
+
+**REED-20-04: JetBrains Extension** 📋 Ticket Created (2025-10-02)
+- **Purpose**: Comprehensive JetBrains platform plugin for all IDEs (IntelliJ, WebStorm, PyCharm, etc.)
+- **Package**: reedcms-jetbrains (Kotlin/Java plugin)
+- **Features**: Tool window panel, visual CSV table editor, advanced refactoring (rename key across project)
+- **Inspections**: Real-time validation, missing key warnings, route conflict detection
+- **AI Integration**: JetBrains AI for content generation via MCP
+- **Multi-IDE Support**: Single plugin for entire JetBrains ecosystem (10+ IDEs)
+- **Distribution**: JetBrains Marketplace
+- **Benefits**: Enterprise-grade tooling, professional UX, native platform integration
 
 ### Command Syntax Standard
 **All CLI commands use colon notation**: `reed command:action`
