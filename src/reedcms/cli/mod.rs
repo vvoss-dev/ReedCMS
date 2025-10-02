@@ -3,10 +3,13 @@
 
 //! CLI Layer module organisation.
 
+pub mod data_commands;
 pub mod help;
 pub mod parser;
 pub mod router;
 
+#[cfg(test)]
+mod data_commands_test;
 #[cfg(test)]
 mod help_test;
 #[cfg(test)]

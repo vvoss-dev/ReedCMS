@@ -137,13 +137,33 @@ impl Default for Router {
 /// - Initialization: O(n) where n = number of commands
 /// - One-time cost at startup
 pub fn create_router() -> Router {
-    let router = Router::new();
+    let mut router = Router::new();
 
-    // TODO: Register handlers as they are implemented
     // REED-04-02: Data commands
-    // router.register("set", "text", data_commands::set_text);
-    // router.register("get", "text", data_commands::get_text);
-    // router.register("list", "text", data_commands::list_text);
+    use super::data_commands;
+
+    // Set commands
+    router.register("set", "text", data_commands::set_text);
+    router.register("set", "route", data_commands::set_route);
+    router.register("set", "meta", data_commands::set_meta);
+
+    // Get commands
+    router.register("get", "text", |args, _flags| data_commands::get_text(args));
+    router.register("get", "route", |args, _flags| {
+        data_commands::get_route(args)
+    });
+    router.register("get", "meta", |args, _flags| data_commands::get_meta(args));
+
+    // List commands
+    router.register("list", "text", |args, _flags| {
+        data_commands::list_text(args)
+    });
+    router.register("list", "route", |args, _flags| {
+        data_commands::list_route(args)
+    });
+    router.register("list", "meta", |args, _flags| {
+        data_commands::list_meta(args)
+    });
 
     // REED-04-03: Layout commands
     // router.register("init", "layout", layout_commands::init_layout);

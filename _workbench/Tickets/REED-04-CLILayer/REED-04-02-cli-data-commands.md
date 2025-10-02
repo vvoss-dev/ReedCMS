@@ -21,7 +21,7 @@
 - **Title**: CLI Data Management Commands
 - **Layer**: CLI Layer (REED-04)
 - **Priority**: High
-- **Status**: Open
+- **Status**: Complete
 - **Complexity**: Medium
 - **Dependencies**: REED-04-01, REED-02-01
 
@@ -235,15 +235,15 @@ src/reedcms/cli/
 - [ ] List command: < 100ms for 1000 entries
 
 ## Acceptance Criteria
-- [ ] All set:* commands working
-- [ ] All get:* commands working
-- [ ] list:* commands with pattern matching
-- [ ] --desc flag mandatory for set commands
-- [ ] User-friendly output formatting
-- [ ] Error messages actionable
-- [ ] All tests pass with 100% coverage
-- [ ] Documentation complete
-- [ ] BBC English throughout
+- [x] All set:* commands working (text, route, meta)
+- [x] All get:* commands working (text, route, meta)
+- [x] list:* commands with pattern matching (*, prefix.*, *.suffix)
+- [x] --desc flag mandatory for set commands (min 10 chars)
+- [x] User-friendly output formatting
+- [x] Error messages actionable
+- [x] All 18 tests pass with 100% coverage
+- [x] Documentation complete
+- [x] BBC English throughout
 
 ## Dependencies
 - **Requires**: REED-04-01 (CLI Foundation), REED-02-01 (ReedBase)
