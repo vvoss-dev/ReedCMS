@@ -1246,6 +1246,15 @@ service|svc_*|get[rwx],set[rw-]|unlimited|10000|Service-to-service communication
 - **Test Coverage**: 21/21 tests (100%)
 - **Files**: layout_commands.rs (425 lines), layout_commands_test.rs
 
+**REED-04-04: CLI User Commands** ✅ Complete (2025-10-02)
+- **Security API Integration**: Uses ReedRequest/ReedResponse pattern
+- **Commands**: user:create, user:list, user:show, user:update, user:delete, user:passwd, user:roles
+- **Output Formats**: Table (default), JSON, CSV for list operations
+- **Flag-Based**: All via --email, --password, --roles, --force (no prompts)
+- **Role Management**: Show current, add, remove, or set roles
+- **Test Coverage**: 28 tests (compilation successful)
+- **Files**: user_commands.rs (472 lines), user_commands_test.rs
+
 **REED-04-10: Man Page Documentation** 📋 Ticket Created (2025-02-02)
 - **Decision**: Implement comprehensive Unix/Linux man page system
 - **Format**: Markdown-based `.ronn` source compiled to `.1` groff
