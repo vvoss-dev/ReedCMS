@@ -215,9 +215,23 @@ pub fn create_router() -> Router {
         taxonomy_commands::usage(args)
     });
 
-    // REED-04-07: Migration commands
-    // router.register("migrate", "text", migration_commands::migrate_text);
-    // router.register("validate", "routes", validation_commands::validate_routes);
+    // REED-04-07: Migration & Validation commands
+    use super::migration_commands;
+    use super::validation_commands;
+    router.register("migrate", "text", migration_commands::migrate_text);
+    router.register("migrate", "routes", migration_commands::migrate_routes);
+    router.register("validate", "routes", |_args, flags| {
+        validation_commands::validate_routes(flags)
+    });
+    router.register("validate", "consistency", |_args, flags| {
+        validation_commands::validate_consistency(flags)
+    });
+    router.register("validate", "text", |_args, flags| {
+        validation_commands::validate_text(flags)
+    });
+    router.register("validate", "references", |_args, flags| {
+        validation_commands::validate_references(flags)
+    });
 
     // REED-04-08: Build commands
     // router.register("build", "kernel", build_commands::build_kernel);

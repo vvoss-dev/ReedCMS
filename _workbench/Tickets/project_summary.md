@@ -1276,6 +1276,19 @@ service|svc_*|get[rwx],set[rw-]|unlimited|10000|Service-to-service communication
 - **Test Coverage**: 43 tests (compilation successful)
 - **Files**: taxonomy_commands.rs (742 lines), taxonomy_commands_test.rs (315 lines)
 
+**REED-04-07: CLI Migration & Validation Commands** ✅ Complete (2025-10-02)
+- **Migration Commands**: migrate:text (with --recursive, --dry-run, --no-backup), migrate:routes (with --force flag)
+- **Validation Commands**: validate:routes, validate:consistency, validate:text (requires --language), validate:references
+- **CSV Discovery**: Automatic discovery of .text.csv files in directories
+- **Conflict Detection**: Route conflict detection with detailed reporting
+- **Dry-Run Mode**: Preview changes without applying for both migrations
+- **Backup Integration**: Automatic XZ backup before migrations (unless --no-backup)
+- **Key Validation**: Enforces @lang suffix and full namespace in text keys
+- **Reference Checking**: Validates layout→template and route→layout references
+- **Translation Completeness**: Calculates completeness percentage per language
+- **Test Coverage**: 21 tests (12 migration + 9 validation, compilation successful)
+- **Files**: migration_commands.rs (423 lines), validation_commands.rs (558 lines), migration_commands_test.rs (125 lines), validation_commands_test.rs (73 lines)
+
 **REED-04-10: Man Page Documentation** 📋 Ticket Created (2025-02-02)
 - **Decision**: Implement comprehensive Unix/Linux man page system
 - **Format**: Markdown-based `.ronn` source compiled to `.1` groff
