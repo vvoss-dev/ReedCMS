@@ -1,5 +1,19 @@
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
+// Copyright 2025 Vivian Voss. Licensed under the Apache Licence, Version 2.0.
+// SPDX-Licence-Identifier: Apache-2.0
+//
+// == AI CODING GUIDELINES ==
+// MANDATORY: Follow KISS principle - One function = One job
+// MANDATORY: BBC English for all documentation and comments
+// MANDATORY: Thread-safe in-memory storage with RwLock
+// MANDATORY: Progressive lockout to prevent brute-force attacks
+// MANDATORY: O(1) HashMap operations for performance
+//
+// == FILE PURPOSE ==
+// This file: Progressive rate limiting for failed login attempts
+// Architecture: Authentication security layer - brute-force prevention
+// Performance: < 1μs per operation (HashMap with RwLock)
+// Dependencies: std collections and sync for thread-safe storage
+// Data Flow: Failed login → increment counter → check lockout duration
 
 //! Rate Limiting
 //!

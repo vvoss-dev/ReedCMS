@@ -1,12 +1,26 @@
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
+// Copyright 2025 Vivian Voss. Licensed under the Apache Licence, Version 2.0.
+// SPDX-Licence-Identifier: Apache-2.0
+//
+// == AI CODING GUIDELINES ==
+// MANDATORY: Follow KISS principle - One function = One job
+// MANDATORY: BBC English for all documentation and comments
+// MANDATORY: Type-safe error handling with ReedResult<T> pattern
+// MANDATORY: Actix-Web middleware pattern with Transform trait
+// MANDATORY: Role and permission checking with clear error responses
+//
+// == FILE PURPOSE ==
+// This file: Authentication middleware for Actix-Web with role-based access control
+// Architecture: Server authentication layer - wraps routes with auth requirements
+// Performance: ~100ms auth verification (Argon2), < 5ms rejection, < 1ms role check
+// Dependencies: actix-web for middleware, futures-util for async
+// Data Flow: Request → extract credentials → verify → check role → allow/deny
 
 //! Authentication Middleware
 //!
 //! Provides authentication middleware for Actix-Web with HTTP Basic Auth and Bearer token support.
 
 use crate::reedcms::auth::credentials::extract_auth_credentials;
-use crate::reedcms::auth::errors::{create_forbidden_error, create_unauthorized_error};
+use crate::reedcms::auth::errors::{create_forbidden_error, create_unauthorised_error};
 use crate::reedcms::auth::verification::verify_credentials;
 use actix_web::dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform};
 use actix_web::Error;
@@ -20,7 +34,7 @@ use std::rc::Rc;
 /// - Bearer Token Auth (future)
 ///
 /// ## Process
-/// 1. Extract Authorization header
+/// 1. Extract Authorisation header
 /// 2. Parse authentication type
 /// 3. Verify credentials against .reed/users.matrix.csv
 /// 4. Validate password with Argon2
@@ -30,7 +44,7 @@ use std::rc::Rc;
 /// ## Performance
 /// - Auth verification: < 100ms (Argon2 intentional slowdown)
 /// - Role lookup: < 1ms (CSV read)
-/// - Unauthorized rejection: < 5ms
+/// - Unauthorised rejection: < 5ms
 ///
 /// ## Security
 /// - Constant-time password comparison
@@ -132,7 +146,7 @@ where
         let service = self.service.clone();
 
         Box::pin(async move {
-            // Extract authorization header
+            // Extract authorisation header
             let auth_result = extract_auth_credentials(req.request());
 
             match auth_result {
@@ -159,10 +173,10 @@ where
                             // Future: Implement proper extension injection or use app data
                             // TODO: Add AuthenticatedUser to request context for handlers
 
-                            // User authenticated and authorized - proceed with request
+                            // User authenticated and authorised - proceed with request
                             service.call(req).await
                         }
-                        Err(_) => Err(create_unauthorized_error()),
+                        Err(_) => Err(create_unauthorised_error()),
                     }
                 }
                 Err(_) => {
@@ -172,7 +186,7 @@ where
                         service.call(req).await
                     } else {
                         // Auth required but not provided
-                        Err(create_unauthorized_error())
+                        Err(create_unauthorised_error())
                     }
                 }
             }

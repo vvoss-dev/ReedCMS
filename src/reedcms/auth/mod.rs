@@ -1,5 +1,5 @@
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
+// Copyright 2025 Vivian Voss. Licensed under the Apache Licence, Version 2.0.
+// SPDX-Licence-Identifier: Apache-2.0
 
 //! Authentication Module
 //!
@@ -13,7 +13,7 @@ pub mod site_protection;
 pub mod verification;
 
 pub use credentials::{extract_auth_credentials, AuthCredentials};
-pub use errors::{create_forbidden_error, create_unauthorized_error};
+pub use errors::{create_forbidden_error, create_unauthorised_error};
 pub use middleware::{AuthMiddleware, AuthMiddlewareService};
 pub use rate_limit::{clear_failed_logins, is_rate_limited, record_failed_login};
 pub use site_protection::{SiteProtection, SiteProtectionService};

@@ -1,12 +1,12 @@
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
+// Copyright 2025 Vivian Voss. Licensed under the Apache Licence, Version 2.0.
+// SPDX-Licence-Identifier: Apache-2.0
 
 //! Simple Site Protection
 //!
 //! Provides htaccess-style site-wide authentication using server.auth.* configuration.
 
 use crate::reedcms::auth::credentials::extract_auth_credentials;
-use crate::reedcms::auth::errors::create_unauthorized_error;
+use crate::reedcms::auth::errors::create_unauthorised_error;
 use crate::reedcms::reedbase::get::server;
 use crate::reedcms::reedstream::{ReedError, ReedRequest};
 use crate::reedcms::security::passwords::verify_password;
@@ -121,7 +121,7 @@ where
                 return service.call(req).await;
             }
 
-            // Extract authorization header
+            // Extract authorisation header
             let auth_result = extract_auth_credentials(req.request());
 
             match auth_result {
@@ -134,17 +134,17 @@ where
                         }
                         Ok(false) => {
                             // Invalid credentials
-                            Err(create_unauthorized_error())
+                            Err(create_unauthorised_error())
                         }
                         Err(_) => {
                             // Error during verification (e.g., missing config)
-                            Err(create_unauthorized_error())
+                            Err(create_unauthorised_error())
                         }
                     }
                 }
                 Err(_) => {
                     // No authentication provided
-                    Err(create_unauthorized_error())
+                    Err(create_unauthorised_error())
                 }
             }
         })
@@ -184,7 +184,7 @@ fn is_site_protection_enabled() -> bool {
 /// Verifies site credentials against server.auth.* configuration.
 ///
 /// ## Input
-/// - `credentials`: Parsed credentials from Authorization header
+/// - `credentials`: Parsed credentials from Authorisation header
 ///
 /// ## Output
 /// - `Result<bool, ReedError>`: true if valid, false if invalid

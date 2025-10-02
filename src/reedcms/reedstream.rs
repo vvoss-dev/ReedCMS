@@ -1,5 +1,5 @@
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
+// Copyright 2025 Vivian Voss. Licensed under the Apache Licence, Version 2.0.
+// SPDX-Licence-Identifier: Apache-2.0
 //
 // == AI CODING GUIDELINES ==
 // MANDATORY: Follow KISS principle - One function = One job

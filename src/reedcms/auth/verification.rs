@@ -1,5 +1,5 @@
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
+// Copyright 2025 Vivian Voss. Licensed under the Apache Licence, Version 2.0.
+// SPDX-Licence-Identifier: Apache-2.0
 
 //! Credential Verification
 //!
@@ -66,7 +66,7 @@ impl AuthenticatedUser {
 /// Verifies authentication credentials.
 ///
 /// ## Input
-/// - `credentials`: Parsed credentials from Authorization header
+/// - `credentials`: Parsed credentials from Authorisation header
 ///
 /// ## Output
 /// - `ReedResult<AuthenticatedUser>`: Authenticated user or error
@@ -116,8 +116,8 @@ pub async fn verify_credentials(credentials: &AuthCredentials) -> ReedResult<Aut
 /// Verifies HTTP Basic Auth credentials.
 ///
 /// ## Input
-/// - `username`: Username from Authorization header
-/// - `password`: Password from Authorization header
+/// - `username`: Username from Authorisation header
+/// - `password`: Password from Authorisation header
 ///
 /// ## Output
 /// - `ReedResult<AuthenticatedUser>`: Authenticated user or error

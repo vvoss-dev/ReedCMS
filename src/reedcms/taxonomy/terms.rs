@@ -1,5 +1,5 @@
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
+// Copyright 2025 Vivian Voss. Licensed under the Apache Licence, Version 2.0.
+// SPDX-Licence-Identifier: Apache-2.0
 
 //! Taxonomy term management.
 //!
@@ -51,7 +51,7 @@ pub struct TermInfo {
 /// - Invalid term name (length, characters)
 /// - Duplicate term in same category
 /// - Parent term does not exist
-/// - Invalid color format
+/// - Invalid colour format
 /// - File I/O errors
 ///
 /// ## Example Usage
@@ -77,7 +77,7 @@ pub fn create_term(
         return Err(validation_error("category", category, "1-32 characters"));
     }
 
-    // Validate color if provided
+    // Validate colour if provided
     if let Some(ref c) = color {
         validate_color(c)?;
     }

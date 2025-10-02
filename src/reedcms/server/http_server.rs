@@ -1,5 +1,5 @@
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
+// Copyright 2025 Vivian Voss. Licensed under the Apache Licence, Version 2.0.
+// SPDX-Licence-Identifier: Apache-2.0
 
 //! HTTP server implementation using Actix-Web.
 //!
@@ -20,7 +20,7 @@ use actix_web::{middleware, web, App, HttpRequest, HttpResponse, HttpServer};
 /// - workers: Number of worker threads (default: CPU count)
 ///
 /// ## Process
-/// 1. Initialize Actix-Web App
+/// 1. Initialise Actix-Web App
 /// 2. Configure middleware (Logger, Compress)
 /// 3. Register routes
 /// 4. Bind to address

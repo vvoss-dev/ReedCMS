@@ -1,9 +1,23 @@
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
+// Copyright 2025 Vivian Voss. Licensed under the Apache Licence, Version 2.0.
+// SPDX-Licence-Identifier: Apache-2.0
+//
+// == AI CODING GUIDELINES ==
+// MANDATORY: Follow KISS principle - One function = One job
+// MANDATORY: BBC English for all documentation and comments
+// MANDATORY: Type-safe error handling with ReedResult<T> pattern
+// MANDATORY: Always use specific ReedError variants with context
+// MANDATORY: HTTP header parsing with proper validation
+//
+// == FILE PURPOSE ==
+// This file: Credential extraction from HTTP Authorisation header
+// Architecture: Authentication layer - parses Basic Auth and Bearer tokens
+// Performance: < 1ms for header parsing, O(1) operations
+// Dependencies: actix-web for HttpRequest, base64 for decoding
+// Data Flow: HttpRequest → extract header → parse → AuthCredentials enum
 
 //! Credential Extraction
 //!
-//! Extracts authentication credentials from HTTP Authorization header.
+//! Extracts authentication credentials from HTTP Authorisation header.
 
 use crate::reedcms::reedstream::{ReedError, ReedResult};
 use actix_web::HttpRequest;
@@ -19,17 +33,17 @@ pub enum AuthCredentials {
 /// Extracts authentication credentials from request.
 ///
 /// ## Input
-/// - `req`: HTTP request with Authorization header
+/// - `req`: HTTP request with Authorisation header
 ///
 /// ## Supported Headers
-/// - Authorization: Basic {base64}
-/// - Authorization: Bearer {token}
+/// - Authorisation: Basic {base64}
+/// - Authorisation: Bearer {token}
 ///
 /// ## Output
 /// - `ReedResult<AuthCredentials>`: Parsed credentials
 ///
 /// ## Process
-/// 1. Get Authorization header
+/// 1. Get Authorisation header
 /// 2. Parse authentication type
 /// 3. Extract credentials
 /// 4. Decode if necessary
@@ -57,13 +71,13 @@ pub fn extract_auth_credentials(req: &HttpRequest) -> ReedResult<AuthCredentials
         .ok_or_else(|| ReedError::AuthError {
             user: None,
             action: "extract_credentials".to_string(),
-            reason: "Missing Authorization header".to_string(),
+            reason: "Missing Authorisation header".to_string(),
         })?;
 
     let auth_str = auth_header.to_str().map_err(|_| ReedError::AuthError {
         user: None,
         action: "extract_credentials".to_string(),
-        reason: "Invalid Authorization header format".to_string(),
+        reason: "Invalid Authorisation header format".to_string(),
     })?;
 
     // Parse authentication type
@@ -83,13 +97,13 @@ pub fn extract_auth_credentials(req: &HttpRequest) -> ReedResult<AuthCredentials
 /// Parses HTTP Basic Auth credentials.
 ///
 /// ## Input
-/// - `auth_str`: Authorization header value (e.g., "Basic dXNlcjpwYXNz")
+/// - `auth_str`: Authorisation header value (e.g., "Basic dXNlcjpwYXNz")
 ///
 /// ## Output
 /// - `ReedResult<AuthCredentials>`: Parsed username and password
 ///
 /// ## Format
-/// - Authorization: Basic base64(username:password)
+/// - Authorisation: Basic base64(username:password)
 ///
 /// ## Process
 /// 1. Extract base64 part
@@ -144,13 +158,13 @@ fn parse_basic_auth(auth_str: &str) -> ReedResult<AuthCredentials> {
 /// Parses Bearer token authentication.
 ///
 /// ## Input
-/// - `auth_str`: Authorization header value (e.g., "Bearer abc123")
+/// - `auth_str`: Authorisation header value (e.g., "Bearer abc123")
 ///
 /// ## Output
 /// - `ReedResult<AuthCredentials>`: Parsed token
 ///
 /// ## Format
-/// - Authorization: Bearer {token}
+/// - Authorisation: Bearer {token}
 ///
 /// ## Process
 /// 1. Extract token part
