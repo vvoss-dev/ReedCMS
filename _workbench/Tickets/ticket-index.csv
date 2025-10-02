@@ -44,3 +44,4 @@ REED-11-01|Open|Hook System|Extension Layer|Medium|High|REED-04-10|Trigger-Based
 REED-11-02|Open|Workflow Engine|Extension Layer|Medium|High|REED-11-01|Workflow Automation|Implement YAML-based workflow definitions with multi-step automation and conditional execution
 REED-11-03|Open|External API Bridges|Extension Layer|Low|Medium|REED-11-01,REED-04-10|Social Media Integration|Implement bidirectional bridges for Mastodon, Twitter/X, LinkedIn with automatic posting
 REED-11-04|Open|Scheduled Tasks|Extension Layer|Low|Medium|REED-11-02|Cron-Style Scheduling|Implement cron-compatible task scheduling for automated workflows and maintenance tasks
+REED-20-01|Open|MCP Server Library|Third-Party Integration|Medium|High|REED-04-10|MCP Protocol Implementation|Implement standalone MCP server library (reed-mcp-server) exposing ReedCMS as MCP tool provider for Claude Desktop, VS Code, and IDEs

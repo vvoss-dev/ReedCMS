@@ -1351,6 +1351,20 @@ service|svc_*|get[rwx],set[rw-]|unlimited|10000|Service-to-service communication
 - **CLI**: schedule:add, schedule:list, schedule:enable, schedule:disable, schedule:run
 - **Integration**: Runs as part of ReedCMS server
 
+### REED-20: Third-Party Integration Layer
+
+**REED-20-01: MCP Server Library** 📋 Ticket Created (2025-10-02)
+- **Purpose**: Separate MCP server library exposing ReedCMS as MCP tool provider for external IDEs and AI tools
+- **Package**: reed-mcp-server (separate crate, independent versioning)
+- **Architecture**: Standalone binary wrapping ReedCMS CLI commands
+- **Protocol**: Anthropic MCP (Model Context Protocol) for AI tool integration
+- **Tools Exposed**: All ReedCMS CLI commands as MCP tools (set:text, get:text, init:layout, etc.)
+- **Resources**: Project configuration, layout registry, content statistics
+- **Claude Desktop**: Direct integration via claude_desktop_config.json
+- **Distribution**: crates.io, npm (optional JS wrapper), Homebrew formula, MCP directory listing
+- **Future Extensions**: VS Code Extension (REED-20-02), GitHub Actions (REED-20-03), Zapier/Make (REED-20-04)
+- **Benefits**: IDE integration, AI-assisted content creation, workflow automation, cross-platform compatibility
+
 ### Command Syntax Standard
 **All CLI commands use colon notation**: `reed command:action`
 
