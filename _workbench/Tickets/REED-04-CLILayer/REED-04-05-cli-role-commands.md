@@ -21,7 +21,7 @@
 - **Title**: CLI Role Management Commands
 - **Layer**: CLI Layer (REED-04)
 - **Priority**: Medium
-- **Status**: Open
+- **Status**: Complete
 - **Complexity**: Medium
 - **Dependencies**: REED-04-01, REED-03-02
 

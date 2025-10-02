@@ -1255,6 +1255,16 @@ service|svc_*|get[rwx],set[rw-]|unlimited|10000|Service-to-service communication
 - **Test Coverage**: 28 tests (compilation successful)
 - **Files**: user_commands.rs (472 lines), user_commands_test.rs
 
+**REED-04-05: CLI Role Commands** ✅ Complete (2025-10-02)
+- **Security API Integration**: Uses ReedRequest/ReedResponse pattern with inheritance
+- **Commands**: role:create, role:list, role:show, role:update, role:delete, role:permissions
+- **Permission Syntax**: Unix-style (text[rwx], route[rw-], *[r--])
+- **Permission Management**: Show current, add, remove, or replace all
+- **Output Formats**: Table (default, with --show-permissions), JSON, CSV
+- **Inheritance**: Support for role inheritance with circular detection
+- **Test Coverage**: 25 tests (compilation successful)
+- **Files**: role_commands.rs (515 lines), role_commands_test.rs
+
 **REED-04-10: Man Page Documentation** 📋 Ticket Created (2025-02-02)
 - **Decision**: Implement comprehensive Unix/Linux man page system
 - **Format**: Markdown-based `.ronn` source compiled to `.1` groff
