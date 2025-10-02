@@ -890,7 +890,8 @@ reed build:watch --dry-run
 - **Module Exports**: All CLI components exposed via `src/reedcms/mod.rs`
 
 **Next Steps**:
-- REED-04-02: Data commands implementation (get, set, list, delete)
+- REED-04-03: Layout commands (init:layout)
+- REED-04-07: Migration commands (migrate:text)
 - REED-04-10: Man page documentation for Unix/Linux integration
 
 ### REED-04-10: CLI Man Page Documentation Decision
@@ -961,12 +962,12 @@ target/man/
 **Dependency Status**:
 ```
 ✅ REED-04-01 (Foundation) - Complete
-⏳ REED-04-02 (Data) - Ready to implement
-⏳ REED-04-03 (Layout) - Blocked by REED-04-02
+✅ REED-04-02 (Data) - Complete
+⏳ REED-04-03 (Layout) - Ready to implement
 ⏳ REED-04-04 (User) - Blocked by REED-03-01
 ⏳ REED-04-05 (Role) - Blocked by REED-03-02
 ⏳ REED-04-06 (Taxonomy) - Blocked by REED-02-06
-⏳ REED-04-07 (Migration) - Blocked by REED-04-02
+⏳ REED-04-07 (Migration) - Ready to implement
 ⏳ REED-04-08 (Build) - Blocked by REED-08-01, REED-08-02
 ⏳ REED-04-09 (Server) - Blocked by REED-06-01
 ⏳ REED-04-10 (Man Pages) - Blocked by all REED-04 tickets

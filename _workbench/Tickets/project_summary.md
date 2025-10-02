@@ -1230,6 +1230,13 @@ service|svc_*|get[rwx],set[rw-]|unlimited|10000|Service-to-service communication
 - **Test Coverage**: 44/44 tests (100%)
 - **Files**: parser.rs, router.rs, help.rs + 3 test files
 
+**REED-04-02: CLI Data Commands** ✅ Complete (2025-10-02)
+- **Set Commands**: set:text, set:route, set:meta with mandatory --desc flag (min 10 chars)
+- **Get Commands**: get:text, get:route, get:meta with ReedBase integration
+- **List Commands**: list:text, list:route, list:meta with pattern matching (*, prefix.*, *.suffix)
+- **Test Coverage**: 18/18 tests (100%)
+- **Files**: data_commands.rs, data_commands_test.rs
+
 **REED-04-10: Man Page Documentation** 📋 Ticket Created (2025-02-02)
 - **Decision**: Implement comprehensive Unix/Linux man page system
 - **Format**: Markdown-based `.ronn` source compiled to `.1` groff
