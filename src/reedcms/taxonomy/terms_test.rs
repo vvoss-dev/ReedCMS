@@ -69,7 +69,7 @@ mod tests {
         setup_test_env();
 
         // Too short
-        let result = create_term("Ru", None, "Programming", None, None, None, "admin");
+        let result = create_term("R", None, "Programming", None, None, None, "admin");
         assert!(result.is_err());
 
         // Invalid characters

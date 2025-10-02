@@ -159,7 +159,11 @@ pub fn get_ancestors(term_id: &str) -> ReedResult<ReedResponse<Vec<TermInfo>>> {
     let mut visited = HashSet::new();
     let mut current_parent =
         if let Some(MatrixValue::Single(pid)) = term_record.fields.get("parent_id") {
-            Some(pid.clone())
+            if pid.is_empty() {
+                None
+            } else {
+                Some(pid.clone())
+            }
         } else {
             None
         };
@@ -190,7 +194,11 @@ pub fn get_ancestors(term_id: &str) -> ReedResult<ReedResponse<Vec<TermInfo>>> {
         ancestors.push(parse_term_info(parent_record)?);
         current_parent =
             if let Some(MatrixValue::Single(pid)) = parent_record.fields.get("parent_id") {
-                Some(pid.clone())
+                if pid.is_empty() {
+                    None
+                } else {
+                    Some(pid.clone())
+                }
             } else {
                 None
             };

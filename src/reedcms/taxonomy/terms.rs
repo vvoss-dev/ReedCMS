@@ -396,7 +396,7 @@ pub fn list_terms(
 /// Searches taxonomy terms by text.
 ///
 /// ## Input
-/// - query: Search query (searches term name and description)
+/// - query: Search query (searches term name, category, and description)
 /// - category: Optional category filter
 ///
 /// ## Output
@@ -452,9 +452,15 @@ pub fn search_terms(
             }
         }
 
-        // Text search in term name and description
+        // Text search in term name, category, and description
         let term_name = if let Some(MatrixValue::Single(t)) = record.fields.get("term") {
             t.to_lowercase()
+        } else {
+            String::new()
+        };
+
+        let category_name = if let Some(MatrixValue::Single(c)) = record.fields.get("category") {
+            c.to_lowercase()
         } else {
             String::new()
         };
@@ -465,7 +471,10 @@ pub fn search_terms(
             String::new()
         };
 
-        if term_name.contains(&query_lower) || description.contains(&query_lower) {
+        if term_name.contains(&query_lower)
+            || category_name.contains(&query_lower)
+            || description.contains(&query_lower)
+        {
             terms.push(parse_term_info(record)?);
         }
     }
@@ -844,8 +853,8 @@ pub struct TermUpdate {
 // Helper functions
 
 fn validate_term_name(term: &str) -> ReedResult<()> {
-    if term.len() < 3 || term.len() > 64 {
-        return Err(validation_error("term", term, "3-64 characters"));
+    if term.len() < 2 || term.len() > 64 {
+        return Err(validation_error("term", term, "2-64 characters"));
     }
 
     if !term

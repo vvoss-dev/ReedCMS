@@ -336,10 +336,14 @@ pub fn list_entities_by_term(
         }
 
         // Check if term_id is in term_ids
-        if let Some(MatrixValue::List(term_ids)) = record.fields.get("term_ids") {
-            if term_ids.iter().any(|t| t.trim() == term_id) {
-                entities.push(parse_entity_terms(record)?);
-            }
+        let has_term = match record.fields.get("term_ids") {
+            Some(MatrixValue::List(term_ids)) => term_ids.iter().any(|t| t.trim() == term_id),
+            Some(MatrixValue::Single(single_term)) => single_term.trim() == term_id,
+            _ => false,
+        };
+
+        if has_term {
+            entities.push(parse_entity_terms(record)?);
         }
     }
 
@@ -411,12 +415,15 @@ pub fn unassign_terms(
     if let Some(specific_terms) = term_ids {
         // Remove specific terms
         let record = &mut records[idx];
-        let current_terms: HashSet<String> =
-            if let Some(MatrixValue::List(terms)) = record.fields.get("term_ids") {
-                terms.iter().cloned().collect()
-            } else {
-                HashSet::new()
-            };
+        let current_terms: HashSet<String> = match record.fields.get("term_ids") {
+            Some(MatrixValue::List(terms)) => terms.iter().cloned().collect(),
+            Some(MatrixValue::Single(term)) if !term.is_empty() => {
+                let mut set = HashSet::new();
+                set.insert(term.clone());
+                set
+            }
+            _ => HashSet::new(),
+        };
 
         let terms_to_remove: HashSet<String> = specific_terms.iter().cloned().collect();
         let remaining: Vec<String> = current_terms
@@ -442,11 +449,10 @@ pub fn unassign_terms(
         decrement_term_usage(&specific_terms)?;
     } else {
         // Remove all terms for this entity
-        let terms = if let Some(MatrixValue::List(term_list)) = records[idx].fields.get("term_ids")
-        {
-            term_list.clone()
-        } else {
-            Vec::new()
+        let terms = match records[idx].fields.get("term_ids") {
+            Some(MatrixValue::List(term_list)) => term_list.clone(),
+            Some(MatrixValue::Single(term)) if !term.is_empty() => vec![term.clone()],
+            _ => Vec::new(),
         };
 
         records.remove(idx);
@@ -582,10 +588,10 @@ fn parse_entity_terms(record: &MatrixRecord) -> ReedResult<EntityTerms> {
 
     let entity_type = EntityType::from_str(&entity_type_str)?;
 
-    let term_ids = if let Some(MatrixValue::List(terms)) = record.fields.get("term_ids") {
-        terms.clone()
-    } else {
-        Vec::new()
+    let term_ids = match record.fields.get("term_ids") {
+        Some(MatrixValue::List(ids)) => ids.clone(),
+        Some(MatrixValue::Single(id)) if !id.is_empty() => vec![id.clone()],
+        _ => Vec::new(),
     };
 
     let get_single = |field: &str| -> String {
