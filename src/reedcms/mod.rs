@@ -6,12 +6,14 @@
 pub mod backup;
 pub mod cli;
 pub mod csv;
+pub mod filters;
 pub mod matrix;
 pub mod reed;
 pub mod reedbase;
 pub mod reedstream;
 pub mod security;
 pub mod taxonomy;
+pub mod templates;
 
 #[cfg(test)]
 mod reedstream_test;

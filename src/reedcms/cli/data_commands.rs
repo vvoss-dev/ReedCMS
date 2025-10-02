@@ -9,7 +9,7 @@
 //! - list:text, list:route, list:meta
 
 use crate::reedcms::csv::read_csv;
-use crate::reedcms::reedbase::{get, set};
+// ReedBase functions accessed via full path
 use crate::reedcms::reedstream::{ReedError, ReedRequest, ReedResponse, ReedResult};
 use std::collections::HashMap;
 
@@ -82,7 +82,7 @@ pub fn set_text(
     };
 
     // Call ReedBase set
-    let response = set(request, &mut cache, csv_path)?;
+    let response = crate::reedcms::reedbase::set::set(request, &mut cache, csv_path)?;
 
     // Format output
     let output = format!(
@@ -146,7 +146,7 @@ pub fn set_route(
         description: Some(description.clone()),
     };
 
-    let response = set(request, &mut cache, csv_path)?;
+    let response = crate::reedcms::reedbase::set::set(request, &mut cache, csv_path)?;
 
     let output = format!(
         "✓ Route set: {} → \"{}\"\n  Description: {}",
@@ -209,7 +209,7 @@ pub fn set_meta(
         description: Some(description.clone()),
     };
 
-    let response = set(request, &mut cache, csv_path)?;
+    let response = crate::reedcms::reedbase::set::set(request, &mut cache, csv_path)?;
 
     let output = format!(
         "✓ Meta set: {} = \"{}\"\n  Description: {}",
@@ -266,7 +266,7 @@ pub fn get_text(args: &[String]) -> ReedResult<ReedResponse<String>> {
     };
 
     // Call ReedBase get
-    let response = get(request, &cache)?;
+    let response = crate::reedcms::reedbase::get::get(request, &cache)?;
 
     // Format output
     let output = format!("{}\n(source: {})", response.data, response.source);
@@ -306,7 +306,7 @@ pub fn get_route(args: &[String]) -> ReedResult<ReedResponse<String>> {
         description: None,
     };
 
-    let response = get(request, &cache)?;
+    let response = crate::reedcms::reedbase::get::get(request, &cache)?;
     let output = format!("{}\n(source: {})", response.data, response.source);
 
     Ok(ReedResponse {
@@ -344,7 +344,7 @@ pub fn get_meta(args: &[String]) -> ReedResult<ReedResponse<String>> {
         description: None,
     };
 
-    let response = get(request, &cache)?;
+    let response = crate::reedcms::reedbase::get::get(request, &cache)?;
     let output = format!("{}\n(source: {})", response.data, response.source);
 
     Ok(ReedResponse {

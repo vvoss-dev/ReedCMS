@@ -20,9 +20,9 @@ REED-04-08|Complete|CLI Build Commands|CLI Layer|Medium|High|REED-04-01|Build Sy
 REED-04-09|Complete|CLI Server Commands|CLI Layer|High|Medium|REED-04-01|Server Management CLI (Line 1068-1076)|Implement server:io, server:start, server:stop, server:restart, server:status, server:logs commands
 REED-04-10|Complete|CLI Agent Commands|CLI Layer|Medium|High|REED-04-01,REED-02-05|MCP Integration Foundation|Implement agent management CLI commands (add, list, test, remove) and basic content generation with MCP providers (Anthropic, OpenAI)
 REED-04-11|Complete|CLI Man Page Documentation|CLI Layer|Medium|Low|REED-04-01,REED-04-02,REED-04-03,REED-04-04,REED-04-05,REED-04-06,REED-04-07,REED-04-08,REED-04-09,REED-04-10|Man Page System (Line 1032-1228)|Create comprehensive Unix/Linux man page documentation for reed CLI with ronn-based build system
-REED-05-01|Open|Template Filter System|Template Layer|High|High|REED-02-01|Template Filters (Line 1256-1289)|Implement MiniJinja filters for text, route, meta, config with type-specific access
-REED-05-02|Open|Template Engine Setup|Template Layer|High|Medium|REED-05-01|MiniJinja Setup (Line 992-995)|Implement MiniJinja environment configuration with template loader and hot-reload
-REED-05-03|Open|Template Context Builder|Template Layer|Medium|Medium|REED-05-01,REED-02-01|Context Builder (Line 994)|Implement template context building with ReedBase data integration
+REED-05-01|Complete|Template Filter System|Template Layer|High|High|REED-02-01|Template Filters (Line 1256-1289)|Implement MiniJinja filters for text, route, meta, config with type-specific access
+REED-05-02|Complete|Template Engine Setup|Template Layer|High|Medium|REED-05-01|MiniJinja Setup (Line 992-995)|Implement MiniJinja environment configuration with template loader and hot-reload
+REED-05-03|Complete|Template Context Builder|Template Layer|Medium|Medium|REED-05-01,REED-02-01|Context Builder (Line 994)|Implement template context building with ReedBase data integration
 REED-06-01|Open|Server Foundation|Server Layer|Critical|High|REED-01-01|Server Services (Line 964-966)|Implement Actix-Web HTTP server with socket support and request handling
 REED-06-02|Open|Routing System|Server Layer|High|High|REED-06-01,REED-02-01|Request Router (Line 987-990)|Implement URL ' Layout + Language resolution via .reed/routes.csv
 REED-06-03|Open|Authentication Middleware|Server Layer|High|Medium|REED-06-01,REED-03-01|Authentication (Line 978)|Implement HTTP Basic Auth validation with user verification

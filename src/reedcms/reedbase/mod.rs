@@ -9,13 +9,9 @@
 //! - init: Initialize in-memory HashMap cache from CSV files
 //! - Thread-safe operations using RwLock
 
-mod get;
-mod init;
-mod set;
-
-pub use get::get;
-pub use init::init;
-pub use set::set;
+pub mod get;
+pub mod init;
+pub mod set;
 
 #[cfg(test)]
 mod get_test;

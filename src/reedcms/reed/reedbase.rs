@@ -5,7 +5,6 @@
 //!
 //! Intelligent data coordinator with O(1) HashMap caches and persistence rights.
 
-use crate::reedcms::reedbase::{get as get_service, init as init_service, set as set_service};
 use crate::reedcms::reedstream::{ReedRequest, ReedResponse, ReedResult};
 use std::collections::HashMap;
 use std::sync::RwLock;
@@ -84,7 +83,7 @@ impl ReedBase {
             value: Some(self.text_path.clone()),
             description: None,
         };
-        let text_response = init_service(text_request)?;
+        let text_response = crate::reedcms::reedbase::init::init(text_request)?;
         *self.text_cache.write().unwrap() = text_response.data;
 
         // Init route cache
@@ -96,7 +95,7 @@ impl ReedBase {
             value: Some(self.route_path.clone()),
             description: None,
         };
-        let route_response = init_service(route_request)?;
+        let route_response = crate::reedcms::reedbase::init::init(route_request)?;
         *self.route_cache.write().unwrap() = route_response.data;
 
         // Init meta cache
@@ -108,7 +107,7 @@ impl ReedBase {
             value: Some(self.meta_path.clone()),
             description: None,
         };
-        let meta_response = init_service(meta_request)?;
+        let meta_response = crate::reedcms::reedbase::init::init(meta_request)?;
         *self.meta_cache.write().unwrap() = meta_response.data;
 
         Ok(())
@@ -144,20 +143,20 @@ impl ReedBase {
         match context {
             "text" => {
                 let cache = self.text_cache.read().unwrap();
-                get_service(request, &cache)
+                crate::reedcms::reedbase::get::get(request, &cache)
             }
             "route" => {
                 let cache = self.route_cache.read().unwrap();
-                get_service(request, &cache)
+                crate::reedcms::reedbase::get::get(request, &cache)
             }
             "meta" => {
                 let cache = self.meta_cache.read().unwrap();
-                get_service(request, &cache)
+                crate::reedcms::reedbase::get::get(request, &cache)
             }
             _ => {
                 // Default to text cache
                 let cache = self.text_cache.read().unwrap();
-                get_service(request, &cache)
+                crate::reedcms::reedbase::get::get(request, &cache)
             }
         }
     }
@@ -193,20 +192,20 @@ impl ReedBase {
         match context {
             "text" => {
                 let mut cache = self.text_cache.write().unwrap();
-                set_service(request, &mut cache, &self.text_path)
+                crate::reedcms::reedbase::set::set(request, &mut cache, &self.text_path)
             }
             "route" => {
                 let mut cache = self.route_cache.write().unwrap();
-                set_service(request, &mut cache, &self.route_path)
+                crate::reedcms::reedbase::set::set(request, &mut cache, &self.route_path)
             }
             "meta" => {
                 let mut cache = self.meta_cache.write().unwrap();
-                set_service(request, &mut cache, &self.meta_path)
+                crate::reedcms::reedbase::set::set(request, &mut cache, &self.meta_path)
             }
             _ => {
                 // Default to text cache
                 let mut cache = self.text_cache.write().unwrap();
-                set_service(request, &mut cache, &self.text_path)
+                crate::reedcms::reedbase::set::set(request, &mut cache, &self.text_path)
             }
         }
     }
