@@ -6,28 +6,28 @@
 <section class="section intro padding-y-2 padding-x-2">
     <article class="breakbox grid-1 gap-2">
         <div class="section-header padding-left-1">
-            <h1>{{ (topic ~ '_TITLE') | text('auto') }}</h1>
+            <h1>{{ (topic ~ '.title') | text('auto') }}</h1>
         </div>
 
         {# Single column layout for mobile with clear separation #}
         <div class="grid-1 gap-3">
             <div class="column grid-1 gap-y-1">
-                <h2>{{ (topic ~ '_TITLE') | text('auto') }}</h2>
+                <h2>{{ (topic ~ '.title') | text('auto') }}</h2>
                 <p>
-                    <strong>{{ (topic ~ '_CATEGORY_LABEL') | text('auto') }}:</strong> {{ (topic ~ '_CATEGORY_VALUE') | text('auto') }}<br>
-                    <strong>{{ (topic ~ '_STABLE_LABEL') | text('auto') }}:</strong> {{ (topic ~ '_STABLE_VALUE') | text('auto') }}<br>
-                    <strong>{{ (topic ~ '_CREATOR_LABEL') | text('auto') }}:</strong> {{ (topic ~ '_CREATOR_VALUE') | text('auto') }}<br>
-                    <strong>{{ (topic ~ '_PROJECT_LABEL') | text('auto') }}:</strong> {{ (topic ~ '_PROJECT_VALUE') | text('auto') | safe }}
+                    <strong>{{ (topic ~ '.category.label') | text('auto') }}:</strong> {{ (topic ~ '.category.value') | text('auto') }}<br>
+                    <strong>{{ (topic ~ '.stable.label') | text('auto') }}:</strong> {{ (topic ~ '.stable.value') | text('auto') }}<br>
+                    <strong>{{ (topic ~ '.creator.label') | text('auto') }}:</strong> {{ (topic ~ '.creator.value') | text('auto') }}<br>
+                    <strong>{{ (topic ~ '.project.label') | text('auto') }}:</strong> {{ (topic ~ '.project.value') | text('auto') | safe }}
                 </p>
 
-                <h3>{{ (topic ~ '_SYNTAX_LABEL') | text('auto') }}</h3>
-                <p>{{ (topic ~ '_SYNTAX_VALUE') | text('auto') }}</p>
+                <h3>{{ (topic ~ '.syntax.label') | text('auto') }}</h3>
+                <p>{{ (topic ~ '.syntax.value') | text('auto') }}</p>
 
-                <h3>{{ (topic ~ '_SECURITY_LABEL') | text('auto') }}</h3>
-                <p>{{ (topic ~ '_SECURITY_VALUE') | text('auto') }}</p>
+                <h3>{{ (topic ~ '.security.label') | text('auto') }}</h3>
+                <p>{{ (topic ~ '.security.value') | text('auto') }}</p>
 
-                <h3>{{ (topic ~ '_PERFORMANCE_LABEL') | text('auto') }}</h3>
-                <p>{{ (topic ~ '_PERFORMANCE_VALUE') | text('auto') }}</p>
+                <h3>{{ (topic ~ '.performance.label') | text('auto') }}</h3>
+                <p>{{ (topic ~ '.performance.value') | text('auto') }}</p>
             </div>
 
             {# Visual separator for mobile #}
@@ -35,9 +35,9 @@
 
             <div class="column grid-1 gap-y-1">
                 <h2>Beschreibung</h2>
-                <p>{{ (topic ~ '_DESCRIPTION') | text('auto') }}</p>
+                <p>{{ (topic ~ '.description') | text('auto') }}</p>
                 <hr>
-                <p>{{ (topic ~ '_ENTERPRISE') | text('auto') }}</p>
+                <p>{{ (topic ~ '.enterprise') | text('auto') }}</p>
             </div>
         </div>
     </article>
@@ -47,8 +47,8 @@
 <section class="section compare padding-y-2 padding-x-1">
     <article class="breakbox grid-1">
         <div class="section-header padding-left-2 margin-bottom-1">
-            <h2>{{ (topic ~ '_COMPARE_TITLE') | text('auto') or ("Bewertung") }}</h2>
-            <p class="description">{{ (topic ~ '_COMPARE_SUBTITLE') | text('auto') or ("Ehrliche Einschätzung der Technologie") }}</p>
+            <h2>{{ (topic ~ '.compare.title') | text('auto') or ("Bewertung") }}</h2>
+            <p class="description">{{ (topic ~ '.compare.subtitle') | text('auto') or ("Ehrliche Einschätzung der Technologie") }}</p>
         </div>
 
         {# Touch mode: stack on phone, side-by-side on tablet #}
@@ -61,25 +61,25 @@
         <div class="compare-grid {{ grid_classes }}">
             {# NO column #}
             <div class="compare-column no padding-2">
-                <h3 class="padding-bottom-2 margin-bottom-2">{{ (topic ~ '_CONS_TITLE') | text('auto') or ("Nachteile") }}</h3>
+                <h3 class="padding-bottom-2 margin-bottom-2">{{ (topic ~ '.cons.title') | text('auto') or ("Nachteile") }}</h3>
                 <ul class="compare-list">
-                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_CONS_1') | text('auto') }}</li>
-                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_CONS_2') | text('auto') }}</li>
-                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_CONS_3') | text('auto') }}</li>
-                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_CONS_4') | text('auto') }}</li>
-                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_CONS_5') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '.cons.1') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '.cons.2') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '.cons.3') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '.cons.4') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '.cons.5') | text('auto') }}</li>
                 </ul>
             </div>
 
             {# YES column #}
             <div class="compare-column yes padding-2">
-                <h3 class="padding-bottom-2 margin-bottom-2">{{ (topic ~ '_PROS_TITLE') | text('auto') or ("Vorteile") }}</h3>
+                <h3 class="padding-bottom-2 margin-bottom-2">{{ (topic ~ '.pros.title') | text('auto') or ("Vorteile") }}</h3>
                 <ul class="compare-list">
-                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_PROS_1') | text('auto') }}</li>
-                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_PROS_2') | text('auto') }}</li>
-                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_PROS_3') | text('auto') }}</li>
-                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_PROS_4') | text('auto') }}</li>
-                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '_PROS_5') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '.pros.1') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '.pros.2') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '.pros.3') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '.pros.4') | text('auto') }}</li>
+                    <li class="padding-y-1 padding-left-2">{{ (topic ~ '.pros.5') | text('auto') }}</li>
                 </ul>
             </div>
         </div>

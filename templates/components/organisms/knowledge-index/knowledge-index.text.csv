@@ -1,7 +1,7 @@
 key|value|comment
-knowledge-index.index.title@de|Fachbegriff-Index|Index title German
-knowledge-index.index.title@en|Technical Index|Index title English
-knowledge-index.glossary.label@de|Glossar|Glossary label German
-knowledge-index.glossary.label@en|Glossary|Glossary label English
-knowledge-index.alphabetical.label@de|Alphabetisch|Alphabetical label German
-knowledge-index.alphabetical.label@en|Alphabetical|Alphabetical label English
+knowledge.index.index.title@de|Fachbegriff-Index|Index title German
+knowledge.index.index.title@en|Technical Index|Index title English
+knowledge.index.glossary.label@de|Glossar|Glossary label German
+knowledge.index.glossary.label@en|Glossary|Glossary label English
+knowledge.index.alphabetical.label@de|Alphabetisch|Alphabetical label German
+knowledge.index.alphabetical.label@en|Alphabetical|Alphabetical label English

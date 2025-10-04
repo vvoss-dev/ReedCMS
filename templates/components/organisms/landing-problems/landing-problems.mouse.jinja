@@ -19,9 +19,9 @@
 
         <div class="problem-grid {{ grid_classes }}">
             {% for card_num in cards %}
-                {% set number_key = "LANDING_PROBLEMS_CARD" ~ card_num ~ "_NUMBER" %}
-                {% set title_key = "LANDING_PROBLEMS_CARD" ~ card_num ~ "_TITLE" %}
-                {% set desc_key = "LANDING_PROBLEMS_CARD" ~ card_num ~ "_DESCRIPTION" %}
+                {% set number_key = "landing.problems.card" ~ card_num ~ ".number" %}
+                {% set title_key = "landing.problems.card" ~ card_num ~ ".title" %}
+                {% set desc_key = "landing.problems.card" ~ card_num ~ ".description" %}
                 <div class="problem-card padding-2">
                     <div class="problem-number">{{ number_key | text('auto') }}</div>
                     <h3 class="problem-title margin-y-2">{{ title_key | text('auto') }}</h3>

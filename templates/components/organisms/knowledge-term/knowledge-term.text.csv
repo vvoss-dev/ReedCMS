@@ -1,25 +1,25 @@
 key|value|comment
-knowledge-term.category.label@de|Kategorie|Generic category label German
-knowledge-term.category.label@en|Category|Generic category label English
-knowledge-term.stable.label@de|Stabil seit|Generic stability label German
-knowledge-term.stable.label@en|Stable since|Generic stability label English
-knowledge-term.creator.label@de|Entwickler|Generic creator label German
-knowledge-term.creator.label@en|Developer|Generic creator label English
-knowledge-term.project.label@de|Projekt-URL|Generic project URL label German
-knowledge-term.project.label@en|Project URL|Generic project URL label English
-knowledge-term.syntax.label@de|Syntax|Generic syntax label German
-knowledge-term.syntax.label@en|Syntax|Generic syntax label English
-knowledge-term.security.label@de|Sicherheit|Generic security label German
-knowledge-term.security.label@en|Security|Generic security label English
-knowledge-term.performance.label@de|Performance|Generic performance label German
-knowledge-term.performance.label@en|Performance|Generic performance label English
-knowledge-term.description.label@de|Beschreibung|Generic description label German
-knowledge-term.description.label@en|Description|Generic description label English
-knowledge-term.compare.title@de|Bewertung|Generic compare section title German
-knowledge-term.compare.title@en|Assessment|Generic compare section title English
-knowledge-term.compare.subtitle@de|Ehrliche Einschätzung der Technologie|Generic compare subtitle German
-knowledge-term.compare.subtitle@en|Honest assessment of the technology|Generic compare subtitle English
-knowledge-term.cons.title@de|Nachteile|Generic cons section title German
-knowledge-term.cons.title@en|Disadvantages|Generic cons section title English
-knowledge-term.pros.title@de|Vorteile|Generic pros section title German
-knowledge-term.pros.title@en|Advantages|Generic pros section title English
+knowledge.term.category.label@de|Kategorie|Generic category label German
+knowledge.term.category.label@en|Category|Generic category label English
+knowledge.term.stable.label@de|Stabil seit|Generic stability label German
+knowledge.term.stable.label@en|Stable since|Generic stability label English
+knowledge.term.creator.label@de|Entwickler|Generic creator label German
+knowledge.term.creator.label@en|Developer|Generic creator label English
+knowledge.term.project.label@de|Projekt-URL|Generic project URL label German
+knowledge.term.project.label@en|Project URL|Generic project URL label English
+knowledge.term.syntax.label@de|Syntax|Generic syntax label German
+knowledge.term.syntax.label@en|Syntax|Generic syntax label English
+knowledge.term.security.label@de|Sicherheit|Generic security label German
+knowledge.term.security.label@en|Security|Generic security label English
+knowledge.term.performance.label@de|Performance|Generic performance label German
+knowledge.term.performance.label@en|Performance|Generic performance label English
+knowledge.term.description.label@de|Beschreibung|Generic description label German
+knowledge.term.description.label@en|Description|Generic description label English
+knowledge.term.compare.title@de|Bewertung|Generic compare section title German
+knowledge.term.compare.title@en|Assessment|Generic compare section title English
+knowledge.term.compare.subtitle@de|Ehrliche Einschätzung der Technologie|Generic compare subtitle German
+knowledge.term.compare.subtitle@en|Honest assessment of the technology|Generic compare subtitle English
+knowledge.term.cons.title@de|Nachteile|Generic cons section title German
+knowledge.term.cons.title@en|Disadvantages|Generic cons section title English
+knowledge.term.pros.title@de|Vorteile|Generic pros section title German
+knowledge.term.pros.title@en|Advantages|Generic pros section title English

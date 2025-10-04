@@ -10,9 +10,9 @@
     {# Metrics as definition list for semantic meaning #}
     <dl>
         {% for item_num in items %}
-            {% set number_key = "LANDING_METRICS_ITEM" ~ item_num ~ "_NUMBER" %}
-            {% set label_key = "LANDING_METRICS_ITEM" ~ item_num ~ "_LABEL" %}
-            {% set desc_key = "LANDING_METRICS_ITEM" ~ item_num ~ "_DESCRIPTION" %}
+            {% set number_key = "landing.metrics.item" ~ item_num ~ ".number" %}
+            {% set label_key = "landing.metrics.item" ~ item_num ~ ".label" %}
+            {% set desc_key = "landing.metrics.item" ~ item_num ~ ".description" %}
             <dt>{{ label_key | text('auto') }}</dt>
             <dd>{{ number_key | text('auto') }} - {{ desc_key | text('auto') }}</dd>
         {% endfor %}

@@ -38,7 +38,7 @@
 
         <details class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
             <summary class="nav-toggle-title">
-                {{ icon("menu", 24, 2, "menu-icon") | safe }}
+                {% include "components/molecules/svg-icon/svg-icon.jinja" with {icon: "menu", size: "24", class: "menu-icon"} %}
             </summary>
 
             {# Navigation menu - ReedCMS route filter #}
@@ -48,8 +48,8 @@
                         <a href="/{{ client.lang }}/{{ pagekey | route('auto') }}/"
                             class="grid-2 gap-x-1"
                             {% if current_pagekey == pagekey %}aria-current="page"{% endif %}>
-                            {{ icon("chevrons-right", 16, 2, "nav-chevron") | safe }}
-                            <span>{{ ("page.header." ~ pagekey ~ ".text") | text('auto') }}</span>
+                            {% include "components/molecules/svg-icon/svg-icon.jinja" with {icon: "chevrons-right", size: "16", class: "nav-chevron"} %}
+                            <span>{{ ("page.header.menu." ~ pagekey) | text('auto') }}</span>
                         </a>
                     </li>
                 {% endfor %}

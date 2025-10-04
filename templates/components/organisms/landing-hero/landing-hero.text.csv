@@ -1,5 +1,5 @@
 key|value|comment
-landing-hero.cta.label@de|Kontakt|Generic CTA label German
-landing-hero.cta.label@en|Contact|Generic CTA label English
-landing-hero.badge.label@de|Badge|Generic badge label German
-landing-hero.badge.label@en|Badge|Generic badge label English
+landing.hero.cta.label@de|Kontakt|Generic CTA label German
+landing.hero.cta.label@en|Contact|Generic CTA label English
+landing.hero.badge.label@de|Badge|Generic badge label German
+landing.hero.badge.label@en|Badge|Generic badge label English

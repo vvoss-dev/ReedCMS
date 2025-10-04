@@ -1,0 +1,3 @@
+key|value|comment
+server.port|8333|HTTP server port
+server.workers|10|Number of worker threads

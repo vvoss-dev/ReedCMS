@@ -19,7 +19,7 @@
                 <li>
                     <a href="/{{ client.lang }}/{{ pagekey | route('auto') }}/"
                        {% if current_pagekey == pagekey %}aria-current="page"{% endif %}>
-                        {{ ("page.header." ~ pagekey ~ ".text") | text('auto') }}
+                        {{ ("page.header.menu." ~ pagekey) | text('auto') }}
                     </a>
                 </li>
             {% endfor %}

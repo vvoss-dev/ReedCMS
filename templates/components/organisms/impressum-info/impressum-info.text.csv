@@ -1,63 +1,63 @@
 key|value|comment
-impressum-info.technical.title@de|Technische Informationen|Technical information section title German
-impressum-info.technical.title@en|Technical Information|Technical information section title English
-impressum-info.technical.co2.title@de|CO2-neutrales Hosting|CO2 neutral hosting title German
-impressum-info.technical.co2.title@en|CO2-neutral Hosting|CO2 neutral hosting title English
-impressum-info.technical.co2.hosting@de|Diese Website wird auf CO2-neutralen Servern gehostet.|CO2 hosting description German
-impressum-info.technical.co2.hosting@en|This website is hosted on CO2-neutral servers.|CO2 hosting description English
-impressum-info.technical.co2.energy@de|100% erneuerbare Energie|100% renewable energy German
-impressum-info.technical.co2.energy@en|100% renewable energy|100% renewable energy English
-impressum-info.technical.co2.iso@de|ISO 14001 zertifiziertes Rechenzentrum|ISO 14001 certified data center German
-impressum-info.technical.co2.iso@en|ISO 14001 certified data center|ISO 14001 certified data center English
-impressum-info.technical.co2.dsgvo@de|DSGVO-konformes Hosting in Deutschland|GDPR compliant hosting in Germany German
-impressum-info.technical.co2.dsgvo@en|GDPR compliant hosting in Germany|GDPR compliant hosting in Germany English
-impressum-info.technical.accessibility.title@de|Barrierefreiheit|Accessibility title German
-impressum-info.technical.accessibility.title@en|Accessibility|Accessibility title English
-impressum-info.technical.accessibility.text@de|Diese Website ist nach WCAG 2.1 AA Standards entwickelt und unterstützt Screenreader sowie Tastaturnavigation.|Accessibility description German
-impressum-info.technical.accessibility.text@en|This website is developed according to WCAG 2.1 AA standards and supports screen readers and keyboard navigation.|Accessibility description English
-impressum-info.technical.browsers.title@de|Browser-Kompatibilität|Browser compatibility title German
-impressum-info.technical.browsers.title@en|Browser Compatibility|Browser compatibility title English
-impressum-info.technical.browsers.modern@de|Diese Website unterstützt alle modernen Browser.|Modern browsers support German
-impressum-info.technical.browsers.modern@en|This website supports all modern browsers.|Modern browsers support English
-impressum-info.technical.browsers.compatibility@de|Getestet mit folgenden Browser-Engines:|Browser engine compatibility German
-impressum-info.technical.browsers.compatibility@en|Tested with the following browser engines:|Browser engine compatibility English
-impressum-info.technical.browsers.webkit@de|WebKit (Safari, iOS Safari)|WebKit browsers German
-impressum-info.technical.browsers.webkit@en|WebKit (Safari, iOS Safari)|WebKit browsers English
-impressum-info.technical.browsers.blink@de|Blink (Chrome, Edge, Opera)|Blink browsers German
-impressum-info.technical.browsers.blink@en|Blink (Chrome, Edge, Opera)|Blink browsers English
-impressum-info.technical.browsers.quantum@de|Quantum (Firefox)|Quantum browser German
-impressum-info.technical.browsers.quantum@en|Quantum (Firefox)|Quantum browser English
-impressum-info.legal.title@de|Rechtliche Hinweise|Legal information title German
-impressum-info.legal.title@en|Legal Information|Legal information title English
-impressum-info.legal.liability.title@de|Haftung für Inhalte|Content liability title German
-impressum-info.legal.liability.title@en|Liability for Content|Content liability title English
-impressum-info.legal.liability.text@de|Die Inhalte dieser Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden.|Content liability text German
-impressum-info.legal.liability.text@en|The contents of these pages were created with the greatest care. However, no guarantee can be given for the accuracy, completeness and timeliness of the contents.|Content liability text English
-impressum-info.legal.links.title@de|Haftung für Links|Link liability title German
-impressum-info.legal.links.title@en|Liability for Links|Link liability title English
-impressum-info.legal.links.text@de|Diese Website enthält Links zu externen Webseiten Dritter, auf deren Inhalte ich keinen Einfluss habe. Für diese fremden Inhalte kann daher keine Gewähr übernommen werden.|Link liability text German
-impressum-info.legal.links.text@en|This website contains links to external third-party websites over whose content I have no influence. Therefore, no guarantee can be given for this external content.|Link liability text English
-impressum-info.legal.odr.title@de|EU-Streitschlichtung|EU dispute resolution title German
-impressum-info.legal.odr.title@en|EU Dispute Resolution|EU dispute resolution title English
-impressum-info.legal.odr.text@de|Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:|EU ODR platform text German
-impressum-info.legal.odr.text@en|The European Commission provides a platform for online dispute resolution (ODR):|EU ODR platform text English
-impressum-info.legal.odr.participation@de|Ich bin nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.|ODR participation disclaimer German
-impressum-info.legal.odr.participation@en|I am not willing or obliged to participate in dispute resolution procedures before a consumer arbitration board.|ODR participation disclaimer English
-impressum-info.misc.title@de|Sonstiges|Miscellaneous title German
-impressum-info.misc.title@en|Miscellaneous|Miscellaneous title English
-impressum-info.technical.cookies.title@de|Cookies und Tracking|Cookies and tracking title German
-impressum-info.technical.cookies.title@en|Cookies and Tracking|Cookies and tracking title English
-impressum-info.technical.cookies.text@de|Diese Website verwendet keine Cookies und keine Tracking-Technologien. Alle Funktionen sind rein statisch.|Cookies policy German
-impressum-info.technical.cookies.text@en|This website uses no cookies and no tracking technologies. All functions are purely static.|Cookies policy English
-impressum-info.misc.detection.title@de|Geräteerkennung|Device detection title German
-impressum-info.misc.detection.title@en|Device Detection|Device detection title English
-impressum-info.misc.detection.language@de|Sprache|Language detection German
-impressum-info.misc.detection.language@en|Language|Language detection English
-impressum-info.misc.detection.monitor@de|Bildschirm|Monitor detection German
-impressum-info.misc.detection.monitor@en|Monitor|Monitor detection English
-impressum-info.misc.detection.pixelratio@de|Pixelverhältnis|Pixel ratio detection German
-impressum-info.misc.detection.pixelratio@en|Pixel Ratio|Pixel ratio detection English
-impressum-info.misc.update.title@de|Letzte Aktualisierung|Last update title German
-impressum-info.misc.update.title@en|Last Update|Last update title English
-impressum-info.misc.update.fallback@de|Informationen nicht verfügbar|Update info fallback German
-impressum-info.misc.update.fallback@en|Information not available|Update info fallback English
+impressum.info.technical.title@de|Technische Informationen|Technical information section title German
+impressum.info.technical.title@en|Technical Information|Technical information section title English
+impressum.info.technical.co2.title@de|CO2-neutrales Hosting|CO2 neutral hosting title German
+impressum.info.technical.co2.title@en|CO2-neutral Hosting|CO2 neutral hosting title English
+impressum.info.technical.co2.hosting@de|Diese Website wird auf CO2-neutralen Servern gehostet.|CO2 hosting description German
+impressum.info.technical.co2.hosting@en|This website is hosted on CO2-neutral servers.|CO2 hosting description English
+impressum.info.technical.co2.energy@de|100% erneuerbare Energie|100% renewable energy German
+impressum.info.technical.co2.energy@en|100% renewable energy|100% renewable energy English
+impressum.info.technical.co2.iso@de|ISO 14001 zertifiziertes Rechenzentrum|ISO 14001 certified data center German
+impressum.info.technical.co2.iso@en|ISO 14001 certified data center|ISO 14001 certified data center English
+impressum.info.technical.co2.dsgvo@de|DSGVO-konformes Hosting in Deutschland|GDPR compliant hosting in Germany German
+impressum.info.technical.co2.dsgvo@en|GDPR compliant hosting in Germany|GDPR compliant hosting in Germany English
+impressum.info.technical.accessibility.title@de|Barrierefreiheit|Accessibility title German
+impressum.info.technical.accessibility.title@en|Accessibility|Accessibility title English
+impressum.info.technical.accessibility.text@de|Diese Website ist nach WCAG 2.1 AA Standards entwickelt und unterstützt Screenreader sowie Tastaturnavigation.|Accessibility description German
+impressum.info.technical.accessibility.text@en|This website is developed according to WCAG 2.1 AA standards and supports screen readers and keyboard navigation.|Accessibility description English
+impressum.info.technical.browsers.title@de|Browser-Kompatibilität|Browser compatibility title German
+impressum.info.technical.browsers.title@en|Browser Compatibility|Browser compatibility title English
+impressum.info.technical.browsers.modern@de|Diese Website unterstützt alle modernen Browser.|Modern browsers support German
+impressum.info.technical.browsers.modern@en|This website supports all modern browsers.|Modern browsers support English
+impressum.info.technical.browsers.compatibility@de|Getestet mit folgenden Browser-Engines:|Browser engine compatibility German
+impressum.info.technical.browsers.compatibility@en|Tested with the following browser engines:|Browser engine compatibility English
+impressum.info.technical.browsers.webkit@de|WebKit (Safari, iOS Safari)|WebKit browsers German
+impressum.info.technical.browsers.webkit@en|WebKit (Safari, iOS Safari)|WebKit browsers English
+impressum.info.technical.browsers.blink@de|Blink (Chrome, Edge, Opera)|Blink browsers German
+impressum.info.technical.browsers.blink@en|Blink (Chrome, Edge, Opera)|Blink browsers English
+impressum.info.technical.browsers.quantum@de|Quantum (Firefox)|Quantum browser German
+impressum.info.technical.browsers.quantum@en|Quantum (Firefox)|Quantum browser English
+impressum.info.legal.title@de|Rechtliche Hinweise|Legal information title German
+impressum.info.legal.title@en|Legal Information|Legal information title English
+impressum.info.legal.liability.title@de|Haftung für Inhalte|Content liability title German
+impressum.info.legal.liability.title@en|Liability for Content|Content liability title English
+impressum.info.legal.liability.text@de|Die Inhalte dieser Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden.|Content liability text German
+impressum.info.legal.liability.text@en|The contents of these pages were created with the greatest care. However, no guarantee can be given for the accuracy, completeness and timeliness of the contents.|Content liability text English
+impressum.info.legal.links.title@de|Haftung für Links|Link liability title German
+impressum.info.legal.links.title@en|Liability for Links|Link liability title English
+impressum.info.legal.links.text@de|Diese Website enthält Links zu externen Webseiten Dritter, auf deren Inhalte ich keinen Einfluss habe. Für diese fremden Inhalte kann daher keine Gewähr übernommen werden.|Link liability text German
+impressum.info.legal.links.text@en|This website contains links to external third-party websites over whose content I have no influence. Therefore, no guarantee can be given for this external content.|Link liability text English
+impressum.info.legal.odr.title@de|EU-Streitschlichtung|EU dispute resolution title German
+impressum.info.legal.odr.title@en|EU Dispute Resolution|EU dispute resolution title English
+impressum.info.legal.odr.text@de|Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:|EU ODR platform text German
+impressum.info.legal.odr.text@en|The European Commission provides a platform for online dispute resolution (ODR):|EU ODR platform text English
+impressum.info.legal.odr.participation@de|Ich bin nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.|ODR participation disclaimer German
+impressum.info.legal.odr.participation@en|I am not willing or obliged to participate in dispute resolution procedures before a consumer arbitration board.|ODR participation disclaimer English
+impressum.info.misc.title@de|Sonstiges|Miscellaneous title German
+impressum.info.misc.title@en|Miscellaneous|Miscellaneous title English
+impressum.info.technical.cookies.title@de|Cookies und Tracking|Cookies and tracking title German
+impressum.info.technical.cookies.title@en|Cookies and Tracking|Cookies and tracking title English
+impressum.info.technical.cookies.text@de|Diese Website verwendet keine Cookies und keine Tracking-Technologien. Alle Funktionen sind rein statisch.|Cookies policy German
+impressum.info.technical.cookies.text@en|This website uses no cookies and no tracking technologies. All functions are purely static.|Cookies policy English
+impressum.info.misc.detection.title@de|Geräteerkennung|Device detection title German
+impressum.info.misc.detection.title@en|Device Detection|Device detection title English
+impressum.info.misc.detection.language@de|Sprache|Language detection German
+impressum.info.misc.detection.language@en|Language|Language detection English
+impressum.info.misc.detection.monitor@de|Bildschirm|Monitor detection German
+impressum.info.misc.detection.monitor@en|Monitor|Monitor detection English
+impressum.info.misc.detection.pixelratio@de|Pixelverhältnis|Pixel ratio detection German
+impressum.info.misc.detection.pixelratio@en|Pixel Ratio|Pixel ratio detection English
+impressum.info.misc.update.title@de|Letzte Aktualisierung|Last update title German
+impressum.info.misc.update.title@en|Last Update|Last update title English
+impressum.info.misc.update.fallback@de|Informationen nicht verfügbar|Update info fallback German
+impressum.info.misc.update.fallback@en|Information not available|Update info fallback English

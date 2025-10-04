@@ -1,63 +1,63 @@
 key|value|comment
-actix-web.title@de|Actix-Web|Content text for de locale
-actix-web.category.label@de|Kategorie|Content text for de locale
-actix-web.category.value@de|Web-Framework|Content text for de locale
-actix-web.stable.label@de|Stabil seit|Content text for de locale
-actix-web.stable.value@de|2018|Content text for de locale
-actix-web.creator.label@de|Erschaffer|Content text for de locale
-actix-web.creator.value@de|Nikolay Kim|Content text for de locale
-actix-web.project.label@de|Projekt|Content text for de locale
-actix-web.project.value@de|"<a href=""https://github.com/actix/actix-web"" target=""_blank"">GitHub-Projekt von Actix-Web</a>"|Content text for de locale
-actix-web.description@de|Actix-Web ist ein extrem schnelles, pragmatisches und Open-Source Web-Framework für Rust. Es basiert auf dem Actor-Modell und nutzt Tokio als asynchrone Runtime. In den TechEmpower-Benchmarks belegt es regelmäßig Spitzenplätze bei der Request-Verarbeitung und übertrifft etablierte Frameworks wie Node.js oder Go deutlich. Diese beeindruckende Performance verdankt es der Zero-Cost-Abstraction von Rust und der geschickten Nutzung von async/await. Das Framework bietet alles, was moderne Web-Anwendungen benötigen: Middleware-System, WebSockets, HTTP/2, TLS, Request-Router und automatische Deserialisierung. Besonders bemerkenswert ist die Type-Safety: Viele Fehler, die in anderen Sprachen erst zur Laufzeit auftreten, werden bereits beim Kompilieren erkannt. Diese Webseite läuft auf Actix-Web und beweist dessen Produktionsreife.|Content text for de locale
-actix-web.enterprise@de|Verwendet von Microsoft (Azure IoT), Cloudflare (Workers), Discord (Backend-Services), Dropbox (Magic Pocket Storage) und vielen Startups, die auf maximale Performance und Zuverlässigkeit setzen.|Content text for de locale
-actix-web.compare.title@de|Bewertung|Content text for de locale
-actix-web.compare.subtitle@de|Ehrliche Einschätzung der Technologie|Content text for de locale
-actix-web.cons.title@de|Nachteile|Content text for de locale
-actix-web.cons.1@de|Rust-Kenntnisse erforderlich|Content text for de locale
-actix-web.cons.2@de|Längere Kompilierungszeiten|Content text for de locale
-actix-web.cons.3@de|Kleinere Community als Node.js/Python|Content text for de locale
-actix-web.cons.4@de|Weniger Third-Party-Pakete|Content text for de locale
-actix-web.cons.5@de|Ownership-Konzept kann frustrierend sein|Content text for de locale
-actix-web.pros.title@de|Vorteile|Content text for de locale
-actix-web.pros.1@de|Beste Performance aller Web-Frameworks|Content text for de locale
-actix-web.pros.2@de|Memory-Safety ohne Garbage Collector|Content text for de locale
-actix-web.pros.3@de|Type-Safety verhindert viele Bugs|Content text for de locale
-actix-web.pros.4@de|Extrem niedrige Latenz und CPU-Nutzung|Content text for de locale
-actix-web.pros.5@de|Produktionsreif und battle-tested|Content text for de locale
-actix-web.syntax.label@de|Syntax|Content text for de locale
-actix-web.syntax.value@de|Rust mit async/await|Content text for de locale
-actix-web.security.label@de|Sicherheit|Content text for de locale
-actix-web.security.value@de|Sehr sicher (Memory-Safety durch Rust)|Content text for de locale
-actix-web.performance.label@de|Performance|Content text for de locale
-actix-web.performance.value@de|Weltklasse-Performance|Content text for de locale
-actix-web.title@en|Actix-Web|Content text for en locale
-actix-web.category.label@en|Category|Content text for en locale
-actix-web.category.value@en|Web Framework|Content text for en locale
-actix-web.stable.label@en|Stable since|Content text for en locale
-actix-web.stable.value@en|2018|Content text for en locale
-actix-web.creator.label@en|Creator|Content text for en locale
-actix-web.creator.value@en|Nikolay Kim|Content text for en locale
-actix-web.project.label@en|Project|Content text for en locale
-actix-web.project.value@en|"<a href=""https://github.com/actix/actix-web"" target=""_blank"">Actix-Web GitHub Project</a>"|Content text for en locale
-actix-web.description@en|Actix-Web is an extremely fast, pragmatic, and open-source web framework for Rust. It's based on the Actor model and uses Tokio as its asynchronous runtime. In TechEmpower benchmarks, it regularly ranks at the top for request processing, significantly outperforming established frameworks like Node.js or Go. This impressive performance is due to Rust's zero-cost abstraction and clever use of async/await. The framework offers everything modern web applications need: middleware system, WebSockets, HTTP/2, TLS, request router, and automatic deserialization. Particularly noteworthy is the type safety: many errors that occur at runtime in other languages are caught at compile time. This website runs on Actix-Web, proving its production readiness.|Content text for en locale
-actix-web.enterprise@en|Used by Microsoft (Azure IoT), Cloudflare (Workers), Discord (backend services), Dropbox (Magic Pocket Storage), and many startups that prioritize maximum performance and reliability.|Content text for en locale
-actix-web.compare.title@en|Assessment|Content text for en locale
-actix-web.compare.subtitle@en|Honest assessment of the technology|Content text for en locale
-actix-web.cons.title@en|Disadvantages|Content text for en locale
-actix-web.cons.1@en|Rust knowledge required|Content text for en locale
-actix-web.cons.2@en|Longer compilation times|Content text for en locale
-actix-web.cons.3@en|Smaller community than Node.js/Python|Content text for en locale
-actix-web.cons.4@en|Fewer third-party packages|Content text for en locale
-actix-web.cons.5@en|Ownership concept can be frustrating|Content text for en locale
-actix-web.pros.title@en|Advantages|Content text for en locale
-actix-web.pros.1@en|Best performance of all web frameworks|Content text for en locale
-actix-web.pros.2@en|Memory safety without garbage collector|Content text for en locale
-actix-web.pros.3@en|Type safety prevents many bugs|Content text for en locale
-actix-web.pros.4@en|Extremely low latency and CPU usage|Content text for en locale
-actix-web.pros.5@en|Production-ready and battle-tested|Content text for en locale
-actix-web.syntax.label@en|Syntax|Content text for en locale
-actix-web.syntax.value@en|Rust with async/await|Content text for en locale
-actix-web.security.label@en|Security|Content text for en locale
-actix-web.security.value@en|Very secure (memory safety through Rust)|Content text for en locale
-actix-web.performance.label@en|Performance|Content text for en locale
-actix-web.performance.value@en|World-class performance|Content text for en locale
+actix.web.title@de|Actix-Web|Content text for de locale
+actix.web.category.label@de|Kategorie|Content text for de locale
+actix.web.category.value@de|Web-Framework|Content text for de locale
+actix.web.stable.label@de|Stabil seit|Content text for de locale
+actix.web.stable.value@de|2018|Content text for de locale
+actix.web.creator.label@de|Erschaffer|Content text for de locale
+actix.web.creator.value@de|Nikolay Kim|Content text for de locale
+actix.web.project.label@de|Projekt|Content text for de locale
+actix.web.project.value@de|"<a href=""https://github.com/actix/actix-web"" target=""_blank"">GitHub-Projekt von Actix-Web</a>"|Content text for de locale
+actix.web.description@de|Actix-Web ist ein extrem schnelles, pragmatisches und Open-Source Web-Framework für Rust. Es basiert auf dem Actor-Modell und nutzt Tokio als asynchrone Runtime. In den TechEmpower-Benchmarks belegt es regelmäßig Spitzenplätze bei der Request-Verarbeitung und übertrifft etablierte Frameworks wie Node.js oder Go deutlich. Diese beeindruckende Performance verdankt es der Zero-Cost-Abstraction von Rust und der geschickten Nutzung von async/await. Das Framework bietet alles, was moderne Web-Anwendungen benötigen: Middleware-System, WebSockets, HTTP/2, TLS, Request-Router und automatische Deserialisierung. Besonders bemerkenswert ist die Type-Safety: Viele Fehler, die in anderen Sprachen erst zur Laufzeit auftreten, werden bereits beim Kompilieren erkannt. Diese Webseite läuft auf Actix-Web und beweist dessen Produktionsreife.|Content text for de locale
+actix.web.enterprise@de|Verwendet von Microsoft (Azure IoT), Cloudflare (Workers), Discord (Backend-Services), Dropbox (Magic Pocket Storage) und vielen Startups, die auf maximale Performance und Zuverlässigkeit setzen.|Content text for de locale
+actix.web.compare.title@de|Bewertung|Content text for de locale
+actix.web.compare.subtitle@de|Ehrliche Einschätzung der Technologie|Content text for de locale
+actix.web.cons.title@de|Nachteile|Content text for de locale
+actix.web.cons.1@de|Rust-Kenntnisse erforderlich|Content text for de locale
+actix.web.cons.2@de|Längere Kompilierungszeiten|Content text for de locale
+actix.web.cons.3@de|Kleinere Community als Node.js/Python|Content text for de locale
+actix.web.cons.4@de|Weniger Third-Party-Pakete|Content text for de locale
+actix.web.cons.5@de|Ownership-Konzept kann frustrierend sein|Content text for de locale
+actix.web.pros.title@de|Vorteile|Content text for de locale
+actix.web.pros.1@de|Beste Performance aller Web-Frameworks|Content text for de locale
+actix.web.pros.2@de|Memory-Safety ohne Garbage Collector|Content text for de locale
+actix.web.pros.3@de|Type-Safety verhindert viele Bugs|Content text for de locale
+actix.web.pros.4@de|Extrem niedrige Latenz und CPU-Nutzung|Content text for de locale
+actix.web.pros.5@de|Produktionsreif und battle-tested|Content text for de locale
+actix.web.syntax.label@de|Syntax|Content text for de locale
+actix.web.syntax.value@de|Rust mit async/await|Content text for de locale
+actix.web.security.label@de|Sicherheit|Content text for de locale
+actix.web.security.value@de|Sehr sicher (Memory-Safety durch Rust)|Content text for de locale
+actix.web.performance.label@de|Performance|Content text for de locale
+actix.web.performance.value@de|Weltklasse-Performance|Content text for de locale
+actix.web.title@en|Actix-Web|Content text for en locale
+actix.web.category.label@en|Category|Content text for en locale
+actix.web.category.value@en|Web Framework|Content text for en locale
+actix.web.stable.label@en|Stable since|Content text for en locale
+actix.web.stable.value@en|2018|Content text for en locale
+actix.web.creator.label@en|Creator|Content text for en locale
+actix.web.creator.value@en|Nikolay Kim|Content text for en locale
+actix.web.project.label@en|Project|Content text for en locale
+actix.web.project.value@en|"<a href=""https://github.com/actix/actix-web"" target=""_blank"">Actix-Web GitHub Project</a>"|Content text for en locale
+actix.web.description@en|Actix-Web is an extremely fast, pragmatic, and open-source web framework for Rust. It's based on the Actor model and uses Tokio as its asynchronous runtime. In TechEmpower benchmarks, it regularly ranks at the top for request processing, significantly outperforming established frameworks like Node.js or Go. This impressive performance is due to Rust's zero-cost abstraction and clever use of async/await. The framework offers everything modern web applications need: middleware system, WebSockets, HTTP/2, TLS, request router, and automatic deserialization. Particularly noteworthy is the type safety: many errors that occur at runtime in other languages are caught at compile time. This website runs on Actix-Web, proving its production readiness.|Content text for en locale
+actix.web.enterprise@en|Used by Microsoft (Azure IoT), Cloudflare (Workers), Discord (backend services), Dropbox (Magic Pocket Storage), and many startups that prioritize maximum performance and reliability.|Content text for en locale
+actix.web.compare.title@en|Assessment|Content text for en locale
+actix.web.compare.subtitle@en|Honest assessment of the technology|Content text for en locale
+actix.web.cons.title@en|Disadvantages|Content text for en locale
+actix.web.cons.1@en|Rust knowledge required|Content text for en locale
+actix.web.cons.2@en|Longer compilation times|Content text for en locale
+actix.web.cons.3@en|Smaller community than Node.js/Python|Content text for en locale
+actix.web.cons.4@en|Fewer third-party packages|Content text for en locale
+actix.web.cons.5@en|Ownership concept can be frustrating|Content text for en locale
+actix.web.pros.title@en|Advantages|Content text for en locale
+actix.web.pros.1@en|Best performance of all web frameworks|Content text for en locale
+actix.web.pros.2@en|Memory safety without garbage collector|Content text for en locale
+actix.web.pros.3@en|Type safety prevents many bugs|Content text for en locale
+actix.web.pros.4@en|Extremely low latency and CPU usage|Content text for en locale
+actix.web.pros.5@en|Production-ready and battle-tested|Content text for en locale
+actix.web.syntax.label@en|Syntax|Content text for en locale
+actix.web.syntax.value@en|Rust with async/await|Content text for en locale
+actix.web.security.label@en|Security|Content text for en locale
+actix.web.security.value@en|Very secure (memory safety through Rust)|Content text for en locale
+actix.web.performance.label@en|Performance|Content text for en locale
+actix.web.performance.value@en|World-class performance|Content text for en locale

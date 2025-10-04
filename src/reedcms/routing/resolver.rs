@@ -60,20 +60,36 @@ pub struct RouteInfo {
 /// ```
 pub fn resolve_url(url: &str) -> ReedResult<RouteInfo> {
     // Strip leading slash
-    let path = url.trim_start_matches('/');
+    let path = url.trim_start_matches('/').trim_end_matches('/');
 
     // Empty path defaults to landing page
     if path.is_empty() {
         return resolve_landing_page();
     }
 
+    // Extract language prefix if present (e.g., "de", "en")
+    let (language, remaining_path) = extract_language_prefix(path);
+
+    // If only language prefix (e.g., "/de" or "/en"), return landing page for that language
+    if remaining_path.is_empty() {
+        return Ok(RouteInfo {
+            layout: "landing".to_string(),
+            language,
+            params: HashMap::new(),
+        });
+    }
+
     // Try exact match first
-    if let Some(route_info) = lookup_exact_route(path)? {
+    if let Some(mut route_info) = lookup_exact_route(&remaining_path)? {
+        // Override language if it was in the URL prefix
+        if path.starts_with("de/") || path.starts_with("en/") {
+            route_info.language = language;
+        }
         return Ok(route_info);
     }
 
     // Try pattern matching for dynamic routes
-    if let Some(route_info) = lookup_pattern_route(path)? {
+    if let Some(route_info) = lookup_pattern_route(&remaining_path)? {
         return Ok(route_info);
     }
 
@@ -82,6 +98,41 @@ pub fn resolve_url(url: &str) -> ReedResult<RouteInfo> {
         resource: url.to_string(),
         context: Some("Route not found in routes.csv".to_string()),
     })
+}
+
+/// Extracts language prefix from path.
+///
+/// ## Arguments
+/// - path: URL path without leading/trailing slashes
+///
+/// ## Returns
+/// - (language, remaining_path) tuple
+///
+/// ## Examples
+/// - "de" → ("de", "")
+/// - "de/wissen" → ("de", "wissen")
+/// - "en/knowledge/api" → ("en", "knowledge/api")
+/// - "wissen" → ("de", "wissen") // defaults to "de"
+fn extract_language_prefix(path: &str) -> (String, String) {
+    let parts: Vec<&str> = path.splitn(2, '/').collect();
+
+    if parts.is_empty() {
+        return ("de".to_string(), String::new());
+    }
+
+    // Check if first segment is a known language code
+    let first = parts[0];
+    if first == "de" || first == "en" {
+        let remaining = if parts.len() > 1 {
+            parts[1].to_string()
+        } else {
+            String::new()
+        };
+        return (first.to_string(), remaining);
+    }
+
+    // No language prefix, default to "de" and treat entire path as route
+    ("de".to_string(), path.to_string())
 }
 
 /// Resolves landing page (root URL).

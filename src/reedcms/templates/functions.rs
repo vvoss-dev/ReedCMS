@@ -17,19 +17,19 @@
 /// ```jinja
 /// {% include organism("page-header") %}
 /// ```
-/// Resolves to: templates/components/organisms/page-header/page-header.mouse.jinja
+/// Resolves to: components/organisms/page-header/page-header.mouse.jinja
 ///
 /// ## Performance
 /// - O(1) string formatting
 /// - < 1μs per function call
 pub fn make_organism_function(
     interaction_mode: String,
-) -> impl Fn(&str) -> Result<String, minijinja::Error> + Send + Sync + 'static {
-    move |name: &str| -> Result<String, minijinja::Error> {
-        Ok(format!(
-            "templates/components/organisms/{}/{}.{}.jinja",
+) -> impl Fn(&str) -> String + Send + Sync + 'static {
+    move |name: &str| -> String {
+        format!(
+            "components/organisms/{}/{}.{}.jinja",
             name, name, interaction_mode
-        ))
+        )
     }
 }
 
@@ -39,15 +39,15 @@ pub fn make_organism_function(
 /// ```jinja
 /// {% include molecule("nav-item") %}
 /// ```
-/// Resolves to: templates/components/molecules/nav-item/nav-item.mouse.jinja
+/// Resolves to: components/molecules/nav-item/nav-item.mouse.jinja
 pub fn make_molecule_function(
     interaction_mode: String,
-) -> impl Fn(&str) -> Result<String, minijinja::Error> + Send + Sync + 'static {
-    move |name: &str| -> Result<String, minijinja::Error> {
-        Ok(format!(
-            "templates/components/molecules/{}/{}.{}.jinja",
+) -> impl Fn(&str) -> String + Send + Sync + 'static {
+    move |name: &str| -> String {
+        format!(
+            "components/molecules/{}/{}.{}.jinja",
             name, name, interaction_mode
-        ))
+        )
     }
 }
 
@@ -57,15 +57,15 @@ pub fn make_molecule_function(
 /// ```jinja
 /// {% include atom("icon-logo") %}
 /// ```
-/// Resolves to: templates/components/atoms/icon-logo/icon-logo.mouse.jinja
+/// Resolves to: components/atoms/icon-logo/icon-logo.mouse.jinja
 pub fn make_atom_function(
     interaction_mode: String,
-) -> impl Fn(&str) -> Result<String, minijinja::Error> + Send + Sync + 'static {
-    move |name: &str| -> Result<String, minijinja::Error> {
-        Ok(format!(
-            "templates/components/atoms/{}/{}.{}.jinja",
+) -> impl Fn(&str) -> String + Send + Sync + 'static {
+    move |name: &str| -> String {
+        format!(
+            "components/atoms/{}/{}.{}.jinja",
             name, name, interaction_mode
-        ))
+        )
     }
 }
 
@@ -78,10 +78,7 @@ pub fn make_atom_function(
 /// ```jinja
 /// {% extends layout("page") %}
 /// ```
-/// Resolves to: templates/layouts/page/page.jinja
-pub fn make_layout_function(
-) -> impl Fn(&str) -> Result<String, minijinja::Error> + Send + Sync + 'static {
-    move |name: &str| -> Result<String, minijinja::Error> {
-        Ok(format!("templates/layouts/{}/{}.jinja", name, name))
-    }
+/// Resolves to: layouts/page/page.jinja
+pub fn make_layout_function() -> impl Fn(&str) -> String + Send + Sync + 'static {
+    move |name: &str| -> String { format!("layouts/{}/{}.jinja", name, name) }
 }

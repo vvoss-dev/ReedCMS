@@ -1,0 +1,1074 @@
+key|value|comment
+SVG_ICON_DEFAULT_ALT@DE|Icon|Default German alt text
+SVG_ICON_DEFAULT_ALT@EN|Icon|Default English alt text
+SVG_ICON_FEATHER_CREDIT@DE|Feather Icons von feathericons.com|German credit for Feather icons
+SVG_ICON_FEATHER_CREDIT@EN|Feather Icons from feathericons.com|English credit for Feather icons
+SVG_ICON_MISSING_ICON_ALT@DE|Fehlendes Icon|German alt text for missing icons
+SVG_ICON_MISSING_ICON_ALT@EN|Missing Icon|English alt text for missing icons
+actix.web.category.label@de|Kategorie|Content text for de locale
+actix.web.category.label@en|Category|Content text for en locale
+actix.web.category.value@de|Web-Framework|Content text for de locale
+actix.web.category.value@en|Web Framework|Content text for en locale
+actix.web.compare.subtitle@de|Ehrliche Einschätzung der Technologie|Content text for de locale
+actix.web.compare.subtitle@en|Honest assessment of the technology|Content text for en locale
+actix.web.compare.title@de|Bewertung|Content text for de locale
+actix.web.compare.title@en|Assessment|Content text for en locale
+actix.web.cons.1@de|Rust-Kenntnisse erforderlich|Content text for de locale
+actix.web.cons.1@en|Rust knowledge required|Content text for en locale
+actix.web.cons.2@de|Längere Kompilierungszeiten|Content text for de locale
+actix.web.cons.2@en|Longer compilation times|Content text for en locale
+actix.web.cons.3@de|Kleinere Community als Node.js/Python|Content text for de locale
+actix.web.cons.3@en|Smaller community than Node.js/Python|Content text for en locale
+actix.web.cons.4@de|Weniger Third-Party-Pakete|Content text for de locale
+actix.web.cons.4@en|Fewer third-party packages|Content text for en locale
+actix.web.cons.5@de|Ownership-Konzept kann frustrierend sein|Content text for de locale
+actix.web.cons.5@en|Ownership concept can be frustrating|Content text for en locale
+actix.web.cons.title@de|Nachteile|Content text for de locale
+actix.web.cons.title@en|Disadvantages|Content text for en locale
+actix.web.creator.label@de|Erschaffer|Content text for de locale
+actix.web.creator.label@en|Creator|Content text for en locale
+actix.web.creator.value@de|Nikolay Kim|Content text for de locale
+actix.web.creator.value@en|Nikolay Kim|Content text for en locale
+actix.web.description@de|Actix-Web ist ein extrem schnelles, pragmatisches und Open-Source Web-Framework für Rust. Es basiert auf dem Actor-Modell und nutzt Tokio als asynchrone Runtime. In den TechEmpower-Benchmarks belegt es regelmäßig Spitzenplätze bei der Request-Verarbeitung und übertrifft etablierte Frameworks wie Node.js oder Go deutlich. Diese beeindruckende Performance verdankt es der Zero-Cost-Abstraction von Rust und der geschickten Nutzung von async/await. Das Framework bietet alles, was moderne Web-Anwendungen benötigen: Middleware-System, WebSockets, HTTP/2, TLS, Request-Router und automatische Deserialisierung. Besonders bemerkenswert ist die Type-Safety: Viele Fehler, die in anderen Sprachen erst zur Laufzeit auftreten, werden bereits beim Kompilieren erkannt. Diese Webseite läuft auf Actix-Web und beweist dessen Produktionsreife.|Content text for de locale
+actix.web.description@en|Actix-Web is an extremely fast, pragmatic, and open-source web framework for Rust. It's based on the Actor model and uses Tokio as its asynchronous runtime. In TechEmpower benchmarks, it regularly ranks at the top for request processing, significantly outperforming established frameworks like Node.js or Go. This impressive performance is due to Rust's zero-cost abstraction and clever use of async/await. The framework offers everything modern web applications need: middleware system, WebSockets, HTTP/2, TLS, request router, and automatic deserialization. Particularly noteworthy is the type safety: many errors that occur at runtime in other languages are caught at compile time. This website runs on Actix-Web, proving its production readiness.|Content text for en locale
+actix.web.enterprise@de|Verwendet von Microsoft (Azure IoT), Cloudflare (Workers), Discord (Backend-Services), Dropbox (Magic Pocket Storage) und vielen Startups, die auf maximale Performance und Zuverlässigkeit setzen.|Content text for de locale
+actix.web.enterprise@en|Used by Microsoft (Azure IoT), Cloudflare (Workers), Discord (backend services), Dropbox (Magic Pocket Storage), and many startups that prioritize maximum performance and reliability.|Content text for en locale
+actix.web.performance.label@de|Performance|Content text for de locale
+actix.web.performance.label@en|Performance|Content text for en locale
+actix.web.performance.value@de|Weltklasse-Performance|Content text for de locale
+actix.web.performance.value@en|World-class performance|Content text for en locale
+actix.web.project.label@de|Projekt|Content text for de locale
+actix.web.project.label@en|Project|Content text for en locale
+actix.web.project.value@de|"<a href=""https://github.com/actix/actix-web"" target=""_blank"">GitHub-Projekt von Actix-Web</a>"|Content text for de locale
+actix.web.project.value@en|"<a href=""https://github.com/actix/actix-web"" target=""_blank"">Actix-Web GitHub Project</a>"|Content text for en locale
+actix.web.pros.1@de|Beste Performance aller Web-Frameworks|Content text for de locale
+actix.web.pros.1@en|Best performance of all web frameworks|Content text for en locale
+actix.web.pros.2@de|Memory-Safety ohne Garbage Collector|Content text for de locale
+actix.web.pros.2@en|Memory safety without garbage collector|Content text for en locale
+actix.web.pros.3@de|Type-Safety verhindert viele Bugs|Content text for de locale
+actix.web.pros.3@en|Type safety prevents many bugs|Content text for en locale
+actix.web.pros.4@de|Extrem niedrige Latenz und CPU-Nutzung|Content text for de locale
+actix.web.pros.4@en|Extremely low latency and CPU usage|Content text for en locale
+actix.web.pros.5@de|Produktionsreif und battle-tested|Content text for de locale
+actix.web.pros.5@en|Production-ready and battle-tested|Content text for en locale
+actix.web.pros.title@de|Vorteile|Content text for de locale
+actix.web.pros.title@en|Advantages|Content text for en locale
+actix.web.security.label@de|Sicherheit|Content text for de locale
+actix.web.security.label@en|Security|Content text for en locale
+actix.web.security.value@de|Sehr sicher (Memory-Safety durch Rust)|Content text for de locale
+actix.web.security.value@en|Very secure (memory safety through Rust)|Content text for en locale
+actix.web.stable.label@de|Stabil seit|Content text for de locale
+actix.web.stable.label@en|Stable since|Content text for en locale
+actix.web.stable.value@de|2018|Content text for de locale
+actix.web.stable.value@en|2018|Content text for en locale
+actix.web.syntax.label@de|Syntax|Content text for de locale
+actix.web.syntax.label@en|Syntax|Content text for en locale
+actix.web.syntax.value@de|Rust mit async/await|Content text for de locale
+actix.web.syntax.value@en|Rust with async/await|Content text for en locale
+actix.web.title@de|Actix-Web|Content text for de locale
+actix.web.title@en|Actix-Web|Content text for en locale
+aeo.category.label@de|Kategorie|Content text for de locale
+aeo.category.label@en|Category|Content text for en locale
+aeo.category.value@de|Optimierungsstrategie|Content text for de locale
+aeo.category.value@en|Optimization Strategy|Content text for en locale
+aeo.compare.subtitle@de|Praktische Einschätzung der Methode|Content text for de locale
+aeo.compare.subtitle@en|Practical assessment of the method|Content text for en locale
+aeo.compare.title@de|Bewertung|Content text for de locale
+aeo.compare.title@en|Assessment|Content text for en locale
+aeo.cons.1@de|Komplette Content-Umstrukturierung nötig|Content text for de locale
+aeo.cons.1@en|Complete content restructuring needed|Content text for en locale
+aeo.cons.2@de|Keine Garantie für Featured Snippets|Content text for de locale
+aeo.cons.2@en|No guarantee for featured snippets|Content text for en locale
+aeo.cons.3@de|Google ändert Kriterien ständig|Content text for de locale
+aeo.cons.3@en|Google constantly changes criteria|Content text for en locale
+aeo.cons.4@de|Sehr technische Implementierung|Content text for de locale
+aeo.cons.4@en|Very technical implementation|Content text for en locale
+aeo.cons.5@de|Hohe initiale Investition|Content text for de locale
+aeo.cons.5@en|High initial investment|Content text for en locale
+aeo.cons.title@de|Nachteile|Content text for de locale
+aeo.cons.title@en|Disadvantages|Content text for en locale
+aeo.creator.label@de|Entstanden|Content text for de locale
+aeo.creator.label@en|Emerged|Content text for en locale
+aeo.creator.value@de|2020 (Featured Snippets)|Content text for de locale
+aeo.creator.value@en|2020 (Featured Snippets)|Content text for en locale
+aeo.description@de|"AEO fokussiert darauf, Inhalte so zu strukturieren, dass sie von KI-Systemen als direkte Antworten ausgewählt werden. Besonders wichtig für Featured Snippets, Sprachsuchen und Google AI Overviews. Die Strategie: Frage-basierte Struktur (""Was ist...?"", ""Wie funktioniert...?""), FAQ- und How-To-Schema-Markup, kurze klare Absätze und Listenformate. Stand Q3 2025: 84% der Google-Suchen zeigen bereits KI-Overviews, Featured Snippets machen 35% der Klicks aus. AEO ist der erste Schritt weg vom traditionellen SEO."|Content text for de locale
+aeo.description@en|"AEO focuses on structuring content to be selected by AI systems as direct answers. Especially important for featured snippets, voice searches, and Google AI Overviews. The strategy: Question-based structure (""What is...?"", ""How does...?""), FAQ and How-To schema markup, short clear paragraphs and list formats. As of Q3 2025: 84% of Google searches already show AI overviews, featured snippets account for 35% of clicks. AEO is the first step away from traditional SEO."|Content text for en locale
+aeo.enterprise@de|Die praktische Umsetzung erfordert radikales Umdenken: Weg von Keyword-Density, hin zu präzisen Antworten. Jeder Absatz muss eine spezifische Frage beantworten. Strukturierte Daten werden Pflicht, nicht Option. Unternehmen müssen ihre gesamte Content-Architektur überarbeiten. Der Aufwand ist enorm, aber die Alternative ist digitale Irrelevanz. AEO ist nur der Einstieg - die wahre Schlacht findet in KI-Chats statt, wo Nutzer gar keine Suchergebnisseiten mehr sehen.|Content text for de locale
+aeo.enterprise@en|Practical implementation requires radical rethinking: Away from keyword density, towards precise answers. Every paragraph must answer a specific question. Structured data becomes mandatory, not optional. Companies must overhaul their entire content architecture. The effort is enormous, but the alternative is digital irrelevance. AEO is just the entry point - the real battle happens in AI chats, where users don't even see search result pages anymore.|Content text for en locale
+aeo.performance.label@de|Erfolgsrate|Content text for de locale
+aeo.performance.label@en|Success Rate|Content text for en locale
+aeo.performance.value@de|15-30% bei richtiger Implementierung|Content text for de locale
+aeo.performance.value@en|15-30% with proper implementation|Content text for en locale
+aeo.project.label@de|Teil von|Content text for de locale
+aeo.project.label@en|Part of|Content text for en locale
+aeo.project.value@de|"<a href=""{{ 'knowledge.ai-visibility' | route(lang='auto') }}"" class=""link"">AI Visibility</a>"|Content text for de locale
+aeo.project.value@en|"<a href=""{{ 'knowledge.ai-visibility' | route(lang='auto') }}"" class=""link"">AI Visibility</a>"|Content text for en locale
+aeo.pros.1@de|Position Zero erreichbar|Content text for de locale
+aeo.pros.1@en|Position Zero achievable|Content text for en locale
+aeo.pros.2@de|Perfekt für Sprachsuchen|Content text for de locale
+aeo.pros.2@en|Perfect for voice searches|Content text for en locale
+aeo.pros.3@de|Höhere Click-Through-Rate|Content text for de locale
+aeo.pros.3@en|Higher click-through rate|Content text for en locale
+aeo.pros.4@de|Zukunftssicherer als SEO|Content text for de locale
+aeo.pros.4@en|More future-proof than SEO|Content text for en locale
+aeo.pros.5@de|Messbare Ergebnisse|Content text for de locale
+aeo.pros.5@en|Measurable results|Content text for en locale
+aeo.pros.title@de|Vorteile|Content text for de locale
+aeo.pros.title@en|Advantages|Content text for en locale
+aeo.security.label@de|Messbarkeit|Content text for de locale
+aeo.security.label@en|Measurability|Content text for en locale
+aeo.security.value@de|Featured Snippet Tracking möglich|Content text for de locale
+aeo.security.value@en|Featured snippet tracking possible|Content text for en locale
+aeo.stable.label@de|Status|Content text for de locale
+aeo.stable.label@en|Status|Content text for en locale
+aeo.stable.value@de|Wachsend|Content text for de locale
+aeo.stable.value@en|Growing|Content text for en locale
+aeo.syntax.label@de|Techniken|Content text for de locale
+aeo.syntax.label@en|Techniques|Content text for en locale
+aeo.syntax.value@de|FAQ-Schema, How-To-Markup, Q&A-Format|Content text for de locale
+aeo.syntax.value@en|FAQ Schema, How-To Markup, Q&A Format|Content text for en locale
+aeo.title@de|AEO|Content text for de locale
+aeo.title@en|AEO|Content text for en locale
+agility.category.label@de|Kategorie|Content text for de locale
+agility.category.label@en|Category|Content text for en locale
+agility.category.value@de|Projektmanagement-Methodik|Content text for de locale
+agility.category.value@en|Project Management Methodology|Content text for en locale
+agility.compare.subtitle@de|Ehrliche Einschätzung der Methodik|Content text for de locale
+agility.compare.subtitle@en|Honest assessment of the methodology|Content text for en locale
+agility.compare.title@de|Bewertung|Content text for de locale
+agility.compare.title@en|Assessment|Content text for en locale
+agility.cons.1@de|Meeting-Overhead statt Entwicklungszeit|Content text for de locale
+agility.cons.1@en|Meeting overhead instead of development time|Content text for en locale
+agility.cons.2@de|Fragmentierte Features statt kohärente Systeme|Content text for de locale
+agility.cons.2@en|Fragmented features instead of coherent systems|Content text for en locale
+agility.cons.3@de|Velocity-Metriken über technische Qualität|Content text for de locale
+agility.cons.3@en|Velocity metrics over technical quality|Content text for en locale
+agility.cons.4@de|Prozess-Theater statt echte Beweglichkeit|Content text for de locale
+agility.cons.4@en|Process theater instead of real agility|Content text for en locale
+agility.cons.5@de|Sprint-Commitment verhindert gründliches Debugging|Content text for de locale
+agility.cons.5@en|Sprint commitment prevents thorough debugging|Content text for en locale
+agility.cons.title@de|Nachteile|Content text for de locale
+agility.cons.title@en|Disadvantages|Content text for en locale
+agility.creator.label@de|Begründer|Content text for de locale
+agility.creator.label@en|Founders|Content text for en locale
+agility.creator.value@de|Kent Beck, Martin Fowler u.a.|Content text for de locale
+agility.creator.value@en|Kent Beck, Martin Fowler et al.|Content text for en locale
+agility.description@de|"Agilität war ursprünglich die Antwort von Ingenieuren auf schwerfällige Wasserfallmodelle. Das Agile Manifesto (2001) forderte funktionierende Software über Dokumentation und technische Exzellenz als Grundlage. Was daraus wurde: Scrum-Bürokratie mit Daily Standups, Sprint Planning, Reviews und Retrospektiven - über 150 Stunden Meetings pro Jahr über ""Agilität"". Moderne Teams bewegen sich wie Marionetten an den Fäden des Prozess-Theaters, nicht wie bewegliche Kämpfer. Die Ironie: Mini-Wasserfälle mit kohärenten Arbeitspaketen sind oft agiler als fragmentierte Sprint-Entwicklung. Diese Webseite entstand bewusst nicht in Sprints, sondern als durchdachtes Gesamtsystem - erst komplett designen, dann sauber implementieren, gründlich testen, dann ausliefern."|Content text for de locale
+agility.description@en|"Agility was originally engineers' answer to cumbersome waterfall models. The Agile Manifesto (2001) demanded working software over documentation and technical excellence as foundation. What it became: Scrum bureaucracy with daily standups, sprint planning, reviews and retrospectives - over 150 hours of meetings per year about ""agility"". Modern teams move like marionettes on process theater strings, not like agile fighters. The irony: mini-waterfalls with coherent work packages are often more agile than fragmented sprint development. This website was deliberately not built in sprints, but as a well-thought-out complete system - first fully design, then cleanly implement, thoroughly test, then deliver."|Content text for en locale
+agility.enterprise@de|"Ironischerweise sind die erfolgreichsten Tech-Unternehmen (Netflix, Amazon) intern weniger ""agil"" als sie nach außen behaupten. Sie nutzen kohärente Arbeitspakete, langfristige Planung und stabile Systeme. Der wahre Grund ihres Erfolgs: Technische Exzellenz über Prozess-Compliance. Aber das verkauft sich schlecht auf Konferenzen."|Content text for de locale
+agility.enterprise@en|"Ironically, the most successful tech companies (Netflix, Amazon) are internally less ""agile"" than they claim externally. They use coherent work packages, long-term planning, and stable systems. The real reason for their success: technical excellence over process compliance. But that doesn't sell well at conferences."|Content text for en locale
+agility.performance.label@de|Effizienz|Content text for de locale
+agility.performance.label@en|Efficiency|Content text for en locale
+agility.performance.value@de|150+ Stunden Meetings pro Jahr|Content text for de locale
+agility.performance.value@en|150+ hours of meetings per year|Content text for en locale
+agility.project.label@de|Ressource|Content text for de locale
+agility.project.label@en|Resource|Content text for en locale
+agility.project.value@de|"<a href=""https://agilemanifesto.org"" target=""_blank"">Agile Manifesto</a>"|Content text for de locale
+agility.project.value@en|"<a href=""https://agilemanifesto.org"" target=""_blank"">Agile Manifesto</a>"|Content text for en locale
+agility.pros.1@de|Ursprüngliche Idee war gut gemeint|Content text for de locale
+agility.pros.1@en|Original idea was well-intentioned|Content text for en locale
+agility.pros.2@de|Kanban besser als reines Scrum|Content text for de locale
+agility.pros.2@en|Kanban better than pure Scrum|Content text for en locale
+agility.pros.3@de|"Management fühlt sich ""in control"""|Content text for de locale
+agility.pros.3@en|"Management feels ""in control"""|Content text for en locale
+agility.pros.4@de|Viele bunte Metriken für Reports|Content text for de locale
+agility.pros.4@en|Many colorful metrics for reports|Content text for en locale
+agility.pros.5@de|Consulting-Industrie liebt es|Content text for de locale
+agility.pros.5@en|Consulting industry loves it|Content text for en locale
+agility.pros.title@de|Vorteile|Content text for de locale
+agility.pros.title@en|Advantages|Content text for en locale
+agility.security.label@de|Stabilität|Content text for de locale
+agility.security.label@en|Stability|Content text for en locale
+agility.security.value@de|MVP meist instabil und buggy|Content text for de locale
+agility.security.value@en|MVP usually unstable and buggy|Content text for en locale
+agility.stable.label@de|Etabliert seit|Content text for de locale
+agility.stable.label@en|Established since|Content text for en locale
+agility.stable.value@de|2001 (Agile Manifesto)|Content text for de locale
+agility.stable.value@en|2001 (Agile Manifesto)|Content text for en locale
+agility.syntax.label@de|Methoden|Content text for de locale
+agility.syntax.label@en|Methods|Content text for en locale
+agility.syntax.value@de|Scrum, Kanban, SAFe (und zu viele Meetings)|Content text for de locale
+agility.syntax.value@en|Scrum, Kanban, SAFe (and too many meetings)|Content text for en locale
+agility.title@de|Agilität|Content text for de locale
+agility.title@en|Agility|Content text for en locale
+ai.visibility.category.label@de|Kategorie|Content text for de locale
+ai.visibility.category.label@en|Category|Content text for en locale
+ai.visibility.category.value@de|Marketing-Strategie|Content text for de locale
+ai.visibility.category.value@en|Marketing Strategy|Content text for en locale
+ai.visibility.compare.subtitle@de|Ehrliche Einschätzung der Strategie|Content text for de locale
+ai.visibility.compare.subtitle@en|Honest assessment of the strategy|Content text for en locale
+ai.visibility.compare.title@de|Bewertung|Content text for de locale
+ai.visibility.compare.title@en|Assessment|Content text for en locale
+ai.visibility.cons.1@de|Keine direkte Kontrolle über KI-Interpretation|Content text for de locale
+ai.visibility.cons.1@en|No direct control over AI interpretation|Content text for en locale
+ai.visibility.cons.2@de|Ständig ändernde KI-Algorithmen|Content text for de locale
+ai.visibility.cons.2@en|Constantly changing AI algorithms|Content text for en locale
+ai.visibility.cons.3@de|Hoher initialer Aufwand für Umstrukturierung|Content text for de locale
+ai.visibility.cons.3@en|High initial effort for restructuring|Content text for en locale
+ai.visibility.cons.4@de|Wenige etablierte Best Practices|Content text for de locale
+ai.visibility.cons.4@en|Few established best practices|Content text for en locale
+ai.visibility.cons.5@de|ROI schwer messbar|Content text for de locale
+ai.visibility.cons.5@en|ROI difficult to measure|Content text for en locale
+ai.visibility.cons.title@de|Herausforderungen|Content text for de locale
+ai.visibility.cons.title@en|Challenges|Content text for en locale
+ai.visibility.creator.label@de|Geprägt von|Content text for de locale
+ai.visibility.creator.label@en|Coined by|Content text for en locale
+ai.visibility.creator.value@de|Marketing-Experten (2023)|Content text for de locale
+ai.visibility.creator.value@en|Marketing Experts (2023)|Content text for en locale
+ai.visibility.description@de|AI Visibility ist der Überbegriff für Strategien, um Inhalte in KI-gestützten Plattformen sichtbar zu machen: ChatGPT, Claude, Gemini, Perplexity und KI-Browser wie Comet. Es geht nicht mehr um traditionelle Suchergebnisse, sondern um Präsenz in KI-generierten Antworten und konversationellen Schnittstellen. AEO (Answer Engine Optimization) optimiert für Featured Snippets und direkte Antworten mit FAQ-Schemas. GEO (Generative Engine Optimization) zielt darauf, dass KIs deine Inhalte als vertrauenswürdige Quelle zitieren. Der Rich-get-Richer-Effekt ist bereits sichtbar.|Content text for de locale
+ai.visibility.description@en|AI Visibility is the umbrella term for strategies to make content visible in AI-powered platforms: ChatGPT, Claude, Gemini, Perplexity, and AI browsers like Comet. It's no longer about traditional search results, but about presence in AI-generated answers and conversational interfaces. AEO (Answer Engine Optimization) optimizes for featured snippets and direct answers with FAQ schemas. GEO (Generative Engine Optimization) aims for AIs to cite your content as a trusted source. The rich-get-richer effect is already visible.|Content text for en locale
+ai.visibility.enterprise@de|Stand Q3 2025: 84% der Google-Suchen zeigen bereits KI-Overviews. Featured Snippets machen 35% der Klicks aus. KI-Browser fassen Webseiten in Echtzeit zusammen - ohne dass Nutzer die Originalseite besuchen. Wer jetzt nicht auf AI Visibility setzt, wird in 2-3 Jahren unsichtbar sein. Die Investition in Topical Authority, strukturierte Daten und Entitäten-Optimierung entscheidet über digitale Existenz. Unternehmen müssen JETZT handeln oder verschwinden.|Content text for de locale
+ai.visibility.enterprise@en|As of Q3 2025: 84% of Google searches already show AI overviews. Featured snippets account for 35% of clicks. AI browsers summarize websites in real-time - without users visiting the original page. Those not investing in AI Visibility now will be invisible in 2-3 years. Investment in topical authority, structured data, and entity optimization determines digital existence. Companies must act NOW or disappear.|Content text for en locale
+ai.visibility.performance.label@de|Wirkung|Content text for de locale
+ai.visibility.performance.label@en|Impact|Content text for en locale
+ai.visibility.performance.value@de|Exponentiell wachsend|Content text for de locale
+ai.visibility.performance.value@en|Exponentially growing|Content text for en locale
+ai.visibility.project.label@de|Umfasst|Content text for de locale
+ai.visibility.project.label@en|Encompasses|Content text for en locale
+ai.visibility.project.value@de|"<a href=""{{ 'knowledge.seo' | route(lang='auto') }}"" class=""link"">AEO & GEO</a>"|Content text for de locale
+ai.visibility.project.value@en|"<a href=""{{ 'knowledge.seo' | route(lang='auto') }}"" class=""link"">AEO & GEO</a>"|Content text for en locale
+ai.visibility.pros.1@de|First-Mover-Advantage noch möglich|Content text for de locale
+ai.visibility.pros.1@en|First-mover advantage still possible|Content text for en locale
+ai.visibility.pros.2@de|Qualität wird endlich belohnt|Content text for de locale
+ai.visibility.pros.2@en|Quality finally rewarded|Content text for en locale
+ai.visibility.pros.3@de|Langfristige Autorität aufbaubar|Content text for de locale
+ai.visibility.pros.3@en|Long-term authority buildable|Content text for en locale
+ai.visibility.pros.4@de|Zukunftssichere Strategie|Content text for de locale
+ai.visibility.pros.4@en|Future-proof strategy|Content text for en locale
+ai.visibility.pros.5@de|Weniger Konkurrenz als bei SEO|Content text for de locale
+ai.visibility.pros.5@en|Less competition than SEO|Content text for en locale
+ai.visibility.pros.title@de|Chancen|Content text for de locale
+ai.visibility.pros.title@en|Opportunities|Content text for en locale
+ai.visibility.security.label@de|Kontrolle|Content text for de locale
+ai.visibility.security.label@en|Control|Content text for en locale
+ai.visibility.security.value@de|Minimal - KIs entscheiden autonom|Content text for de locale
+ai.visibility.security.value@en|Minimal - AIs decide autonomously|Content text for en locale
+ai.visibility.stable.label@de|Status|Content text for de locale
+ai.visibility.stable.label@en|Status|Content text for en locale
+ai.visibility.stable.value@de|Emergierend|Content text for de locale
+ai.visibility.stable.value@en|Emerging|Content text for en locale
+ai.visibility.syntax.label@de|Methoden|Content text for de locale
+ai.visibility.syntax.label@en|Methods|Content text for en locale
+ai.visibility.syntax.value@de|Schema-Markup, FAQ-Struktur, Entitäten|Content text for de locale
+ai.visibility.syntax.value@en|Schema Markup, FAQ Structure, Entities|Content text for en locale
+ai.visibility.title@de|AI Visibility|Content text for de locale
+ai.visibility.title@en|AI Visibility|Content text for en locale
+apache.category.label@de|Kategorie|Content text for de locale
+apache.category.label@en|Category|Content text for en locale
+apache.category.value@de|Webserver|Content text for de locale
+apache.category.value@en|Web Server|Content text for en locale
+apache.compare.subtitle@de|Ehrliche Einschätzung der Technologie|Content text for de locale
+apache.compare.subtitle@en|Honest assessment of the technology|Content text for en locale
+apache.compare.title@de|Bewertung|Content text for de locale
+apache.compare.title@en|Assessment|Content text for en locale
+apache.cons.1@de|Höherer Speicherverbrauch als Nginx|Content text for de locale
+apache.cons.1@en|Higher memory usage than Nginx|Content text for en locale
+apache.cons.2@de|Langsamer bei statischen Dateien|Content text for de locale
+apache.cons.2@en|Slower for static files|Content text for en locale
+apache.cons.3@de|Komplexe Konfiguration bei großen Setups|Content text for de locale
+apache.cons.3@en|Complex configuration for large setups|Content text for en locale
+apache.cons.4@de|Thread-basiert statt Event-driven|Content text for de locale
+apache.cons.4@en|Thread-based instead of event-driven|Content text for en locale
+apache.cons.5@de|.htaccess Performance-Overhead|Content text for de locale
+apache.cons.5@en|.htaccess performance overhead|Content text for en locale
+apache.cons.title@de|Nachteile|Content text for de locale
+apache.cons.title@en|Disadvantages|Content text for en locale
+apache.creator.label@de|Erschaffer|Content text for de locale
+apache.creator.label@en|Creator|Content text for en locale
+apache.creator.value@de|Robert McCool|Content text for de locale
+apache.creator.value@en|Robert McCool|Content text for en locale
+apache.description@de|"Apache HTTP Server ist der Dinosaurier unter den Webservern - und das ist positiv gemeint. Seit 1995 läuft er zuverlässig auf Millionen von Servern weltweit. Geboren aus dem NCSA HTTPd (""a patchy server""), wurde Apache zum Fundament des modernen Webs. Mit seinem modularen Aufbau und der legendären .htaccess-Konfiguration prägte er Generationen von Webentwicklern. Während modernere Server wie Nginx bei statischen Inhalten schneller sind, bleibt Apache bei dynamischen PHP-Anwendungen oft erste Wahl. mod_rewrite ist ein Schweizer Taschenmesser für URL-Manipulation. Die Dokumentation ist vorbildlich, die Community riesig. Apache mag nicht mehr der schnellste sein, aber er ist wie ein alter Mercedes: solide, verlässlich und läuft ewig."|Content text for de locale
+apache.description@en|"Apache HTTP Server is the dinosaur among web servers - and that's meant positively. Since 1995, it has been running reliably on millions of servers worldwide. Born from NCSA HTTPd (""a patchy server""), Apache became the foundation of the modern web. With its modular architecture and legendary .htaccess configuration, it shaped generations of web developers. While modern servers like Nginx are faster for static content, Apache remains the first choice for dynamic PHP applications. mod_rewrite is a Swiss Army knife for URL manipulation. The documentation is exemplary, the community huge. Apache may no longer be the fastest, but it's like an old Mercedes: solid, reliable, and runs forever."|Content text for en locale
+apache.enterprise@de|Immer noch verwendet von Wikipedia, WordPress.com, Adobe, PayPal, eBay und zahllosen Shared-Hosting-Providern weltweit. Über 30% aller Webseiten laufen auf Apache - nicht schlecht für einen 30-jährigen Server.|Content text for de locale
+apache.enterprise@en|Still used by Wikipedia, WordPress.com, Adobe, PayPal, eBay, and countless shared hosting providers worldwide. Over 30% of all websites run on Apache - not bad for a 30-year-old server.|Content text for en locale
+apache.license.category.label@de|Kategorie|Content text for de locale
+apache.license.category.label@en|Category|Content text for en locale
+apache.license.category.value@de|Open-Source-Lizenz|Content text for de locale
+apache.license.category.value@en|Open Source License|Content text for en locale
+apache.license.compare.subtitle@de|Ehrliche Einschätzung der Lizenz|Content text for de locale
+apache.license.compare.subtitle@en|Honest assessment of the license|Content text for en locale
+apache.license.compare.title@de|Bewertung|Content text for de locale
+apache.license.compare.title@en|Assessment|Content text for en locale
+apache.license.cons.1@de|Keine Copyleft-Garantie|Content text for de locale
+apache.license.cons.1@en|No copyleft guarantee|Content text for en locale
+apache.license.cons.2@de|Komplexer als MIT-Lizenz|Content text for de locale
+apache.license.cons.2@en|More complex than MIT License|Content text for en locale
+apache.license.cons.3@de|NOTICE-Datei muss gepflegt werden|Content text for de locale
+apache.license.cons.3@en|NOTICE file must be maintained|Content text for en locale
+apache.license.cons.4@de|Inkompatibel mit GPL v2|Content text for de locale
+apache.license.cons.4@en|Incompatible with GPL v2|Content text for en locale
+apache.license.cons.5@de|Kein virales Copyleft für Puristen|Content text for de locale
+apache.license.cons.5@en|No viral copyleft for purists|Content text for en locale
+apache.license.cons.title@de|Nachteile|Content text for de locale
+apache.license.cons.title@en|Disadvantages|Content text for en locale
+apache.license.creator.label@de|Herausgeber|Content text for de locale
+apache.license.creator.label@en|Publisher|Content text for en locale
+apache.license.creator.value@de|Apache Software Foundation|Content text for de locale
+apache.license.creator.value@en|Apache Software Foundation|Content text for en locale
+apache.license.description@de|Die Apache-Lizenz 2.0 ist der pragmatische Kompromiss der Open-Source-Welt. Sie erlaubt praktisch alles: kommerzielle Nutzung, Modifikation, private Nutzung, Patentgewährung - solange der Copyright-Hinweis erhalten bleibt. Im Gegensatz zur GPL ist sie nicht viral: Du kannst Apache-lizenzierten Code in proprietäre Software einbauen ohne deine eigene Software öffnen zu müssen. Das macht sie zur Lieblingslizenz großer Unternehmen. Google (Android, Kubernetes), Microsoft (TypeScript, VS Code), Facebook (React Native) - alle nutzen Apache 2.0. Der Patentschutz ist clever: Wer dich verklagt, verliert automatisch die Lizenz. Diese Webseite nutzt Apache-lizenzierte Komponenten wie Actix-Web und kann sie problemlos mit proprietärem Code kombinieren.|Content text for de locale
+apache.license.description@en|Apache License 2.0 is the pragmatic compromise of the open-source world. It allows practically everything: commercial use, modification, private use, patent grant - as long as the copyright notice is preserved. Unlike GPL, it's not viral: you can embed Apache-licensed code in proprietary software without having to open your own software. This makes it the favorite license of large companies. Google (Android, Kubernetes), Microsoft (TypeScript, VS Code), Facebook (React Native) - all use Apache 2.0. The patent protection is clever: whoever sues you automatically loses the license. This website uses Apache-licensed components like Actix-Web and can easily combine them with proprietary code.|Content text for en locale
+apache.license.enterprise@de|Standard bei Google (Android, TensorFlow, Kubernetes), Microsoft (TypeScript, .NET Core), Facebook (React Native), Netflix (Hystrix), Uber (Jaeger) und praktisch jedem Enterprise-Open-Source-Projekt das kommerziell nutzbar sein soll.|Content text for de locale
+apache.license.enterprise@en|Standard at Google (Android, TensorFlow, Kubernetes), Microsoft (TypeScript, .NET Core), Facebook (React Native), Netflix (Hystrix), Uber (Jaeger), and practically every enterprise open-source project that should be commercially usable.|Content text for en locale
+apache.license.performance.label@de|Adoption|Content text for de locale
+apache.license.performance.label@en|Adoption|Content text for en locale
+apache.license.performance.value@de|Top 3 Open-Source-Lizenz|Content text for de locale
+apache.license.performance.value@en|Top 3 open source license|Content text for en locale
+apache.license.project.label@de|Volltext|Content text for de locale
+apache.license.project.label@en|Full Text|Content text for en locale
+apache.license.project.value@de|"<a href=""https://www.apache.org/licenses/LICENSE-2.0"" target=""_blank"">Apache License 2.0</a>"|Content text for de locale
+apache.license.project.value@en|"<a href=""https://www.apache.org/licenses/LICENSE-2.0"" target=""_blank"">Apache License 2.0</a>"|Content text for en locale
+apache.license.pros.1@de|Kann in proprietäre Software eingebaut werden|Content text for de locale
+apache.license.pros.1@en|Can be embedded in proprietary software|Content text for en locale
+apache.license.pros.2@de|Expliziter Patentschutz|Content text for de locale
+apache.license.pros.2@en|Explicit patent protection|Content text for en locale
+apache.license.pros.3@de|Kommerzielle Nutzung erlaubt|Content text for de locale
+apache.license.pros.3@en|Commercial use allowed|Content text for en locale
+apache.license.pros.4@de|Große Unternehmen vertrauen ihr|Content text for de locale
+apache.license.pros.4@en|Large companies trust it|Content text for en locale
+apache.license.pros.5@de|Nicht viral wie GPL|Content text for de locale
+apache.license.pros.5@en|Not viral like GPL|Content text for en locale
+apache.license.pros.title@de|Vorteile|Content text for de locale
+apache.license.pros.title@en|Advantages|Content text for en locale
+apache.license.security.label@de|Rechtssicherheit|Content text for de locale
+apache.license.security.label@en|Legal Security|Content text for en locale
+apache.license.security.value@de|Sehr hoch, gerichtserprobt|Content text for de locale
+apache.license.security.value@en|Very high, court-tested|Content text for en locale
+apache.license.stable.label@de|Version|Content text for de locale
+apache.license.stable.label@en|Version|Content text for en locale
+apache.license.stable.value@de|2.0 (seit 2004)|Content text for de locale
+apache.license.stable.value@en|2.0 (since 2004)|Content text for en locale
+apache.license.syntax.label@de|Pflichten|Content text for de locale
+apache.license.syntax.label@en|Obligations|Content text for en locale
+apache.license.syntax.value@de|Copyright + NOTICE erhalten|Content text for de locale
+apache.license.syntax.value@en|Preserve copyright + NOTICE|Content text for en locale
+apache.license.title@de|Apache-Lizenz 2.0|Content text for de locale
+apache.license.title@en|Apache License 2.0|Content text for en locale
+apache.performance.label@de|Performance|Content text for de locale
+apache.performance.label@en|Performance|Content text for en locale
+apache.performance.value@de|Solide, aber nicht der schnellste|Content text for de locale
+apache.performance.value@en|Solid, but not the fastest|Content text for en locale
+apache.project.label@de|Projekt|Content text for de locale
+apache.project.label@en|Project|Content text for en locale
+apache.project.value@de|"<a href=""https://httpd.apache.org"" target=""_blank"">Apache Software Foundation</a>"|Content text for de locale
+apache.project.value@en|"<a href=""https://httpd.apache.org"" target=""_blank"">Apache Software Foundation</a>"|Content text for en locale
+apache.pros.1@de|Bewährt seit 30 Jahren|Content text for de locale
+apache.pros.1@en|Proven for 30 years|Content text for en locale
+apache.pros.2@de|Perfekte PHP-Integration|Content text for de locale
+apache.pros.2@en|Perfect PHP integration|Content text for en locale
+apache.pros.3@de|mod_rewrite ist mächtig|Content text for de locale
+apache.pros.3@en|mod_rewrite is powerful|Content text for en locale
+apache.pros.4@de|Riesige Community und Dokumentation|Content text for de locale
+apache.pros.4@en|Huge community and documentation|Content text for en locale
+apache.pros.5@de|Läuft überall, extrem stabil|Content text for de locale
+apache.pros.5@en|Runs everywhere, extremely stable|Content text for en locale
+apache.pros.title@de|Vorteile|Content text for de locale
+apache.pros.title@en|Advantages|Content text for en locale
+apache.security.label@de|Sicherheit|Content text for de locale
+apache.security.label@en|Security|Content text for en locale
+apache.security.value@de|Sehr sicher mit mod_security|Content text for de locale
+apache.security.value@en|Very secure with mod_security|Content text for en locale
+apache.stable.label@de|Stabil seit|Content text for de locale
+apache.stable.label@en|Stable since|Content text for en locale
+apache.stable.value@de|1995|Content text for de locale
+apache.stable.value@en|1995|Content text for en locale
+apache.syntax.label@de|Konfiguration|Content text for de locale
+apache.syntax.label@en|Configuration|Content text for en locale
+apache.syntax.value@de|httpd.conf und .htaccess|Content text for de locale
+apache.syntax.value@en|httpd.conf and .htaccess|Content text for en locale
+apache.title@de|Apache HTTP Server|Content text for de locale
+apache.title@en|Apache HTTP Server|Content text for en locale
+api.category.label@de|Kategorie|Content text for de locale
+api.category.label@en|Category|Content text for en locale
+api.category.value@de|Software-Architektur|Content text for de locale
+api.category.value@en|Software Architecture|Content text for en locale
+api.compare.subtitle@de|Ehrliche Einschätzung des Konzepts|Content text for de locale
+api.compare.subtitle@en|Honest assessment of the concept|Content text for en locale
+api.compare.title@de|Bewertung|Content text for de locale
+api.compare.title@en|Assessment|Content text for en locale
+api.cons.1@de|Versionierung ist die Hölle|Content text for de locale
+api.cons.1@en|Versioning is hell|Content text for en locale
+api.cons.2@de|Breaking Changes zerstören alles|Content text for de locale
+api.cons.2@en|Breaking changes destroy everything|Content text for en locale
+api.cons.3@de|Dokumentation meist veraltet|Content text for de locale
+api.cons.3@en|Documentation usually outdated|Content text for en locale
+api.cons.4@de|Rate Limiting nervt legitime Nutzer|Content text for de locale
+api.cons.4@en|Rate limiting annoys legitimate users|Content text for en locale
+api.cons.5@de|REST vs GraphQL vs gRPC Religionskriege|Content text for de locale
+api.cons.5@en|REST vs GraphQL vs gRPC religious wars|Content text for en locale
+api.cons.title@de|Nachteile|Content text for de locale
+api.cons.title@en|Disadvantages|Content text for en locale
+api.creator.label@de|Ursprung|Content text for de locale
+api.creator.label@en|Origin|Content text for en locale
+api.creator.value@de|IBM System/360|Content text for de locale
+api.creator.value@en|IBM System/360|Content text for en locale
+api.description@de|API - die drei Buchstaben, die das moderne Internet zusammenhalten. Eine Schnittstelle definiert, wie Programme miteinander sprechen, ohne ihre Innereien zu kennen. Wie eine Steckdose: Du musst nicht wissen, wie Strom erzeugt wird, nur dass 230V rauskommen. REST-APIs dominieren das Web: GET /users/42 holt einen Nutzer, POST /users erstellt einen neuen. GraphQL versucht es eleganter, gRPC macht es binär und schneller. Die Realität: Die meisten APIs sind ein Chaos aus inkonsistenten Endpunkten, fehlender Dokumentation und Breaking Changes ohne Versionierung. Swagger/OpenAPI hilft, aber nur wenn Entwickler es pflegen. Diese Webseite hat bewusst keine öffentliche API - manchmal ist keine API die beste API.|Content text for de locale
+api.description@en|API - the three letters that hold the modern internet together. An interface defines how programs talk to each other without knowing their internals. Like a power outlet: you don't need to know how electricity is generated, just that 230V comes out. REST APIs dominate the web: GET /users/42 fetches a user, POST /users creates a new one. GraphQL tries to be more elegant, gRPC does it binary and faster. The reality: most APIs are a chaos of inconsistent endpoints, missing documentation, and breaking changes without versioning. Swagger/OpenAPI helps, but only if developers maintain it. This website deliberately has no public API - sometimes no API is the best API.|Content text for en locale
+api.enterprise@de|Jedes moderne Unternehmen hat APIs: Stripe (Payments), Twilio (SMS), AWS (Cloud), Google Maps (Geolocation). Die API-Economy ist Milliarden schwer. Ironisch: Die erfolgreichsten APIs (POSIX, Win32) sind die ältesten und stabilsten.|Content text for de locale
+api.enterprise@en|Every modern company has APIs: Stripe (Payments), Twilio (SMS), AWS (Cloud), Google Maps (Geolocation). The API economy is worth billions. Ironically: the most successful APIs (POSIX, Win32) are the oldest and most stable.|Content text for en locale
+api.performance.label@de|Performance|Content text for de locale
+api.performance.label@en|Performance|Content text for en locale
+api.performance.value@de|Abhängig von Implementation|Content text for de locale
+api.performance.value@en|Depends on implementation|Content text for en locale
+api.project.label@de|Standards|Content text for de locale
+api.project.label@en|Standards|Content text for en locale
+api.project.value@de|"<a href=""https://www.openapis.org"" target=""_blank"">OpenAPI Specification</a>"|Content text for de locale
+api.project.value@en|"<a href=""https://www.openapis.org"" target=""_blank"">OpenAPI Specification</a>"|Content text for en locale
+api.pros.1@de|Entkopplung von Systemen|Content text for de locale
+api.pros.1@en|Decoupling of systems|Content text for en locale
+api.pros.2@de|Plattformunabhängigkeit|Content text for de locale
+api.pros.2@en|Platform independence|Content text for en locale
+api.pros.3@de|Skalierbarkeit durch Instanzierung|Content text for de locale
+api.pros.3@en|Scalability through instantiation|Content text for en locale
+api.pros.4@de|Monetarisierung möglich|Content text for de locale
+api.pros.4@en|Monetization possible|Content text for en locale
+api.pros.5@de|Ökosystem-Bildung|Content text for de locale
+api.pros.5@en|Ecosystem formation|Content text for en locale
+api.pros.title@de|Vorteile|Content text for de locale
+api.pros.title@en|Advantages|Content text for en locale
+api.security.label@de|Sicherheit|Content text for de locale
+api.security.label@en|Security|Content text for en locale
+api.security.value@de|OAuth2, API Keys, JWT|Content text for de locale
+api.security.value@en|OAuth2, API Keys, JWT|Content text for en locale
+api.stable.label@de|Konzept seit|Content text for de locale
+api.stable.label@en|Concept since|Content text for en locale
+api.stable.value@de|1960er Jahre|Content text for de locale
+api.stable.value@en|1960s|Content text for en locale
+api.syntax.label@de|Typen|Content text for de locale
+api.syntax.label@en|Types|Content text for en locale
+api.syntax.value@de|REST, GraphQL, gRPC, SOAP|Content text for de locale
+api.syntax.value@en|REST, GraphQL, gRPC, SOAP|Content text for en locale
+api.title@de|API (Application Programming Interface)|Content text for de locale
+api.title@en|API (Application Programming Interface)|Content text for en locale
+bastille.category.label@de|Kategorie|Content text for de locale
+bastille.category.label@en|Category|Content text for en locale
+bastille.category.value@de|Jail-Verwaltung|Content text for de locale
+bastille.category.value@en|Jail Management|Content text for en locale
+bastille.compare.subtitle@de|Ehrliche Einschätzung der Technologie|Content text for de locale
+bastille.compare.subtitle@en|Honest assessment of the technology|Content text for en locale
+bastille.compare.title@de|Bewertung|Content text for de locale
+bastille.compare.title@en|Assessment|Content text for en locale
+bastille.cons.1@de|Nur auf FreeBSD/BSD verfügbar|Content text for de locale
+bastille.cons.1@en|Only available on FreeBSD/BSD|Content text for en locale
+bastille.cons.2@de|Weniger Marketing und Hype|Content text for de locale
+bastille.cons.2@en|Less marketing and hype|Content text for en locale
+bastille.cons.3@de|Weniger vorgefertigte Templates|Content text for de locale
+bastille.cons.3@en|Fewer pre-built templates|Content text for en locale
+bastille.cons.4@de|Erfordert Erfahrung mit Linux/Unix Shell und deren man pages|Content text for de locale
+bastille.cons.4@en|Requires experience with Linux/Unix shell and their man pages|Content text for en locale
+bastille.cons.5@de|Komplexe Netzwerk-Konfiguration|Content text for de locale
+bastille.cons.5@en|Complex network configuration|Content text for en locale
+bastille.cons.title@de|Nachteile|Content text for de locale
+bastille.cons.title@en|Disadvantages|Content text for en locale
+bastille.creator.label@de|Erschaffer|Content text for de locale
+bastille.creator.label@en|Creator|Content text for en locale
+bastille.creator.value@de|Christer Edwards|Content text for de locale
+bastille.creator.value@en|Christer Edwards|Content text for en locale
+bastille.description@de|Bastille ist ein modernes Management-System für FreeBSD Jails, das die bewährte BSD-Jail-Technologie mit einer benutzerfreundlichen Oberfläche verbindet. Im Gegensatz zu Docker-Containern, die auf Linux-Namespaces basieren, nutzt Bastille echte Kernel-Level-Isolation durch FreeBSD Jails. Dies bedeutet höhere Sicherheit und native Performance ohne Virtualisierungs-Overhead. Das System automatisiert komplexe Jail-Verwaltungsaufgaben wie Netzwerkkonfiguration, Template-Management und Ressourcenzuweisung. Besonders attraktiv: ZFS-Snapshots und -Clones sind nahtlos integriert, was blitzschnelle Backups und Rollbacks ermöglicht. Mit nur wenigen Shell-Befehlen lassen sich produktionsreife Umgebungen erstellen, die jahrelang wartungsfrei laufen. Für Entwickler und Systemadministratoren, die Wert auf Stabilität und Sicherheit legen, bietet Bastille eine ausgereifte Alternative zu containerisierten Lösungen.|Content text for de locale
+bastille.description@en|Bastille is a modern management system for FreeBSD Jails that combines proven BSD jail technology with a user-friendly interface. Unlike Docker containers, which rely on Linux namespaces, Bastille uses true kernel-level isolation through FreeBSD Jails. This means higher security and native performance without virtualization overhead. The system automates complex jail management tasks like network configuration, template management, and resource allocation. Particularly attractive: ZFS snapshots and clones are seamlessly integrated, enabling lightning-fast backups and rollbacks. With just a few shell commands, you can create production-ready environments that run maintenance-free for years. For developers and system administrators who value stability and security, Bastille offers a mature alternative to containerized solutions.|Content text for en locale
+bastille.enterprise@de|Eingesetzt von Netflix (CDN-Infrastruktur), WhatsApp (Messaging-Backend), Sony PlayStation Network, Juniper Networks und weiteren Fortune-500-Unternehmen, die auf FreeBSD und dessen überlegene Jail-Technologie vertrauen.|Content text for de locale
+bastille.enterprise@en|Used by Netflix (CDN infrastructure), WhatsApp (messaging backend), Sony PlayStation Network, Juniper Networks and other Fortune 500 companies that trust FreeBSD and its superior jail technology.|Content text for en locale
+bastille.performance.label@de|Performance|Content text for de locale
+bastille.performance.label@en|Performance|Content text for en locale
+bastille.performance.value@de|Native Geschwindigkeit|Content text for de locale
+bastille.performance.value@en|Native speed|Content text for en locale
+bastille.project.label@de|Projekt|Content text for de locale
+bastille.project.label@en|Project|Content text for en locale
+bastille.project.value@de|"<a href=""https://github.com/BastilleBSD/bastille"" target=""_blank"">GitHub-Projekt von Bastille</a>"|Content text for de locale
+bastille.project.value@en|"<a href=""https://github.com/BastilleBSD/bastille"" target=""_blank"">Bastille GitHub Project</a>"|Content text for en locale
+bastille.pros.1@de|Native Performance ohne Overhead|Content text for de locale
+bastille.pros.1@en|Native performance without overhead|Content text for en locale
+bastille.pros.2@de|Echte Kernel-Level Isolation|Content text for de locale
+bastille.pros.2@en|True kernel-level isolation|Content text for en locale
+bastille.pros.3@de|ZFS-Integration out-of-the-box|Content text for de locale
+bastille.pros.3@en|ZFS integration out-of-the-box|Content text for en locale
+bastille.pros.4@de|Von Netflix und WhatsApp in Produktion eingesetzt|Content text for de locale
+bastille.pros.4@en|Used in production by Netflix and WhatsApp|Content text for en locale
+bastille.pros.5@de|Sehr sicher durch BSD-Architektur|Content text for de locale
+bastille.pros.5@en|Very secure through BSD architecture|Content text for en locale
+bastille.pros.title@de|Vorteile|Content text for de locale
+bastille.pros.title@en|Advantages|Content text for en locale
+bastille.security.label@de|Sicherheit|Content text for de locale
+bastille.security.label@en|Security|Content text for en locale
+bastille.security.value@de|Sehr sicher (BSD Jail-Technologie)|Content text for de locale
+bastille.security.value@en|Very secure (BSD jail technology)|Content text for en locale
+bastille.stable.label@de|Stabil seit|Content text for de locale
+bastille.stable.label@en|Stable since|Content text for en locale
+bastille.stable.value@de|2020|Content text for de locale
+bastille.stable.value@en|2020|Content text for en locale
+bastille.syntax.label@de|Syntax|Content text for de locale
+bastille.syntax.label@en|Syntax|Content text for en locale
+bastille.syntax.value@de|Einfache Shell-Befehle|Content text for de locale
+bastille.syntax.value@en|Simple shell commands|Content text for en locale
+bastille.title@de|Bastille|Content text for de locale
+bastille.title@en|Bastille|Content text for en locale
+blog.message@de|Bald verfügbar - Blog-Artikel über Enterprise-Architektur, TCO-Optimierung und Vendor Independence|German placeholder message
+blog.message@en|Coming soon - Blog articles about enterprise architecture, TCO optimisation and vendor independence|English placeholder message
+blog.subtitle@de|Einblicke in Enterprise-Architektur und moderne Software-Entwicklung|German blog subtitle
+blog.subtitle@en|Insights into enterprise architecture and modern software development|English blog subtitle
+blog.title@de|Blog|German blog title
+blog.title@en|Blog|English blog title
+contact.availability@de|"25+ Jahre Polyglot-Entwicklung: Rust, PHP, Python, Java, Javascript/Typescript und mehr. Von FreeBSD über Linux bis macOS. Spezialisiert auf Enterprise-Architektur mit messbar reduzierten Betriebskosten und eliminierten Vendor-Dependencies. You say Docker! I say <a href=""/de/wissen/bastille-jail-verwaltung"">Jail</a>!"|German availability text
+contact.availability@en|"25+ years polyglot development: Rust, PHP, Python, Java, Javascript/Typescript and more. From FreeBSD through Linux to macOS. Specialised in enterprise architecture with measurably reduced operational costs and eliminated vendor dependencies. You say Docker! I say <a href=""/en/knowledge/bastille-jail-management"">Jail</a>!"|English availability text
+contact.email@de|ask+42@vvoss.dev|German contact email
+contact.email@en|ask+42@vvoss.dev|English contact email
+contact.subtitle@de|25 Jahre Erfahrung mit beidem: Was alle machen und was tatsächlich funktioniert|German contact subtitle
+contact.subtitle@en|25 years experience with both: what everyone does and what actually works|English contact subtitle
+contact.title@de|Interesse an einem fachlichen Austausch?|German contact title
+contact.title@en|Interested in a technical exchange?|English contact title
+geo.category.label@de|Kategorie|Content text for de locale
+geo.category.label@en|Category|Content text for en locale
+geo.category.value@de|Fortgeschrittene Optimierung|Content text for de locale
+geo.category.value@en|Advanced Optimization|Content text for en locale
+geo.compare.subtitle@de|Brutale Wahrheit über GEO|Content text for de locale
+geo.compare.subtitle@en|Brutal truth about GEO|Content text for en locale
+geo.compare.title@de|Bewertung|Content text for de locale
+geo.compare.title@en|Assessment|Content text for en locale
+geo.cons.1@de|Keine Kontrolle über KI-Entscheidungen|Content text for de locale
+geo.cons.1@en|No control over AI decisions|Content text for en locale
+geo.cons.2@de|Massive Investition ohne Garantie|Content text for de locale
+geo.cons.2@en|Massive investment without guarantee|Content text for en locale
+geo.cons.3@de|Rich-get-Richer-Effekt verstärkt sich|Content text for de locale
+geo.cons.3@en|Rich-get-richer effect intensifies|Content text for en locale
+geo.cons.4@de|Trainingsdaten-Updates unvorhersehbar|Content text for de locale
+geo.cons.4@en|Training data updates unpredictable|Content text for en locale
+geo.cons.5@de|99% werden scheitern|Content text for de locale
+geo.cons.5@en|99% will fail|Content text for en locale
+geo.cons.title@de|Risiken|Content text for de locale
+geo.cons.title@en|Risks|Content text for en locale
+geo.creator.label@de|Entstanden|Content text for de locale
+geo.creator.label@en|Emerged|Content text for en locale
+geo.creator.value@de|2023 (ChatGPT-Boom)|Content text for de locale
+geo.creator.value@en|2023 (ChatGPT boom)|Content text for en locale
+geo.description@de|GEO (Generative Engine Optimization) geht über AEO hinaus: Es optimiert für generative KI-Modelle wie ChatGPT, Claude, Gemini oder Bing Copilot, die Inhalte nicht nur anzeigen, sondern zusammenfassen und neu generieren. Ziel: Als vertrauenswürdige Quelle in KI-Antworten zitiert werden. Strategien: Topical Authority durch Themen-Cluster aufbauen, Entitäten-Optimierung (Personen, Orte, Konzepte), Multimedia mit Alt-Texten und Transkripten. Der Rich-get-Richer-Effekt ist brutal - KIs bevorzugen wenige Quellen.|Content text for de locale
+geo.description@en|GEO (Generative Engine Optimization) goes beyond AEO: It optimizes for generative AI models like ChatGPT, Claude, Gemini, or Bing Copilot that don't just display content but summarize and regenerate it. Goal: Being cited as a trusted source in AI answers. Strategies: Building topical authority through topic clusters, entity optimization (people, places, concepts), multimedia with alt texts and transcripts. The rich-get-richer effect is brutal - AIs prefer few sources.|Content text for en locale
+geo.enterprise@de|Die Herausforderung ist existenziell: KI-Modelle entscheiden autonom, welche Quellen sie zitieren. Ohne etablierte Autorität in den Trainingsdaten verschwindest du. Die Investition ist massiv: Komplette Content-Architekturen müssen neu gedacht werden. Semantische Beziehungen zwischen Inhalten werden wichtiger als Keywords. Unternehmen müssen JETZT ihre Expertise in KI-Trainingsdaten verankern - in 12 Monaten ist es zu spät. Der Markt wird sich auf wenige autoritäre Quellen konzentrieren.|Content text for de locale
+geo.enterprise@en|The challenge is existential: AI models autonomously decide which sources to cite. Without established authority in training data, you disappear. The investment is massive: Complete content architectures must be rethought. Semantic relationships between content become more important than keywords. Companies must anchor their expertise in AI training data NOW - in 12 months it will be too late. The market will concentrate on few authoritative sources.|Content text for en locale
+geo.performance.label@de|Erfolgschance|Content text for de locale
+geo.performance.label@en|Success Rate|Content text for en locale
+geo.performance.value@de|Nur für Top 1% der Autoritäten|Content text for de locale
+geo.performance.value@en|Only for top 1% of authorities|Content text for en locale
+geo.project.label@de|Teil von|Content text for de locale
+geo.project.label@en|Part of|Content text for en locale
+geo.project.value@de|"<a href=""{{ 'knowledge.ai-visibility' | route(lang='auto') }}"" class=""link"">AI Visibility</a>"|Content text for de locale
+geo.project.value@en|"<a href=""{{ 'knowledge.ai-visibility' | route(lang='auto') }}"" class=""link"">AI Visibility</a>"|Content text for en locale
+geo.pros.1@de|Direkte Präsenz in KI-Antworten|Content text for de locale
+geo.pros.1@en|Direct presence in AI answers|Content text for en locale
+geo.pros.2@de|Umgeht traditionelle Suchmaschinen|Content text for de locale
+geo.pros.2@en|Bypasses traditional search engines|Content text for en locale
+geo.pros.3@de|Etabliert dauerhafte Autorität|Content text for de locale
+geo.pros.3@en|Establishes lasting authority|Content text for en locale
+geo.pros.4@de|First-Mover können dominieren|Content text for de locale
+geo.pros.4@en|First movers can dominate|Content text for en locale
+geo.pros.5@de|Zukunft der digitalen Präsenz|Content text for de locale
+geo.pros.5@en|Future of digital presence|Content text for en locale
+geo.pros.title@de|Chancen|Content text for de locale
+geo.pros.title@en|Opportunities|Content text for en locale
+geo.security.label@de|Vorhersagbarkeit|Content text for de locale
+geo.security.label@en|Predictability|Content text for en locale
+geo.security.value@de|Null - KIs sind Black Boxes|Content text for de locale
+geo.security.value@en|Zero - AIs are black boxes|Content text for en locale
+geo.stable.label@de|Status|Content text for de locale
+geo.stable.label@en|Status|Content text for en locale
+geo.stable.value@de|Kritisch wichtig|Content text for de locale
+geo.stable.value@en|Critically important|Content text for en locale
+geo.syntax.label@de|Kernstrategien|Content text for de locale
+geo.syntax.label@en|Core Strategies|Content text for en locale
+geo.syntax.value@de|Themen-Cluster, Entitäten, E-E-A-T|Content text for de locale
+geo.syntax.value@en|Topic Clusters, Entities, E-E-A-T|Content text for en locale
+geo.title@de|GEO|Content text for de locale
+geo.title@en|GEO|Content text for en locale
+impressum.page.license.code.text@de|Der Quellcode dieser Website ist proprietär und nicht öffentlich verfügbar.|Source code license text German
+impressum.page.license.code.text@en|The source code of this website is proprietary and not publicly available.|Source code license text English
+impressum.page.license.code.title@de|Quellcode|Source code section title German
+impressum.page.license.code.title@en|Source Code|Source code section title English
+impressum.page.license.copyright.text@de|© 2025 Vivian Voss. Alle Rechte vorbehalten.|Copyright text German
+impressum.page.license.copyright.text@en|© 2025 Vivian Voss. All rights reserved.|Copyright text English
+impressum.page.license.copyright.title@de|Urheberrecht|Copyright section title German
+impressum.page.license.copyright.title@en|Copyright|Copyright section title English
+impressum.page.license.title@de|Seiten-Lizenz|Page license section title German
+impressum.page.license.title@en|Page License|Page license section title English
+impressum.contact.email.label@de|E-Mail|German email label
+impressum.contact.email.label@en|Email|English email label
+impressum.contact.email.value|hello@vvoss.dev|Contact email address
+impressum.contact.title@de|Kontakt|German contact section title
+impressum.contact.title@en|Contact|English contact section title
+impressum.contact.web.label@de|Internet|German web label
+impressum.contact.web.label@en|Website|English web label
+impressum.info.legal.liability.text@de|Die Inhalte dieser Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden.|Content liability text German
+impressum.info.legal.liability.text@en|The contents of these pages were created with the greatest care. However, no guarantee can be given for the accuracy, completeness and timeliness of the contents.|Content liability text English
+impressum.info.legal.liability.title@de|Haftung für Inhalte|Content liability title German
+impressum.info.legal.liability.title@en|Liability for Content|Content liability title English
+impressum.info.legal.links.text@de|Diese Website enthält Links zu externen Webseiten Dritter, auf deren Inhalte ich keinen Einfluss habe. Für diese fremden Inhalte kann daher keine Gewähr übernommen werden.|Link liability text German
+impressum.info.legal.links.text@en|This website contains links to external third-party websites over whose content I have no influence. Therefore, no guarantee can be given for this external content.|Link liability text English
+impressum.info.legal.links.title@de|Haftung für Links|Link liability title German
+impressum.info.legal.links.title@en|Liability for Links|Link liability title English
+impressum.info.legal.odr.participation@de|Ich bin nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.|ODR participation disclaimer German
+impressum.info.legal.odr.participation@en|I am not willing or obliged to participate in dispute resolution procedures before a consumer arbitration board.|ODR participation disclaimer English
+impressum.info.legal.odr.text@de|Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:|EU ODR platform text German
+impressum.info.legal.odr.text@en|The European Commission provides a platform for online dispute resolution (ODR):|EU ODR platform text English
+impressum.info.legal.odr.title@de|EU-Streitschlichtung|EU dispute resolution title German
+impressum.info.legal.odr.title@en|EU Dispute Resolution|EU dispute resolution title English
+impressum.info.legal.title@de|Rechtliche Hinweise|Legal information title German
+impressum.info.legal.title@en|Legal Information|Legal information title English
+impressum.info.misc.detection.language@de|Sprache|Language detection German
+impressum.info.misc.detection.language@en|Language|Language detection English
+impressum.info.misc.detection.monitor@de|Bildschirm|Monitor detection German
+impressum.info.misc.detection.monitor@en|Monitor|Monitor detection English
+impressum.info.misc.detection.pixelratio@de|Pixelverhältnis|Pixel ratio detection German
+impressum.info.misc.detection.pixelratio@en|Pixel Ratio|Pixel ratio detection English
+impressum.info.misc.detection.title@de|Geräteerkennung|Device detection title German
+impressum.info.misc.detection.title@en|Device Detection|Device detection title English
+impressum.info.misc.title@de|Sonstiges|Miscellaneous title German
+impressum.info.misc.title@en|Miscellaneous|Miscellaneous title English
+impressum.info.misc.update.fallback@de|Informationen nicht verfügbar|Update info fallback German
+impressum.info.misc.update.fallback@en|Information not available|Update info fallback English
+impressum.info.misc.update.title@de|Letzte Aktualisierung|Last update title German
+impressum.info.misc.update.title@en|Last Update|Last update title English
+impressum.info.technical.accessibility.text@de|Diese Website ist nach WCAG 2.1 AA Standards entwickelt und unterstützt Screenreader sowie Tastaturnavigation.|Accessibility description German
+impressum.info.technical.accessibility.text@en|This website is developed according to WCAG 2.1 AA standards and supports screen readers and keyboard navigation.|Accessibility description English
+impressum.info.technical.accessibility.title@de|Barrierefreiheit|Accessibility title German
+impressum.info.technical.accessibility.title@en|Accessibility|Accessibility title English
+impressum.info.technical.browsers.blink@de|Blink (Chrome, Edge, Opera)|Blink browsers German
+impressum.info.technical.browsers.blink@en|Blink (Chrome, Edge, Opera)|Blink browsers English
+impressum.info.technical.browsers.compatibility@de|Getestet mit folgenden Browser-Engines:|Browser engine compatibility German
+impressum.info.technical.browsers.compatibility@en|Tested with the following browser engines:|Browser engine compatibility English
+impressum.info.technical.browsers.modern@de|Diese Website unterstützt alle modernen Browser.|Modern browsers support German
+impressum.info.technical.browsers.modern@en|This website supports all modern browsers.|Modern browsers support English
+impressum.info.technical.browsers.quantum@de|Quantum (Firefox)|Quantum browser German
+impressum.info.technical.browsers.quantum@en|Quantum (Firefox)|Quantum browser English
+impressum.info.technical.browsers.title@de|Browser-Kompatibilität|Browser compatibility title German
+impressum.info.technical.browsers.title@en|Browser Compatibility|Browser compatibility title English
+impressum.info.technical.browsers.webkit@de|WebKit (Safari, iOS Safari)|WebKit browsers German
+impressum.info.technical.browsers.webkit@en|WebKit (Safari, iOS Safari)|WebKit browsers English
+impressum.info.technical.co2.dsgvo@de|DSGVO-konformes Hosting in Deutschland|GDPR compliant hosting in Germany German
+impressum.info.technical.co2.dsgvo@en|GDPR compliant hosting in Germany|GDPR compliant hosting in Germany English
+impressum.info.technical.co2.energy@de|100% erneuerbare Energie|100% renewable energy German
+impressum.info.technical.co2.energy@en|100% renewable energy|100% renewable energy English
+impressum.info.technical.co2.hosting@de|Diese Website wird auf CO2-neutralen Servern gehostet.|CO2 hosting description German
+impressum.info.technical.co2.hosting@en|This website is hosted on CO2-neutral servers.|CO2 hosting description English
+impressum.info.technical.co2.iso@de|ISO 14001 zertifiziertes Rechenzentrum|ISO 14001 certified data center German
+impressum.info.technical.co2.iso@en|ISO 14001 certified data center|ISO 14001 certified data center English
+impressum.info.technical.co2.title@de|CO2-neutrales Hosting|CO2 neutral hosting title German
+impressum.info.technical.co2.title@en|CO2-neutral Hosting|CO2 neutral hosting title English
+impressum.info.technical.cookies.text@de|Diese Website verwendet keine Cookies und keine Tracking-Technologien. Alle Funktionen sind rein statisch.|Cookies policy German
+impressum.info.technical.cookies.text@en|This website uses no cookies and no tracking technologies. All functions are purely static.|Cookies policy English
+impressum.info.technical.cookies.title@de|Cookies und Tracking|Cookies and tracking title German
+impressum.info.technical.cookies.title@en|Cookies and Tracking|Cookies and tracking title English
+impressum.info.technical.title@de|Technische Informationen|Technical information section title German
+impressum.info.technical.title@en|Technical Information|Technical information section title English
+impressum.intro.contact.email.label@de|E-Mail:|Email label German
+impressum.intro.contact.email.label@en|Email:|Email label English
+impressum.intro.contact.email.value@de|kontakt@vvoss.dev|Contact email address German
+impressum.intro.contact.email.value@en|contact@vvoss.dev|Contact email address English
+impressum.intro.contact.title@de|Kontakt|Contact section title German
+impressum.intro.contact.title@en|Contact|Contact section title English
+impressum.intro.contact.web.label@de|Website:|Website label German
+impressum.intro.contact.web.label@en|Website:|Website label English
+impressum.intro.legal.disclaimer@de|Alle Angaben ohne Gewähr. Trotz sorgfältiger inhaltlicher Kontrolle übernehme ich keine Haftung für die Inhalte externer Links.|Legal disclaimer German
+impressum.intro.legal.disclaimer@en|All information without guarantee. Despite careful content control, I assume no liability for the content of external links.|Legal disclaimer English
+impressum.intro.legal.title@de|Rechtliche Hinweise|Legal section title German
+impressum.intro.legal.title@en|Legal Information|Legal section title English
+impressum.intro.privacy.text@de|Diese Website erhebt keine personenbezogenen Daten und verwendet keine Cookies oder Tracking-Technologien.|Privacy policy text German
+impressum.intro.privacy.text@en|This website does not collect personal data and uses no cookies or tracking technologies.|Privacy policy text English
+impressum.intro.privacy.title@de|Datenschutz|Privacy section title German
+impressum.intro.privacy.title@en|Privacy|Privacy section title English
+impressum.intro.responsible.city@de|12345 Berlin|City and postal code German
+impressum.intro.responsible.city@en|12345 Berlin|City and postal code English
+impressum.intro.responsible.country@de|Deutschland|Country German
+impressum.intro.responsible.country@en|Germany|Country English
+impressum.intro.responsible.name@de|Vivian Voss|Name of responsible person German
+impressum.intro.responsible.name@en|Vivian Voss|Name of responsible person English
+impressum.intro.responsible.street@de|Musterstraße 123|Street address German
+impressum.intro.responsible.street@en|Musterstraße 123|Street address English
+impressum.intro.responsible.title@de|Verantwortlich für den Inhalt|Responsible person section title German
+impressum.intro.responsible.title@en|Responsible for Content|Responsible person section title English
+impressum.intro.title@de|Impressum|Impressum page title German
+impressum.intro.title@en|Legal Notice|Impressum page title English
+impressum.legal.disclaimer@de|Die Inhalte dieser Seiten wurden mit größter Sorgfalt erstellt.|German legal disclaimer
+impressum.legal.disclaimer@en|The contents of these pages have been created with the utmost care.|English legal disclaimer
+impressum.legal.title@de|Rechtliche Hinweise|German legal section title
+impressum.legal.title@en|Legal Information|English legal section title
+impressum.licenses.feather.text@de|Feather Icons von Cole Bemis, MIT License|Feather icons license text German
+impressum.licenses.feather.text@en|Feather Icons by Cole Bemis, MIT License|Feather icons license text English
+impressum.licenses.feather.title@de|Feather Icons|Feather icons license German
+impressum.licenses.feather.title@en|Feather Icons|Feather icons license English
+impressum.licenses.inter.text@de|Inter Font von Rasmus Andersson, SIL Open Font License 1.1|Inter font license text German
+impressum.licenses.inter.text@en|Inter Font by Rasmus Andersson, SIL Open Font License 1.1|Inter font license text English
+impressum.licenses.inter.title@de|Inter Schriftart|Inter font license German
+impressum.licenses.inter.title@en|Inter Font|Inter font license English
+impressum.licenses.svg.text@de|SVG-Optimierungen mit eigenen Tools durchgeführt.|SVG license text German
+impressum.licenses.svg.text@en|SVG optimizations performed with own tools.|SVG license text English
+impressum.licenses.svg.title@de|SVG-Optimierungen|SVG optimization license German
+impressum.licenses.svg.title@en|SVG Optimizations|SVG optimization license English
+impressum.licenses.title@de|Verwendete Lizenzen|License section title German
+impressum.licenses.title@en|Used Licenses|License section title English
+impressum.licenses.website.text@de|Alle Inhalte dieser Website stehen unter eigener Lizenz.|Website license text German
+impressum.licenses.website.text@en|All content of this website is under own license.|Website license text English
+impressum.licenses.website.title@de|Website-Inhalte|Website content license German
+impressum.licenses.website.title@en|Website Content|Website content license English
+impressum.privacy.text@de|Diese Website verwendet keine Cookies oder Tracking-Technologien.|German privacy text
+impressum.privacy.text@en|This website does not use cookies or tracking technologies.|English privacy text
+impressum.privacy.title@de|Datenschutz|German privacy section title
+impressum.privacy.title@en|Privacy|English privacy section title
+impressum.responsible.city@de|12345 Musterstadt|German city
+impressum.responsible.city@en|12345 Sample City|English city
+impressum.responsible.country@de|Deutschland|German country
+impressum.responsible.country@en|Germany|English country
+impressum.responsible.name@de|Vivian Voss|Responsible person name German
+impressum.responsible.name@en|Vivian Voss|Responsible person name English
+impressum.responsible.street@de|Musterstraße 123|German street address
+impressum.responsible.street@en|Sample Street 123|English street address
+impressum.responsible.title@de|Verantwortlich für den Inhalt|German responsibility section title
+impressum.responsible.title@en|Responsible for content|English responsibility section title
+impressum.title@de|Impressum|German impressum page title
+impressum.title@en|Legal Notice|English impressum page title
+knowledge.index.alphabetical.label@de|Alphabetisch|Alphabetical label German
+knowledge.index.alphabetical.label@en|Alphabetical|Alphabetical label English
+knowledge.index.glossary.label@de|Glossar|Glossary label German
+knowledge.index.glossary.label@en|Glossary|Glossary label English
+knowledge.index.index.title@de|Fachbegriff-Index|Index title German
+knowledge.index.index.title@en|Technical Index|Index title English
+knowledge.intro.description@de|Auf dieser Seite finden Sie anschauliche Erklärungen zu wichtigen Fachtermini aus meinen Projekten und dieser Webseite.|Intro description German
+knowledge.intro.description@de|Auf dieser Seite finden Sie klare Erklärungen wichtiger technischer Begriffe, die in meinen Projekten und auf dieser Website verwendet werden.|Knowledge intro description German
+knowledge.intro.description@en|On this page you'll find clear explanations of important technical terms used in my projects and on this website.|Intro description English
+knowledge.intro.description@en|On this page you'll find clear explanations of important technical terms used in my projects and on this website.|Knowledge intro description English
+knowledge.intro.title@de|Technisches Glossar|Intro title German
+knowledge.intro.title@de|Technisches Glossar|Knowledge intro title German
+knowledge.intro.title@en|Technical Glossary|Intro title English
+knowledge.intro.title@en|Technical Glossary|Knowledge intro title English
+knowledge.page.title@de|Wissen|Page title German
+knowledge.page.title@en|Knowledge|Page title English
+knowledge.term.category.label@de|Kategorie|Generic category label German
+knowledge.term.category.label@en|Category|Generic category label English
+knowledge.term.compare.subtitle@de|Ehrliche Einschätzung der Technologie|Generic compare subtitle German
+knowledge.term.compare.subtitle@en|Honest assessment of the technology|Generic compare subtitle English
+knowledge.term.compare.title@de|Bewertung|Generic compare section title German
+knowledge.term.compare.title@en|Assessment|Generic compare section title English
+knowledge.term.cons.title@de|Nachteile|Generic cons section title German
+knowledge.term.cons.title@en|Disadvantages|Generic cons section title English
+knowledge.term.creator.label@de|Entwickler|Generic creator label German
+knowledge.term.creator.label@en|Developer|Generic creator label English
+knowledge.term.description.label@de|Beschreibung|Generic description label German
+knowledge.term.description.label@en|Description|Generic description label English
+knowledge.term.performance.label@de|Performance|Generic performance label German
+knowledge.term.performance.label@en|Performance|Generic performance label English
+knowledge.term.project.label@de|Projekt-URL|Generic project URL label German
+knowledge.term.project.label@en|Project URL|Generic project URL label English
+knowledge.term.pros.title@de|Vorteile|Generic pros section title German
+knowledge.term.pros.title@en|Advantages|Generic pros section title English
+knowledge.term.security.label@de|Sicherheit|Generic security label German
+knowledge.term.security.label@en|Security|Generic security label English
+knowledge.term.stable.label@de|Stabil seit|Generic stability label German
+knowledge.term.stable.label@en|Stable since|Generic stability label English
+knowledge.term.syntax.label@de|Syntax|Generic syntax label German
+knowledge.term.syntax.label@en|Syntax|Generic syntax label English
+landing.compare.cons.title@de|Nachteile|Generic disadvantages title German
+landing.compare.cons.title@en|Disadvantages|Generic disadvantages title English
+landing.compare.no.item1@de|Teams, bei denen historisch gewachsene Strukturen unter Artenschutz stehen|Content text for de locale
+landing.compare.no.item1@en|Teams where legacy structures are protected species|Content text for en locale
+landing.compare.no.item2@de|Umgebungen, in denen Code-Tradition mehr zählt als technische Überlegenheit|Content text for de locale
+landing.compare.no.item2@en|Environments where code tradition outweighs technical superiority|Content text for en locale
+landing.compare.no.item3@de|Strukturen, in denen Kompromisse wichtiger sind als Problemlösungen|Content text for de locale
+landing.compare.no.item3@en|Structures where compromises matter more than solutions|Content text for en locale
+landing.compare.no.item4@de|Kulturen, die Agilität und Meetingexzesse mit Fortschritt verwechseln|Content text for de locale
+landing.compare.no.item4@en|Cultures that confuse agility and meeting excess with progress|Content text for en locale
+landing.compare.no.item5@de|Systeme, in denen Komplexität und bunte Graphen als Kompetenznachweis gelten|Content text for de locale
+landing.compare.no.item5@en|Systems where complexity and colourful graphs count as proof of competence|Content text for en locale
+landing.compare.no.title@de|Wo ich NICHT helfen kann:|Content text for de locale
+landing.compare.no.title@en|Where I CANNOT help:|Content text for en locale
+landing.compare.pros.title@de|Vorteile|Generic advantages title German
+landing.compare.pros.title@en|Advantages|Generic advantages title English
+landing.compare.section.title@de|Vergleich|Generic section title German
+landing.compare.section.title@en|Comparison|Generic section title English
+landing.compare.subtitle@de|Wenn alle 'innovative Cloud-Native Solutions' bewundern, zeige ich auf die nackte Komplexität|Content text for de locale
+landing.compare.subtitle@en|While everyone admires 'innovative cloud-native solutions', I point at the naked complexity|Content text for en locale
+landing.compare.title@de|Für Teams, die des Kaisers neue Kleider beim Namen nennen|Content text for de locale
+landing.compare.title@en|For Teams Who Call Out the Emperor's New Clothes|Content text for en locale
+landing.compare.yes.item1@de|Bei verzwickten Architektur-Problemen die Sie schon innerlich aufgegeben haben|Content text for de locale
+landing.compare.yes.item1@en|With intricate architecture problems you've already given up on internally|Content text for en locale
+landing.compare.yes.item2@de|Teams die wirklich bereit sind bewährte Prinzipien über populäre Frameworks zu stellen|Content text for de locale
+landing.compare.yes.item2@en|Teams truly ready to put proven principles over popular frameworks|Content text for en locale
+landing.compare.yes.item3@de|Organisationen die langfristige Verlässlichkeit höher als kurzfristige Features priorisieren|Content text for de locale
+landing.compare.yes.item3@en|Organisations that prioritise long-term reliability over short-term features|Content text for en locale
+landing.compare.yes.item4@de|Bei technischen Herausforderungen mit bedeutendem konzeptionellem Umfang|Content text for de locale
+landing.compare.yes.item4@en|With technical challenges of significant conceptual scope|Content text for en locale
+landing.compare.yes.item5@de|Unternehmen die Technical Excellence belohnen|Content text for de locale
+landing.compare.yes.item5@en|Companies that reward technical excellence|Content text for en locale
+landing.compare.yes.title@de|Wo ich Lösungen biete:|Content text for de locale
+landing.compare.yes.title@en|Where I offer solutions:|Content text for en locale
+landing.contact.availability.label@de|Verfügbarkeit|Availability label German
+landing.contact.availability.label@en|Availability|Availability label English
+landing.contact.availability@de|"25+ Jahre Polyglot-Entwicklung: Rust, PHP, Python, Java, Javascript/Typescript und mehr. Von FreeBSD über Linux bis macOS. Spezialisiert auf Enterprise-Architektur mit messbar reduzierten Betriebskosten und eliminierten Vendor-Dependencies. You say Docker! I say <a href=""/de/wissen/bastille-jail-verwaltung"">Jail</a>!"|Content text for de locale
+landing.contact.availability@en|"25+ years polyglot development: Rust, PHP, Python, Java, Javascript/Typescript and more. From FreeBSD through Linux to macOS. Specialised in enterprise architecture with measurably reduced operational costs and eliminated vendor dependencies. You say Docker! I say <a href=""/en/knowledge/bastille-jail-management"">Jail</a>!"|Content text for en locale
+landing.contact.email.label@de|E-Mail|Email label German
+landing.contact.email.label@en|Email|Email label English
+landing.contact.email@de|ask+42@vvoss.dev|Content text for de locale
+landing.contact.email@en|ask+42@vvoss.dev|Content text for en locale
+landing.contact.subtitle@de|25 Jahre Erfahrung mit beidem: Was alle machen und was tatsächlich funktioniert|Content text for de locale
+landing.contact.subtitle@en|25 years experience with both: what everyone does and what actually works|Content text for en locale
+landing.contact.title@de|Interesse an einem fachlichen Austausch?|Content text for de locale
+landing.contact.title@en|Interested in a technical exchange?|Content text for en locale
+landing.hero.badge.audience@de|Enterprise|Content text for de locale
+landing.hero.badge.audience@en|Enterprise|Content text for en locale
+landing.hero.badge.experience@de|25+ Jahre|Content text for de locale
+landing.hero.badge.experience@en|25+ Years|Content text for en locale
+landing.hero.badge.label@de|Badge|Generic badge label German
+landing.hero.badge.label@en|Badge|Generic badge label English
+landing.hero.badge.topic@de|System-Architektur|Content text for de locale
+landing.hero.badge.topic@en|System Architecture|Content text for en locale
+landing.hero.cta.label@de|Kontakt|Generic CTA label German
+landing.hero.cta.label@en|Contact|Generic CTA label English
+landing.hero.cta.primary@de|Interesse an einem fachlichen Austausch?|Content text for de locale
+landing.hero.cta.primary@en|Interested in a technical exchange?|Content text for en locale
+landing.hero.description@de|Meine Anti-Komplexitäts-Philosophie: Ockham ist mein bester Freund. Warum 47 Services, wenn einer reicht? Warum 800 KB JavaScript, wenn 12 KB genügen? Warum ein 200.000 Euro teurer Enterprise-Storage, wenn ein bewährtes FreeBSD für 200 Euro exakt das Gleiche leistet? Angst, Ihre Experten können das nicht leisten? Glauben Sie mir, die schlagen sich tagtäglich mit deutlich komplexeren Technologien herum!|Content text for de locale
+landing.hero.description@en|My anti-complexity philosophy: Ockham is my best friend. Why 47 services when one suffices? Why 800 KB JavaScript when 12 KB is enough? Why a 200,000 euro enterprise storage when proven FreeBSD delivers exactly the same for 200 euros? Afraid your experts can't handle it? Trust me, they're wrestling with far more complex technologies every day!|Content text for en locale
+landing.hero.headline@de|Entwickler mit einer notorischen Schwäche für effiziente und zugleich realistische Lösungen|Content text for de locale
+landing.hero.headline@en|Developer with a notorious weakness for efficient yet realistic solutions|Content text for en locale
+landing.hero.subtitle@de|Ich eliminiere Problemkategorien durch fundamentale Systemneugestaltung, anstatt Symptome mit noch komplexerer Technologie zu behandeln. Nach 25 Jahren Enterprise-Frustrationen zeige ich offen und ehrlich, was ohne Corporate-Politik möglich ist.|Content text for de locale
+landing.hero.subtitle@en|I eliminate problem categories through fundamental system redesign, rather than treating symptoms with even more complex technology. After 25 years of enterprise frustrations, I openly and honestly show what's possible without corporate politics.|Content text for en locale
+landing.metrics.item1.description@de|Von 15 Minuten auf 30 Sekunden und das nur durch bewährte Unix-Philosophie?! Moment: Aber dann bräuchte man ja keine 47 Kubernetes-Pods mehr, kein Docker-Sammelsurium, keine Cloud-Native-Consultants! Einfach rsync und systemd – aber das klingt ja nicht innovativ genug fürs Management.<br><br>Wie erklärt man das dem Management, das gerade Millionen in „Cloud-Native“ investiert hat?|Content text for de locale
+landing.metrics.item1.description@en|From 15 minutes to 30 seconds and that just through proven Unix philosophy?! Wait: But then you wouldn't need 47 Kubernetes pods anymore, no Docker hodgepodge, no cloud-native consultants! Just rsync and systemd – but that doesn't sound innovative enough for management.<br><br>How do you explain that to management who just invested millions in 'cloud-native'?|Content text for en locale
+landing.metrics.item1.label@de|schnellere Deployments|Content text for de locale
+landing.metrics.item1.label@en|faster deployments|Content text for en locale
+landing.metrics.item1.number@de|30×|Content text for de locale
+landing.metrics.item1.number@en|30×|Content text for en locale
+landing.metrics.item2.description@de|Queries, schneller als Ihre Nutzer klicken können! Ich sage: Direct-Access statt JOIN-Hölle! Lustig, wie alle „NoSQL“ schreien, aber dann doch wieder relationale Datenbanken falsch benutzen. MongoDB installieren, um dann Relationen nachzubauen – der Klassiker der modernen Softwareentwicklung!<br><br>Als ob das Problem die Technologie wäre und nicht das Verständnis!|Content text for de locale
+landing.metrics.item2.description@en|Queries faster than your users can click! I say: Direct access instead of JOIN hell! Funny how everyone screams 'NoSQL' but then misuses relational databases anyway. Installing MongoDB just to rebuild relations – the classic of modern software development!<br><br>As if the problem was the technology and not the understanding!|Content text for en locale
+landing.metrics.item2.label@de|Sub-Millisekunden-Queries|Content text for de locale
+landing.metrics.item2.label@en|Sub-Millisecond Queries|Content text for en locale
+landing.metrics.item2.number@de|<1ms|Content text for de locale
+landing.metrics.item2.number@en|<1ms|Content text for en locale
+landing.metrics.item3.description@de|"Ein 200.000 Euro Enterprise-Storage ersetzt durch ein 200 Euro FreeBSD mit skalierbaren <a href=""/de/wissen/bastille-jail-verwaltung"">Jails</a>. Gleiche Skalierbarkeit – Null Vendor-Lock-in! Nicht untypisch für „Enterprise Appliances“ – kratzt man die Oberfläche ab, findet man die von mir angepriesenen effektiven Lösungen mit ein paar kleinen Scripts für mehr Convenience.<br><br>Darf natürlich keiner wissen, sonst bricht das ganze Geschäftsmodell zusammen!"|Content text for de locale
+landing.metrics.item3.description@en|"A 200,000 euro enterprise storage replaced by a 200 euro FreeBSD with scalable <a href=""/en/knowledge/bastille-jail-management"">jails</a>. Same scalability – zero vendor lock-in! Not untypical for 'enterprise appliances' – scratch the surface and you'll find the effective solutions I'm advocating, plus a few little scripts for more convenience.<br><br>Nobody's supposed to know that, or the whole business model collapses!"|Content text for en locale
+landing.metrics.item3.label@de|Kostenverhältnis|Content text for de locale
+landing.metrics.item3.label@en|Cost ratio|Content text for en locale
+landing.metrics.item3.number@de|1000:1|Content text for de locale
+landing.metrics.item3.number@en|1000:1|Content text for en locale
+landing.metrics.subtitle@de|Hardware-bewusste Performance-Optimierung mit TCO-Fokus|Content text for de locale
+landing.metrics.subtitle@en|Hardware-aware performance optimisation with TCO focus|Content text for en locale
+landing.metrics.title@de|Was mit bewährten Technologien heute schon möglich ist|Content text for de locale
+landing.metrics.title@en|What's already possible today with proven technologies|Content text for en locale
+landing.philosophy.content@de|Enterprise-Entwickler sind Meister im Symptome-Behandeln. Performance-Problem? Mehr Server! Deployment zu langsam? Mehr Tools! Ich mache das Gegenteil: Weniger von allem. Klingt verrückt? Nur für die, die ihre Komplexität lieben gelernt haben. Zeit für Ockham's Rasiermesser.|Philosophy main content
+landing.philosophy.content@en|Enterprise developers are masters at treating symptoms. Performance problem? More servers! Deployment too slow? More tools! I do the opposite: less of everything. Sounds crazy? Only to those who've learned to love their complexity. Time for Ockham's razor.|Philosophy main content
+landing.philosophy.quote@de|Enterprise-Entwickler sind Meister im Symptome-Behandeln. Performance-Problem? Mehr Server! Deployment zu langsam? Mehr Tools! Ich mache das Gegenteil: Weniger von allem. Klingt verrückt? Nur für die, die ihre Komplexität lieben gelernt haben. Zeit für Ockham's Rasiermesser.|Content text for de locale
+landing.philosophy.quote@en|Enterprise developers are masters at treating symptoms. Performance problem? More servers! Deployment too slow? More tools! I do the opposite: less of everything. Sounds crazy? Only to those who've learned to love their complexity. Time for Ockham's razor.|Content text for en locale
+landing.philosophy.subtitle@de|Weniger ist mehr – besonders in der Enterprise-Softwareentwicklung|Philosophy section subtitle
+landing.philosophy.subtitle@en|Less is more – especially in enterprise software development|Philosophy section subtitle
+landing.philosophy.title@de|Anti-Komplexitäts-Philosophie|Philosophy section title
+landing.philosophy.title@en|Anti-Complexity Philosophy|Philosophy section title
+landing.problems.card1.description@de|Jedes Update ist ein Glücksspiel: Geht die CI/CD-Pipeline diesmal stabil durch? Rollbacks dauern jedes Mal zu lange und blockieren das halbe Team. Das ist Russisch Roulette – auf einer sehr kostenintensiven Ebene.<br><br>„Das ist halt modern DevOps“ — Nein, das ist kaputte Architektur.|Content text for de locale
+landing.problems.card1.description@en|Every update is a gamble: Will the CI/CD pipeline run stable this time? Rollbacks take too long every time and block half the team. That’s Russian roulette – at a very expensive level.<br><br>'That’s just modern DevOps' — No, that’s broken architecture.|Content text for en locale
+landing.problems.card1.number@de|01|Content text for de locale
+landing.problems.card1.number@en|01|Content text for en locale
+landing.problems.card1.title@de|Deployment-Roulette|Content text for de locale
+landing.problems.card1.title@en|Deployment Roulette|Content text for en locale
+landing.problems.card2.description@de|47 Services weil Node.js single-threaded ist. Der branchenübliche React+Node.js Stack hat ein Skalierungsproblem. Die „Lösung“? Hunderte kleine Services statt einem funktionierenden System. Das ist 1995er-Technologie als 2024er-Innovation verkauft.<br><br>„Aber das machen doch alle so!“ — Wenn alle aus dem Fenster springen…|Content text for de locale
+landing.problems.card2.description@en|47 services because Node.js is single-threaded. The industry-standard React+Node.js stack has a scaling problem. The 'solution'? Hundreds of tiny services instead of one functioning system. That's 1995 technology sold as 2024 innovation.<br><br>'But everyone's doing it!' — If everyone jumped out of a window…|Content text for en locale
+landing.problems.card2.number@de|02|Content text for de locale
+landing.problems.card2.number@en|02|Content text for en locale
+landing.problems.card2.title@de|Microservice-Wahnsinn|Content text for de locale
+landing.problems.card2.title@en|Microservice Madness|Content text for en locale
+landing.problems.card3.description@de|5.000 CPU-intensive JOINs für einfache Content-Abfragen. Ihre Hardware schreit. Die Performance-Berichte werden immer röter. Neue Server lösen das Problem für… 3 Monate. Dann wieder von vorne. Eine never ending Story.<br><br>„Wir brauchen mehr RAM, müssen skalieren!“ — Nein, was Sie brauchen: eine bessere Architektur.|Content text for de locale
+landing.problems.card3.description@en|5,000 CPU-intensive JOINs for simple content queries. Your hardware is screaming. Performance reports getting redder. New servers solve the problem for… 3 months. Then back to square one. A never-ending story.<br><br>'We need more RAM, we need to scale!' — No, what you need: better architecture.|Content text for en locale
+landing.problems.card3.number@de|03|Content text for de locale
+landing.problems.card3.number@en|03|Content text for en locale
+landing.problems.card3.title@de|Database-Hölle|Content text for de locale
+landing.problems.card3.title@en|Database Hell|Content text for en locale
+landing.problems.subtitle@de|Kostspielige Infrastruktur-Probleme mit versteckten TCO-Impacts|Content text for de locale
+landing.problems.subtitle@en|Costly infrastructure problems with hidden TCO impacts|Content text for en locale
+landing.problems.title@de|Enterprise-Realitäten die Sie täglich erleben|Content text for de locale
+landing.problems.title@en|Enterprise Realities You Experience Daily|Content text for en locale
+lost.in.the.middle.category.label@de|Kategorie|Content text for de locale
+lost.in.the.middle.category.label@en|Category|Content text for en locale
+lost.in.the.middle.category.value@de|KI-Limitation|Content text for de locale
+lost.in.the.middle.category.value@en|AI Limitation|Content text for en locale
+lost.in.the.middle.compare.subtitle@de|Praktische Auswirkungen verstehen|Content text for de locale
+lost.in.the.middle.compare.subtitle@en|Understanding practical impacts|Content text for en locale
+lost.in.the.middle.compare.title@de|Bewertung|Content text for de locale
+lost.in.the.middle.compare.title@en|Assessment|Content text for en locale
+lost.in.the.middle.cons.1@de|Lange Kontexte sind unzuverlässig|Content text for de locale
+lost.in.the.middle.cons.1@en|Long contexts are unreliable|Content text for en locale
+lost.in.the.middle.cons.2@de|Marketing-Versprechen sind irreführend|Content text for de locale
+lost.in.the.middle.cons.2@en|Marketing promises are misleading|Content text for en locale
+lost.in.the.middle.cons.3@de|Keine Lösung in Sicht|Content text for de locale
+lost.in.the.middle.cons.3@en|No solution in sight|Content text for en locale
+lost.in.the.middle.cons.4@de|Betrifft alle Modelle|Content text for de locale
+lost.in.the.middle.cons.4@en|Affects all models|Content text for en locale
+lost.in.the.middle.cons.5@de|Verschlechtert sich mit Kontextlänge|Content text for de locale
+lost.in.the.middle.cons.5@en|Worsens with context length|Content text for en locale
+lost.in.the.middle.cons.title@de|Probleme|Content text for de locale
+lost.in.the.middle.cons.title@en|Problems|Content text for en locale
+lost.in.the.middle.creator.label@de|Entdeckt von|Content text for de locale
+lost.in.the.middle.creator.label@en|Discovered by|Content text for en locale
+lost.in.the.middle.creator.value@de|Stanford (2023)|Content text for de locale
+lost.in.the.middle.creator.value@en|Stanford (2023)|Content text for en locale
+lost.in.the.middle.description@de|Lost in the Middle ist das Phänomen, dass Large Language Models (LLMs) Informationen in der Mitte langer Kontexte schlechter verarbeiten als am Anfang oder Ende. Studien zeigen: Bei 128k Token Kontext sinkt die Retrieval-Genauigkeit in der Mitte auf unter 20%. Das betrifft alle modernen KIs - GPT-4, Claude, Gemini. Die U-förmige Aufmerksamkeitskurve ist universal. Kritische Informationen gehören ans Ende oder den Anfang, niemals in die Mitte.|Content text for de locale
+lost.in.the.middle.description@en|Lost in the Middle is the phenomenon where Large Language Models (LLMs) process information in the middle of long contexts worse than at the beginning or end. Studies show: With 128k token context, retrieval accuracy in the middle drops below 20%. This affects all modern AIs - GPT-4, Claude, Gemini. The U-shaped attention curve is universal. Critical information belongs at the end or beginning, never in the middle.|Content text for en locale
+lost.in.the.middle.enterprise@de|Die Implikationen sind massiv: Lange Dokumentationen, umfangreiche Prompts und Context-Stuffing funktionieren nicht wie erwartet. Unternehmen, die KI-Systeme mit riesigen Kontexten füttern, verschenken Genauigkeit. Die Lösung: Strukturierung in kleinere Chunks, wichtigste Informationen ans Ende, iterative Verarbeitung statt Mega-Prompts. Wer das ignoriert, erhält unzuverlässige KI-Outputs. Die 200k-Token-Versprechen der Anbieter sind Marketing-Bluff.|Content text for de locale
+lost.in.the.middle.enterprise@en|The implications are massive: Long documentation, extensive prompts, and context stuffing don't work as expected. Companies feeding AI systems with huge contexts are sacrificing accuracy. The solution: Structure into smaller chunks, most important information at the end, iterative processing instead of mega-prompts. Those who ignore this get unreliable AI outputs. The 200k token promises from providers are marketing bluff.|Content text for en locale
+lost.in.the.middle.performance.label@de|Performance-Verlust|Content text for de locale
+lost.in.the.middle.performance.label@en|Performance Loss|Content text for en locale
+lost.in.the.middle.performance.value@de|Bis zu 80% Genauigkeitsverlust|Content text for de locale
+lost.in.the.middle.performance.value@en|Up to 80% accuracy loss|Content text for en locale
+lost.in.the.middle.project.label@de|Betrifft|Content text for de locale
+lost.in.the.middle.project.label@en|Affects|Content text for en locale
+lost.in.the.middle.project.value@de|Alle LLMs|Content text for de locale
+lost.in.the.middle.project.value@en|All LLMs|Content text for en locale
+lost.in.the.middle.pros.1@de|Wichtiges ans Ende platzieren|Content text for de locale
+lost.in.the.middle.pros.1@en|Place important at the end|Content text for en locale
+lost.in.the.middle.pros.2@de|Kleinere Chunks verwenden|Content text for de locale
+lost.in.the.middle.pros.2@en|Use smaller chunks|Content text for en locale
+lost.in.the.middle.pros.3@de|Iterative Verarbeitung|Content text for de locale
+lost.in.the.middle.pros.3@en|Iterative processing|Content text for en locale
+lost.in.the.middle.pros.4@de|Redundanz einbauen|Content text for de locale
+lost.in.the.middle.pros.4@en|Build in redundancy|Content text for en locale
+lost.in.the.middle.pros.5@de|Zusammenfassungen nutzen|Content text for de locale
+lost.in.the.middle.pros.5@en|Use summaries|Content text for en locale
+lost.in.the.middle.pros.title@de|Workarounds|Content text for de locale
+lost.in.the.middle.pros.title@en|Workarounds|Content text for en locale
+lost.in.the.middle.security.label@de|Schweregrad|Content text for de locale
+lost.in.the.middle.security.label@en|Severity|Content text for en locale
+lost.in.the.middle.security.value@de|Kritisch für lange Dokumente|Content text for de locale
+lost.in.the.middle.security.value@en|Critical for long documents|Content text for en locale
+lost.in.the.middle.stable.label@de|Status|Content text for de locale
+lost.in.the.middle.stable.label@en|Status|Content text for en locale
+lost.in.the.middle.stable.value@de|Bestätigt|Content text for de locale
+lost.in.the.middle.stable.value@en|Confirmed|Content text for en locale
+lost.in.the.middle.syntax.label@de|Betroffener Bereich|Content text for de locale
+lost.in.the.middle.syntax.label@en|Affected Range|Content text for en locale
+lost.in.the.middle.syntax.value@de|20-80% des Kontexts|Content text for de locale
+lost.in.the.middle.syntax.value@en|20-80% of context|Content text for en locale
+lost.in.the.middle.title@de|Lost in the Middle|Content text for de locale
+lost.in.the.middle.title@en|Lost in the Middle|Content text for en locale
+page.footer.contact@de|Kontakt|Contact link text
+page.footer.contact@en|Contact|Contact link text
+page.footer.copyright.text@de|Alle Rechte vorbehalten|Copyright text part (after name)
+page.footer.copyright.text@en|All rights reserved|Copyright text part (after name)
+page.footer.dev.breakpoint@de|Breakpoint|Dev mode breakpoint label
+page.footer.dev.breakpoint@en|Breakpoint|Dev mode breakpoint label
+page.footer.dev.device@de|Gerät|Dev mode device label
+page.footer.dev.device@en|Device|Dev mode device label
+page.footer.dev.dpr@de|DPR|Dev mode device pixel ratio label
+page.footer.dev.dpr@en|DPR|Dev mode device pixel ratio label
+page.footer.dev.info.title@de|Client Info|Dev mode debug info title
+page.footer.dev.info.title@en|Client Info|Dev mode debug info title
+page.footer.dev.language@de|Sprache|Dev mode language label
+page.footer.dev.language@en|Language|Dev mode language label
+page.footer.dev.mode@de|Modus|Dev mode interaction label
+page.footer.dev.mode@en|Mode|Dev mode interaction label
+page.footer.dev.screen@de|Bildschirm|Dev mode screen label
+page.footer.dev.screen@en|Screen|Dev mode screen label
+page.footer.dev.viewport@de|Viewport|Dev mode viewport label
+page.footer.dev.viewport@en|Viewport|Dev mode viewport label
+page.footer.email@de|hello@vvoss.dev|Contact email
+page.footer.email@en|hello@vvoss.dev|Contact email
+page.footer.impressum@de|Impressum|Impressum link text
+page.footer.impressum@en|Imprint|Impressum link text
+page.footer.tech.description@de|Minimalistisch, schnell und ohne JavaScript-Bloat. Gebaut für Leistung und Lesbarkeit|Footer tech description
+page.footer.tech.description@en|Minimalist, fast and without JavaScript bloat. Built for performance and readability|Footer tech description
+page.header.blog.label@de|Blog und Artikel|Blog navigation label
+page.header.blog.label@en|Blog and Articles|Blog navigation label
+page.header.blog.text@de|Blog|Blog navigation text
+page.header.blog.text@en|Blog|Blog navigation text
+page.header.home.label@de|Startseite|Home link aria label
+page.header.home.label@en|Home|Home link aria label
+page.header.impressum.label@de|Impressum und rechtliche Hinweise|Impressum navigation label
+page.header.impressum.label@en|Imprint and Legal|Impressum navigation label
+page.header.impressum.text@de|Impressum|Impressum navigation text
+page.header.impressum.text@en|Imprint|Impressum navigation text
+page.header.knowledge.label@de|Technisches Wissen|Knowledge navigation label
+page.header.knowledge.label@en|Technical Knowledge|Knowledge navigation label
+page.header.knowledge.text@de|Wissen|Knowledge navigation text
+page.header.knowledge.text@en|Knowledge|Knowledge navigation text
+page.header.lang.switch@de|Sprache wechseln|Language switch aria label
+page.header.lang.switch@en|Switch language|Language switch aria label
+page.header.logo.name@de|vvoss.dev|Logo name
+page.header.logo.name@en|vvoss.dev|Logo name
+page.header.logo.title@de|Effektive Software-Architektur|Logo subtitle/tagline text
+page.header.logo.title@en|Effective Software Architecture|Logo subtitle/tagline text
+page.header.main.label@de|Hauptnavigation|Main navigation aria label
+page.header.main.label@en|Main navigation|Main navigation aria label
+page.header.menu.blog@de|Blog|Blog menu text
+page.header.menu.blog@en|Blog|Blog menu text
+page.header.menu.impressum@de|Impressum|Impressum menu text
+page.header.menu.impressum@en|Imprint|Impressum menu text
+page.header.menu.knowledge@de|Wissen|Knowledge menu text
+page.header.menu.knowledge@en|Knowledge|Knowledge menu text
+page.header.menu.portfolio@de|Portfolio|Portfolio menu text
+page.header.menu.portfolio@en|Portfolio|Portfolio menu text
+page.header.portfolio.label@de|Portfolio und Projekte|Portfolio navigation label
+page.header.portfolio.label@en|Portfolio and Projects|Portfolio navigation label
+page.header.portfolio.text@de|Portfolio|Portfolio navigation text
+page.header.portfolio.text@en|Portfolio|Portfolio navigation text
+page.placeholder.availability.de@de|Verfügbar für Enterprise-Architektur-Projekte und technische Beratung|Contact availability info
+page.placeholder.availability.de@en|Available for enterprise architecture projects and technical consulting|Contact availability info
+page.placeholder.email@de|hello@vvoss.dev|Contact email
+page.placeholder.email@en|hello@vvoss.dev|Contact email
+page.placeholder.message@de|Diese Seite befindet sich noch im Aufbau. Schauen Sie bald wieder vorbei!|Generic placeholder message
+page.placeholder.message@en|This page is still under construction. Please check back soon!|Generic placeholder message
+page.placeholder.subtitle@de|Diese Seite wird derzeit überarbeitet|Placeholder page subtitle
+page.placeholder.subtitle@en|This page is currently being redesigned|Placeholder page subtitle
+page.placeholder.title@de|Seite in Entwicklung|Placeholder page title
+page.placeholder.title@en|Page Under Development|Placeholder page title
+page.skip.to.content@de|Zum Hauptinhalt springen|Skip to content link text
+page.skip.to.content@en|Skip to content|Skip to content link text
+portfolio.title@de|Portfolio|German portfolio page title
+portfolio.title@en|Portfolio|English portfolio page title
+seo.category.label@de|Kategorie|Content text for de locale
+seo.category.label@en|Category|Content text for en locale
+seo.category.value@de|Marketing-Konzept|Content text for de locale
+seo.category.value@en|Marketing Concept|Content text for en locale
+seo.cons.1@de|Google zeigt Antworten direkt, keine Klicks mehr|Content text for de locale
+seo.cons.1@en|Google shows answers directly, no more clicks|Content text for en locale
+seo.cons.2@de|AI-Systeme ignorieren SEO-Tricks komplett|Content text for de locale
+seo.cons.2@en|AI systems completely ignore SEO tricks|Content text for en locale
+seo.cons.3@de|Ranking-Algorithmen ändern sich ständig|Content text for de locale
+seo.cons.3@en|Ranking algorithms constantly changing|Content text for en locale
+seo.cons.4@de|Massive Konkurrenz um gleiche Keywords|Content text for de locale
+seo.cons.4@en|Massive competition for same keywords|Content text for en locale
+seo.cons.5@de|Zero-Click-Searches dominieren bereits|Content text for de locale
+seo.cons.5@en|Zero-click searches already dominate|Content text for en locale
+seo.cons.title@de|Nachteile traditionelles SEO|Content text for de locale
+seo.cons.title@en|Traditional SEO Disadvantages|Content text for en locale
+seo.creator.label@de|Begründer|Content text for de locale
+seo.creator.label@en|Founder|Content text for en locale
+seo.creator.value@de|Google PageRank (1996)|Content text for de locale
+seo.creator.value@en|Google PageRank (1996)|Content text for en locale
+seo.description@de|Traditionelles SEO stirbt. Die Ära des Keyword-Stuffings und Link-Farmings endet. Stand Q3 2025: 84% der Google-Suchen zeigen bereits KI-gestützte Overviews. Die Zukunft gehört AEO (Answer Engine Optimization): Inhalte werden für Featured Snippets und direkte KI-Antworten strukturiert - mit FAQ-Schema, klaren Absätzen und Frage-basierten Formaten. Parallel dazu entsteht GEO (Generative Engine Optimization): Die Optimierung dafür, dass ChatGPT, Claude und andere KIs deine Inhalte als vertrauenswürdige Quelle zitieren. Der Rich-get-Richer-Effekt verstärkt sich - wer jetzt nicht handelt, wird unsichtbar.|Content text for de locale
+seo.description@en|Traditional SEO is dying. The era of keyword stuffing and link farming is ending. As of Q3 2025: 84% of Google searches already show AI-powered overviews. The future belongs to AEO (Answer Engine Optimization): Content structured for featured snippets and direct AI answers - with FAQ schema, clear paragraphs and question-based formats. Simultaneously, GEO (Generative Engine Optimization) emerges: Optimizing for ChatGPT, Claude and other AIs to cite your content as a trusted source. The rich-get-richer effect intensifies - those who don't act now will become invisible.|Content text for en locale
+seo.enterprise@de|Die SEO-Industrie mit ihrem Milliardenmarkt an Beratern, Tools und Agenturen steht vor dem Kollaps. Unternehmen, die weiterhin in traditionelles SEO investieren, verschwenden Ressourcen. Die Zukunft heißt AI Visibility: Die Sichtbarkeit in KI-gestützten Plattformen wie ChatGPT, Claude, Gemini oder Perplexity - und in KI-Browsern wie Comet, die Webseiten in Echtzeit zusammenfassen und umschreiben. AI Visibility umfasst AEO (Answer Engine Optimization) und GEO (Generative Engine Optimization) - die Optimierung dafür, wie KI-Systeme Inhalte interpretieren und in ihre Antworten integrieren. Die Gewinner werden jene sein, die ihre Autorität in AI-Trainingsdaten etablieren.|Content text for de locale
+seo.enterprise@en|The SEO industry with its billion-dollar market of consultants, tools, and agencies faces collapse. Companies continuing to invest in traditional SEO are wasting resources. The future is AI Visibility: Being visible in AI-powered platforms like ChatGPT, Claude, Gemini, or Perplexity - and in AI browsers like Comet that summarize and rewrite websites in real-time. AI Visibility encompasses AEO (Answer Engine Optimization) and GEO (Generative Engine Optimization) - optimizing for how AI systems interpret content and integrate it into their answers. The winners will be those who establish their authority in AI training data.|Content text for en locale
+seo.performance.label@de|ROI|Content text for de locale
+seo.performance.label@en|ROI|Content text for en locale
+seo.performance.value@de|Rapide sinkend|Content text for de locale
+seo.performance.value@en|Rapidly declining|Content text for en locale
+seo.project.label@de|Nachfolger|Content text for de locale
+seo.project.label@en|Successor|Content text for en locale
+seo.project.value@de|"<a href=""#"" class=""link"">AI-Antwort-Optimierung</a>"|Content text for de locale
+seo.project.value@en|"<a href=""#"" class=""link"">AI Answer Optimization</a>"|Content text for en locale
+seo.pros.1@de|Expertise wird direkt belohnt|Content text for de locale
+seo.pros.1@en|Expertise directly rewarded|Content text for en locale
+seo.pros.2@de|Qualität schlägt Quantität|Content text for de locale
+seo.pros.2@en|Quality beats quantity|Content text for en locale
+seo.pros.3@de|Langfristige Autorität aufbaubar|Content text for de locale
+seo.pros.3@en|Long-term authority buildable|Content text for en locale
+seo.pros.4@de|Weniger Manipulation möglich|Content text for de locale
+seo.pros.4@en|Less manipulation possible|Content text for en locale
+seo.pros.5@de|Direkte Integration in AI-Antworten|Content text for de locale
+seo.pros.5@en|Direct integration in AI answers|Content text for en locale
+seo.pros.title@de|Vorteile AI-Optimierung|Content text for de locale
+seo.pros.title@en|AI Optimization Advantages|Content text for en locale
+seo.security.label@de|Manipulationsrisiko|Content text for de locale
+seo.security.label@en|Manipulation Risk|Content text for en locale
+seo.security.value@de|Extrem hoch (Black Hat SEO)|Content text for de locale
+seo.security.value@en|Extremely high (Black Hat SEO)|Content text for en locale
+seo.stable.label@de|Status|Content text for de locale
+seo.stable.label@en|Status|Content text for en locale
+seo.stable.value@de|Am Sterben|Content text for de locale
+seo.stable.value@en|Dying|Content text for en locale
+seo.syntax.label@de|Methodik|Content text for de locale
+seo.syntax.label@en|Methodology|Content text for en locale
+seo.syntax.value@de|Keywords, Backlinks, Meta-Tags (veraltet)|Content text for de locale
+seo.syntax.value@en|Keywords, Backlinks, Meta Tags (obsolete)|Content text for en locale
+seo.title@de|SEO|Content text for de locale
+seo.title@en|SEO|Content text for en locale

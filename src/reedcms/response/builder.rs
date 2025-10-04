@@ -75,22 +75,27 @@ pub async fn build_response(req: HttpRequest) -> Result<HttpResponse, Error> {
         Err(_) => return Ok(build_404_response()),
     };
 
-    // 2. Detect variant from User-Agent
-    let variant = detect_variant(&req);
+    // 2. Detect client info (variant, breakpoint, device_type, etc.)
+    let client_info = match crate::reedcms::server::client_detection::detect_client_info(&req, &route_info.language) {
+        Ok(info) => info,
+        Err(e) => return Ok(build_500_response(e)),
+    };
 
-    // 3. Build template context
-    // Note: interaction_mode is the variant (mouse/touch/reader)
+    let variant = client_info.interaction_mode.clone();
+
+    // 3. Build template context with client info
     let context = match build_context(
         &route_info.layout,
         &route_info.language,
-        &variant,
+        &client_info,
     ) {
         Ok(ctx) => ctx,
         Err(e) => return Ok(build_500_response(e)),
     };
 
     // 5. Render template
-    let template_name = format!("{}.{}", route_info.layout, variant);
+    // Template path: layouts/{layout}/{layout}.jinja
+    let template_name = format!("layouts/{}/{}.jinja", route_info.layout, route_info.layout);
     let html = match render_template(&template_name, &context) {
         Ok(output) => output,
         Err(e) => return Ok(build_500_response(e)),

@@ -6,8 +6,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{{ page_description or ('page.meta.description' | text('auto')) }}">
-    <title>{{ page_title or ('page.meta.title' | text('auto')) }}</title>
+    {% set meta_desc_key = 'page.meta.description@' ~ client.lang %}
+    {% set meta_title_key = 'page.meta.title@' ~ client.lang %}
+    <meta name="description" content="{{ page_description or (meta_desc_key | meta) }}">
+    <title>{{ page_title or (meta_title_key | meta) }}</title>
 
     {# CSS Files - Static files plus dynamic layout bundles #}
     <link rel="stylesheet" href="/public/static/styles/layers.css?v=42">
@@ -34,7 +36,7 @@
 
     {# Header with navigation #}
     <header class="grid-1" role="banner">
-        {% include organism("page-header") %}
+        {% include "components/organisms/page-header/page-header." ~ interaction_mode ~ ".jinja" %}
     </header>
 
     <main id="main" role="main" tabindex="-1">
@@ -42,7 +44,7 @@
     </main>
 
     {# Footer section #}
-    {% include organism("page-footer") %}
+    {% include "components/organisms/page-footer/page-footer." ~ interaction_mode ~ ".jinja" %}
 
     {# Simple content loaded visibility #}
     <script>

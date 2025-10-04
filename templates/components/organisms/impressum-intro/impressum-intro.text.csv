@@ -1,29 +1,29 @@
 key|value|comment
-impressum-intro.title@de|Impressum|Impressum page title German
-impressum-intro.title@en|Legal Notice|Impressum page title English
-impressum-intro.responsible.title@de|Verantwortlich für den Inhalt|Responsible person section title German
-impressum-intro.responsible.title@en|Responsible for Content|Responsible person section title English
-impressum-intro.responsible.name@de|Vivian Voss|Name of responsible person German
-impressum-intro.responsible.name@en|Vivian Voss|Name of responsible person English
-impressum-intro.responsible.street@de|Musterstraße 123|Street address German
-impressum-intro.responsible.street@en|Musterstraße 123|Street address English
-impressum-intro.responsible.city@de|12345 Berlin|City and postal code German
-impressum-intro.responsible.city@en|12345 Berlin|City and postal code English
-impressum-intro.responsible.country@de|Deutschland|Country German
-impressum-intro.responsible.country@en|Germany|Country English
-impressum-intro.contact.title@de|Kontakt|Contact section title German
-impressum-intro.contact.title@en|Contact|Contact section title English
-impressum-intro.contact.email.label@de|E-Mail:|Email label German
-impressum-intro.contact.email.label@en|Email:|Email label English
-impressum-intro.contact.email.value@de|kontakt@vvoss.dev|Contact email address German
-impressum-intro.contact.email.value@en|contact@vvoss.dev|Contact email address English
-impressum-intro.contact.web.label@de|Website:|Website label German
-impressum-intro.contact.web.label@en|Website:|Website label English
-impressum-intro.legal.title@de|Rechtliche Hinweise|Legal section title German
-impressum-intro.legal.title@en|Legal Information|Legal section title English
-impressum-intro.legal.disclaimer@de|Alle Angaben ohne Gewähr. Trotz sorgfältiger inhaltlicher Kontrolle übernehme ich keine Haftung für die Inhalte externer Links.|Legal disclaimer German
-impressum-intro.legal.disclaimer@en|All information without guarantee. Despite careful content control, I assume no liability for the content of external links.|Legal disclaimer English
-impressum-intro.privacy.title@de|Datenschutz|Privacy section title German
-impressum-intro.privacy.title@en|Privacy|Privacy section title English
-impressum-intro.privacy.text@de|Diese Website erhebt keine personenbezogenen Daten und verwendet keine Cookies oder Tracking-Technologien.|Privacy policy text German
-impressum-intro.privacy.text@en|This website does not collect personal data and uses no cookies or tracking technologies.|Privacy policy text English
+impressum.intro.title@de|Impressum|Impressum page title German
+impressum.intro.title@en|Legal Notice|Impressum page title English
+impressum.intro.responsible.title@de|Verantwortlich für den Inhalt|Responsible person section title German
+impressum.intro.responsible.title@en|Responsible for Content|Responsible person section title English
+impressum.intro.responsible.name@de|Vivian Voss|Name of responsible person German
+impressum.intro.responsible.name@en|Vivian Voss|Name of responsible person English
+impressum.intro.responsible.street@de|Musterstraße 123|Street address German
+impressum.intro.responsible.street@en|Musterstraße 123|Street address English
+impressum.intro.responsible.city@de|12345 Berlin|City and postal code German
+impressum.intro.responsible.city@en|12345 Berlin|City and postal code English
+impressum.intro.responsible.country@de|Deutschland|Country German
+impressum.intro.responsible.country@en|Germany|Country English
+impressum.intro.contact.title@de|Kontakt|Contact section title German
+impressum.intro.contact.title@en|Contact|Contact section title English
+impressum.intro.contact.email.label@de|E-Mail:|Email label German
+impressum.intro.contact.email.label@en|Email:|Email label English
+impressum.intro.contact.email.value@de|kontakt@vvoss.dev|Contact email address German
+impressum.intro.contact.email.value@en|contact@vvoss.dev|Contact email address English
+impressum.intro.contact.web.label@de|Website:|Website label German
+impressum.intro.contact.web.label@en|Website:|Website label English
+impressum.intro.legal.title@de|Rechtliche Hinweise|Legal section title German
+impressum.intro.legal.title@en|Legal Information|Legal section title English
+impressum.intro.legal.disclaimer@de|Alle Angaben ohne Gewähr. Trotz sorgfältiger inhaltlicher Kontrolle übernehme ich keine Haftung für die Inhalte externer Links.|Legal disclaimer German
+impressum.intro.legal.disclaimer@en|All information without guarantee. Despite careful content control, I assume no liability for the content of external links.|Legal disclaimer English
+impressum.intro.privacy.title@de|Datenschutz|Privacy section title German
+impressum.intro.privacy.title@en|Privacy|Privacy section title English
+impressum.intro.privacy.text@de|Diese Website erhebt keine personenbezogenen Daten und verwendet keine Cookies oder Tracking-Technologien.|Privacy policy text German
+impressum.intro.privacy.text@en|This website does not collect personal data and uses no cookies or tracking technologies.|Privacy policy text English

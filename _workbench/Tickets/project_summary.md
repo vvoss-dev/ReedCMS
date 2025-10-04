@@ -641,17 +641,19 @@ component.section.subsection.element.variant.state.detail.info@de|Value|Comment
 ```
 **Rationale**: Readability, maintainability, KISS principle.
 
-#### 7. Component Names: Hyphens Allowed
+#### 7. Component Names: MANDATORY Dot-Notation
 ```csv
-# ✅ CORRECT - Hyphens in component names
+# ✅ CORRECT - Dots everywhere, no exceptions
+page.header.logo.title@de
+landing.hero.headline@de
+knowledge.intro.title@de
+page.footer.copyright.text@de
+
+# ❌ WRONG - No hyphens in keys
 page-header.logo.title@de
 landing-hero.headline@de
-knowledge-intro.title@de
-
-# ✅ ALSO CORRECT - Without hyphens if simpler
-pageheader.logo.title@de
 ```
-**Rationale**: Compatibility with file system naming conventions.
+**Rationale**: Unified dot-notation everywhere. Directory names use hyphens (filesystem), but CSV keys use only dots (logical structure).
 
 #### 8. Environment Suffixes: After Complete Key
 ```csv
@@ -3503,6 +3505,10 @@ monitor|tcp|127.0.0.1:9090|||reedcms|reedcms
 - ✅ **D**: CSS bundling strategy - session hash (MD5) with on-demand generation
 - ✅ **E**: Client context population - screen_info cookie with ClientInfo structure (REED-06-05)
 - ✅ **F**: Icon rendering - svg-icon molecule wrapper (Atomic Design compliant)
+  - **Pattern**: `{% include "components/molecules/svg-icon/svg-icon.jinja" with {icon: "name", size: "24", class: "..."} %}`
+  - **Available Icons**: 500+ SVG icons in `templates/components/atoms/icons/`
+  - **Parameters**: icon (name), size (pixels), class (CSS class), alt (accessibility label)
+  - **Deprecated**: ❌ `icon()` function calls are no longer used
 - ✅ **G**: Navigation management - Drupal-style taxonomy with Matrix Type 4 (REED-03-03)
 - ✅ **H**: Text migration - direct 1:1 copy with full namespace keys (REED-04-07)
 

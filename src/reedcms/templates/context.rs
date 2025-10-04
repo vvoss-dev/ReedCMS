@@ -6,6 +6,7 @@
 //! Prepares data for template rendering with ReedBase integration.
 
 use crate::reedcms::reedstream::{ReedError, ReedRequest, ReedResult};
+use crate::reedcms::server::client_detection::ClientInfo;
 use std::collections::HashMap;
 
 /// Builds template context for rendering.
@@ -13,7 +14,7 @@ use std::collections::HashMap;
 /// ## Arguments
 /// - layout: Layout name (e.g., "knowledge")
 /// - language: Language code (e.g., "en", "de")
-/// - interaction_mode: Interaction mode (mouse/touch/reader)
+/// - client_info: Client detection information (breakpoint, interaction_mode, etc.)
 ///
 /// ## Context Variables
 /// - layout: Current layout name
@@ -34,7 +35,7 @@ use std::collections::HashMap;
 pub fn build_context(
     layout: &str,
     language: &str,
-    interaction_mode: &str,
+    client_info: &ClientInfo,
 ) -> ReedResult<HashMap<String, serde_json::Value>> {
     let mut ctx = HashMap::new();
 
@@ -43,8 +44,32 @@ pub fn build_context(
     ctx.insert("lang".to_string(), serde_json::json!(language));
     ctx.insert(
         "interaction_mode".to_string(),
-        serde_json::json!(interaction_mode),
+        serde_json::json!(&client_info.interaction_mode),
     );
+
+    // Client object for template compatibility
+    let mut client = HashMap::new();
+    client.insert("lang", serde_json::json!(language));
+    client.insert(
+        "interaction_mode",
+        serde_json::json!(&client_info.interaction_mode),
+    );
+    client.insert("breakpoint", serde_json::json!(&client_info.breakpoint));
+    client.insert("device_type", serde_json::json!(&client_info.device_type));
+    ctx.insert("client".to_string(), serde_json::json!(client));
+
+    // Layout name
+    ctx.insert("layout_name".to_string(), serde_json::json!(layout));
+
+    // Config object
+    let mut config = HashMap::new();
+    config.insert("session_hash", serde_json::json!("dev42")); // TODO: Generate real hash
+    ctx.insert("config".to_string(), serde_json::json!(config));
+
+    // Optional page metadata (templates use these with fallbacks)
+    ctx.insert("page_title".to_string(), serde_json::Value::Null);
+    ctx.insert("page_description".to_string(), serde_json::Value::Null);
+    ctx.insert("current_pagekey".to_string(), serde_json::json!(layout));
 
     // Add globals
     add_globals(&mut ctx)?;

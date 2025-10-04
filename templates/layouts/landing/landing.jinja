@@ -3,24 +3,24 @@
 
 {% set pagekey = "landing" %}
 
-{% extends layout("page") %}
+{% extends "layouts/page/page.jinja" %}
 
 {% block content %}
     {# Hero Section - First impression #}
-    {% include organism("landing-hero") %}
+    {% include "components/organisms/landing-hero/landing-hero." ~ interaction_mode ~ ".jinja" %}
 
     {# Problems Section - Problem identification #}
-    {% include organism("landing-problems") %}
+    {% include "components/organisms/landing-problems/landing-problems." ~ interaction_mode ~ ".jinja" %}
 
     {# Metrics Section - Proven results #}
-    {% include organism("landing-metrics") %}
+    {% include "components/organisms/landing-metrics/landing-metrics." ~ interaction_mode ~ ".jinja" %}
 
     {# Compare Section - Anti-pitch / honest assessment #}
-    {% include organism("landing-compare") %}
+    {% include "components/organisms/landing-compare/landing-compare." ~ interaction_mode ~ ".jinja" %}
 
     {# Philosophy Section - Approach explanation #}
-    {% include organism("landing-philosophy") %}
+    {% include "components/organisms/landing-philosophy/landing-philosophy." ~ interaction_mode ~ ".jinja" %}
 
     {# Contact Section - Call to action #}
-    {% include organism("landing-contact") %}
+    {% include "components/organisms/landing-contact/landing-contact." ~ interaction_mode ~ ".jinja" %}
 {% endblock %}

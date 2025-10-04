@@ -9,7 +9,7 @@
         </div>
 
         <div class="contact-info">
-            {{ icon("mail", 32, 2, "") | safe }}
+            {% include "components/molecules/svg-icon/svg-icon.jinja" with {icon: "mail", size: "32", class: "contact-icon"} %}
             <span>{{ 'landing.contact.email' | text('auto') }}</span>
         </div>
 

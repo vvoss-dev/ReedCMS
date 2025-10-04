@@ -70,7 +70,7 @@ ReedCMS/
 - **`.reed/`**: Central CSV database (pipe `|` delimited), single source of truth
 - **`templates/`**: Atomic Design structure with variants (mouse/touch/reader)
 - **`src/reedcms/`**: Rust implementation following KISS principle
-- **Key format**: `lowercase.with.dots@lang` (e.g., `page-header.logo.title@de`)
+- **Key format**: `lowercase.with.dots@lang` (e.g., `page.header.logo.title@de`)
 - **Dispatchers**: Intelligent coordinators in `reed/` with persistence rights
 - **Services**: Pure implementation in domain folders, no persistence
 
@@ -490,11 +490,14 @@ reed build:release
 - **Automatic backups before modifications**
 
 ### Key Nomenclature (MANDATORY)
-- **Dot-notation**: `lowercase.with.dots` (NOT `UPPERCASE_WITH_UNDERSCORES`)
+- **Dot-notation EVERYWHERE**: `lowercase.with.dots` (NO hyphens in keys!)
+- **Directory names**: Use hyphens (e.g., `page-header/`, `landing-hero/`)
+- **CSV keys**: Use dots only (e.g., `page.header.logo.title`, `landing.hero.headline`)
 - **Sub-layouts**: Flat structure (`agility.title`, NOT `knowledge.agility.title`)
-- **Global components**: With namespace (`page-header.logo.title`)
+- **Component namespacing**: `page.header.logo.title` (NOT `page-header.logo.title`)
 - **Nesting depth**: Optimal 4, maximum 8 levels
 - **Language suffix**: Lowercase after key (`@de`, `@en`, NOT `@DE`, `@EN`)
+- **Example mapping**: Directory `page-header/` → Keys `page.header.*`
 
 ### CSV File Separation
 - **`.reed/text.csv`**: All content text

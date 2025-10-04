@@ -33,6 +33,7 @@ D017,Taxonomy-based navigation,"Drupal-style flexibility, multiple menu location
 D018,Session hash asset bundling,"MD5-based cache-busting, on-demand generation",2025-01-30,Active
 D019,Client detection via cookie,"Server-side responsive rendering, no JS needed",2025-01-30,Active
 D020,SVG icon molecule wrapper,"Atomic Design compliance, accessibility support",2025-01-30,Active
+D044,Dot-notation for all CSV keys,"Lowercase dot-separated keys (e.g., landing.hero.title), no hyphens or underscores",2025-02-04,Active
 D021,Full namespace text keys,"No auto-prefixing, explicit key format validation",2025-01-30,Active
 D022,RESTful API architecture,"Resource-based endpoints, standard HTTP methods, JSON responses",2025-02-01,Active
 D023,Direct CSV fallback for API,"Immediate functionality without ReedBase cache dependency",2025-02-01,Active
@@ -684,6 +685,76 @@ pub struct ClientInfo {
 **Template Files Analyzed**: 31 `.text.csv` files, 14 `.jinja` files  
 **New Decisions**: 5 (D017-D021)  
 **Result**: Template integration ready for implementation
+
+---
+
+## Template Component Usage Patterns (2025-02-04)
+
+This section documents the standardised patterns for using template components across all variants.
+
+### Icon Usage Pattern
+
+**Standard Pattern**: Always use the svg-icon molecule wrapper to render icons.
+
+**Syntax**:
+```jinja
+{% include "components/molecules/svg-icon/svg-icon.jinja" with {
+    icon: "menu",           # Icon name from atoms/icons/
+    size: "24",             # Size in pixels
+    class: "menu-icon"      # CSS class (optional)
+} %}
+```
+
+**Available Parameters**:
+- `icon` (required): Icon name matching filename in `templates/components/atoms/icons/` (without `.jinja` extension)
+- `size` (required): Icon size in pixels (e.g., "16", "24", "32")
+- `class` (optional): CSS class for styling
+- `alt` (optional): Accessibility label for screen readers
+
+**Available Icons**: 500+ SVG icons in `templates/components/atoms/icons/` directory
+
+**Examples from Templates**:
+```jinja
+{# Navigation menu icon (page-header.touch.jinja) #}
+{% include "components/molecules/svg-icon/svg-icon.jinja" with {
+    icon: "menu",
+    size: "24",
+    class: "menu-icon"
+} %}
+
+{# Contact mail icon (landing-contact.mouse.jinja) #}
+{% include "components/molecules/svg-icon/svg-icon.jinja" with {
+    icon: "mail",
+    size: "32",
+    class: "contact-icon"
+} %}
+
+{# Navigation chevron (page-header.touch.jinja) #}
+{% include "components/molecules/svg-icon/svg-icon.jinja" with {
+    icon: "chevrons-right",
+    size: "16",
+    class: "nav-chevron"
+} %}
+```
+
+**Deprecated Pattern**: ❌ DO NOT use `icon()` function calls
+```jinja
+{# WRONG - deprecated function call #}
+{{ icon("menu", 24, 2, "menu-icon") | safe }}
+```
+
+**Benefits**:
+- Template-based rendering (no Rust function dependency)
+- Atomic Design compliance (Molecule wrapping Atom)
+- Variant-specific CSS support (`svg-icon.mouse.css` vs `svg-icon.touch.css`)
+- Centralised accessibility attributes
+- Error handling with fallback icon
+- Consistent SVG wrapper (`<svg>` element with viewBox, stroke attributes)
+
+**Files**: 
+- Molecule: `templates/components/molecules/svg-icon/svg-icon.jinja`
+- Atoms: `templates/components/atoms/icons/*.jinja` (500+ icons)
+- Usage: `page-header`, `landing-contact`, and other organisms
 
 ---
 

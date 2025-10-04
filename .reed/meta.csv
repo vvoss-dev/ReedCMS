@@ -1,8 +1,12 @@
 key|value|comment
-actix-web.description@de|Actix-Web ist ein extrem schnelles Web-Framework für Rust. Actor-Modell, Tokio-Runtime, weltklasse Performance. Diese Webseite läuft darauf.|SEO meta description
-actix-web.description@en|Actix-Web is an extremely fast web framework for Rust. Actor model, Tokio runtime, world-class performance. This website runs on it.|SEO meta description
-actix-web.title@de|Actix-Web: Das schnellste Rust Web-Framework - Vivian Voss|SEO page title
-actix-web.title@en|Actix-Web: The Fastest Rust Web Framework - Vivian Voss|SEO page title
+page.meta.description@de|Praktische Lösungen für komplexe Software-Probleme. Rust, FreeBSD, Performance-Optimierung|Generic fallback page description
+page.meta.description@en|Practical solutions for complex software problems. Rust, FreeBSD, performance optimization|Generic fallback page description
+page.meta.title@de|vvoss.dev - Effektive Software-Architektur|Generic fallback page title
+page.meta.title@en|vvoss.dev - Effective Software Architecture|Generic fallback page title
+actix.web.description@de|Actix-Web ist ein extrem schnelles Web-Framework für Rust. Actor-Modell, Tokio-Runtime, weltklasse Performance. Diese Webseite läuft darauf.|SEO meta description
+actix.web.description@en|Actix-Web is an extremely fast web framework for Rust. Actor model, Tokio runtime, world-class performance. This website runs on it.|SEO meta description
+actix.web.title@de|Actix-Web: Das schnellste Rust Web-Framework - Vivian Voss|SEO page title
+actix.web.title@en|Actix-Web: The Fastest Rust Web Framework - Vivian Voss|SEO page title
 aeo.description@de|AEO optimiert für Featured Snippets und direkte Antworten. FAQ-Schema, Position Zero und strukturierte Daten für maximale Sichtbarkeit.|SEO meta description
 aeo.description@en|AEO optimizes for featured snippets and direct answers. FAQ schema, position zero and structured data for maximum visibility.|SEO meta description
 aeo.title@de|AEO (Answer Engine Optimization): Featured Snippets erobern - Vivian Voss|SEO page title
@@ -11,10 +15,10 @@ agility.description@de|Kritische Analyse der Agile-Bewegung: Wie aus technischer
 agility.description@en|Critical analysis of the Agile movement: How technical excellence became meeting overhead. Scrum bureaucracy vs. real developer agility.|SEO meta description
 agility.title@de|Agilität: Prozess-Theater statt echter Beweglichkeit - Vivian Voss|SEO page title
 agility.title@en|Agility: Process Theater Instead of Real Agility - Vivian Voss|SEO page title
-ai-visibility.description@de|AI Visibility Strategien für KI-gestützte Plattformen. AEO und GEO für ChatGPT, Claude, Gemini. Zukunftssichere digitale Präsenz aufbauen.|SEO meta description
-ai-visibility.description@en|AI Visibility strategies for AI-powered platforms. AEO and GEO for ChatGPT, Claude, Gemini. Building future-proof digital presence.|SEO meta description
-ai-visibility.title@de|AI Visibility: Die Zukunft der digitalen Sichtbarkeit - Vivian Voss|SEO page title
-ai-visibility.title@en|AI Visibility: The Future of Digital Visibility - Vivian Voss|SEO page title
+ai.visibility.description@de|AI Visibility Strategien für KI-gestützte Plattformen. AEO und GEO für ChatGPT, Claude, Gemini. Zukunftssichere digitale Präsenz aufbauen.|SEO meta description
+ai.visibility.description@en|AI Visibility strategies for AI-powered platforms. AEO and GEO for ChatGPT, Claude, Gemini. Building future-proof digital presence.|SEO meta description
+ai.visibility.title@de|AI Visibility: Die Zukunft der digitalen Sichtbarkeit - Vivian Voss|SEO page title
+ai.visibility.title@en|AI Visibility: The Future of Digital Visibility - Vivian Voss|SEO page title
 apache.description@de|Apache HTTP Server Erklärung: Der bewährte Open-Source-Webserver seit 1995. Modulare Architektur, .htaccess-Konfiguration, battle-tested.|SEO meta description
 apache.description@en|Apache HTTP Server explained: The proven open source web server since 1995. Modular architecture, .htaccess configuration, battle-tested.|SEO meta description
 apache.license.description@de|Apache License 2.0 Erklärung: Permissive Open-Source-Lizenz für kommerzielle Nutzung. Die beliebteste Wahl für moderne Software-Projekte.|SEO meta description
