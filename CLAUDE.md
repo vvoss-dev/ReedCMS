@@ -150,6 +150,21 @@ ReedCMS/
 - **Ask before introducing new patterns** or paradigms not present in the codebase
 - **Respect verbose/explicit code** - it's often intentional, not a mistake to "fix"
 
+**⚠️ ABSOLUTELY FORBIDDEN WITHOUT EXPLICIT PERMISSION:**
+- **NEVER delete code, functions, or visual elements** (icons, images, styling, HTML elements)
+- **NEVER remove template content** (text, structure, components)
+- **NEVER simplify existing implementations** to "fix" perceived complexity
+- **NEVER change working code** when encountering errors - ASK first
+- **NEVER replace existing patterns** with "better" solutions from your training
+
+**If something doesn't work:**
+1. ✅ STOP immediately
+2. ✅ ASK the user what to do
+3. ✅ WAIT for instructions
+4. ❌ DO NOT invent your own solution
+5. ❌ DO NOT delete "problematic" code
+6. ❌ DO NOT simplify to "make it work"
+
 ### 3. Instruction Adherence
 - **ONLY change what was requested** - no bonus "improvements"
 - **Confirm scope** before starting batch operations
