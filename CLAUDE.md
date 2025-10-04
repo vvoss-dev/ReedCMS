@@ -76,6 +76,51 @@ ReedCMS/
 
 ## Critical Safety Rules
 
+### 0. Code Reuse - NEVER Duplicate Existing Functions
+**⚠️ MANDATORY: ALWAYS CHECK FOR EXISTING FUNCTIONS BEFORE WRITING NEW CODE**
+
+**Function Registry**: See `_workbench/Tickets/project_functions.csv` for complete list of all 984+ functions in the system.
+
+**Rules:**
+1. **BEFORE writing ANY function**, search the function registry:
+   ```bash
+   grep "function_name" _workbench/Tickets/project_functions.csv
+   ```
+
+2. **IF a function exists that does what you need**:
+   - ✅ **USE the existing function** - import and call it
+   - ❌ **DO NOT write a duplicate** - even with slight modifications
+   - ❌ **DO NOT copy-paste and modify** - that creates unmaintainable code
+
+3. **IF existing function is ALMOST what you need**:
+   - ✅ **EXTEND the existing function** with additional parameters/logic
+   - ✅ **ASK the user** if you should refactor the existing function
+   - ❌ **DO NOT create a variant** - maintain single source of truth
+
+4. **Common existing functions you MUST use**:
+   - **CSV Operations**: `crate::reedcms::csv::{read_csv, write_csv}` - NEVER parse CSV manually
+   - **Backup**: `crate::reedcms::backup::create_backup()` - NEVER write own backup logic
+   - **Error Handling**: Use `ReedError` variants from `reedstream.rs` - NEVER create custom error types
+   - **ReedBase Access**: Use `reedbase::get::{text, route, meta, server}` - NEVER read CSV directly for data access
+
+5. **Examples of VIOLATIONS**:
+   - ❌ Writing custom CSV parsing when `csv::read_csv()` exists
+   - ❌ Duplicating `create_backup()` logic in multiple files
+   - ❌ Creating `get_text_custom()` when `reedbase::get::text()` exists
+   - ❌ Manual file operations when `csv::write_csv()` does atomic writes
+
+6. **Check these locations for common needs**:
+   - **CSV handling**: `src/reedcms/csv/` (read, write, parse, create)
+   - **Backup/Restore**: `src/reedcms/backup/` (create, list, restore, cleanup)
+   - **Data access**: `src/reedcms/reedbase/` (get, set, init)
+   - **Error types**: `src/reedcms/reedstream.rs` (ReedError, ReedResult)
+   - **CLI commands**: `src/reedcms/cli/` (all command implementations)
+   - **API handlers**: `src/reedcms/api/` (GET, SET, batch, list)
+
+**Penalty for violation**: Code review rejection + mandatory refactoring to use existing functions.
+
+**WHY this rule exists**: The API SET handlers incident where 200+ lines of duplicate CSV code was written instead of using the existing 2-line `csv::read_csv()` and `csv::write_csv()` functions. This wasted tokens, created maintenance burden, and violated DRY principle.
+
 ### 1. File Operation Safety
 **⚠️ CRITICAL: ALWAYS ASK USER BEFORE DESTRUCTIVE OPERATIONS**
 

@@ -1,0 +1,985 @@
+file_path|line_number|function_name|signature|description|inputs|return_type|status
+src/main.rs|8|main|fn main()|No description|None|()|active
+src/reedcms/api/batch_handlers.rs|128|batch_get|pub async fn batch_get( _req: HttpRequest, body: web::Json<BatchGetRequest>, ) -> HttpResponse|POST /api/v1/batch/get - Retrieve multiple keys in one request.|_req: HttpRequest; body: web::Json<BatchGetRequest>|HttpResponse|active
+src/reedcms/api/batch_handlers.rs|217|batch_set|pub async fn batch_set( _req: HttpRequest, body: web::Json<BatchSetRequest>, ) -> HttpResponse|POST /api/v1/batch/set - Set multiple keys in one request.|_req: HttpRequest; body: web::Json<BatchSetRequest>|HttpResponse|active
+src/reedcms/api/batch_handlers.rs|271|fetch_single_key|async fn fetch_single_key( key: &str, cache_type: &str, language: &Option<String>, environment: &Option<String>, ) -> ApiBatchResult<String>|Internal helper: Fetch a single key from ReedBase.|key: &str; cache_type: &str; language: &Option<String>; environment: &Option<String>|ApiBatchResult<String>|active
+src/reedcms/api/batch_handlers.rs|331|set_single_key|async fn set_single_key( key: &str, value: &str, description: &Option<String>, cache_type: &str, _language: &Option<String>, _environment: &Option<String>, ) -> ApiBatchResult<String>|Internal helper: Set a single key in ReedBase.|key: &str; value: &str; description: &Option<String>; cache_type: &str; _language: &Option<String>; _environment: &Option<String>|ApiBatchResult<String>|active
+src/reedcms/api/get_handlers.rs|78|get_text|pub async fn get_text( _req: HttpRequest, query: web::Query<GetQuery>, ) -> HttpResponse|GET /api/v1/text/get - Retrieve text data from ReedBase.|_req: HttpRequest; query: web::Query<GetQuery>|HttpResponse|active
+src/reedcms/api/get_handlers.rs|118|get_route|pub async fn get_route( _req: HttpRequest, query: web::Query<GetQuery>, ) -> HttpResponse|GET /api/v1/route/get - Retrieve route data from ReedBase.|_req: HttpRequest; query: web::Query<GetQuery>|HttpResponse|active
+src/reedcms/api/get_handlers.rs|158|get_meta|pub async fn get_meta( _req: HttpRequest, query: web::Query<GetQuery>, ) -> HttpResponse|GET /api/v1/meta/get - Retrieve metadata from ReedBase.|_req: HttpRequest; query: web::Query<GetQuery>|HttpResponse|active
+src/reedcms/api/get_handlers.rs|197|get_config|pub async fn get_config( _req: HttpRequest, query: web::Query<GetQuery>, ) -> HttpResponse|GET /api/v1/config/get - Retrieve configuration from ReedBase.|_req: HttpRequest; query: web::Query<GetQuery>|HttpResponse|active
+src/reedcms/api/get_handlers.rs|222|fetch_from_reedbase|async fn fetch_from_reedbase( key: &str, language: &Option<String>, environment: &Option<String>, cache_type: &str, ) -> Result<ApiResponse<String>, ApiError>|Internal helper: Fetch data from ReedBase cache.|key: &str; language: &Option<String>; environment: &Option<String>; cache_type: &str|Result<ApiResponse<String>, ApiError>|active
+src/reedcms/api/get_handlers.rs|288|fetch_config_from_reedbase|async fn fetch_config_from_reedbase( key: &str, language: &Option<String>, environment: &Option<String>, ) -> Result<ApiConfigResponse, ApiError>|Internal helper: Fetch configuration data from ReedBase.|key: &str; language: &Option<String>; environment: &Option<String>|Result<ApiConfigResponse, ApiError>|active
+src/reedcms/api/get_handlers.rs|340|extract_suffixes|fn extract_suffixes(key: &str) -> (String, String)|Extracts language and environment suffixes from key.|key: &str|(String, String)|active
+src/reedcms/api/list_handlers.rs|115|list_text|pub async fn list_text( _req: HttpRequest, query: web::Query<ListQuery>, ) -> HttpResponse|GET /api/v1/list/text - List all text keys.|_req: HttpRequest; query: web::Query<ListQuery>|HttpResponse|active
+src/reedcms/api/list_handlers.rs|160|list_routes|pub async fn list_routes( _req: HttpRequest, query: web::Query<ListQuery>, ) -> HttpResponse|GET /api/v1/list/routes - List all route keys.|_req: HttpRequest; query: web::Query<ListQuery>|HttpResponse|active
+src/reedcms/api/list_handlers.rs|203|list_layouts|pub async fn list_layouts( _req: HttpRequest, query: web::Query<ListQuery>, ) -> HttpResponse|GET /api/v1/list/layouts - List all available layouts.|_req: HttpRequest; query: web::Query<ListQuery>|HttpResponse|active
+src/reedcms/api/list_handlers.rs|227|fetch_key_list|async fn fetch_key_list( cache_type: &str, query: &ListQuery, ) -> Result<ApiResponse<ListResponse>, ApiError>|Internal helper: Fetch list of keys from ReedBase cache.|cache_type: &str; query: &ListQuery|Result<ApiResponse<ListResponse>, ApiError>|active
+src/reedcms/api/list_handlers.rs|294|read_keys_from_csv|async fn read_keys_from_csv(csv_path: &str) -> Result<Vec<String>, String>|Reads all keys from a CSV file.|csv_path: &str|Result<Vec<String>, String>|active
+src/reedcms/api/list_handlers.rs|317|apply_filters|fn apply_filters(keys: &[String], query: &ListQuery) -> Vec<String>|Applies filters to key list.|keys: &[String]; query: &ListQuery|Vec<String>|active
+src/reedcms/api/list_handlers.rs|358|fetch_layout_list|async fn fetch_layout_list( query: &ListQuery, ) -> Result<ApiResponse<ListResponse>, ApiError>|Internal helper: Fetch list of available layouts.|query: &ListQuery|Result<ApiResponse<ListResponse>, ApiError>|active
+src/reedcms/api/responses.rs|69|new|pub fn new(data: T) -> Self|Creates a new successful API response.|data: T|Self|active
+src/reedcms/api/responses.rs|99|with_metadata|pub fn with_metadata(data: T, key: String, language: String, environment: String) -> Self|Creates a new successful API response with full metadata.|data: T; key: String; language: String; environment: String|Self|active
+src/reedcms/api/responses.rs|139|new|pub fn new(message: String) -> Self|Creates a new success response.|message: String|Self|active
+src/reedcms/api/responses.rs|163|with_key|pub fn with_key(message: String, key: String) -> Self|Creates a new success response with key metadata.|message: String; key: String|Self|active
+src/reedcms/api/responses.rs|205|new|pub fn new(error: String, message: String) -> Self|Creates a new error response.|error: String; message: String|Self|active
+src/reedcms/api/responses.rs|232|with_key|pub fn with_key(error: String, message: String, key: String) -> Self|Creates a new error response with key metadata.|error: String; message: String; key: String|Self|active
+src/reedcms/api/responses.rs|277|new|pub fn new(key: String, value: String) -> Self|Creates a new configuration response.|key: String; value: String|Self|active
+src/reedcms/api/responses.rs|304|with_description|pub fn with_description(key: String, value: String, description: String) -> Self|Creates a new configuration response with description.|key: String; value: String; description: String|Self|active
+src/reedcms/api/responses.rs|367|new|pub fn new(results: Vec<ApiBatchResult<T>>) -> Self|Creates a new batch response from individual results.|results: Vec<ApiBatchResult<T>>|Self|active
+src/reedcms/api/responses.rs|392|success|pub fn success(key: String, data: T) -> Self|Creates a successful batch result.|key: String; data: T|Self|active
+src/reedcms/api/responses.rs|409|failure|pub fn failure(key: String, error: String) -> Self|Creates a failed batch result.|key: String; error: String|Self|active
+src/reedcms/api/routes.rs|71|configure_api_routes|pub fn configure_api_routes(cfg: &mut web::ServiceConfig)|Configures all API routes under /api/v1 scope.|cfg: &mut web::ServiceConfig|()|active
+src/reedcms/api/routes.rs|121|test_api_routes_configured|async fn test_api_routes_configured()|No description|None|()|active
+src/reedcms/api/routes.rs|139|test_invalid_route_returns_404|async fn test_invalid_route_returns_404()|No description|None|()|active
+src/reedcms/api/set_handlers.rs|98|set_text|pub async fn set_text( _req: HttpRequest, body: web::Json<SetRequest>, ) -> HttpResponse|POST /api/v1/text/set - Set text data in ReedBase.|_req: HttpRequest; body: web::Json<SetRequest>|HttpResponse|active
+src/reedcms/api/set_handlers.rs|148|set_route|pub async fn set_route( _req: HttpRequest, body: web::Json<SetRequest>, ) -> HttpResponse|POST /api/v1/route/set - Set route data in ReedBase.|_req: HttpRequest; body: web::Json<SetRequest>|HttpResponse|active
+src/reedcms/api/set_handlers.rs|198|set_meta|pub async fn set_meta( _req: HttpRequest, body: web::Json<SetRequest>, ) -> HttpResponse|POST /api/v1/meta/set - Set metadata in ReedBase.|_req: HttpRequest; body: web::Json<SetRequest>|HttpResponse|active
+src/reedcms/api/set_handlers.rs|249|set_config|pub async fn set_config( _req: HttpRequest, body: web::Json<SetRequest>, ) -> HttpResponse|POST /api/v1/config/set - Set configuration in ReedBase.|_req: HttpRequest; body: web::Json<SetRequest>|HttpResponse|active
+src/reedcms/api/set_handlers.rs|273|persist_to_reedbase|async fn persist_to_reedbase( body: &SetRequest, cache_type: &str, ) -> Result<ApiSuccess, ApiError>|Internal helper: Persist data to ReedBase cache and CSV.|body: &SetRequest; cache_type: &str|Result<ApiSuccess, ApiError>|active
+src/reedcms/api/set_handlers.rs|298|set_via_csv_direct|async fn set_via_csv_direct( body: &SetRequest, cache_type: &str, ) -> Result<ApiSuccess, ApiError>|Direct CSV modification fallback (when cache not available).|body: &SetRequest; cache_type: &str|Result<ApiSuccess, ApiError>|active
+src/reedcms/api/set_handlers.rs|374|capitalize|fn capitalize(s: &str) -> String|Capitalises first letter of string.|s: &str|String|active
+src/reedcms/auth/credentials.rs|67|extract_auth_credentials|pub fn extract_auth_credentials(req: &HttpRequest) -> ReedResult<AuthCredentials>|Extracts authentication credentials from request.|req: &HttpRequest|ReedResult<AuthCredentials>|active
+src/reedcms/auth/credentials.rs|122|parse_basic_auth|fn parse_basic_auth(auth_str: &str) -> ReedResult<AuthCredentials>|Parses HTTP Basic Auth credentials.|auth_str: &str|ReedResult<AuthCredentials>|active
+src/reedcms/auth/credentials.rs|181|parse_bearer_auth|fn parse_bearer_auth(auth_str: &str) -> ReedResult<AuthCredentials>|Parses Bearer token authentication.|auth_str: &str|ReedResult<AuthCredentials>|active
+src/reedcms/auth/errors.rs|49|create_unauthorised_error|pub fn create_unauthorised_error() -> Error|Creates 401 Unauthorised error response.|None|Error|active
+src/reedcms/auth/errors.rs|85|create_forbidden_error|pub fn create_forbidden_error() -> Error|Creates 403 Forbidden error response.|None|Error|active
+src/reedcms/auth/middleware.rs|71|new|pub fn new(required_role: Option<String>, required_permission: Option<String>) -> Self|Creates new authentication middleware.|required_role: Option<String>; required_permission: Option<String>|Self|active
+src/reedcms/auth/middleware.rs|79|public|pub fn public() -> Self|Creates middleware requiring no authentication (public access).|None|Self|active
+src/reedcms/auth/middleware.rs|87|authenticated|pub fn authenticated() -> Self|Creates middleware requiring authentication only (any authenticated user).|None|Self|active
+src/reedcms/auth/middleware.rs|95|admin_only|pub fn admin_only() -> Self|Creates middleware requiring admin role.|None|Self|active
+src/reedcms/auth/middleware.rs|115|new_transform|fn new_transform(&self, service: S) -> Self::Future|No description|service: S|Self::Future|active
+src/reedcms/auth/middleware.rs|143|call|fn call(&self, req: ServiceRequest) -> Self::Future|No description|req: ServiceRequest|Self::Future|active
+src/reedcms/auth/rate_limit.rs|42|get_rate_limit_store|fn get_rate_limit_store() -> &'static RwLock<HashMap<String, LoginAttempt>>|Gets rate limit store (singleton).|None|&'static RwLock<HashMap<String, LoginAttempt>>|active
+src/reedcms/auth/rate_limit.rs|69|is_rate_limited|pub fn is_rate_limited(username: &str) -> bool|Checks if user is rate limited.|username: &str|bool|active
+src/reedcms/auth/rate_limit.rs|103|record_failed_login|pub fn record_failed_login(username: &str)|Records failed login attempt.|username: &str|()|active
+src/reedcms/auth/rate_limit.rs|138|clear_failed_logins|pub fn clear_failed_logins(username: &str)|Clears failed login counter for user.|username: &str|()|active
+src/reedcms/auth/rate_limit.rs|162|calculate_lockout_time|fn calculate_lockout_time(attempts: u32) -> Duration|Calculates lockout duration based on attempt count.|attempts: u32|Duration|active
+src/reedcms/auth/site_protection.rs|65|new|pub fn new() -> Self|Creates new site protection middleware.|None|Self|active
+src/reedcms/auth/site_protection.rs|71|default|fn default() -> Self|No description|None|Self|active
+src/reedcms/auth/site_protection.rs|88|new_transform|fn new_transform(&self, service: S) -> Self::Future|No description|service: S|Self::Future|active
+src/reedcms/auth/site_protection.rs|112|call|fn call(&self, req: ServiceRequest) -> Self::Future|No description|req: ServiceRequest|Self::Future|active
+src/reedcms/auth/site_protection.rs|168|is_site_protection_enabled|fn is_site_protection_enabled() -> bool|Checks if site protection is enabled.|None|bool|active
+src/reedcms/auth/site_protection.rs|205|verify_site_credentials|async fn verify_site_credentials( credentials: &crate::reedcms::auth::credentials::AuthCredentials, ) -> Result<bool, ReedError>|Verifies site credentials against server.auth.* configuration.|credentials: &crate::reedcms::auth::credentials::AuthCredentials|Result<bool, ReedError>|active
+src/reedcms/auth/verification.rs|36|has_role|pub fn has_role(&self, role: &str) -> bool|Checks if user has specific role.|role: &str|bool|active
+src/reedcms/auth/verification.rs|56|has_permission|pub fn has_permission(&self, permission: &str) -> bool|Checks if user has specific permission.|permission: &str|bool|active
+src/reedcms/auth/verification.rs|100|verify_credentials|pub async fn verify_credentials(credentials: &AuthCredentials) -> ReedResult<AuthenticatedUser>|Verifies authentication credentials.|credentials: &AuthCredentials|ReedResult<AuthenticatedUser>|active
+src/reedcms/auth/verification.rs|143|verify_basic_credentials|async fn verify_basic_credentials(username: &str, password: &str) -> ReedResult<AuthenticatedUser>|Verifies HTTP Basic Auth credentials.|username: &str; password: &str|ReedResult<AuthenticatedUser>|active
+src/reedcms/auth/verification.rs|252|role_has_permission|fn role_has_permission(role: &str, _permission: &str) -> bool|Checks if role has specific permission.|role: &str; _permission: &str|bool|active
+src/reedcms/backup/cleanup.rs|42|cleanup_old_backups|pub fn cleanup_old_backups<P: AsRef<Path>>(source_path: P) -> ReedResult<usize>|Cleans up old backups, keeping only the most recent 32.|source_path: P|ReedResult<usize>|active
+src/reedcms/backup/cleanup_test.rs|10|create_test_file|fn create_test_file(content: &str) -> PathBuf|No description|content: &str|PathBuf|cfg_test
+src/reedcms/backup/cleanup_test.rs|19|cleanup_test_dir|fn cleanup_test_dir(path: &PathBuf)|No description|path: &PathBuf|()|cfg_test
+src/reedcms/backup/cleanup_test.rs|26|test_cleanup_old_backups_none_to_delete|fn test_cleanup_old_backups_none_to_delete()|No description|None|()|cfg_test
+src/reedcms/backup/cleanup_test.rs|42|test_cleanup_old_backups_empty_directory|fn test_cleanup_old_backups_empty_directory()|No description|None|()|cfg_test
+src/reedcms/backup/cleanup_test.rs|52|test_cleanup_old_backups_basic_functionality|fn test_cleanup_old_backups_basic_functionality()|No description|None|()|cfg_test
+src/reedcms/backup/cleanup_test.rs|77|test_cleanup_old_backups_keeps_newest|fn test_cleanup_old_backups_keeps_newest()|No description|None|()|cfg_test
+src/reedcms/backup/cleanup_test.rs|101|test_cleanup_old_backups_performance|fn test_cleanup_old_backups_performance()|No description|None|()|cfg_test
+src/reedcms/backup/cleanup_test.rs|128|test_cleanup_old_backups_exactly_32|fn test_cleanup_old_backups_exactly_32()|No description|None|()|cfg_test
+src/reedcms/backup/create.rs|44|create_backup|pub fn create_backup<P: AsRef<Path>>(source_path: P) -> ReedResult<PathBuf>|Creates an XZ-compressed backup of a CSV file.|source_path: P|ReedResult<PathBuf>|active
+src/reedcms/backup/create_test.rs|10|create_test_file|fn create_test_file(content: &str) -> PathBuf|No description|content: &str|PathBuf|cfg_test
+src/reedcms/backup/create_test.rs|19|cleanup_test_dir|fn cleanup_test_dir(path: &PathBuf)|No description|path: &PathBuf|()|cfg_test
+src/reedcms/backup/create_test.rs|26|test_create_backup_basic|fn test_create_backup_basic()|No description|None|()|cfg_test
+src/reedcms/backup/create_test.rs|41|test_create_backup_creates_backup_dir|fn test_create_backup_creates_backup_dir()|No description|None|()|cfg_test
+src/reedcms/backup/create_test.rs|56|test_create_backup_compression_ratio|fn test_create_backup_compression_ratio()|No description|None|()|cfg_test
+src/reedcms/backup/create_test.rs|81|test_create_backup_timestamp_format|fn test_create_backup_timestamp_format()|No description|None|()|cfg_test
+src/reedcms/backup/create_test.rs|103|test_create_backup_multiple_backups|fn test_create_backup_multiple_backups()|No description|None|()|cfg_test
+src/reedcms/backup/create_test.rs|123|test_create_backup_empty_file|fn test_create_backup_empty_file()|No description|None|()|cfg_test
+src/reedcms/backup/create_test.rs|136|test_create_backup_large_file|fn test_create_backup_large_file()|No description|None|()|cfg_test
+src/reedcms/backup/create_test.rs|162|test_create_backup_file_not_found|fn test_create_backup_file_not_found()|No description|None|()|cfg_test
+src/reedcms/backup/create_test.rs|168|test_create_backup_no_temp_file_left|fn test_create_backup_no_temp_file_left()|No description|None|()|cfg_test
+src/reedcms/backup/list.rs|57|list_backups|pub fn list_backups<P: AsRef<Path>>(source_path: P) -> ReedResult<Vec<BackupInfo>>|Lists all backups for a given CSV file.|source_path: P|ReedResult<Vec<BackupInfo>>|active
+src/reedcms/backup/list_test.rs|10|create_test_file|fn create_test_file(content: &str) -> PathBuf|No description|content: &str|PathBuf|cfg_test
+src/reedcms/backup/list_test.rs|19|cleanup_test_dir|fn cleanup_test_dir(path: &PathBuf)|No description|path: &PathBuf|()|cfg_test
+src/reedcms/backup/list_test.rs|26|test_list_backups_empty|fn test_list_backups_empty()|No description|None|()|cfg_test
+src/reedcms/backup/list_test.rs|39|test_list_backups_single|fn test_list_backups_single()|No description|None|()|cfg_test
+src/reedcms/backup/list_test.rs|53|test_list_backups_multiple|fn test_list_backups_multiple()|No description|None|()|cfg_test
+src/reedcms/backup/list_test.rs|69|test_list_backups_sorted_newest_first|fn test_list_backups_sorted_newest_first()|No description|None|()|cfg_test
+src/reedcms/backup/list_test.rs|88|test_list_backups_filters_other_files|fn test_list_backups_filters_other_files()|No description|None|()|cfg_test
+src/reedcms/backup/list_test.rs|111|test_list_backups_backup_info_fields|fn test_list_backups_backup_info_fields()|No description|None|()|cfg_test
+src/reedcms/backup/list_test.rs|129|test_list_backups_performance|fn test_list_backups_performance()|No description|None|()|cfg_test
+src/reedcms/backup/restore.rs|45|restore_backup|pub fn restore_backup<P: AsRef<Path>, Q: AsRef<Path>>( backup_path: P, destination_path: Q, ) -> ReedResult<()>|Restores a CSV file from an XZ-compressed backup.|backup_path: P; destination_path: Q|ReedResult<()>|active
+src/reedcms/backup/restore_test.rs|10|create_test_file|fn create_test_file(content: &str) -> PathBuf|No description|content: &str|PathBuf|cfg_test
+src/reedcms/backup/restore_test.rs|19|cleanup_test_dir|fn cleanup_test_dir(path: &PathBuf)|No description|path: &PathBuf|()|cfg_test
+src/reedcms/backup/restore_test.rs|26|test_restore_backup_basic|fn test_restore_backup_basic()|No description|None|()|cfg_test
+src/reedcms/backup/restore_test.rs|48|test_restore_backup_to_different_location|fn test_restore_backup_to_different_location()|No description|None|()|cfg_test
+src/reedcms/backup/restore_test.rs|68|test_restore_backup_overwrites_existing|fn test_restore_backup_overwrites_existing()|No description|None|()|cfg_test
+src/reedcms/backup/restore_test.rs|87|test_restore_backup_empty_file|fn test_restore_backup_empty_file()|No description|None|()|cfg_test
+src/reedcms/backup/restore_test.rs|102|test_restore_backup_large_file|fn test_restore_backup_large_file()|No description|None|()|cfg_test
+src/reedcms/backup/restore_test.rs|132|test_restore_backup_file_not_found|fn test_restore_backup_file_not_found()|No description|None|()|cfg_test
+src/reedcms/backup/restore_test.rs|142|test_restore_backup_round_trip|fn test_restore_backup_round_trip()|No description|None|()|cfg_test
+src/reedcms/backup/restore_test.rs|164|test_restore_backup_no_temp_file_left|fn test_restore_backup_no_temp_file_left()|No description|None|()|cfg_test
+src/reedcms/cli/agent_commands.rs|39|add|pub fn add(args: &[String], flags: &HashMap<String, String>) -> ReedResult<ReedResponse<String>>|Add new agent to registry.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/agent_commands.rs|125|list|pub fn list(_args: &[String], flags: &HashMap<String, String>) -> ReedResult<ReedResponse<String>>|List all registered agents.|_args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/agent_commands.rs|164|show|pub fn show(args: &[String], _flags: &HashMap<String, String>) -> ReedResult<ReedResponse<String>>|Show agent details.|args: &[String]; _flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/agent_commands.rs|199|test|pub fn test(args: &[String], flags: &HashMap<String, String>) -> ReedResult<ReedResponse<String>>|Test agent connection.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/agent_commands.rs|236|update|pub fn update( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Update agent configuration.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/agent_commands.rs|285|remove|pub fn remove( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Remove agent from registry.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/agent_commands.rs|331|generate|pub fn generate( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Generate content with AI agent (placeholder).|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/agent_commands.rs|395|translate|pub fn translate( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Translate content with AI agent (placeholder).|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/build_commands.rs|32|build_kernel|pub fn build_kernel( _args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Build kernel binary with cargo.|_args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/build_commands.rs|142|build_public|pub fn build_public( _args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Build public assets (placeholder).|_args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/build_commands.rs|192|build_complete|pub fn build_complete( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Run complete build pipeline.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/build_commands.rs|262|build_watch|pub fn build_watch( _args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Start watch mode for development (placeholder).|_args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/data_commands.rs|38|set_text|pub fn set_text( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Sets text content via CLI.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/data_commands.rs|108|set_route|pub fn set_route( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Sets route mapping via CLI.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/data_commands.rs|171|set_meta|pub fn set_meta( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Sets metadata via CLI.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/data_commands.rs|243|get_text|pub fn get_text(args: &[String]) -> ReedResult<ReedResponse<String>>|Gets text content via CLI.|args: &[String]|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/data_commands.rs|287|get_route|pub fn get_route(args: &[String]) -> ReedResult<ReedResponse<String>>|Gets route mapping via CLI.|args: &[String]|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/data_commands.rs|325|get_meta|pub fn get_meta(args: &[String]) -> ReedResult<ReedResponse<String>>|Gets metadata via CLI.|args: &[String]|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/data_commands.rs|374|list_text|pub fn list_text(args: &[String]) -> ReedResult<ReedResponse<String>>|Lists text keys matching pattern.|args: &[String]|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/data_commands.rs|412|list_route|pub fn list_route(args: &[String]) -> ReedResult<ReedResponse<String>>|Lists route keys matching pattern.|args: &[String]|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/data_commands.rs|448|list_meta|pub fn list_meta(args: &[String]) -> ReedResult<ReedResponse<String>>|Lists meta keys matching pattern.|args: &[String]|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/data_commands.rs|487|matches_pattern|fn matches_pattern(key: &str, pattern: &str) -> bool|Matches a key against a glob-style pattern.|key: &str; pattern: &str|bool|active
+src/reedcms/cli/data_commands_test.rs|13|create_test_csv|fn create_test_csv(path: &str, records: Vec<CsvRecord>)|Creates a test CSV file with sample data.|path: &str; records: Vec<CsvRecord>|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|22|cleanup_test_csv|fn cleanup_test_csv(path: &str)|Cleans up test CSV files.|path: &str|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|27|cleanup_reed_dir|fn cleanup_reed_dir()|Cleans up .reed directory after tests.|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|32|test_set_text_success|fn test_set_text_success()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|52|test_set_text_missing_args|fn test_set_text_missing_args()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|61|test_set_text_missing_desc_flag|fn test_set_text_missing_desc_flag()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|70|test_set_text_desc_too_short|fn test_set_text_desc_too_short()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|80|test_set_route_success|fn test_set_route_success()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|101|test_set_meta_success|fn test_set_meta_success()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|122|test_get_text_success|fn test_get_text_success()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|145|test_get_text_missing_key|fn test_get_text_missing_key()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|157|test_get_text_no_args|fn test_get_text_no_args()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|164|test_get_route_success|fn test_get_route_success()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|186|test_get_meta_success|fn test_get_meta_success()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|208|test_list_text_all|fn test_list_text_all()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|245|test_list_text_with_prefix_pattern|fn test_list_text_with_prefix_pattern()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|282|test_list_text_with_suffix_pattern|fn test_list_text_with_suffix_pattern()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|319|test_list_text_no_matches|fn test_list_text_no_matches()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|341|test_list_route_success|fn test_list_route_success()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|372|test_list_meta_success|fn test_list_meta_success()|No description|None|()|cfg_test
+src/reedcms/cli/data_commands_test.rs|403|test_round_trip_set_and_get|fn test_round_trip_set_and_get()|No description|None|()|cfg_test
+src/reedcms/cli/help.rs|32|print_general_help|pub fn print_general_help() -> ReedResult<ReedResponse<String>>|Prints general help overview.|None|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/help.rs|120|print_command_help|pub fn print_command_help(namespace: &str, action: &str) -> ReedResult<ReedResponse<String>>|Prints command-specific help.|namespace: &str; action: &str|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/help.rs|283|print_version|pub fn print_version() -> ReedResult<ReedResponse<String>>|Prints version information.|None|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/help.rs|301|generate_usage|pub fn generate_usage(info: &CommandInfo) -> String|Generates usage string from command info.|info: &CommandInfo|String|active
+src/reedcms/cli/help.rs|323|list_commands|pub fn list_commands() -> Vec<CommandInfo>|Lists all commands with descriptions.|None|Vec<CommandInfo>|active
+src/reedcms/cli/help_test.rs|9|test_print_general_help|fn test_print_general_help()|No description|None|()|cfg_test
+src/reedcms/cli/help_test.rs|27|test_print_general_help_contains_all_categories|fn test_print_general_help_contains_all_categories()|No description|None|()|cfg_test
+src/reedcms/cli/help_test.rs|52|test_print_general_help_contains_flags|fn test_print_general_help_contains_flags()|No description|None|()|cfg_test
+src/reedcms/cli/help_test.rs|63|test_print_command_help_data_get|fn test_print_command_help_data_get()|No description|None|()|cfg_test
+src/reedcms/cli/help_test.rs|74|test_print_command_help_data_set|fn test_print_command_help_data_set()|No description|None|()|cfg_test
+src/reedcms/cli/help_test.rs|83|test_print_command_help_layout_create|fn test_print_command_help_layout_create()|No description|None|()|cfg_test
+src/reedcms/cli/help_test.rs|92|test_print_command_help_user_create|fn test_print_command_help_user_create()|No description|None|()|cfg_test
+src/reedcms/cli/help_test.rs|101|test_print_command_help_role_create|fn test_print_command_help_role_create()|No description|None|()|cfg_test
+src/reedcms/cli/help_test.rs|110|test_print_command_help_taxonomy_create|fn test_print_command_help_taxonomy_create()|No description|None|()|cfg_test
+src/reedcms/cli/help_test.rs|119|test_print_command_help_server_start|fn test_print_command_help_server_start()|No description|None|()|cfg_test
+src/reedcms/cli/help_test.rs|128|test_print_command_help_unknown_command|fn test_print_command_help_unknown_command()|No description|None|()|cfg_test
+src/reedcms/cli/help_test.rs|137|test_print_version|fn test_print_version()|No description|None|()|cfg_test
+src/reedcms/cli/help_test.rs|147|test_print_version_contains_license|fn test_print_version_contains_license()|No description|None|()|cfg_test
+src/reedcms/cli/help_test.rs|154|test_print_command_help_contains_flags|fn test_print_command_help_contains_flags()|No description|None|()|cfg_test
+src/reedcms/cli/help_test.rs|162|test_help_response_structure|fn test_help_response_structure()|No description|None|()|cfg_test
+src/reedcms/cli/help_test.rs|174|test_command_help_response_structure|fn test_command_help_response_structure()|No description|None|()|cfg_test
+src/reedcms/cli/help_test.rs|185|test_version_response_structure|fn test_version_response_structure()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands.rs|25|from_str|pub fn from_str(s: &str) -> ReedResult<Self>|Converts string to variant.|s: &str|ReedResult<Self>|active
+src/reedcms/cli/layout_commands.rs|39|as_str|pub fn as_str(&self) -> &'static str|Converts variant to string.|None|&'static str|active
+src/reedcms/cli/layout_commands.rs|74|init_layout|pub fn init_layout( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Creates new layout(s) with flag-based configuration.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/layout_commands.rs|133|parse_layout_config|fn parse_layout_config(flags: &HashMap<String, String>) -> ReedResult<LayoutConfig>|Parses layout configuration from flags.|flags: &HashMap<String, String>|ReedResult<LayoutConfig>|active
+src/reedcms/cli/layout_commands.rs|173|parse_routes|fn parse_routes(route_str: &str) -> ReedResult<HashMap<String, String>>|Parses route string (format: "de:wissen,en:knowledge").|route_str: &str|ReedResult<HashMap<String, String>>|active
+src/reedcms/cli/layout_commands.rs|198|validate_layout_name|pub fn validate_layout_name(name: &str) -> ReedResult<()>|Validates layout name.|name: &str|ReedResult<()>|active
+src/reedcms/cli/layout_commands.rs|240|layout_exists|pub fn layout_exists(name: &str) -> ReedResult<bool>|Checks if layout exists.|name: &str|ReedResult<bool>|active
+src/reedcms/cli/layout_commands.rs|246|create_layout|fn create_layout(name: &str, config: &LayoutConfig) -> ReedResult<()>|Creates single layout with all files and data.|name: &str; config: &LayoutConfig|ReedResult<()>|active
+src/reedcms/cli/layout_commands.rs|286|generate_template_file|fn generate_template_file(layout: &str, variant: TemplateVariant) -> ReedResult<()>|Generates Jinja template file.|layout: &str; variant: TemplateVariant|ReedResult<()>|active
+src/reedcms/cli/layout_commands.rs|334|generate_css_file|fn generate_css_file(layout: &str, variant: TemplateVariant) -> ReedResult<()>|Generates CSS file.|layout: &str; variant: TemplateVariant|ReedResult<()>|active
+src/reedcms/cli/layout_commands.rs|385|update_registry|fn update_registry(layout: &str, config: &LayoutConfig) -> ReedResult<()>|Updates registry with new layout.|layout: &str; config: &LayoutConfig|ReedResult<()>|active
+src/reedcms/cli/layout_commands.rs|431|add_routes|fn add_routes(layout: &str, routes: &HashMap<String, String>) -> ReedResult<()>|Adds routes for layout.|layout: &str; routes: &HashMap<String, String>|ReedResult<()>|active
+src/reedcms/cli/layout_commands.rs|459|add_default_text|fn add_default_text(layout: &str, languages: &[String]) -> ReedResult<()>|Adds default text content for layout.|layout: &str; languages: &[String]|ReedResult<()>|active
+src/reedcms/cli/layout_commands.rs|496|add_default_meta|fn add_default_meta(layout: &str) -> ReedResult<()>|Adds default meta data for layout.|layout: &str|ReedResult<()>|active
+src/reedcms/cli/layout_commands_test.rs|12|cleanup_test_files|fn cleanup_test_files(layout: &str)|Cleanup test files and directories.|layout: &str|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|21|cleanup_csv_entries|fn cleanup_csv_entries(layout: &str)|Cleanup CSV entries for test layout.|layout: &str|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|50|test_template_variant_from_str|fn test_template_variant_from_str()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|67|test_template_variant_as_str|fn test_template_variant_as_str()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|74|test_validate_layout_name_success|fn test_validate_layout_name_success()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|81|test_validate_layout_name_too_short|fn test_validate_layout_name_too_short()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|86|test_validate_layout_name_too_long|fn test_validate_layout_name_too_long()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|91|test_validate_layout_name_invalid_start|fn test_validate_layout_name_invalid_start()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|97|test_validate_layout_name_invalid_chars|fn test_validate_layout_name_invalid_chars()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|104|test_validate_layout_name_reserved|fn test_validate_layout_name_reserved()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|111|test_init_layout_no_args|fn test_init_layout_no_args()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|119|test_init_layout_minimal|fn test_init_layout_minimal()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|155|test_init_layout_with_languages|fn test_init_layout_with_languages()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|173|test_init_layout_with_variants|fn test_init_layout_with_variants()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|209|test_init_layout_with_routes|fn test_init_layout_with_routes()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|225|test_init_layout_with_parent|fn test_init_layout_with_parent()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|240|test_init_layout_multiple|fn test_init_layout_multiple()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|266|test_init_layout_duplicate|fn test_init_layout_duplicate()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|285|test_init_layout_invalid_variant|fn test_init_layout_invalid_variant()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|300|test_init_layout_invalid_route_format|fn test_init_layout_invalid_route_format()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|315|test_layout_exists|fn test_layout_exists()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|331|test_generated_template_content|fn test_generated_template_content()|No description|None|()|cfg_test
+src/reedcms/cli/layout_commands_test.rs|352|test_generated_css_content|fn test_generated_css_content()|No description|None|()|cfg_test
+src/reedcms/cli/migration_commands.rs|46|migrate_text|pub fn migrate_text( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Migrates text content from component/layout CSV files to central .reed/text.csv.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/migration_commands.rs|221|migrate_routes|pub fn migrate_routes( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Migrates route definitions from CSV.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/migration_commands.rs|367|discover_text_csv_files|fn discover_text_csv_files(path: &Path, recursive: bool) -> ReedResult<Vec<PathBuf>>|Discovers .text.csv files in path.|path: &Path; recursive: bool|ReedResult<Vec<PathBuf>>|active
+src/reedcms/cli/migration_commands.rs|391|discover_in_directory|fn discover_in_directory( dir: &Path, csv_files: &mut Vec<PathBuf>, recursive: bool, ) -> ReedResult<()>|Recursively discovers .text.csv files in directory.|dir: &Path; csv_files: &mut Vec<PathBuf>; recursive: bool|ReedResult<()>|active
+src/reedcms/cli/migration_commands_test.rs|10|make_flags|fn make_flags(pairs: &[(&str, &str)]) -> HashMap<String, String>|No description|pairs: &[(&str, &str|HashMap<String, String>|cfg_test
+src/reedcms/cli/migration_commands_test.rs|18|test_migrate_text_missing_args|fn test_migrate_text_missing_args()|No description|None|()|cfg_test
+src/reedcms/cli/migration_commands_test.rs|27|test_migrate_text_nonexistent_path|fn test_migrate_text_nonexistent_path()|No description|None|()|cfg_test
+src/reedcms/cli/migration_commands_test.rs|36|test_migrate_text_dry_run|fn test_migrate_text_dry_run()|No description|None|()|cfg_test
+src/reedcms/cli/migration_commands_test.rs|46|test_migrate_text_recursive|fn test_migrate_text_recursive()|No description|None|()|cfg_test
+src/reedcms/cli/migration_commands_test.rs|55|test_migrate_text_no_backup|fn test_migrate_text_no_backup()|No description|None|()|cfg_test
+src/reedcms/cli/migration_commands_test.rs|64|test_migrate_text_combined_flags|fn test_migrate_text_combined_flags()|No description|None|()|cfg_test
+src/reedcms/cli/migration_commands_test.rs|73|test_migrate_routes_missing_args|fn test_migrate_routes_missing_args()|No description|None|()|cfg_test
+src/reedcms/cli/migration_commands_test.rs|82|test_migrate_routes_nonexistent_file|fn test_migrate_routes_nonexistent_file()|No description|None|()|cfg_test
+src/reedcms/cli/migration_commands_test.rs|91|test_migrate_routes_dry_run|fn test_migrate_routes_dry_run()|No description|None|()|cfg_test
+src/reedcms/cli/migration_commands_test.rs|100|test_migrate_routes_force|fn test_migrate_routes_force()|No description|None|()|cfg_test
+src/reedcms/cli/migration_commands_test.rs|109|test_migrate_routes_no_backup|fn test_migrate_routes_no_backup()|No description|None|()|cfg_test
+src/reedcms/cli/migration_commands_test.rs|118|test_migrate_routes_combined_flags|fn test_migrate_routes_combined_flags()|No description|None|()|cfg_test
+src/reedcms/cli/mod.rs|59|run|pub fn run(args: Vec<String>) -> ReedResult<String>|Main CLI entry point.|args: Vec<String>|ReedResult<String>|active
+src/reedcms/cli/parser.rs|68|parse_command|pub fn parse_command(args: Vec<String>) -> ReedResult<Command>|Parses CLI arguments into Command structure.|args: Vec<String>|ReedResult<Command>|active
+src/reedcms/cli/parser.rs|107|parse_command_format|fn parse_command_format(cmd: &str) -> ReedResult<(String, String)>|Parses command format (namespace:action).|cmd: &str|ReedResult<(String, String)>|active
+src/reedcms/cli/parser.rs|151|validate_identifier|fn validate_identifier(id: &str, context: &str) -> ReedResult<()>|Validates identifier contains only allowed characters.|id: &str; context: &str|ReedResult<()>|active
+src/reedcms/cli/parser.rs|173|parse_args_and_flags|fn parse_args_and_flags(args: &[String]) -> ReedResult<(Vec<String>, HashMap<String, String>)>|Parses arguments and flags from remaining CLI args.|args: &[String]|ReedResult<(Vec<String>, HashMap<String, String>)>|active
+src/reedcms/cli/parser.rs|242|has_flag|pub fn has_flag(&self, flag: &str) -> bool|Returns true if flag exists (regardless of value).|flag: &str|bool|active
+src/reedcms/cli/parser.rs|247|get_flag|pub fn get_flag(&self, flag: &str) -> Option<&String>|Gets flag value, returns None if not present.|flag: &str|Option<&String>|active
+src/reedcms/cli/parser.rs|252|get_flag_bool|pub fn get_flag_bool(&self, flag: &str) -> bool|Gets flag value as boolean.|flag: &str|bool|active
+src/reedcms/cli/parser_test.rs|10|test_parse_simple_command|fn test_parse_simple_command()|No description|None|()|cfg_test
+src/reedcms/cli/parser_test.rs|21|test_parse_command_with_multiple_args|fn test_parse_command_with_multiple_args()|No description|None|()|cfg_test
+src/reedcms/cli/parser_test.rs|36|test_parse_command_with_boolean_flags|fn test_parse_command_with_boolean_flags()|No description|None|()|cfg_test
+src/reedcms/cli/parser_test.rs|52|test_parse_command_with_value_flags|fn test_parse_command_with_value_flags()|No description|None|()|cfg_test
+src/reedcms/cli/parser_test.rs|74|test_parse_command_mixed_args_and_flags|fn test_parse_command_mixed_args_and_flags()|No description|None|()|cfg_test
+src/reedcms/cli/parser_test.rs|101|test_parse_command_help_flag|fn test_parse_command_help_flag()|No description|None|()|cfg_test
+src/reedcms/cli/parser_test.rs|112|test_parse_command_no_colon|fn test_parse_command_no_colon()|No description|None|()|cfg_test
+src/reedcms/cli/parser_test.rs|124|test_parse_command_empty_namespace|fn test_parse_command_empty_namespace()|No description|None|()|cfg_test
+src/reedcms/cli/parser_test.rs|136|test_parse_command_empty_action|fn test_parse_command_empty_action()|No description|None|()|cfg_test
+src/reedcms/cli/parser_test.rs|148|test_parse_command_invalid_characters_namespace|fn test_parse_command_invalid_characters_namespace()|No description|None|()|cfg_test
+src/reedcms/cli/parser_test.rs|158|test_parse_command_invalid_characters_action|fn test_parse_command_invalid_characters_action()|No description|None|()|cfg_test
+src/reedcms/cli/parser_test.rs|168|test_parse_command_flag_missing_value|fn test_parse_command_flag_missing_value()|No description|None|()|cfg_test
+src/reedcms/cli/parser_test.rs|184|test_parse_command_no_args|fn test_parse_command_no_args()|No description|None|()|cfg_test
+src/reedcms/cli/parser_test.rs|196|test_parse_command_multiple_colons|fn test_parse_command_multiple_colons()|No description|None|()|cfg_test
+src/reedcms/cli/parser_test.rs|208|test_parse_command_underscores_allowed|fn test_parse_command_underscores_allowed()|No description|None|()|cfg_test
+src/reedcms/cli/parser_test.rs|218|test_parse_command_short_flags|fn test_parse_command_short_flags()|No description|None|()|cfg_test
+src/reedcms/cli/parser_test.rs|229|test_parse_command_all_boolean_flags|fn test_parse_command_all_boolean_flags()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands.rs|35|create_role|pub fn create_role( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Creates new role with permissions and optional inheritance.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/role_commands.rs|115|list_roles|pub fn list_roles(flags: &HashMap<String, String>) -> ReedResult<ReedResponse<String>>|Lists all roles with optional formatting.|flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/role_commands.rs|148|show_role|pub fn show_role(args: &[String]) -> ReedResult<ReedResponse<String>>|Shows detailed role information.|args: &[String]|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/role_commands.rs|186|update_role|pub fn update_role( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Updates role properties.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/role_commands.rs|248|delete_role|pub fn delete_role( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Deletes role with --force confirmation.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/role_commands.rs|300|manage_permissions|pub fn manage_permissions( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Manages role permissions (show/add/remove/set).|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/role_commands.rs|384|format_role_table|fn format_role_table(roles: &[&RoleInfo], show_permissions: bool) -> String|Formats role list as ASCII table.|roles: &[&RoleInfo]; show_permissions: bool|String|active
+src/reedcms/cli/role_commands.rs|433|format_role_json|fn format_role_json(roles: &[&RoleInfo]) -> String|Formats role list as JSON.|roles: &[&RoleInfo]|String|active
+src/reedcms/cli/role_commands.rs|452|format_role_csv|fn format_role_csv(roles: &[&RoleInfo]) -> String|Formats role list as CSV.|roles: &[&RoleInfo]|String|active
+src/reedcms/cli/role_commands.rs|471|format_role_details|fn format_role_details(role: &RoleInfo) -> String|Formats single role details.|role: &RoleInfo|String|active
+src/reedcms/cli/role_commands.rs|506|describe_permissions|fn describe_permissions(perm: &Permission) -> &'static str|Describes permission flags in human-readable format.|perm: &Permission|&'static str|active
+src/reedcms/cli/role_commands_test.rs|13|cleanup_test_roles|fn cleanup_test_roles()|Cleanup test role data.|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|18|test_create_role_success|fn test_create_role_success()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|40|test_create_role_with_inheritance|fn test_create_role_with_inheritance()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|67|test_create_role_missing_rolename|fn test_create_role_missing_rolename()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|76|test_create_role_missing_permissions|fn test_create_role_missing_permissions()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|86|test_create_role_missing_desc|fn test_create_role_missing_desc()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|96|test_list_roles_empty|fn test_list_roles_empty()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|110|test_list_roles_table_format|fn test_list_roles_table_format()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|133|test_list_roles_json_format|fn test_list_roles_json_format()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|146|test_list_roles_csv_format|fn test_list_roles_csv_format()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|162|test_show_role_missing_rolename|fn test_show_role_missing_rolename()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|169|test_show_role_not_found|fn test_show_role_not_found()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|180|test_show_role_success|fn test_show_role_success()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|201|test_update_role_missing_rolename|fn test_update_role_missing_rolename()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|209|test_update_role_no_flags|fn test_update_role_no_flags()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|217|test_update_role_success|fn test_update_role_success()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|243|test_delete_role_missing_rolename|fn test_delete_role_missing_rolename()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|251|test_delete_role_missing_force|fn test_delete_role_missing_force()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|259|test_delete_role_success|fn test_delete_role_success()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|281|test_manage_permissions_missing_rolename|fn test_manage_permissions_missing_rolename()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|289|test_manage_permissions_show|fn test_manage_permissions_show()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|313|test_manage_permissions_add|fn test_manage_permissions_add()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|335|test_manage_permissions_remove|fn test_manage_permissions_remove()|No description|None|()|cfg_test
+src/reedcms/cli/role_commands_test.rs|360|test_manage_permissions_set|fn test_manage_permissions_set()|No description|None|()|cfg_test
+src/reedcms/cli/router.rs|23|new|pub fn new() -> Self|Creates a new empty router.|None|Self|active
+src/reedcms/cli/router.rs|40|register|pub fn register(&mut self, namespace: &str, action: &str, handler: CommandHandler)|Registers a command handler.|namespace: &str; action: &str; handler: CommandHandler|()|active
+src/reedcms/cli/router.rs|65|route|pub fn route(&self, cmd: Command) -> ReedResult<ReedResponse<String>>|Routes command to appropriate handler.|cmd: Command|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/router.rs|106|route_help|fn route_help(&self, cmd: &Command) -> ReedResult<ReedResponse<String>>|Routes --help flag to help system.|cmd: &Command|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/router.rs|112|list_commands|pub fn list_commands(&self) -> Vec<(String, String)>|Lists all registered commands.|None|Vec<(String, String)>|active
+src/reedcms/cli/router.rs|117|has_command|pub fn has_command(&self, namespace: &str, action: &str) -> bool|Checks if a command is registered.|namespace: &str; action: &str|bool|active
+src/reedcms/cli/router.rs|124|default|fn default() -> Self|No description|None|Self|active
+src/reedcms/cli/router.rs|137|create_router|pub fn create_router() -> Router|Creates router with all command handlers registered.|None|Router|active
+src/reedcms/cli/router_test.rs|12|test_handler_success|fn test_handler_success( _args: &[String], _flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|No description|_args: &[String]; _flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|cfg_test
+src/reedcms/cli/router_test.rs|23|test_handler_error|fn test_handler_error( _args: &[String], _flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|No description|_args: &[String]; _flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|cfg_test
+src/reedcms/cli/router_test.rs|35|test_router_register_and_route|fn test_router_register_and_route()|No description|None|()|cfg_test
+src/reedcms/cli/router_test.rs|52|test_router_command_not_found|fn test_router_command_not_found()|No description|None|()|cfg_test
+src/reedcms/cli/router_test.rs|71|test_router_help_interception|fn test_router_help_interception()|No description|None|()|cfg_test
+src/reedcms/cli/router_test.rs|91|test_router_help_short_flag|fn test_router_help_short_flag()|No description|None|()|cfg_test
+src/reedcms/cli/router_test.rs|111|test_router_multiple_handlers|fn test_router_multiple_handlers()|No description|None|()|cfg_test
+src/reedcms/cli/router_test.rs|138|test_router_with_args|fn test_router_with_args()|No description|None|()|cfg_test
+src/reedcms/cli/router_test.rs|154|test_router_with_flags|fn test_router_with_flags()|No description|None|()|cfg_test
+src/reedcms/cli/router_test.rs|174|test_create_router_structure|fn test_create_router_structure()|No description|None|()|cfg_test
+src/reedcms/cli/router_test.rs|184|test_router_different_namespaces|fn test_router_different_namespaces()|No description|None|()|cfg_test
+src/reedcms/cli/router_test.rs|211|test_router_case_sensitive|fn test_router_case_sensitive()|No description|None|()|cfg_test
+src/reedcms/cli/server_commands.rs|37|server_io|pub fn server_io( _args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Starts ReedCMS server in interactive mode.|_args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/server_commands.rs|105|server_start|pub fn server_start( _args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Starts server in background (daemon mode).|_args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/server_commands.rs|170|server_stop|pub fn server_stop( _args: &[String], _flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Stops running server.|_args: &[String]; _flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/server_commands.rs|266|server_restart|pub fn server_restart( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Restarts server (stop + start).|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/server_commands.rs|310|server_status|pub fn server_status( _args: &[String], _flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Check server status.|_args: &[String]; _flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/server_commands.rs|379|server_logs|pub fn server_logs( _args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|View server logs.|_args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/server_commands.rs|446|is_process_running|fn is_process_running(pid: &str) -> bool|Helper: Check if process is running.|pid: &str|bool|active
+src/reedcms/cli/taxonomy_commands.rs|36|create|pub fn create( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Creates a new taxonomy term.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/taxonomy_commands.rs|110|list|pub fn list(flags: &HashMap<String, String>) -> ReedResult<ReedResponse<String>>|Lists taxonomy terms.|flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/taxonomy_commands.rs|161|show|pub fn show(args: &[String]) -> ReedResult<ReedResponse<String>>|Shows detailed term information.|args: &[String]|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/taxonomy_commands.rs|213|search|pub fn search( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Searches taxonomy terms.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/taxonomy_commands.rs|294|update|pub fn update( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Updates a taxonomy term.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/taxonomy_commands.rs|380|delete|pub fn delete( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Deletes a taxonomy term.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/taxonomy_commands.rs|428|assign|pub fn assign( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Assigns taxonomy terms to an entity.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/taxonomy_commands.rs|490|unassign|pub fn unassign(args: &[String]) -> ReedResult<ReedResponse<String>>|Removes taxonomy term assignments from an entity.|args: &[String]|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/taxonomy_commands.rs|560|entities|pub fn entities( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Lists entities assigned to a taxonomy term.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/taxonomy_commands.rs|638|usage|pub fn usage(args: &[String]) -> ReedResult<ReedResponse<String>>|Shows taxonomy usage statistics.|args: &[String]|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/taxonomy_commands.rs|685|format_terms_table|fn format_terms_table(terms: &[TermInfo]) -> String|No description|terms: &[TermInfo]|String|active
+src/reedcms/cli/taxonomy_commands.rs|709|format_entities_table|fn format_entities_table(entities: &[crate::reedcms::taxonomy::EntityTerms]) -> String|No description|entities: &[crate::reedcms::taxonomy::EntityTerms]|String|active
+src/reedcms/cli/taxonomy_commands.rs|736|truncate|fn truncate(s: &str, max_len: usize) -> String|No description|s: &str; max_len: usize|String|active
+src/reedcms/cli/taxonomy_commands_test.rs|10|make_flags|fn make_flags(pairs: &[(&str, &str)]) -> HashMap<String, String>|No description|pairs: &[(&str, &str|HashMap<String, String>|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|18|test_create_term_missing_args|fn test_create_term_missing_args()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|27|test_create_term_missing_category|fn test_create_term_missing_category()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|36|test_create_term_success|fn test_create_term_success()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|52|test_create_term_with_parent|fn test_create_term_with_parent()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|62|test_list_terms_no_filters|fn test_list_terms_no_filters()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|70|test_list_terms_with_category|fn test_list_terms_with_category()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|77|test_list_terms_root_only|fn test_list_terms_root_only()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|84|test_list_terms_json_format|fn test_list_terms_json_format()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|91|test_list_terms_csv_format|fn test_list_terms_csv_format()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|98|test_show_term_missing_args|fn test_show_term_missing_args()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|105|test_show_term|fn test_show_term()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|113|test_search_missing_query|fn test_search_missing_query()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|121|test_search_with_query|fn test_search_with_query()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|129|test_search_with_category|fn test_search_with_category()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|137|test_search_json_format|fn test_search_json_format()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|145|test_update_missing_args|fn test_update_missing_args()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|153|test_update_description|fn test_update_description()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|161|test_update_remove_parent|fn test_update_remove_parent()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|169|test_update_status|fn test_update_status()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|177|test_delete_missing_args|fn test_delete_missing_args()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|185|test_delete_term|fn test_delete_term()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|193|test_delete_with_force|fn test_delete_with_force()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|201|test_assign_missing_args|fn test_assign_missing_args()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|209|test_assign_invalid_entity_format|fn test_assign_invalid_entity_format()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|217|test_assign_single_term|fn test_assign_single_term()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|228|test_assign_multiple_terms|fn test_assign_multiple_terms()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|240|test_unassign_missing_args|fn test_unassign_missing_args()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|247|test_unassign_invalid_entity_format|fn test_unassign_invalid_entity_format()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|254|test_unassign_all_terms|fn test_unassign_all_terms()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|261|test_unassign_specific_terms|fn test_unassign_specific_terms()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|271|test_entities_missing_args|fn test_entities_missing_args()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|279|test_entities_list|fn test_entities_list()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|287|test_entities_filter_by_type|fn test_entities_filter_by_type()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|295|test_entities_json_format|fn test_entities_json_format()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|303|test_usage_missing_args|fn test_usage_missing_args()|No description|None|()|cfg_test
+src/reedcms/cli/taxonomy_commands_test.rs|310|test_usage_statistics|fn test_usage_statistics()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands.rs|37|create_user|pub fn create_user( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Creates new user with flag-based input.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/user_commands.rs|125|list_users|pub fn list_users(flags: &HashMap<String, String>) -> ReedResult<ReedResponse<String>>|Lists users with optional filtering and formatting.|flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/user_commands.rs|168|show_user|pub fn show_user(args: &[String]) -> ReedResult<ReedResponse<String>>|Shows detailed user information.|args: &[String]|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/user_commands.rs|205|update_user|pub fn update_user( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Updates user profile data.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/user_commands.rs|265|delete_user|pub fn delete_user( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Deletes user with --force confirmation.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/user_commands.rs|311|change_password|pub fn change_password( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Changes user password.|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/user_commands.rs|369|manage_roles|pub fn manage_roles( args: &[String], flags: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Manages user roles (show/add/remove/set).|args: &[String]; flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/user_commands.rs|441|format_user_table|fn format_user_table(users: &[&UserInfo]) -> String|Formats user list as ASCII table.|users: &[&UserInfo]|String|active
+src/reedcms/cli/user_commands.rs|468|format_user_json|fn format_user_json(users: &[&UserInfo]) -> String|Formats user list as JSON.|users: &[&UserInfo]|String|active
+src/reedcms/cli/user_commands.rs|488|format_user_csv|fn format_user_csv(users: &[&UserInfo]) -> String|Formats user list as CSV.|users: &[&UserInfo]|String|active
+src/reedcms/cli/user_commands.rs|505|format_user_details|fn format_user_details(user: &UserInfo) -> String|Formats single user details.|user: &UserInfo|String|active
+src/reedcms/cli/user_commands_test.rs|13|cleanup_test_users|fn cleanup_test_users()|Cleanup test user data.|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|18|test_create_user_success|fn test_create_user_success()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|38|test_create_user_missing_username|fn test_create_user_missing_username()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|47|test_create_user_missing_email|fn test_create_user_missing_email()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|58|test_create_user_missing_password|fn test_create_user_missing_password()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|69|test_create_user_missing_roles|fn test_create_user_missing_roles()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|80|test_create_user_weak_password|fn test_create_user_weak_password()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|96|test_create_user_with_optional_fields|fn test_create_user_with_optional_fields()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|115|test_list_users_empty|fn test_list_users_empty()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|129|test_list_users_table_format|fn test_list_users_table_format()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|154|test_list_users_json_format|fn test_list_users_json_format()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|167|test_list_users_csv_format|fn test_list_users_csv_format()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|183|test_show_user_missing_username|fn test_show_user_missing_username()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|190|test_show_user_not_found|fn test_show_user_not_found()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|201|test_show_user_success|fn test_show_user_success()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|224|test_update_user_missing_username|fn test_update_user_missing_username()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|232|test_update_user_no_flags|fn test_update_user_no_flags()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|240|test_update_user_success|fn test_update_user_success()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|264|test_delete_user_missing_username|fn test_delete_user_missing_username()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|272|test_delete_user_missing_force|fn test_delete_user_missing_force()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|281|test_delete_user_success|fn test_delete_user_success()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|304|test_change_password_missing_username|fn test_change_password_missing_username()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|312|test_change_password_missing_new|fn test_change_password_missing_new()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|320|test_change_password_weak|fn test_change_password_weak()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|330|test_manage_roles_missing_username|fn test_manage_roles_missing_username()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|338|test_manage_roles_show|fn test_manage_roles_show()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|363|test_manage_roles_add|fn test_manage_roles_add()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|386|test_manage_roles_remove|fn test_manage_roles_remove()|No description|None|()|cfg_test
+src/reedcms/cli/user_commands_test.rs|409|test_manage_roles_set|fn test_manage_roles_set()|No description|None|()|cfg_test
+src/reedcms/cli/validation_commands.rs|34|validate_routes|pub fn validate_routes(flags: &HashMap<String, String>) -> ReedResult<ReedResponse<String>>|Validates route consistency.|flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/validation_commands.rs|209|validate_consistency|pub fn validate_consistency(_flags: &HashMap<String, String>) -> ReedResult<ReedResponse<String>>|Validates complete data consistency.|_flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/validation_commands.rs|322|validate_text|pub fn validate_text(flags: &HashMap<String, String>) -> ReedResult<ReedResponse<String>>|Validates text content for specific language.|flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/validation_commands.rs|468|validate_references|pub fn validate_references(_flags: &HashMap<String, String>) -> ReedResult<ReedResponse<String>>|Validates reference integrity.|_flags: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/cli/validation_commands_test.rs|10|make_flags|fn make_flags(pairs: &[(&str, &str)]) -> HashMap<String, String>|No description|pairs: &[(&str, &str|HashMap<String, String>|cfg_test
+src/reedcms/cli/validation_commands_test.rs|18|test_validate_routes_no_flags|fn test_validate_routes_no_flags()|No description|None|()|cfg_test
+src/reedcms/cli/validation_commands_test.rs|26|test_validate_routes_with_fix|fn test_validate_routes_with_fix()|No description|None|()|cfg_test
+src/reedcms/cli/validation_commands_test.rs|33|test_validate_consistency_no_flags|fn test_validate_consistency_no_flags()|No description|None|()|cfg_test
+src/reedcms/cli/validation_commands_test.rs|40|test_validate_text_missing_language|fn test_validate_text_missing_language()|No description|None|()|cfg_test
+src/reedcms/cli/validation_commands_test.rs|47|test_validate_text_with_language_de|fn test_validate_text_with_language_de()|No description|None|()|cfg_test
+src/reedcms/cli/validation_commands_test.rs|54|test_validate_text_with_language_en|fn test_validate_text_with_language_en()|No description|None|()|cfg_test
+src/reedcms/cli/validation_commands_test.rs|61|test_validate_text_with_language_fr|fn test_validate_text_with_language_fr()|No description|None|()|cfg_test
+src/reedcms/cli/validation_commands_test.rs|68|test_validate_references_no_flags|fn test_validate_references_no_flags()|No description|None|()|cfg_test
+src/reedcms/csv/read.rs|38|read_csv|pub fn read_csv<P: AsRef<Path>>(path: P) -> ReedResult<Vec<CsvRecord>>|Reads a pipe-delimited CSV file into a vector of CsvRecord.|path: P|ReedResult<Vec<CsvRecord>>|active
+src/reedcms/csv/read_test.rs|10|create_test_file|fn create_test_file(content: &str) -> PathBuf|No description|content: &str|PathBuf|cfg_test
+src/reedcms/csv/read_test.rs|16|cleanup_test_file|fn cleanup_test_file(path: &PathBuf)|No description|path: &PathBuf|()|cfg_test
+src/reedcms/csv/read_test.rs|21|test_read_csv_basic|fn test_read_csv_basic()|No description|None|()|cfg_test
+src/reedcms/csv/read_test.rs|42|test_read_csv_no_description|fn test_read_csv_no_description()|No description|None|()|cfg_test
+src/reedcms/csv/read_test.rs|63|test_read_csv_skip_empty_lines|fn test_read_csv_skip_empty_lines()|No description|None|()|cfg_test
+src/reedcms/csv/read_test.rs|76|test_read_csv_skip_comments|fn test_read_csv_skip_comments()|No description|None|()|cfg_test
+src/reedcms/csv/read_test.rs|89|test_read_csv_mixed_formats|fn test_read_csv_mixed_formats()|No description|None|()|cfg_test
+src/reedcms/csv/read_test.rs|106|test_read_csv_file_not_found|fn test_read_csv_file_not_found()|No description|None|()|cfg_test
+src/reedcms/csv/read_test.rs|112|test_read_csv_invalid_format|fn test_read_csv_invalid_format()|No description|None|()|cfg_test
+src/reedcms/csv/read_test.rs|122|test_read_csv_empty_file|fn test_read_csv_empty_file()|No description|None|()|cfg_test
+src/reedcms/csv/read_test.rs|135|test_read_csv_only_comments|fn test_read_csv_only_comments()|No description|None|()|cfg_test
+src/reedcms/csv/read_test.rs|148|test_read_csv_whitespace_handling|fn test_read_csv_whitespace_handling()|No description|None|()|cfg_test
+src/reedcms/csv/read_test.rs|165|test_read_csv_performance_1000_rows|fn test_read_csv_performance_1000_rows()|No description|None|()|cfg_test
+src/reedcms/csv/read_test.rs|192|test_read_csv_real_world_keys|fn test_read_csv_real_world_keys()|No description|None|()|cfg_test
+src/reedcms/csv/record.rs|45|new|pub fn new(key: String, value: String, description: Option<String>) -> Self|Creates a new CSV record.|key: String; value: String; description: Option<String>|Self|active
+src/reedcms/csv/record.rs|77|parse_row|pub fn parse_row(line: &str) -> ReedResult<CsvRecord>|Parses a pipe-delimited CSV row into a CsvRecord.|line: &str|ReedResult<CsvRecord>|active
+src/reedcms/csv/record.rs|133|create_row|pub fn create_row(record: &CsvRecord) -> String|Creates a pipe-delimited CSV row from a CsvRecord.|record: &CsvRecord|String|active
+src/reedcms/csv/record.rs|145|test_csv_record_new|fn test_csv_record_new()|No description|None|()|active
+src/reedcms/csv/record.rs|158|test_csv_record_new_no_description|fn test_csv_record_new_no_description()|No description|None|()|active
+src/reedcms/csv/record_test.rs|10|test_csv_record_new_with_description|fn test_csv_record_new_with_description()|No description|None|()|cfg_test
+src/reedcms/csv/record_test.rs|23|test_csv_record_new_without_description|fn test_csv_record_new_without_description()|No description|None|()|cfg_test
+src/reedcms/csv/record_test.rs|33|test_parse_row_three_fields|fn test_parse_row_three_fields()|No description|None|()|cfg_test
+src/reedcms/csv/record_test.rs|44|test_parse_row_two_fields|fn test_parse_row_two_fields()|No description|None|()|cfg_test
+src/reedcms/csv/record_test.rs|55|test_parse_row_with_whitespace|fn test_parse_row_with_whitespace()|No description|None|()|cfg_test
+src/reedcms/csv/record_test.rs|66|test_parse_row_empty_description|fn test_parse_row_empty_description()|No description|None|()|cfg_test
+src/reedcms/csv/record_test.rs|77|test_parse_row_one_field_error|fn test_parse_row_one_field_error()|No description|None|()|cfg_test
+src/reedcms/csv/record_test.rs|83|test_parse_row_empty_key_error|fn test_parse_row_empty_key_error()|No description|None|()|cfg_test
+src/reedcms/csv/record_test.rs|89|test_parse_row_whitespace_key_error|fn test_parse_row_whitespace_key_error()|No description|None|()|cfg_test
+src/reedcms/csv/record_test.rs|95|test_parse_row_empty_line_error|fn test_parse_row_empty_line_error()|No description|None|()|cfg_test
+src/reedcms/csv/record_test.rs|101|test_parse_row_with_pipes_in_value|fn test_parse_row_with_pipes_in_value()|No description|None|()|cfg_test
+src/reedcms/csv/record_test.rs|114|test_create_row_with_description|fn test_create_row_with_description()|No description|None|()|cfg_test
+src/reedcms/csv/record_test.rs|126|test_create_row_without_description|fn test_create_row_without_description()|No description|None|()|cfg_test
+src/reedcms/csv/record_test.rs|135|test_round_trip_with_description|fn test_round_trip_with_description()|No description|None|()|cfg_test
+src/reedcms/csv/record_test.rs|143|test_round_trip_without_description|fn test_round_trip_without_description()|No description|None|()|cfg_test
+src/reedcms/csv/record_test.rs|152|test_parse_row_performance|fn test_parse_row_performance()|No description|None|()|cfg_test
+src/reedcms/csv/record_test.rs|169|test_create_row_performance|fn test_create_row_performance()|No description|None|()|cfg_test
+src/reedcms/csv/write.rs|48|write_csv|pub fn write_csv<P: AsRef<Path>>(path: P, records: &[CsvRecord]) -> ReedResult<()>|Writes a vector of CsvRecord to a pipe-delimited CSV file atomically.|path: P; records: &[CsvRecord]|ReedResult<()>|active
+src/reedcms/csv/write_test.rs|10|get_test_path|fn get_test_path() -> PathBuf|No description|None|PathBuf|cfg_test
+src/reedcms/csv/write_test.rs|14|cleanup_test_file|fn cleanup_test_file(path: &PathBuf)|No description|path: &PathBuf|()|cfg_test
+src/reedcms/csv/write_test.rs|21|test_write_csv_basic|fn test_write_csv_basic()|No description|None|()|cfg_test
+src/reedcms/csv/write_test.rs|46|test_write_csv_no_description|fn test_write_csv_no_description()|No description|None|()|cfg_test
+src/reedcms/csv/write_test.rs|63|test_write_csv_mixed_formats|fn test_write_csv_mixed_formats()|No description|None|()|cfg_test
+src/reedcms/csv/write_test.rs|92|test_write_csv_empty_records|fn test_write_csv_empty_records()|No description|None|()|cfg_test
+src/reedcms/csv/write_test.rs|106|test_write_csv_overwrite_existing|fn test_write_csv_overwrite_existing()|No description|None|()|cfg_test
+src/reedcms/csv/write_test.rs|132|test_write_csv_atomic_no_temp_file_left|fn test_write_csv_atomic_no_temp_file_left()|No description|None|()|cfg_test
+src/reedcms/csv/write_test.rs|150|test_write_csv_round_trip|fn test_write_csv_round_trip()|No description|None|()|cfg_test
+src/reedcms/csv/write_test.rs|184|test_write_csv_performance_1000_rows|fn test_write_csv_performance_1000_rows()|No description|None|()|cfg_test
+src/reedcms/csv/write_test.rs|212|test_write_csv_real_world_keys|fn test_write_csv_real_world_keys()|No description|None|()|cfg_test
+src/reedcms/csv/write_test.rs|245|test_write_csv_concurrent_safety|fn test_write_csv_concurrent_safety()|No description|None|()|cfg_test
+src/reedcms/filters/config.rs|32|make_config_filter|pub fn make_config_filter( ) -> impl Fn(&str) -> Result<String, minijinja::Error> + Send + Sync + 'static|Creates config filter for MiniJinja.|None|impl Fn(&str) -> Result<String, minijinja::Error> + Send + Sync + 'static|active
+src/reedcms/filters/config.rs|73|convert_reed_error_to_jinja|fn convert_reed_error_to_jinja(err: ReedError, filter: &str, key: &str) -> minijinja::Error|Converts ReedError to MiniJinja Error with context.|err: ReedError; filter: &str; key: &str|minijinja::Error|active
+src/reedcms/filters/meta.rs|30|make_meta_filter|pub fn make_meta_filter( ) -> impl Fn(&str) -> Result<String, minijinja::Error> + Send + Sync + 'static|Creates meta filter for MiniJinja.|None|impl Fn(&str) -> Result<String, minijinja::Error> + Send + Sync + 'static|active
+src/reedcms/filters/meta.rs|52|convert_reed_error_to_jinja|fn convert_reed_error_to_jinja(err: ReedError, filter: &str, key: &str) -> minijinja::Error|Converts ReedError to MiniJinja Error with context.|err: ReedError; filter: &str; key: &str|minijinja::Error|active
+src/reedcms/filters/route.rs|46|make_route_filter|pub fn make_route_filter( current_lang: String, ) -> impl Fn(&str, Option<&str>) -> Result<String, minijinja::Error> + Send + Sync + 'static|Creates route filter for MiniJinja.|current_lang: String|impl Fn(&str, Option<&str>) -> Result<String, minijinja::Error> + Send + Sync + 'static|active
+src/reedcms/filters/route.rs|86|convert_reed_error_to_jinja|fn convert_reed_error_to_jinja(err: ReedError, filter: &str, key: &str) -> minijinja::Error|Converts ReedError to MiniJinja Error with context.|err: ReedError; filter: &str; key: &str|minijinja::Error|active
+src/reedcms/filters/text.rs|42|make_text_filter|pub fn make_text_filter( current_lang: String, ) -> impl Fn(&str, Option<&str>) -> Result<String, minijinja::Error> + Send + Sync + 'static|Creates text filter for MiniJinja.|current_lang: String|impl Fn(&str, Option<&str>) -> Result<String, minijinja::Error> + Send + Sync + 'static|active
+src/reedcms/filters/text.rs|80|convert_reed_error_to_jinja|fn convert_reed_error_to_jinja(err: ReedError, filter: &str, key: &str) -> minijinja::Error|Converts ReedError to MiniJinja Error with context.|err: ReedError; filter: &str; key: &str|minijinja::Error|active
+src/reedcms/matrix/parse.rs|24|parse_modifiers|pub fn parse_modifiers(value: &str) -> (String, Vec<String>)|Parses modifiers from a value string.|value: &str|(String, Vec<String>)|active
+src/reedcms/matrix/parse.rs|69|parse_matrix_value|pub fn parse_matrix_value(value: &str) -> MatrixValue|Parses a Matrix CSV value with automatic type detection.|value: &str|MatrixValue|active
+src/reedcms/matrix/parse.rs|151|test_parse_modifiers_simple|fn test_parse_modifiers_simple()|No description|None|()|active
+src/reedcms/matrix/parse.rs|158|test_parse_modifiers_multiple|fn test_parse_modifiers_multiple()|No description|None|()|active
+src/reedcms/matrix/parse.rs|165|test_parse_modifiers_no_brackets|fn test_parse_modifiers_no_brackets()|No description|None|()|active
+src/reedcms/matrix/parse.rs|172|test_parse_matrix_value_type1|fn test_parse_matrix_value_type1()|No description|None|()|active
+src/reedcms/matrix/parse.rs|179|test_parse_matrix_value_type2|fn test_parse_matrix_value_type2()|No description|None|()|active
+src/reedcms/matrix/parse.rs|188|test_parse_matrix_value_type3|fn test_parse_matrix_value_type3()|No description|None|()|active
+src/reedcms/matrix/parse.rs|198|test_parse_matrix_value_type4|fn test_parse_matrix_value_type4()|No description|None|()|active
+src/reedcms/matrix/parse_test.rs|11|test_parse_modifiers_single|fn test_parse_modifiers_single()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|18|test_parse_modifiers_multiple|fn test_parse_modifiers_multiple()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|25|test_parse_modifiers_no_brackets|fn test_parse_modifiers_no_brackets()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|32|test_parse_modifiers_empty_brackets|fn test_parse_modifiers_empty_brackets()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|39|test_parse_modifiers_whitespace|fn test_parse_modifiers_whitespace()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|47|test_parse_matrix_value_type1_simple|fn test_parse_matrix_value_type1_simple()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|57|test_parse_matrix_value_type1_with_whitespace|fn test_parse_matrix_value_type1_with_whitespace()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|68|test_parse_matrix_value_type2_two_items|fn test_parse_matrix_value_type2_two_items()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|80|test_parse_matrix_value_type2_multiple_items|fn test_parse_matrix_value_type2_multiple_items()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|92|test_parse_matrix_value_type2_with_whitespace|fn test_parse_matrix_value_type2_with_whitespace()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|105|test_parse_matrix_value_type3_single_modifier|fn test_parse_matrix_value_type3_single_modifier()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|118|test_parse_matrix_value_type3_multiple_modifiers|fn test_parse_matrix_value_type3_multiple_modifiers()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|131|test_parse_matrix_value_type3_unix_permissions|fn test_parse_matrix_value_type3_unix_permissions()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|145|test_parse_matrix_value_type4_two_items|fn test_parse_matrix_value_type4_two_items()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|159|test_parse_matrix_value_type4_multiple_items|fn test_parse_matrix_value_type4_multiple_items()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|175|test_parse_matrix_value_type4_wildcard|fn test_parse_matrix_value_type4_wildcard()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|181|test_parse_matrix_value_type4_multiple_modifiers_per_item|fn test_parse_matrix_value_type4_multiple_modifiers_per_item()|No description|None|()|cfg_test
+src/reedcms/matrix/parse_test.rs|196|test_parse_matrix_value_performance|fn test_parse_matrix_value_performance()|No description|None|()|cfg_test
+src/reedcms/matrix/read.rs|47|read_matrix_csv|pub fn read_matrix_csv<P: AsRef<Path>>(path: P) -> ReedResult<Vec<MatrixRecord>>|Reads a pipe-delimited Matrix CSV file.|path: P|ReedResult<Vec<MatrixRecord>>|active
+src/reedcms/matrix/read_test.rs|10|create_test_file|fn create_test_file(content: &str) -> PathBuf|No description|content: &str|PathBuf|cfg_test
+src/reedcms/matrix/read_test.rs|19|cleanup_test_file|fn cleanup_test_file(path: &PathBuf)|No description|path: &PathBuf|()|cfg_test
+src/reedcms/matrix/read_test.rs|24|test_read_matrix_csv_basic|fn test_read_matrix_csv_basic()|No description|None|()|cfg_test
+src/reedcms/matrix/read_test.rs|45|test_read_matrix_csv_type2_lists|fn test_read_matrix_csv_type2_lists()|No description|None|()|cfg_test
+src/reedcms/matrix/read_test.rs|67|test_read_matrix_csv_type3_modified|fn test_read_matrix_csv_type3_modified()|No description|None|()|cfg_test
+src/reedcms/matrix/read_test.rs|88|test_read_matrix_csv_type4_permissions|fn test_read_matrix_csv_type4_permissions()|No description|None|()|cfg_test
+src/reedcms/matrix/read_test.rs|112|test_read_matrix_csv_skip_comments|fn test_read_matrix_csv_skip_comments()|No description|None|()|cfg_test
+src/reedcms/matrix/read_test.rs|126|test_read_matrix_csv_skip_empty_lines|fn test_read_matrix_csv_skip_empty_lines()|No description|None|()|cfg_test
+src/reedcms/matrix/read_test.rs|140|test_read_matrix_csv_no_description|fn test_read_matrix_csv_no_description()|No description|None|()|cfg_test
+src/reedcms/matrix/read_test.rs|155|test_read_matrix_csv_empty_file|fn test_read_matrix_csv_empty_file()|No description|None|()|cfg_test
+src/reedcms/matrix/read_test.rs|166|test_read_matrix_csv_file_not_found|fn test_read_matrix_csv_file_not_found()|No description|None|()|cfg_test
+src/reedcms/matrix/read_test.rs|172|test_read_matrix_csv_performance|fn test_read_matrix_csv_performance()|No description|None|()|cfg_test
+src/reedcms/matrix/read_test.rs|202|test_read_matrix_csv_field_order_preserved|fn test_read_matrix_csv_field_order_preserved()|No description|None|()|cfg_test
+src/reedcms/matrix/record.rs|29|is_single|pub fn is_single(&self) -> bool|Returns true if this is a Single value.|None|bool|active
+src/reedcms/matrix/record.rs|34|is_list|pub fn is_list(&self) -> bool|Returns true if this is a List value.|None|bool|active
+src/reedcms/matrix/record.rs|39|is_modified|pub fn is_modified(&self) -> bool|Returns true if this is a Modified value.|None|bool|active
+src/reedcms/matrix/record.rs|44|is_modified_list|pub fn is_modified_list(&self) -> bool|Returns true if this is a ModifiedList value.|None|bool|active
+src/reedcms/matrix/record.rs|49|to_csv_string|pub fn to_csv_string(&self) -> String|Converts to string representation for CSV output.|None|String|active
+src/reedcms/matrix/record.rs|90|new|pub fn new() -> Self|Creates a new empty MatrixRecord.|None|Self|active
+src/reedcms/matrix/record.rs|107|add_field|pub fn add_field(&mut self, name: String, value: MatrixValue)|Adds a field to the record.|name: String; value: MatrixValue|()|active
+src/reedcms/matrix/record.rs|115|get_field|pub fn get_field(&self, name: &str) -> Option<&MatrixValue>|Gets a field value by name.|name: &str|Option<&MatrixValue>|active
+src/reedcms/matrix/record.rs|120|set_description|pub fn set_description(&mut self, desc: String)|Sets the description.|desc: String|()|active
+src/reedcms/matrix/record.rs|128|to_csv_row|pub fn to_csv_row(&self) -> String|Converts to CSV row string.|None|String|active
+src/reedcms/matrix/record.rs|148|default|fn default() -> Self|No description|None|Self|active
+src/reedcms/matrix/record_test.rs|9|test_matrix_value_single|fn test_matrix_value_single()|No description|None|()|cfg_test
+src/reedcms/matrix/record_test.rs|16|test_matrix_value_list|fn test_matrix_value_list()|No description|None|()|cfg_test
+src/reedcms/matrix/record_test.rs|23|test_matrix_value_modified|fn test_matrix_value_modified()|No description|None|()|cfg_test
+src/reedcms/matrix/record_test.rs|30|test_matrix_value_modified_list|fn test_matrix_value_modified_list()|No description|None|()|cfg_test
+src/reedcms/matrix/record_test.rs|40|test_matrix_value_modified_multiple_mods|fn test_matrix_value_modified_multiple_mods()|No description|None|()|cfg_test
+src/reedcms/matrix/record_test.rs|49|test_matrix_record_new|fn test_matrix_record_new()|No description|None|()|cfg_test
+src/reedcms/matrix/record_test.rs|57|test_matrix_record_add_field|fn test_matrix_record_add_field()|No description|None|()|cfg_test
+src/reedcms/matrix/record_test.rs|73|test_matrix_record_get_field|fn test_matrix_record_get_field()|No description|None|()|cfg_test
+src/reedcms/matrix/record_test.rs|85|test_matrix_record_to_csv_row|fn test_matrix_record_to_csv_row()|No description|None|()|cfg_test
+src/reedcms/matrix/record_test.rs|102|test_matrix_record_to_csv_row_no_description|fn test_matrix_record_to_csv_row_no_description()|No description|None|()|cfg_test
+src/reedcms/matrix/record_test.rs|114|test_matrix_record_field_order_preserved|fn test_matrix_record_field_order_preserved()|No description|None|()|cfg_test
+src/reedcms/matrix/write.rs|49|write_matrix_csv|pub fn write_matrix_csv<P: AsRef<Path>>( path: P, records: &[MatrixRecord], field_names: &[&str], ) -> ReedResult<()>|Writes Matrix CSV records to file atomically.|path: P; records: &[MatrixRecord]; field_names: &[&str]|ReedResult<()>|active
+src/reedcms/matrix/write_test.rs|10|get_test_path|fn get_test_path() -> PathBuf|No description|None|PathBuf|cfg_test
+src/reedcms/matrix/write_test.rs|17|cleanup_test_file|fn cleanup_test_file(path: &PathBuf)|No description|path: &PathBuf|()|cfg_test
+src/reedcms/matrix/write_test.rs|24|test_write_matrix_csv_basic|fn test_write_matrix_csv_basic()|No description|None|()|cfg_test
+src/reedcms/matrix/write_test.rs|62|test_write_matrix_csv_with_lists|fn test_write_matrix_csv_with_lists()|No description|None|()|cfg_test
+src/reedcms/matrix/write_test.rs|86|test_write_matrix_csv_with_permissions|fn test_write_matrix_csv_with_permissions()|No description|None|()|cfg_test
+src/reedcms/matrix/write_test.rs|113|test_write_matrix_csv_no_description|fn test_write_matrix_csv_no_description()|No description|None|()|cfg_test
+src/reedcms/matrix/write_test.rs|129|test_write_matrix_csv_atomic_no_temp_file|fn test_write_matrix_csv_atomic_no_temp_file()|No description|None|()|cfg_test
+src/reedcms/matrix/write_test.rs|144|test_write_matrix_csv_round_trip|fn test_write_matrix_csv_round_trip()|No description|None|()|cfg_test
+src/reedcms/matrix/write_test.rs|175|test_write_matrix_csv_performance|fn test_write_matrix_csv_performance()|No description|None|()|cfg_test
+src/reedcms/matrix/write_test.rs|205|test_write_matrix_csv_infer_fields_from_record|fn test_write_matrix_csv_infer_fields_from_record()|No description|None|()|cfg_test
+src/reedcms/reed/reedbase.rs|52|new|pub fn new(text_path: &str, route_path: &str, meta_path: &str) -> Self|Creates a new ReedBase dispatcher.|text_path: &str; route_path: &str; meta_path: &str|Self|active
+src/reedcms/reed/reedbase.rs|76|init|pub fn init(&self) -> ReedResult<()>|Initialises all caches from CSV files.|None|ReedResult<()>|active
+src/reedcms/reed/reedbase.rs|140|get|pub fn get(&self, request: ReedRequest) -> ReedResult<ReedResponse<String>>|Retrieves a value by key from the appropriate cache.|request: ReedRequest|ReedResult<ReedResponse<String>>|active
+src/reedcms/reed/reedbase.rs|189|set|pub fn set(&self, request: ReedRequest) -> ReedResult<ReedResponse<String>>|Updates a key-value pair in the appropriate cache and persists to CSV.|request: ReedRequest|ReedResult<ReedResponse<String>>|active
+src/reedcms/reedbase/get.rs|49|get|pub fn get( request: ReedRequest, cache: &HashMap<String, String>, ) -> ReedResult<ReedResponse<String>>|Retrieves a value by key from the cache.|request: ReedRequest; cache: &HashMap<String, String>|ReedResult<ReedResponse<String>>|active
+src/reedcms/reedbase/get.rs|113|text|pub fn text(request: &ReedRequest) -> ReedResult<ReedResponse<String>>|Retrieves text content from ReedBase.|request: &ReedRequest|ReedResult<ReedResponse<String>>|active
+src/reedcms/reedbase/get.rs|132|route|pub fn route(request: &ReedRequest) -> ReedResult<ReedResponse<String>>|Retrieves route from ReedBase.|request: &ReedRequest|ReedResult<ReedResponse<String>>|active
+src/reedcms/reedbase/get.rs|151|meta|pub fn meta(request: &ReedRequest) -> ReedResult<ReedResponse<String>>|Retrieves metadata from ReedBase.|request: &ReedRequest|ReedResult<ReedResponse<String>>|active
+src/reedcms/reedbase/get.rs|170|project|pub fn project(request: &ReedRequest) -> ReedResult<ReedResponse<String>>|Retrieves project configuration from ReedBase.|request: &ReedRequest|ReedResult<ReedResponse<String>>|active
+src/reedcms/reedbase/get.rs|189|server|pub fn server(request: &ReedRequest) -> ReedResult<ReedResponse<String>>|Retrieves server configuration from ReedBase.|request: &ReedRequest|ReedResult<ReedResponse<String>>|active
+src/reedcms/reedbase/get.rs|204|read_from_csv|fn read_from_csv(csv_path: &str, request: &ReedRequest) -> ReedResult<ReedResponse<String>>|Reads value from CSV file (placeholder implementation).|csv_path: &str; request: &ReedRequest|ReedResult<ReedResponse<String>>|active
+src/reedcms/reedbase/get_test.rs|11|test_get_basic|fn test_get_basic()|No description|None|()|cfg_test
+src/reedcms/reedbase/get_test.rs|33|test_get_with_language|fn test_get_with_language()|No description|None|()|cfg_test
+src/reedcms/reedbase/get_test.rs|55|test_get_with_environment_fallback|fn test_get_with_environment_fallback()|No description|None|()|cfg_test
+src/reedcms/reedbase/get_test.rs|78|test_get_environment_specific|fn test_get_environment_specific()|No description|None|()|cfg_test
+src/reedcms/reedbase/get_test.rs|101|test_get_not_found|fn test_get_not_found()|No description|None|()|cfg_test
+src/reedcms/reedbase/get_test.rs|118|test_get_performance|fn test_get_performance()|No description|None|()|cfg_test
+src/reedcms/reedbase/get_test.rs|144|test_get_response_fields|fn test_get_response_fields()|No description|None|()|cfg_test
+src/reedcms/reedbase/init.rs|50|init|pub fn init(request: ReedRequest) -> ReedResult<ReedResponse<HashMap<String, String>>>|Initialises in-memory cache from a CSV file.|request: ReedRequest|ReedResult<ReedResponse<HashMap<String, String>>>|active
+src/reedcms/reedbase/init_test.rs|11|create_test_csv|fn create_test_csv(content: &str) -> PathBuf|No description|content: &str|PathBuf|cfg_test
+src/reedcms/reedbase/init_test.rs|17|cleanup_test_file|fn cleanup_test_file(path: &PathBuf)|No description|path: &PathBuf|()|cfg_test
+src/reedcms/reedbase/init_test.rs|22|test_init_basic|fn test_init_basic()|No description|None|()|cfg_test
+src/reedcms/reedbase/init_test.rs|47|test_init_with_descriptions|fn test_init_with_descriptions()|No description|None|()|cfg_test
+src/reedcms/reedbase/init_test.rs|69|test_init_empty_file|fn test_init_empty_file()|No description|None|()|cfg_test
+src/reedcms/reedbase/init_test.rs|91|test_init_large_file|fn test_init_large_file()|No description|None|()|cfg_test
+src/reedcms/reedbase/init_test.rs|123|test_init_no_path_provided|fn test_init_no_path_provided()|No description|None|()|cfg_test
+src/reedcms/reedbase/init_test.rs|138|test_init_file_not_found|fn test_init_file_not_found()|No description|None|()|cfg_test
+src/reedcms/reedbase/init_test.rs|153|test_init_response_fields|fn test_init_response_fields()|No description|None|()|cfg_test
+src/reedcms/reedbase/set.rs|53|set|pub fn set( request: ReedRequest, cache: &mut HashMap<String, String>, csv_path: &str, ) -> ReedResult<ReedResponse<String>>|Updates a key-value pair in cache and persists to CSV.|request: ReedRequest; cache: &mut HashMap<String, String>; csv_path: &str|ReedResult<ReedResponse<String>>|active
+src/reedcms/reedbase/set_test.rs|13|create_test_csv|fn create_test_csv(content: &str) -> PathBuf|No description|content: &str|PathBuf|cfg_test
+src/reedcms/reedbase/set_test.rs|22|cleanup_test_dir|fn cleanup_test_dir(path: &PathBuf)|No description|path: &PathBuf|()|cfg_test
+src/reedcms/reedbase/set_test.rs|29|test_set_basic|fn test_set_basic()|No description|None|()|cfg_test
+src/reedcms/reedbase/set_test.rs|57|test_set_updates_existing|fn test_set_updates_existing()|No description|None|()|cfg_test
+src/reedcms/reedbase/set_test.rs|81|test_set_creates_backup|fn test_set_creates_backup()|No description|None|()|cfg_test
+src/reedcms/reedbase/set_test.rs|113|test_set_persists_to_csv|fn test_set_persists_to_csv()|No description|None|()|cfg_test
+src/reedcms/reedbase/set_test.rs|142|test_set_no_value_provided|fn test_set_no_value_provided()|No description|None|()|cfg_test
+src/reedcms/reedbase/set_test.rs|162|test_set_performance|fn test_set_performance()|No description|None|()|cfg_test
+src/reedcms/reedbase/set_test.rs|191|test_set_sorted_output|fn test_set_sorted_output()|No description|None|()|cfg_test
+src/reedcms/reedstream.rs|149|new|pub fn new(data: T, source: &str) -> Self|Creates a new ReedResponse with minimal fields.|data: T; source: &str|Self|active
+src/reedcms/reedstream.rs|177|with_metrics|pub fn with_metrics(mut self, metrics: ResponseMetrics) -> Self|Adds performance metrics to an existing response.|mut self; metrics: ResponseMetrics|Self|active
+src/reedcms/reedstream.rs|186|module_name|fn module_name() -> &'static str;|Returns the module name for identification.|None|&'static str|active
+src/reedcms/reedstream.rs|189|health_check|fn health_check() -> ReedResult<ReedResponse<String>>;|Performs a health check on the module.|None|ReedResult<ReedResponse<String>>|active
+src/reedcms/reedstream.rs|192|version|fn version() -> &'static str|Returns the module version.|None|&'static str|active
+src/reedcms/reedstream.rs|197|dependencies|fn dependencies() -> Vec<&'static str>|Returns the list of module dependencies.|None|Vec<&'static str>|active
+src/reedcms/reedstream.rs|217|current_timestamp|pub fn current_timestamp() -> u64|Returns current Unix timestamp in seconds.|None|u64|active
+src/reedcms/reedstream.rs|227|not_found|pub fn not_found(resource: impl Into<String>) -> ReedError|Creates a NotFound error.|resource: impl Into<String>|ReedError|active
+src/reedcms/reedstream.rs|235|validation_error|pub fn validation_error( field: impl Into<String>, value: impl Into<String>, constraint: impl Into<String>, ) -> ReedError|Creates a ValidationError.|field: impl Into<String>; value: impl Into<String>; constraint: impl Into<String>|ReedError|active
+src/reedcms/reedstream.rs|248|csv_error|pub fn csv_error( file_type: impl Into<String>, operation: impl Into<String>, reason: impl Into<String>, ) -> ReedError|Creates a CsvError.|file_type: impl Into<String>; operation: impl Into<String>; reason: impl Into<String>|ReedError|active
+src/reedcms/reedstream.rs|261|io_error|pub fn io_error( operation: impl Into<String>, path: impl Into<String>, reason: impl Into<String>, ) -> ReedError|Creates an IoError.|operation: impl Into<String>; path: impl Into<String>; reason: impl Into<String>|ReedError|active
+src/reedcms/reedstream.rs|274|auth_error|pub fn auth_error( user: Option<String>, action: impl Into<String>, reason: impl Into<String>, ) -> ReedError|Creates an AuthError.|user: Option<String>; action: impl Into<String>; reason: impl Into<String>|ReedError|active
+src/reedcms/reedstream.rs|287|config_error|pub fn config_error(component: impl Into<String>, reason: impl Into<String>) -> ReedError|Creates a ConfigError.|component: impl Into<String>; reason: impl Into<String>|ReedError|active
+src/reedcms/reedstream.rs|295|template_error|pub fn template_error(template: impl Into<String>, reason: impl Into<String>) -> ReedError|Creates a TemplateError.|template: impl Into<String>; reason: impl Into<String>|ReedError|active
+src/reedcms/reedstream.rs|303|server_error|pub fn server_error(component: impl Into<String>, reason: impl Into<String>) -> ReedError|Creates a ServerError.|component: impl Into<String>; reason: impl Into<String>|ReedError|active
+src/reedcms/reedstream.rs|311|invalid_command|pub fn invalid_command(command: impl Into<String>, reason: impl Into<String>) -> ReedError|Creates an InvalidCommand error.|command: impl Into<String>; reason: impl Into<String>|ReedError|active
+src/reedcms/reedstream.rs|319|parse_error|pub fn parse_error(input: impl Into<String>, reason: impl Into<String>) -> ReedError|Creates a ParseError.|input: impl Into<String>; reason: impl Into<String>|ReedError|active
+src/reedcms/reedstream.rs|342|with_context|pub fn with_context(mut self, context: impl Into<String>) -> Self|Adds context to NotFound errors.|mut self; context: impl Into<String>|Self|active
+src/reedcms/reedstream.rs|356|from|fn from(err: std::io::Error) -> Self|No description|err: std::io::Error|Self|active
+src/reedcms/reedstream.rs|367|from|fn from(err: csv::Error) -> Self|No description|err: csv::Error|Self|active
+src/reedcms/reedstream_test.rs|11|test_reed_request_creation|fn test_reed_request_creation()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|27|test_reed_request_minimal|fn test_reed_request_minimal()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|45|test_reed_response_new|fn test_reed_response_new()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|56|test_reed_response_with_metrics|fn test_reed_response_with_metrics()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|72|test_reed_response_with_different_types|fn test_reed_response_with_different_types()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|85|test_response_metrics_creation|fn test_response_metrics_creation()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|108|test_cache_info_hit|fn test_cache_info_hit()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|122|test_cache_info_miss|fn test_cache_info_miss()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|137|test_reed_error_not_found|fn test_reed_error_not_found()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|153|test_reed_error_validation|fn test_reed_error_validation()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|175|test_reed_error_csv|fn test_reed_error_csv()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|199|test_not_found_convenience|fn test_not_found_convenience()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|212|test_validation_error_convenience|fn test_validation_error_convenience()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|230|test_csv_error_convenience|fn test_csv_error_convenience()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|248|test_io_error_convenience|fn test_io_error_convenience()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|266|test_auth_error_convenience|fn test_auth_error_convenience()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|284|test_config_error_convenience|fn test_config_error_convenience()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|297|test_template_error_convenience|fn test_template_error_convenience()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|310|test_server_error_convenience|fn test_server_error_convenience()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|323|test_invalid_command_convenience|fn test_invalid_command_convenience()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|336|test_parse_error_convenience|fn test_parse_error_convenience()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|351|test_current_timestamp|fn test_current_timestamp()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|361|test_current_timestamp_performance|fn test_current_timestamp_performance()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|379|module_name|fn module_name() -> &'static str|No description|None|&'static str|cfg_test
+src/reedcms/reedstream_test.rs|383|health_check|fn health_check() -> ReedResult<ReedResponse<String>>|No description|None|ReedResult<ReedResponse<String>>|cfg_test
+src/reedcms/reedstream_test.rs|387|version|fn version() -> &'static str|No description|None|&'static str|cfg_test
+src/reedcms/reedstream_test.rs|391|dependencies|fn dependencies() -> Vec<&'static str>|No description|None|Vec<&'static str>|cfg_test
+src/reedcms/reedstream_test.rs|397|test_reed_module_implementation|fn test_reed_module_implementation()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|410|test_reed_request_creation_performance|fn test_reed_request_creation_performance()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|431|test_reed_response_creation_performance|fn test_reed_response_creation_performance()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|445|test_response_metrics_calculation_performance|fn test_response_metrics_calculation_performance()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|467|test_reed_error_display|fn test_reed_error_display()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|475|test_reed_error_clone|fn test_reed_error_clone()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|503|test_with_context_on_not_found|fn test_with_context_on_not_found()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|516|test_with_context_on_other_error_ignored|fn test_with_context_on_other_error_ignored()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|529|test_from_io_error|fn test_from_io_error()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|550|test_from_csv_error|fn test_from_csv_error()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|577|test_question_mark_operator_with_io_error|fn test_question_mark_operator_with_io_error()|No description|None|()|cfg_test
+src/reedcms/reedstream_test.rs|580|read_file|fn read_file() -> ReedResult<String>|No description|None|ReedResult<String>|cfg_test
+src/reedcms/response/builder.rs|69|build_response|pub async fn build_response(req: HttpRequest) -> Result<HttpResponse, Error>|Builds complete HTTP response for incoming request.|req: HttpRequest|Result<HttpResponse, Error>|active
+src/reedcms/response/builder.rs|149|detect_variant|fn detect_variant(req: &HttpRequest) -> String|Detects variant from User-Agent header.|req: &HttpRequest|String|active
+src/reedcms/response/builder.rs|204|render_template|fn render_template( template_name: &str, context: &std::collections::HashMap<String, serde_json::Value>, ) -> Result<String, crate::reedcms::reedstream::ReedError>|Renders template with context using MiniJinja engine.|template_name: &str; context: &std::collections::HashMap<String, serde_json::Value>|Result<String, crate::reedcms::reedstream::ReedError>|active
+src/reedcms/response/builder.rs|251|get_template_engine|fn get_template_engine() -> &'static Environment<'static>|Gets template engine singleton.|None|&'static Environment<'static>|active
+src/reedcms/response/builder.test.rs|15|test_build_response_returns_response|fn test_build_response_returns_response()|No description|None|()|active
+src/reedcms/response/builder.test.rs|32|test_build_response_with_user_agent|fn test_build_response_with_user_agent()|No description|None|()|active
+src/reedcms/response/cache.rs|60|cache_control_header|pub fn cache_control_header(layout: &str) -> (&'static str, String)|Generates Cache-Control header tuple for HTTP response.|layout: &str|(&'static str, String)|active
+src/reedcms/response/cache.rs|99|get_cache_ttl|fn get_cache_ttl(layout: &str) -> u64|Gets cache TTL (Time To Live) for layout from meta.csv.|layout: &str|u64|active
+src/reedcms/response/cache.rs|142|is_public_layout|fn is_public_layout(layout: &str) -> bool|Checks if layout is publicly cacheable.|layout: &str|bool|active
+src/reedcms/response/cache.test.rs|11|test_cache_control_header_format|fn test_cache_control_header_format()|No description|None|()|active
+src/reedcms/response/cache.test.rs|25|test_cache_control_default_ttl|fn test_cache_control_default_ttl()|No description|None|()|active
+src/reedcms/response/cache.test.rs|33|test_cache_control_no_cache_format|fn test_cache_control_no_cache_format()|No description|None|()|active
+src/reedcms/response/content_type.rs|49|mime_type|pub fn mime_type(&self) -> &'static str|Returns MIME type string for HTTP Content-Type header.|None|&'static str|active
+src/reedcms/response/content_type.rs|88|negotiate_content_type|pub fn negotiate_content_type(req: &HttpRequest) -> ContentType|Determines response content type based on request Accept header.|req: &HttpRequest|ContentType|active
+src/reedcms/response/content_type.test.rs|12|test_content_type_mime_types|fn test_content_type_mime_types()|No description|None|()|active
+src/reedcms/response/content_type.test.rs|22|test_negotiate_html_default|fn test_negotiate_html_default()|No description|None|()|active
+src/reedcms/response/content_type.test.rs|28|test_negotiate_json|fn test_negotiate_json()|No description|None|()|active
+src/reedcms/response/content_type.test.rs|36|test_negotiate_plain|fn test_negotiate_plain()|No description|None|()|active
+src/reedcms/response/content_type.test.rs|44|test_negotiate_html_explicit|fn test_negotiate_html_explicit()|No description|None|()|active
+src/reedcms/response/content_type.test.rs|52|test_negotiate_priority_json|fn test_negotiate_priority_json()|No description|None|()|active
+src/reedcms/response/errors.rs|49|build_404_response|pub fn build_404_response() -> HttpResponse|Builds 404 Not Found HTTP response.|None|HttpResponse|active
+src/reedcms/response/errors.rs|95|build_500_response|pub fn build_500_response(error: ReedError) -> HttpResponse|Builds 500 Internal Server Error HTTP response.|error: ReedError|HttpResponse|active
+src/reedcms/response/errors.rs|140|render_error_template|fn render_error_template( template_name: &str, code: u16, message: &str, ) -> Result<String, ReedError>|Renders error template with minimal context.|template_name: &str; code: u16; message: &str|Result<String, ReedError>|active
+src/reedcms/response/errors.rs|185|is_dev_environment|fn is_dev_environment() -> bool|Checks if running in DEV environment.|None|bool|active
+src/reedcms/response/errors.rs|214|get_template_engine|fn get_template_engine() -> &'static Environment<'static>|Gets template engine singleton.|None|&'static Environment<'static>|active
+src/reedcms/response/errors.test.rs|13|test_404_response_status|fn test_404_response_status()|No description|None|()|active
+src/reedcms/response/errors.test.rs|19|test_404_response_content_type|fn test_404_response_content_type()|No description|None|()|active
+src/reedcms/response/errors.test.rs|32|test_500_response_status|fn test_500_response_status()|No description|None|()|active
+src/reedcms/response/errors.test.rs|41|test_500_response_content_type|fn test_500_response_content_type()|No description|None|()|active
+src/reedcms/routing/language.rs|43|detect_language|pub fn detect_language(req: &HttpRequest) -> String|Detects language from HTTP request.|req: &HttpRequest|String|active
+src/reedcms/routing/language.rs|75|extract_language_from_path|pub fn extract_language_from_path(path: &str) -> Option<String>|Extracts language from URL path.|path: &str|Option<String>|active
+src/reedcms/routing/language.rs|108|parse_accept_language_header|pub fn parse_accept_language_header(req: &HttpRequest) -> Option<String>|Parses Accept-Language HTTP header.|req: &HttpRequest|Option<String>|active
+src/reedcms/routing/language.rs|142|is_valid_language_code|pub fn is_valid_language_code(code: &str) -> bool|Checks if language code is valid.|code: &str|bool|active
+src/reedcms/routing/language.rs|159|get_supported_languages|pub fn get_supported_languages() -> ReedResult<Vec<String>>|Gets supported languages from project config.|None|ReedResult<Vec<String>>|active
+src/reedcms/routing/language.rs|195|get_default_language|pub fn get_default_language() -> Option<String>|Gets default language from project config.|None|Option<String>|active
+src/reedcms/routing/patterns.rs|55|match_pattern|pub fn match_pattern(pattern: &str, path: &str) -> Option<HashMap<String, String>>|Matches URL against pattern and extracts parameters.|pattern: &str; path: &str|Option<HashMap<String, String>>|active
+src/reedcms/routing/patterns.rs|107|is_valid_pattern|pub fn is_valid_pattern(pattern: &str) -> bool|Checks if pattern is valid.|pattern: &str|bool|active
+src/reedcms/routing/patterns.rs|134|test_match_simple_parameter|fn test_match_simple_parameter()|No description|None|()|active
+src/reedcms/routing/patterns.rs|142|test_match_multiple_parameters|fn test_match_multiple_parameters()|No description|None|()|active
+src/reedcms/routing/patterns.rs|151|test_match_wildcard|fn test_match_wildcard()|No description|None|()|active
+src/reedcms/routing/patterns.rs|159|test_no_match_different_literal|fn test_no_match_different_literal()|No description|None|()|active
+src/reedcms/routing/patterns.rs|165|test_no_match_different_segment_count|fn test_no_match_different_segment_count()|No description|None|()|active
+src/reedcms/routing/patterns.rs|171|test_valid_pattern|fn test_valid_pattern()|No description|None|()|active
+src/reedcms/routing/patterns.rs|178|test_invalid_pattern|fn test_invalid_pattern()|No description|None|()|active
+src/reedcms/routing/resolver.rs|61|resolve_url|pub fn resolve_url(url: &str) -> ReedResult<RouteInfo>|Resolves URL to layout and language.|url: &str|ReedResult<RouteInfo>|active
+src/reedcms/routing/resolver.rs|94|resolve_landing_page|fn resolve_landing_page() -> ReedResult<RouteInfo>|Resolves landing page (root URL).|None|ReedResult<RouteInfo>|active
+src/reedcms/routing/resolver.rs|122|lookup_exact_route|fn lookup_exact_route(path: &str) -> ReedResult<Option<RouteInfo>>|Looks up exact route match via reverse lookup.|path: &str|ReedResult<Option<RouteInfo>>|active
+src/reedcms/routing/resolver.rs|170|lookup_pattern_route|fn lookup_pattern_route(_path: &str) -> ReedResult<Option<RouteInfo>>|Looks up pattern-based route match.|_path: &str|ReedResult<Option<RouteInfo>>|active
+src/reedcms/routing/resolver.rs|190|parse_route_key|fn parse_route_key(key: &str) -> Option<(String, String)>|Parses route key into layout and language.|key: &str|Option<(String, String)>|active
+src/reedcms/routing/resolver.rs|211|get_default_language|fn get_default_language() -> Option<String>|Gets default language from project config.|None|Option<String>|active
+src/reedcms/security/inheritance.rs|37|resolve_inheritance|pub fn resolve_inheritance(role: &str) -> ReedResult<Vec<String>>|Resolves role inheritance chain.|role: &str|ReedResult<Vec<String>>|active
+src/reedcms/security/inheritance.rs|77|get_parent_role|fn get_parent_role(role: &str) -> ReedResult<Option<String>>|Gets parent role name for a role.|role: &str|ReedResult<Option<String>>|active
+src/reedcms/security/inheritance.rs|117|has_circular_inheritance|pub fn has_circular_inheritance(role: &str) -> ReedResult<bool>|Checks for circular inheritance in role chain.|role: &str|ReedResult<bool>|active
+src/reedcms/security/inheritance.rs|149|merge_inherited_permissions|pub fn merge_inherited_permissions(roles: &[String]) -> ReedResult<Vec<Permission>>|Merges permissions from inheritance chain.|roles: &[String]|ReedResult<Vec<Permission>>|active
+src/reedcms/security/inheritance.rs|172|get_role_permissions|fn get_role_permissions(role: &str) -> ReedResult<Vec<Permission>>|Gets direct permissions for a role (without inheritance).|role: &str|ReedResult<Vec<Permission>>|active
+src/reedcms/security/inheritance.rs|215|resolve_role_permissions|pub fn resolve_role_permissions(role: &str) -> ReedResult<Vec<Permission>>|Resolves all permissions for a role (including inherited).|role: &str|ReedResult<Vec<Permission>>|active
+src/reedcms/security/inheritance_test.rs|17|setup_test_env|fn setup_test_env()|No description|None|()|cfg_test
+src/reedcms/security/inheritance_test.rs|23|cleanup_test_roles|fn cleanup_test_roles()|No description|None|()|cfg_test
+src/reedcms/security/inheritance_test.rs|27|create_test_role|fn create_test_role( rolename: &str, permissions: &str, inherits: &str, ) -> Result<(), Box<dyn std::error::Error>>|No description|rolename: &str; permissions: &str; inherits: &str|Result<(), Box<dyn std::error::Error>>|cfg_test
+src/reedcms/security/inheritance_test.rs|91|test_resolve_inheritance_single|fn test_resolve_inheritance_single()|No description|None|()|cfg_test
+src/reedcms/security/inheritance_test.rs|104|test_resolve_inheritance_chain|fn test_resolve_inheritance_chain()|No description|None|()|cfg_test
+src/reedcms/security/inheritance_test.rs|121|test_resolve_inheritance_not_found|fn test_resolve_inheritance_not_found()|No description|None|()|cfg_test
+src/reedcms/security/inheritance_test.rs|131|test_has_circular_inheritance_none|fn test_has_circular_inheritance_none()|No description|None|()|cfg_test
+src/reedcms/security/inheritance_test.rs|144|test_has_circular_inheritance_direct|fn test_has_circular_inheritance_direct()|No description|None|()|cfg_test
+src/reedcms/security/inheritance_test.rs|156|test_has_circular_inheritance_indirect|fn test_has_circular_inheritance_indirect()|No description|None|()|cfg_test
+src/reedcms/security/inheritance_test.rs|170|test_merge_inherited_permissions_simple|fn test_merge_inherited_permissions_simple()|No description|None|()|cfg_test
+src/reedcms/security/inheritance_test.rs|191|test_merge_inherited_permissions_wildcard|fn test_merge_inherited_permissions_wildcard()|No description|None|()|cfg_test
+src/reedcms/security/inheritance_test.rs|210|test_resolve_role_permissions_with_inheritance|fn test_resolve_role_permissions_with_inheritance()|No description|None|()|cfg_test
+src/reedcms/security/inheritance_test.rs|231|test_resolve_role_permissions_no_inheritance|fn test_resolve_role_permissions_no_inheritance()|No description|None|()|cfg_test
+src/reedcms/security/inheritance_test.rs|244|test_inheritance_chain_ordering|fn test_inheritance_chain_ordering()|No description|None|()|cfg_test
+src/reedcms/security/passwords.rs|45|hash_password|pub fn hash_password(password: &str) -> ReedResult<String>|Hashes password using Argon2id with secure parameters.|password: &str|ReedResult<String>|active
+src/reedcms/security/passwords.rs|91|verify_password|pub fn verify_password(password: &str, hash: &str) -> ReedResult<bool>|Verifies password against Argon2id hash.|password: &str; hash: &str|ReedResult<bool>|active
+src/reedcms/security/passwords.rs|137|change_password|pub fn change_password( _username: &str, _old_password: &str, new_password: &str, ) -> ReedResult<ReedResponse<()>>|Changes user password after verification.|_username: &str; _old_password: &str; new_password: &str|ReedResult<ReedResponse<()>>|active
+src/reedcms/security/passwords.rs|188|validate_password_strength|pub fn validate_password_strength(password: &str) -> ReedResult<()>|Validates password strength requirements.|password: &str|ReedResult<()>|active
+src/reedcms/security/passwords_test.rs|13|test_hash_password_success|fn test_hash_password_success()|No description|None|()|cfg_test
+src/reedcms/security/passwords_test.rs|23|test_hash_password_empty|fn test_hash_password_empty()|No description|None|()|cfg_test
+src/reedcms/security/passwords_test.rs|34|test_hash_password_deterministic|fn test_hash_password_deterministic()|No description|None|()|cfg_test
+src/reedcms/security/passwords_test.rs|43|test_verify_password_correct|fn test_verify_password_correct()|No description|None|()|cfg_test
+src/reedcms/security/passwords_test.rs|52|test_verify_password_incorrect|fn test_verify_password_incorrect()|No description|None|()|cfg_test
+src/reedcms/security/passwords_test.rs|60|test_verify_password_invalid_hash|fn test_verify_password_invalid_hash()|No description|None|()|cfg_test
+src/reedcms/security/passwords_test.rs|66|test_validate_password_strength_valid|fn test_validate_password_strength_valid()|No description|None|()|cfg_test
+src/reedcms/security/passwords_test.rs|76|test_validate_password_strength_too_short|fn test_validate_password_strength_too_short()|No description|None|()|cfg_test
+src/reedcms/security/passwords_test.rs|84|test_validate_password_strength_no_uppercase|fn test_validate_password_strength_no_uppercase()|No description|None|()|cfg_test
+src/reedcms/security/passwords_test.rs|92|test_validate_password_strength_no_lowercase|fn test_validate_password_strength_no_lowercase()|No description|None|()|cfg_test
+src/reedcms/security/passwords_test.rs|100|test_validate_password_strength_no_digit|fn test_validate_password_strength_no_digit()|No description|None|()|cfg_test
+src/reedcms/security/passwords_test.rs|108|test_validate_password_strength_no_special|fn test_validate_password_strength_no_special()|No description|None|()|cfg_test
+src/reedcms/security/passwords_test.rs|116|test_password_hashing_performance|fn test_password_hashing_performance()|No description|None|()|cfg_test
+src/reedcms/security/passwords_test.rs|133|test_verify_password_performance|fn test_verify_password_performance()|No description|None|()|cfg_test
+src/reedcms/security/passwords_test.rs|151|test_argon2_hash_format|fn test_argon2_hash_format()|No description|None|()|cfg_test
+src/reedcms/security/passwords_test.rs|165|test_special_characters_all_valid|fn test_special_characters_all_valid()|No description|None|()|cfg_test
+src/reedcms/security/permissions.rs|22|new|pub fn new(resource: impl Into<String>) -> Self|Creates a new permission with all flags set to false.|resource: impl Into<String>|Self|active
+src/reedcms/security/permissions.rs|32|allows|pub fn allows(&self, action: &str) -> bool|Checks if permission allows specific action.|action: &str|bool|active
+src/reedcms/security/permissions.rs|47|matches_resource|pub fn matches_resource(&self, resource: &str) -> bool|Checks if this permission matches a resource (with wildcard and hierarchy support).|resource: &str|bool|active
+src/reedcms/security/permissions.rs|90|parse_permission|pub fn parse_permission(perm: &str) -> ReedResult<Permission>|Parses permission string into Permission structure.|perm: &str|ReedResult<Permission>|active
+src/reedcms/security/permissions.rs|192|validate_permission_syntax|pub fn validate_permission_syntax(perm: &str) -> ReedResult<()>|Validates permission syntax without parsing.|perm: &str|ReedResult<()>|active
+src/reedcms/security/permissions.rs|210|parse_permissions|pub fn parse_permissions(perms: &str) -> ReedResult<Vec<Permission>>|Parses comma-separated permission list.|perms: &str|ReedResult<Vec<Permission>>|active
+src/reedcms/security/permissions.rs|236|format_permission|pub fn format_permission(perm: &Permission) -> String|Formats permission back to string representation.|perm: &Permission|String|active
+src/reedcms/security/permissions.rs|245|format_permissions|pub fn format_permissions(perms: &[Permission]) -> String|Formats multiple permissions to comma-separated string.|perms: &[Permission]|String|active
+src/reedcms/security/permissions_test.rs|14|test_parse_permission_full|fn test_parse_permission_full()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|23|test_parse_permission_read_write|fn test_parse_permission_read_write()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|32|test_parse_permission_read_only|fn test_parse_permission_read_only()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|41|test_parse_permission_wildcard|fn test_parse_permission_wildcard()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|48|test_parse_permission_hierarchical|fn test_parse_permission_hierarchical()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|55|test_parse_permission_missing_bracket|fn test_parse_permission_missing_bracket()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|63|test_parse_permission_missing_closing_bracket|fn test_parse_permission_missing_closing_bracket()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|71|test_parse_permission_empty_resource|fn test_parse_permission_empty_resource()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|79|test_parse_permission_wrong_length|fn test_parse_permission_wrong_length()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|87|test_parse_permission_invalid_char|fn test_parse_permission_invalid_char()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|95|test_parse_permissions_multiple|fn test_parse_permissions_multiple()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|104|test_parse_permissions_with_spaces|fn test_parse_permissions_with_spaces()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|110|test_parse_permissions_empty|fn test_parse_permissions_empty()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|116|test_validate_permission_syntax_valid|fn test_validate_permission_syntax_valid()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|123|test_validate_permission_syntax_invalid|fn test_validate_permission_syntax_invalid()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|129|test_permission_allows|fn test_permission_allows()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|147|test_permission_matches_resource_exact|fn test_permission_matches_resource_exact()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|160|test_permission_matches_resource_wildcard|fn test_permission_matches_resource_wildcard()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|174|test_permission_matches_resource_hierarchical|fn test_permission_matches_resource_hierarchical()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|189|test_format_permission|fn test_format_permission()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|201|test_format_permission_all_denied|fn test_format_permission_all_denied()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|213|test_format_permissions_multiple|fn test_format_permissions_multiple()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|233|test_permission_new|fn test_permission_new()|No description|None|()|cfg_test
+src/reedcms/security/permissions_test.rs|242|test_permission_roundtrip|fn test_permission_roundtrip()|No description|None|()|cfg_test
+src/reedcms/security/roles.rs|72|create_role|pub fn create_role(req: &ReedRequest) -> ReedResult<ReedResponse<RoleInfo>>|Creates new role with permission validation.|req: &ReedRequest|ReedResult<ReedResponse<RoleInfo>>|active
+src/reedcms/security/roles.rs|228|get_role|pub fn get_role(rolename: &str) -> ReedResult<ReedResponse<RoleInfo>>|Retrieves role with resolved permissions (including inherited).|rolename: &str|ReedResult<ReedResponse<RoleInfo>>|active
+src/reedcms/security/roles.rs|269|list_roles|pub fn list_roles() -> ReedResult<ReedResponse<Vec<RoleInfo>>>|Lists all roles.|None|ReedResult<ReedResponse<Vec<RoleInfo>>>|active
+src/reedcms/security/roles.rs|325|update_role|pub fn update_role(rolename: &str, updates: RoleUpdate) -> ReedResult<ReedResponse<RoleInfo>>|Updates role permissions or inheritance.|rolename: &str; updates: RoleUpdate|ReedResult<ReedResponse<RoleInfo>>|active
+src/reedcms/security/roles.rs|466|delete_role|pub fn delete_role(rolename: &str, confirm: bool) -> ReedResult<ReedResponse<()>>|Deletes role with dependency check.|rolename: &str; confirm: bool|ReedResult<ReedResponse<()>>|active
+src/reedcms/security/roles.rs|520|role_exists|fn role_exists(rolename: &str) -> ReedResult<bool>|Helper: Check if role exists.|rolename: &str|ReedResult<bool>|active
+src/reedcms/security/roles.rs|541|has_dependent_roles|fn has_dependent_roles(rolename: &str) -> ReedResult<bool>|Helper: Check if any roles inherit from this role.|rolename: &str|ReedResult<bool>|active
+src/reedcms/security/roles.rs|562|matrix_record_to_role_info|fn matrix_record_to_role_info( record: &MatrixRecord, resolved_perms: Vec<Permission>, ) -> ReedResult<RoleInfo>|Helper: Convert MatrixRecord to RoleInfo.|record: &MatrixRecord; resolved_perms: Vec<Permission>|ReedResult<RoleInfo>|active
+src/reedcms/security/roles_test.rs|15|setup_test_env|fn setup_test_env()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|21|cleanup_test_roles|fn cleanup_test_roles()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|31|test_create_role_success|fn test_create_role_success()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|52|test_create_role_with_inheritance|fn test_create_role_with_inheritance()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|83|test_create_role_duplicate|fn test_create_role_duplicate()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|106|test_create_role_invalid_permissions|fn test_create_role_invalid_permissions()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|125|test_create_role_parent_not_found|fn test_create_role_parent_not_found()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|144|test_create_role_circular_inheritance|fn test_create_role_circular_inheritance()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|176|test_get_role_success|fn test_get_role_success()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|197|test_get_role_not_found|fn test_get_role_not_found()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|207|test_get_role_with_resolved_permissions|fn test_get_role_with_resolved_permissions()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|251|test_list_roles_empty|fn test_list_roles_empty()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|261|test_list_roles_multiple|fn test_list_roles_multiple()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|283|test_update_role_permissions|fn test_update_role_permissions()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|319|test_update_role_inheritance|fn test_update_role_inheritance()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|358|test_update_role_not_found|fn test_update_role_not_found()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|375|test_delete_role_success|fn test_delete_role_success()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|397|test_delete_role_requires_confirmation|fn test_delete_role_requires_confirmation()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|419|test_delete_role_with_dependents|fn test_delete_role_with_dependents()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|454|test_delete_role_not_found|fn test_delete_role_not_found()|No description|None|()|cfg_test
+src/reedcms/security/roles_test.rs|464|test_role_lifecycle_complete|fn test_role_lifecycle_complete()|No description|None|()|cfg_test
+src/reedcms/security/users.rs|114|create_user|pub fn create_user(req: &ReedRequest) -> ReedResult<ReedResponse<UserInfo>>|Creates new user with validation and password hashing.|req: &ReedRequest|ReedResult<ReedResponse<UserInfo>>|active
+src/reedcms/security/users.rs|374|get_user|pub fn get_user(username: &str) -> ReedResult<ReedResponse<UserInfo>>|Retrieves user by username.|username: &str|ReedResult<ReedResponse<UserInfo>>|active
+src/reedcms/security/users.rs|420|list_users|pub fn list_users(filter: Option<UserFilter>) -> ReedResult<ReedResponse<Vec<UserInfo>>>|Lists all users with optional filtering.|filter: Option<UserFilter>|ReedResult<ReedResponse<Vec<UserInfo>>>|active
+src/reedcms/security/users.rs|491|update_user|pub fn update_user(username: &str, updates: UserUpdate) -> ReedResult<ReedResponse<UserInfo>>|Updates user profile data (not password - use change_password instead).|username: &str; updates: UserUpdate|ReedResult<ReedResponse<UserInfo>>|active
+src/reedcms/security/users.rs|607|delete_user|pub fn delete_user(username: &str, confirm: bool) -> ReedResult<ReedResponse<()>>|Deletes user (requires confirmation).|username: &str; confirm: bool|ReedResult<ReedResponse<()>>|active
+src/reedcms/security/users.rs|652|matrix_record_to_user_info|fn matrix_record_to_user_info(record: &MatrixRecord) -> ReedResult<UserInfo>|Helper function to convert MatrixRecord to UserInfo.|record: &MatrixRecord|ReedResult<UserInfo>|active
+src/reedcms/security/users_test.rs|16|setup_test_env|fn setup_test_env()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|22|cleanup_test_users|fn cleanup_test_users()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|33|test_create_user_success|fn test_create_user_success()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|59|test_create_user_with_roles|fn test_create_user_with_roles()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|80|test_create_user_duplicate_username|fn test_create_user_duplicate_username()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|112|test_create_user_duplicate_email|fn test_create_user_duplicate_email()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|144|test_create_user_weak_password|fn test_create_user_weak_password()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|163|test_create_user_invalid_username|fn test_create_user_invalid_username()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|184|test_create_user_invalid_email|fn test_create_user_invalid_email()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|203|test_create_user_with_full_profile|fn test_create_user_with_full_profile()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|244|test_get_user_success|fn test_get_user_success()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|266|test_get_user_not_found|fn test_get_user_not_found()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|281|test_list_users_empty|fn test_list_users_empty()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|291|test_list_users_multiple|fn test_list_users_multiple()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|314|test_list_users_filter_active|fn test_list_users_filter_active()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|365|test_update_user_success|fn test_update_user_success()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|400|test_update_user_not_found|fn test_update_user_not_found()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|421|test_delete_user_success|fn test_delete_user_success()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|443|test_delete_user_requires_confirmation|fn test_delete_user_requires_confirmation()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|465|test_delete_user_not_found|fn test_delete_user_not_found()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|475|test_user_lifecycle_complete|fn test_user_lifecycle_complete()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|526|test_user_timestamps|fn test_user_timestamps()|No description|None|()|cfg_test
+src/reedcms/security/users_test.rs|548|test_backup_created_on_user_creation|fn test_backup_created_on_user_creation()|No description|None|()|cfg_test
+src/reedcms/security/validation.rs|36|validate_email|pub fn validate_email(email: &str) -> ReedResult<()>|Validates email format using basic RFC 5322 pattern.|email: &str|ReedResult<()>|active
+src/reedcms/security/validation.rs|110|validate_username|pub fn validate_username(username: &str) -> ReedResult<()>|Validates username format and availability.|username: &str|ReedResult<()>|active
+src/reedcms/security/validation.rs|181|username_exists|pub fn username_exists(username: &str) -> ReedResult<bool>|Checks if username already exists in users database.|username: &str|ReedResult<bool>|active
+src/reedcms/security/validation.rs|225|email_exists|pub fn email_exists(email: &str) -> ReedResult<bool>|Checks if email already exists in users database.|email: &str|ReedResult<bool>|active
+src/reedcms/security/validation_test.rs|15|test_validate_email_valid|fn test_validate_email_valid()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|30|test_validate_email_empty|fn test_validate_email_empty()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|38|test_validate_email_no_at_symbol|fn test_validate_email_no_at_symbol()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|46|test_validate_email_multiple_at_symbols|fn test_validate_email_multiple_at_symbols()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|54|test_validate_email_empty_local_part|fn test_validate_email_empty_local_part()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|62|test_validate_email_empty_domain|fn test_validate_email_empty_domain()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|70|test_validate_email_no_dot_in_domain|fn test_validate_email_no_dot_in_domain()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|78|test_validate_email_invalid_characters|fn test_validate_email_invalid_characters()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|86|test_validate_username_valid|fn test_validate_username_valid()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|95|test_validate_username_too_short|fn test_validate_username_too_short()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|103|test_validate_username_too_long|fn test_validate_username_too_long()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|112|test_validate_username_invalid_characters|fn test_validate_username_invalid_characters()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|124|test_validate_username_must_start_with_letter|fn test_validate_username_must_start_with_letter()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|132|test_validate_username_underscore_start|fn test_validate_username_underscore_start()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|140|test_validate_username_cannot_end_with_underscore|fn test_validate_username_cannot_end_with_underscore()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|148|test_username_exists_no_file|fn test_username_exists_no_file()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|157|test_email_exists_no_file|fn test_email_exists_no_file()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|166|test_username_exists_with_users|fn test_username_exists_with_users()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|176|test_email_exists_with_users|fn test_email_exists_with_users()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|184|test_validate_username_edge_cases|fn test_validate_username_edge_cases()|No description|None|()|cfg_test
+src/reedcms/security/validation_test.rs|197|test_validate_email_edge_cases|fn test_validate_email_edge_cases()|No description|None|()|cfg_test
+src/reedcms/server/client_detection.rs|78|detect_client_info|pub fn detect_client_info(req: &HttpRequest, lang: &str) -> ReedResult<ClientInfo>|Detects client information from HTTP request.|req: &HttpRequest; lang: &str|ReedResult<ClientInfo>|active
+src/reedcms/server/client_detection.rs|117|parse_screen_info_cookie|pub fn parse_screen_info_cookie(req: &HttpRequest) -> ReedResult<Option<ScreenInfo>>|Parses screen_info cookie from HTTP request.|req: &HttpRequest|ReedResult<Option<ScreenInfo>>|active
+src/reedcms/server/client_detection.rs|154|detect_device_type|fn detect_device_type(req: &HttpRequest, screen_info: &Option<ScreenInfo>) -> String|Detects device type from screen info or User-Agent fallback.|req: &HttpRequest; screen_info: &Option<ScreenInfo>|String|active
+src/reedcms/server/client_detection.rs|214|detect_breakpoint|fn detect_breakpoint(screen_info: &Option<ScreenInfo>, device_type: &str) -> String|Determines CSS breakpoint based on viewport width.|screen_info: &Option<ScreenInfo>; device_type: &str|String|active
+src/reedcms/server/client_detection.rs|250|detect_interaction_mode|fn detect_interaction_mode( screen_info: &Option<ScreenInfo>, device_type: &str, breakpoint: &str, is_bot: bool, ) -> String|Detects interaction mode for template variant selection.|screen_info: &Option<ScreenInfo>; device_type: &str; breakpoint: &str; is_bot: bool|String|active
+src/reedcms/server/client_detection.rs|292|is_bot_request|pub fn is_bot_request(req: &HttpRequest) -> bool|Checks if request is from a bot or crawler.|req: &HttpRequest|bool|active
+src/reedcms/server/config.rs|26|default|fn default() -> Self|No description|None|Self|active
+src/reedcms/server/config.rs|51|load_server_config|pub fn load_server_config() -> ReedResult<ServerConfig>|Loads server configuration from .reed/server.csv.|None|ReedResult<ServerConfig>|active
+src/reedcms/server/config.rs|80|get_config_value|fn get_config_value(key: &str) -> ReedResult<String>|Gets configuration value from ReedBase.|key: &str|ReedResult<String>|active
+src/reedcms/server/http_server.rs|40|start_http_server|pub async fn start_http_server(port: u16, workers: Option<usize>) -> ReedResult<()>|Starts HTTP server on specified port.|port: u16; workers: Option<usize>|ReedResult<()>|active
+src/reedcms/server/http_server.rs|81|configure_routes|fn configure_routes(cfg: &mut web::ServiceConfig)|Configures application routes.|cfg: &mut web::ServiceConfig|()|active
+src/reedcms/server/http_server.rs|98|handle_request|async fn handle_request(req: HttpRequest, _path: web::Path<String>) -> HttpResponse|Main request handler.|req: HttpRequest; _path: web::Path<String>|HttpResponse|active
+src/reedcms/server/http_server.rs|219|get_error_text|fn get_error_text(key: &str, lang: &str) -> Option<String>|Gets error text from ReedBase.|key: &str; lang: &str|Option<String>|active
+src/reedcms/server/screen_detection.rs|46|generate_screen_detection_html|pub fn generate_screen_detection_html() -> String|Generates minimal HTML page for screen detection.|None|String|active
+src/reedcms/server/screen_detection.rs|124|needs_screen_detection|pub fn needs_screen_detection(req: &HttpRequest) -> bool|Checks if screen detection is needed.|req: &HttpRequest|bool|active
+src/reedcms/server/shutdown.rs|67|setup_shutdown_handler|pub async fn setup_shutdown_handler()|Sets up graceful shutdown handler.|None|()|active
+src/reedcms/server/socket_server.rs|51|configure_routes|fn configure_routes(cfg: &mut web::ServiceConfig)|Configures routes for the application.|cfg: &mut web::ServiceConfig|()|active
+src/reedcms/server/socket_server.rs|67|handle_request|async fn handle_request(req: HttpRequest, _path: web::Path<String>) -> HttpResponse|Handles incoming HTTP requests.|req: HttpRequest; _path: web::Path<String>|HttpResponse|active
+src/reedcms/server/socket_server.rs|188|set_socket_permissions|fn set_socket_permissions(socket_path: &str) -> ReedResult<()>|Sets Unix socket file permissions.|socket_path: &str|ReedResult<()>|active
+src/reedcms/server/socket_server.rs|216|get_error_text|fn get_error_text(key: &str, lang: &str) -> Option<String>|Gets error text from ReedBase.|key: &str; lang: &str|Option<String>|active
+src/reedcms/server/socket_server.rs|258|start_socket_server|pub async fn start_socket_server(socket_path: &str, workers: Option<usize>) -> ReedResult<()>|Starts Unix socket server.|socket_path: &str; workers: Option<usize>|ReedResult<()>|active
+src/reedcms/taxonomy/entities.rs|30|as_str|pub fn as_str(&self) -> &str|No description|None|&str|active
+src/reedcms/taxonomy/entities.rs|43|from_str|pub fn from_str(s: &str) -> ReedResult<Self>|No description|s: &str|ReedResult<Self>|active
+src/reedcms/taxonomy/entities.rs|97|assign_terms|pub fn assign_terms( entity_type: EntityType, entity_id: &str, term_ids: Vec<String>, assigned_by: &str, ) -> ReedResult<ReedResponse<EntityTerms>>|Assigns taxonomy terms to an entity.|entity_type: EntityType; entity_id: &str; term_ids: Vec<String>; assigned_by: &str|ReedResult<ReedResponse<EntityTerms>>|active
+src/reedcms/taxonomy/entities.rs|236|get_entity_terms|pub fn get_entity_terms( entity_type: EntityType, entity_id: &str, ) -> ReedResult<ReedResponse<EntityTerms>>|Retrieves taxonomy terms assigned to an entity.|entity_type: EntityType; entity_id: &str|ReedResult<ReedResponse<EntityTerms>>|active
+src/reedcms/taxonomy/entities.rs|301|list_entities_by_term|pub fn list_entities_by_term( term_id: &str, entity_type: Option<EntityType>, ) -> ReedResult<ReedResponse<Vec<EntityTerms>>>|Lists all entities assigned to a specific term.|term_id: &str; entity_type: Option<EntityType>|ReedResult<ReedResponse<Vec<EntityTerms>>>|active
+src/reedcms/taxonomy/entities.rs|388|unassign_terms|pub fn unassign_terms( entity_type: EntityType, entity_id: &str, term_ids: Option<Vec<String>>, ) -> ReedResult<ReedResponse<()>>|Removes taxonomy term assignments from an entity.|entity_type: EntityType; entity_id: &str; term_ids: Option<Vec<String>>|ReedResult<ReedResponse<()>>|active
+src/reedcms/taxonomy/entities.rs|494|verify_terms_exist|fn verify_terms_exist(term_ids: &[String]) -> ReedResult<()>|No description|term_ids: &[String]|ReedResult<()>|active
+src/reedcms/taxonomy/entities.rs|525|increment_term_usage|fn increment_term_usage(term_ids: &[String]) -> ReedResult<()>|No description|term_ids: &[String]|ReedResult<()>|active
+src/reedcms/taxonomy/entities.rs|529|decrement_term_usage|fn decrement_term_usage(term_ids: &[String]) -> ReedResult<()>|No description|term_ids: &[String]|ReedResult<()>|active
+src/reedcms/taxonomy/entities.rs|533|update_term_usage|fn update_term_usage(term_ids: &[String], delta: i32) -> ReedResult<()>|No description|term_ids: &[String]; delta: i32|ReedResult<()>|active
+src/reedcms/taxonomy/entities.rs|582|parse_entity_terms|fn parse_entity_terms(record: &MatrixRecord) -> ReedResult<EntityTerms>|No description|record: &MatrixRecord|ReedResult<EntityTerms>|active
+src/reedcms/taxonomy/entities.rs|615|validation_error|fn validation_error(field: &str, value: &str, constraint: &str) -> ReedError|No description|field: &str; value: &str; constraint: &str|ReedError|active
+src/reedcms/taxonomy/entities.rs|623|not_found_error|fn not_found_error(resource: &str, id: &str) -> ReedError|No description|resource: &str; id: &str|ReedError|active
+src/reedcms/taxonomy/entities_test.rs|10|setup_test_env|fn setup_test_env()|No description|None|()|cfg_test
+src/reedcms/taxonomy/entities_test.rs|16|cleanup_test_data|fn cleanup_test_data()|No description|None|()|cfg_test
+src/reedcms/taxonomy/entities_test.rs|22|test_assign_terms|fn test_assign_terms()|No description|None|()|cfg_test
+src/reedcms/taxonomy/entities_test.rs|45|test_assign_terms_nonexistent_term|fn test_assign_terms_nonexistent_term()|No description|None|()|cfg_test
+src/reedcms/taxonomy/entities_test.rs|59|test_assign_terms_empty_entity_id|fn test_assign_terms_empty_entity_id()|No description|None|()|cfg_test
+src/reedcms/taxonomy/entities_test.rs|75|test_assign_terms_update_existing|fn test_assign_terms_update_existing()|No description|None|()|cfg_test
+src/reedcms/taxonomy/entities_test.rs|106|test_get_entity_terms|fn test_get_entity_terms()|No description|None|()|cfg_test
+src/reedcms/taxonomy/entities_test.rs|128|test_get_entity_terms_not_found|fn test_get_entity_terms_not_found()|No description|None|()|cfg_test
+src/reedcms/taxonomy/entities_test.rs|136|test_list_entities_by_term|fn test_list_entities_by_term()|No description|None|()|cfg_test
+src/reedcms/taxonomy/entities_test.rs|179|test_unassign_terms_specific|fn test_unassign_terms_specific()|No description|None|()|cfg_test
+src/reedcms/taxonomy/entities_test.rs|210|test_unassign_terms_all|fn test_unassign_terms_all()|No description|None|()|cfg_test
+src/reedcms/taxonomy/entities_test.rs|233|test_unassign_terms_last_term|fn test_unassign_terms_last_term()|No description|None|()|cfg_test
+src/reedcms/taxonomy/entities_test.rs|261|test_term_usage_count|fn test_term_usage_count()|No description|None|()|cfg_test
+src/reedcms/taxonomy/entities_test.rs|304|test_entity_type_conversion|fn test_entity_type_conversion()|No description|None|()|cfg_test
+src/reedcms/taxonomy/entities_test.rs|323|test_all_entity_types|fn test_all_entity_types()|No description|None|()|cfg_test
+src/reedcms/taxonomy/entities_test.rs|355|test_performance_assign_100_entities|fn test_performance_assign_100_entities()|No description|None|()|cfg_test
+src/reedcms/taxonomy/entities_test.rs|378|test_performance_list_by_term_100_entities|fn test_performance_list_by_term_100_entities()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy.rs|38|get_children|pub fn get_children(term_id: &str, recursive: bool) -> ReedResult<ReedResponse<Vec<TermInfo>>>|Retrieves all children of a term.|term_id: &str; recursive: bool|ReedResult<ReedResponse<Vec<TermInfo>>>|active
+src/reedcms/taxonomy/hierarchy.rs|136|get_ancestors|pub fn get_ancestors(term_id: &str) -> ReedResult<ReedResponse<Vec<TermInfo>>>|Retrieves the complete ancestry path of a term.|term_id: &str|ReedResult<ReedResponse<Vec<TermInfo>>>|active
+src/reedcms/taxonomy/hierarchy.rs|248|get_path|pub fn get_path(term_id: &str, separator: &str) -> ReedResult<ReedResponse<String>>|Gets the complete path string for a term.|term_id: &str; separator: &str|ReedResult<ReedResponse<String>>|active
+src/reedcms/taxonomy/hierarchy.rs|323|get_depth|pub fn get_depth(term_id: &str) -> ReedResult<ReedResponse<usize>>|Gets the depth of a term in the hierarchy.|term_id: &str|ReedResult<ReedResponse<usize>>|active
+src/reedcms/taxonomy/hierarchy.rs|366|has_circular_reference|pub fn has_circular_reference( term_id: &str, new_parent_id: &str, ) -> ReedResult<ReedResponse<bool>>|Checks for circular references in hierarchy.|term_id: &str; new_parent_id: &str|ReedResult<ReedResponse<bool>>|active
+src/reedcms/taxonomy/hierarchy.rs|430|get_tree|pub fn get_tree(category: Option<&str>) -> ReedResult<ReedResponse<Vec<TermTree>>>|Builds a complete taxonomy tree structure.|category: Option<&str>|ReedResult<ReedResponse<Vec<TermTree>>>|active
+src/reedcms/taxonomy/hierarchy.rs|515|build_tree_node|fn build_tree_node( term_id: &str, term_map: &HashMap<String, TermInfo>, records: &[&MatrixRecord], ) -> ReedResult<TermTree>|No description|term_id: &str; term_map: &HashMap<String, TermInfo>; records: &[&MatrixRecord]|ReedResult<TermTree>|active
+src/reedcms/taxonomy/hierarchy.rs|544|parse_term_info|fn parse_term_info(record: &MatrixRecord) -> ReedResult<TermInfo>|No description|record: &MatrixRecord|ReedResult<TermInfo>|active
+src/reedcms/taxonomy/hierarchy.rs|575|validation_error|fn validation_error(field: &str, value: &str, constraint: &str) -> ReedError|No description|field: &str; value: &str; constraint: &str|ReedError|active
+src/reedcms/taxonomy/hierarchy.rs|583|not_found_error|fn not_found_error(resource: &str, id: &str) -> ReedError|No description|resource: &str; id: &str|ReedError|active
+src/reedcms/taxonomy/hierarchy_test.rs|10|setup_test_env|fn setup_test_env()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|16|cleanup_test_data|fn cleanup_test_data()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|20|create_test_hierarchy|fn create_test_hierarchy()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|83|test_get_children_direct|fn test_get_children_direct()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|96|test_get_children_recursive|fn test_get_children_recursive()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|107|test_get_children_leaf_node|fn test_get_children_leaf_node()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|117|test_get_children_not_found|fn test_get_children_not_found()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|126|test_get_ancestors|fn test_get_ancestors()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|139|test_get_ancestors_root|fn test_get_ancestors_root()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|149|test_get_ancestors_not_found|fn test_get_ancestors_not_found()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|158|test_get_path|fn test_get_path()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|168|test_get_path_custom_separator|fn test_get_path_custom_separator()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|178|test_get_path_root|fn test_get_path_root()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|188|test_get_depth|fn test_get_depth()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|198|test_has_circular_reference_self|fn test_has_circular_reference_self()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|208|test_has_circular_reference_descendant|fn test_has_circular_reference_descendant()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|224|test_has_circular_reference_valid|fn test_has_circular_reference_valid()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|240|test_get_tree|fn test_get_tree()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|270|test_get_tree_multiple_roots|fn test_get_tree_multiple_roots()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|305|test_get_tree_empty|fn test_get_tree_empty()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|314|test_deep_hierarchy|fn test_deep_hierarchy()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|373|test_performance_get_children_1000_terms|fn test_performance_get_children_1000_terms()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|404|test_performance_get_tree_deep|fn test_performance_get_tree_deep()|No description|None|()|cfg_test
+src/reedcms/taxonomy/hierarchy_test.rs|433|test_performance_get_ancestors_depth_10|fn test_performance_get_ancestors_depth_10()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms.rs|61|create_term|pub fn create_term( term: &str, parent_id: Option<String>, category: &str, description: Option<String>, color: Option<String>, icon: Option<String>, created_by: &str, ) -> ReedResult<ReedResponse<TermInfo>>|Creates a new taxonomy term.|term: &str; parent_id: Option<String>; category: &str; description: Option<String>; color: Option<String>; icon: Option<String>; created_by: &str|ReedResult<ReedResponse<TermInfo>>|active
+src/reedcms/taxonomy/terms.rs|245|get_term|pub fn get_term(term_id: &str) -> ReedResult<ReedResponse<TermInfo>>|Retrieves a taxonomy term by ID.|term_id: &str|ReedResult<ReedResponse<TermInfo>>|active
+src/reedcms/taxonomy/terms.rs|307|list_terms|pub fn list_terms( category: Option<&str>, parent_id: Option<&str>, status: Option<&str>, ) -> ReedResult<ReedResponse<Vec<TermInfo>>>|Lists taxonomy terms with optional filtering.|category: Option<&str>; parent_id: Option<&str>; status: Option<&str>|ReedResult<ReedResponse<Vec<TermInfo>>>|active
+src/reedcms/taxonomy/terms.rs|416|search_terms|pub fn search_terms( query: &str, category: Option<&str>, ) -> ReedResult<ReedResponse<Vec<TermInfo>>>|Searches taxonomy terms by text.|query: &str; category: Option<&str>|ReedResult<ReedResponse<Vec<TermInfo>>>|active
+src/reedcms/taxonomy/terms.rs|525|update_term|pub fn update_term(term_id: &str, update: TermUpdate) -> ReedResult<ReedResponse<TermInfo>>|Updates a taxonomy term.|term_id: &str; update: TermUpdate|ReedResult<ReedResponse<TermInfo>>|active
+src/reedcms/taxonomy/terms.rs|725|delete_term|pub fn delete_term(term_id: &str, force: bool) -> ReedResult<ReedResponse<()>>|Deletes a taxonomy term.|term_id: &str; force: bool|ReedResult<ReedResponse<()>>|active
+src/reedcms/taxonomy/terms.rs|855|validate_term_name|fn validate_term_name(term: &str) -> ReedResult<()>|No description|term: &str|ReedResult<()>|active
+src/reedcms/taxonomy/terms.rs|874|validate_color|fn validate_color(color: &str) -> ReedResult<()>|No description|color: &str|ReedResult<()>|active
+src/reedcms/taxonomy/terms.rs|890|parse_term_info|fn parse_term_info(record: &MatrixRecord) -> ReedResult<TermInfo>|No description|record: &MatrixRecord|ReedResult<TermInfo>|active
+src/reedcms/taxonomy/terms.rs|921|validation_error|fn validation_error(field: &str, value: &str, constraint: &str) -> ReedError|No description|field: &str; value: &str; constraint: &str|ReedError|active
+src/reedcms/taxonomy/terms.rs|929|not_found_error|fn not_found_error(resource: &str, id: &str) -> ReedError|No description|resource: &str; id: &str|ReedError|active
+src/reedcms/taxonomy/terms_test.rs|9|setup_test_env|fn setup_test_env()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|15|cleanup_test_terms|fn cleanup_test_terms()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|20|test_create_term_basic|fn test_create_term_basic()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|42|test_create_term_with_parent|fn test_create_term_with_parent()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|68|test_create_term_invalid_name|fn test_create_term_invalid_name()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|81|test_create_term_invalid_color|fn test_create_term_invalid_color()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|108|test_create_term_duplicate|fn test_create_term_duplicate()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|118|test_create_term_parent_not_exists|fn test_create_term_parent_not_exists()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|134|test_get_term|fn test_get_term()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|156|test_get_term_not_found|fn test_get_term_not_found()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|164|test_list_terms_all|fn test_list_terms_all()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|177|test_list_terms_by_category|fn test_list_terms_by_category()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|190|test_list_terms_by_parent|fn test_list_terms_by_parent()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|221|test_list_terms_root_only|fn test_list_terms_root_only()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|242|test_search_terms|fn test_search_terms()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|276|test_update_term|fn test_update_term()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|298|test_update_term_change_parent|fn test_update_term_change_parent()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|328|test_update_term_remove_parent|fn test_update_term_remove_parent()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|354|test_update_term_circular_parent|fn test_update_term_circular_parent()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|369|test_delete_term|fn test_delete_term()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|382|test_delete_term_with_children_no_force|fn test_delete_term_with_children_no_force()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|402|test_delete_term_with_children_force|fn test_delete_term_with_children_force()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|426|test_performance_create_100_terms|fn test_performance_create_100_terms()|No description|None|()|cfg_test
+src/reedcms/taxonomy/terms_test.rs|450|test_performance_search_1000_terms|fn test_performance_search_1000_terms()|No description|None|()|cfg_test
+src/reedcms/templates/context.rs|34|build_context|pub fn build_context( layout: &str, language: &str, interaction_mode: &str, ) -> ReedResult<HashMap<String, serde_json::Value>>|Builds template context for rendering.|layout: &str; language: &str; interaction_mode: &str|ReedResult<HashMap<String, serde_json::Value>>|active
+src/reedcms/templates/context.rs|73|add_globals|pub fn add_globals(ctx: &mut HashMap<String, serde_json::Value>) -> ReedResult<()>|Adds global variables to context.|ctx: &mut HashMap<String, serde_json::Value>|ReedResult<()>|active
+src/reedcms/templates/context.rs|114|add_layout_data|pub fn add_layout_data( ctx: &mut HashMap<String, serde_json::Value>, layout: &str, language: &str, ) -> ReedResult<()>|Adds layout-specific data to context.|ctx: &mut HashMap<String, serde_json::Value>; layout: &str; language: &str|ReedResult<()>|active
+src/reedcms/templates/context.rs|144|get_text_value|fn get_text_value(key: &str, language: &str) -> ReedResult<String>|Gets text value from ReedBase.|key: &str; language: &str|ReedResult<String>|active
+src/reedcms/templates/context.rs|161|get_meta_value|fn get_meta_value(key: &str) -> ReedResult<String>|Gets meta value from ReedBase.|key: &str|ReedResult<String>|active
+src/reedcms/templates/context.rs|181|get_config_value|fn get_config_value(key: &str) -> ReedResult<String>|Gets config value from ReedBase.|key: &str|ReedResult<String>|active
+src/reedcms/templates/engine.rs|37|init_template_engine|pub fn init_template_engine( current_lang: String, interaction_mode: String, ) -> ReedResult<Environment<'static>>|Initialises MiniJinja template engine.|current_lang: String; interaction_mode: String|ReedResult<Environment<'static>>|active
+src/reedcms/templates/engine.rs|102|template_loader|fn template_loader(name: &str) -> Result<Option<String>, Error>|Template loader function.|name: &str|Result<Option<String>, Error>|active
+src/reedcms/templates/functions.rs|25|make_organism_function|pub fn make_organism_function( interaction_mode: String, ) -> impl Fn(&str) -> Result<String, minijinja::Error> + Send + Sync + 'static|Creates organism component path resolver function.|interaction_mode: String|impl Fn(&str) -> Result<String, minijinja::Error> + Send + Sync + 'static|active
+src/reedcms/templates/functions.rs|43|make_molecule_function|pub fn make_molecule_function( interaction_mode: String, ) -> impl Fn(&str) -> Result<String, minijinja::Error> + Send + Sync + 'static|Creates molecule component path resolver function.|interaction_mode: String|impl Fn(&str) -> Result<String, minijinja::Error> + Send + Sync + 'static|active
+src/reedcms/templates/functions.rs|61|make_atom_function|pub fn make_atom_function( interaction_mode: String, ) -> impl Fn(&str) -> Result<String, minijinja::Error> + Send + Sync + 'static|Creates atom component path resolver function.|interaction_mode: String|impl Fn(&str) -> Result<String, minijinja::Error> + Send + Sync + 'static|active
+src/reedcms/templates/functions.rs|82|make_layout_function|pub fn make_layout_function( ) -> impl Fn(&str) -> Result<String, minijinja::Error> + Send + Sync + 'static|Creates layout path resolver function.|None|impl Fn(&str) -> Result<String, minijinja::Error> + Send + Sync + 'static|active
