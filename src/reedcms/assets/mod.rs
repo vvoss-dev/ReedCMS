@@ -7,3 +7,4 @@
 //! Handles CSS bundling, JS bundling (future), and static asset serving.
 
 pub mod css;
+pub mod js;
