@@ -93,7 +93,7 @@ pub fn server_io(
 /// Starts server in background (daemon mode).
 ///
 /// ## Input
-/// - flags: --environment ENV, --config PATH
+/// - flags: --environment ENV, --port PORT, --workers N
 ///
 /// ## Output
 /// - Server start confirmation with PID
@@ -101,7 +101,7 @@ pub fn server_io(
 /// ## Error Conditions
 /// - Server already running
 /// - Cannot write PID file
-/// - Configuration invalid
+/// - Cannot spawn background process
 pub fn server_start(
     _args: &[String],
     flags: &HashMap<String, String>,
@@ -134,17 +134,83 @@ pub fn server_start(
         }
     }
 
-    output.push_str(&format!("✓ Configuration validated\n"));
-    output.push_str(&format!("✓ Environment: {}\n\n", environment));
+    // Ensure log directory exists
+    let log_dir = ".reed/flow";
+    if !std::path::Path::new(log_dir).exists() {
+        fs::create_dir_all(log_dir).map_err(|e| ReedError::IoError {
+            operation: "create_dir".to_string(),
+            path: log_dir.to_string(),
+            reason: e.to_string(),
+        })?;
+    }
 
-    output.push_str("⚠ Server daemon mode not yet implemented (requires REED-06-01)\n");
-    output
-        .push_str("   Background server will be available when server foundation is complete.\n\n");
+    output.push_str("✓ Configuration validated\n");
+    output.push_str(&format!("✓ Environment: {}\n", environment));
 
-    output.push_str("Would start background server with:\n");
-    output.push_str(&format!("- Environment: {}\n", environment));
-    output.push_str(&format!("- PID file: {}\n", pid_file));
-    output.push_str("- Log file: .reed/flow/server.log\n");
+    // Get current executable path
+    let exe_path = std::env::current_exe().map_err(|e| ReedError::IoError {
+        operation: "current_exe".to_string(),
+        path: "".to_string(),
+        reason: e.to_string(),
+    })?;
+
+    // Build command arguments for server:io
+    let mut args = vec!["server:io".to_string()];
+
+    if let Some(port) = flags.get("port") {
+        args.push("--port".to_string());
+        args.push(port.clone());
+    }
+
+    if let Some(workers) = flags.get("workers") {
+        args.push("--workers".to_string());
+        args.push(workers.clone());
+    }
+
+    // Open log file
+    let log_file_path = format!("{}/server.log", log_dir);
+    let log_file = fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&log_file_path)
+        .map_err(|e| ReedError::IoError {
+            operation: "open".to_string(),
+            path: log_file_path.clone(),
+            reason: e.to_string(),
+        })?;
+
+    // Spawn background process
+    let child = Command::new(exe_path)
+        .args(&args)
+        .stdout(Stdio::from(log_file.try_clone().map_err(|e| ReedError::IoError {
+            operation: "clone".to_string(),
+            path: log_file_path.clone(),
+            reason: e.to_string(),
+        })?))
+        .stderr(Stdio::from(log_file))
+        .stdin(Stdio::null())
+        .spawn()
+        .map_err(|e| ReedError::ServerError {
+            component: "server_start".to_string(),
+            reason: format!("Failed to spawn server process: {}", e),
+        })?;
+
+    let pid = child.id();
+
+    // Write PID file
+    fs::write(pid_file, pid.to_string()).map_err(|e| ReedError::IoError {
+        operation: "write".to_string(),
+        path: pid_file.to_string(),
+        reason: e.to_string(),
+    })?;
+
+    output.push_str("✓ Server started in background\n\n");
+    output.push_str(&format!("PID: {}\n", pid));
+    output.push_str(&format!("PID file: {}\n", pid_file));
+    output.push_str(&format!("Log file: {}\n", log_file_path));
+    output.push_str("\nUse 'reed server:status' to check status\n");
+    output.push_str("Use 'reed server:logs --tail 50' to view logs\n");
+    output.push_str("Use 'reed server:stop' to stop server\n");
 
     Ok(ReedResponse {
         data: output,

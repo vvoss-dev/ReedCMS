@@ -7,6 +7,10 @@ license = "Apache-2.0"
 description = "High-Performance Headless Rust CMS"
 repository = "https://github.com/vvoss-dev/reedcms"
 
+[[bin]]
+name = "reed"
+path = "src/main.rs"
+
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
