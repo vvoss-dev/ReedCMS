@@ -1123,3 +1123,21 @@ src/reedcms/build/version.rs|101|is_compatible|pub fn is_compatible(version_a: &
 src/reedcms/build/version.rs|111|BuildMetadata|pub struct BuildMetadata|Build metadata structure.|None|struct|active
 src/reedcms/build/version.rs|127|full_version|pub fn full_version(&self) -> String|Gets full version string with package name.|None|String|active
 src/reedcms/build/version.rs|141|build_info_string|pub fn build_info_string(&self) -> String|Gets build information as formatted string.|None|String|active
+src/reedcms/build/pipeline.rs|17|BuildMode|pub enum BuildMode|Build mode enum (Full/Incremental).|None|enum|active
+src/reedcms/build/pipeline.rs|24|BuildReport|pub struct BuildReport|Build report structure with metrics.|None|struct|active
+src/reedcms/build/pipeline.rs|38|new|pub fn new() -> Self|Creates new empty build report.|None|BuildReport|active
+src/reedcms/build/pipeline.rs|53|calculate_totals|pub fn calculate_totals(&mut self)|Calculates totals from bundle data.|None|None|active
+src/reedcms/build/pipeline.rs|112|run_pipeline|pub fn run_pipeline(mode: BuildMode) -> ReedResult<BuildReport>|Runs complete asset build pipeline.|mode: BuildMode|ReedResult<BuildReport>|active
+src/reedcms/build/pipeline.rs|207|run_full_build|pub fn run_full_build() -> ReedResult<BuildReport>|Convenience function for full build.|None|ReedResult<BuildReport>|active
+src/reedcms/build/pipeline.rs|217|run_incremental_build|pub fn run_incremental_build() -> ReedResult<BuildReport>|Convenience function for incremental build.|None|ReedResult<BuildReport>|active
+src/reedcms/build/pipeline.rs|231|clean_public_directory|pub(crate) fn clean_public_directory() -> ReedResult<()>|Cleans and recreates public directory.|None|ReedResult<()>|active
+src/reedcms/build/cache_bust.rs|15|AssetManifest|pub struct AssetManifest|Asset manifest with original->hashed mappings.|None|struct|active
+src/reedcms/build/cache_bust.rs|21|new|pub fn new() -> Self|Creates new empty manifest.|None|AssetManifest|active
+src/reedcms/build/cache_bust.rs|40|generate_cache_busting_manifest|pub fn generate_cache_busting_manifest() -> ReedResult<AssetManifest>|Generates cache-busted filenames with content hashing.|None|ReedResult<AssetManifest>|active
+src/reedcms/build/cache_bust.rs|83|process_directory|pub(crate) fn process_directory(dir: &str, manifest: &mut AssetManifest) -> ReedResult<()>|Processes directory for cache busting.|dir: &str; manifest: &mut AssetManifest|ReedResult<()>|active
+src/reedcms/build/cache_bust.rs|147|calculate_content_hash|pub(crate) fn calculate_content_hash(content: &[u8]) -> String|Calculates content hash (SHA256, 8 chars).|content: &[u8]|String|active
+src/reedcms/build/cache_bust.rs|168|insert_hash_into_filename|pub(crate) fn insert_hash_into_filename(filename: &str, hash: &str) -> String|Inserts hash into filename before extension.|filename: &str; hash: &str|String|active
+src/reedcms/build/cache_bust.rs|186|is_already_hashed|pub(crate) fn is_already_hashed(filename: &str) -> bool|Checks if filename already contains hash.|filename: &str|bool|active
+src/reedcms/build/cache_bust.rs|207|write_manifest|pub(crate) fn write_manifest(manifest: &AssetManifest) -> ReedResult<()>|Writes asset manifest to JSON file.|manifest: &AssetManifest|ReedResult<()>|active
+src/reedcms/build/cache_bust.rs|222|load_manifest|pub fn load_manifest() -> ReedResult<AssetManifest>|Loads asset manifest from JSON file.|None|ReedResult<AssetManifest>|active
+src/reedcms/build/cache_bust.rs|248|get_hashed_filename|pub fn get_hashed_filename(original: &str) -> Option<String>|Gets hashed filename for original asset.|original: &str|Option<String>|active

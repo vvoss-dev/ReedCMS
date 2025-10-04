@@ -208,7 +208,7 @@ fn run_cargo_build() -> ReedResult<()> {
 ///
 /// ## Performance
 /// - < 10ms
-fn should_use_upx() -> bool {
+pub(crate) fn should_use_upx() -> bool {
     Command::new("upx").arg("--version").output().is_ok()
 }
 
@@ -266,7 +266,7 @@ fn compress_with_upx(binary_path: &str) -> ReedResult<usize> {
 ///
 /// ## Error Conditions
 /// - `ReedError::FileNotFound`: File does not exist
-fn calculate_sha256(path: &str) -> ReedResult<String> {
+pub(crate) fn calculate_sha256(path: &str) -> ReedResult<String> {
     use sha2::{Digest, Sha256};
 
     let content = std::fs::read(path).map_err(|e| ReedError::FileNotFound {
@@ -292,7 +292,7 @@ fn calculate_sha256(path: &str) -> ReedResult<String> {
 ///
 /// ## Error Conditions
 /// - `ReedError::FileNotFound`: File does not exist
-fn calculate_md5(path: &str) -> ReedResult<String> {
+pub(crate) fn calculate_md5(path: &str) -> ReedResult<String> {
     let content = std::fs::read(path).map_err(|e| ReedError::FileNotFound {
         path: path.to_string(),
         reason: format!("Cannot read file: {}", e),

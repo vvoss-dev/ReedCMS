@@ -130,7 +130,7 @@ pub fn package_release(build_info: &BuildInfo) -> ReedResult<PackageInfo> {
 /// ## Error Conditions
 /// - `ReedError::DirectoryNotFound`: Source directory not found
 /// - `ReedError::IoError`: Copy operation failed
-fn copy_dir_recursive(src: &str, dst: &str) -> ReedResult<()> {
+pub(crate) fn copy_dir_recursive(src: &str, dst: &str) -> ReedResult<()> {
     std::fs::create_dir_all(dst).map_err(|e| ReedError::IoError {
         operation: "create_dir".to_string(),
         path: dst.to_string(),
@@ -182,7 +182,7 @@ fn copy_dir_recursive(src: &str, dst: &str) -> ReedResult<()> {
 ///
 /// ## Error Conditions
 /// - `ReedError::IoError`: Archive creation failed
-fn create_tar_gz_archive(package_name: &str, package_dir: &str) -> ReedResult<String> {
+pub(crate) fn create_tar_gz_archive(package_name: &str, package_dir: &str) -> ReedResult<String> {
     let archive_path = format!("target/release/{}.tar.gz", package_name);
 
     let tar_gz = std::fs::File::create(&archive_path).map_err(|e| ReedError::IoError {
@@ -223,7 +223,7 @@ fn create_tar_gz_archive(package_name: &str, package_dir: &str) -> ReedResult<St
 ///
 /// ## Error Conditions
 /// - `ReedError::FileNotFound`: Archive file not found
-fn calculate_archive_sha256(path: &str) -> ReedResult<String> {
+pub(crate) fn calculate_archive_sha256(path: &str) -> ReedResult<String> {
     use sha2::{Digest, Sha256};
 
     let content = std::fs::read(path).map_err(|e| ReedError::FileNotFound {

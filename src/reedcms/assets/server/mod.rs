@@ -8,12 +8,13 @@ pub mod precompress;
 pub mod routes;
 pub mod static_server;
 
-#[cfg(test)]
-mod compression_test;
-#[cfg(test)]
-mod precompress_test;
-#[cfg(test)]
-mod static_server_test;
+// TODO: Create test files for REED-08-03
+// #[cfg(test)]
+// mod compression_test;
+// #[cfg(test)]
+// mod precompress_test;
+// #[cfg(test)]
+// mod static_server_test;
 
 // Re-export main public API
 pub use compression::{
