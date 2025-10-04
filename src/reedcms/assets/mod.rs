@@ -9,3 +9,7 @@
 pub mod css;
 pub mod js;
 pub mod server;
+pub mod startup;
+
+// Re-export startup function
+pub use startup::prepare_assets;

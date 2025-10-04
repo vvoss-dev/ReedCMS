@@ -419,6 +419,123 @@ minijinja = { version = "2.0", features = ["builtins", "debug", "loader", "multi
 
 ---
 
+## Debug Session 3: Server Auto-Stop Implementation (2025-01-04)
+
+### Problem Statement
+Multiple `reed server:start` calls should automatically stop existing instances instead of failing with "Server already running" error.
+
+### Requirement
+**User Request**: "jedes mal wenn man mit reed via server startet werden alle laufenden instanzen beendet - es darf immer nur einen aktiven geben"
+
+### Current Behavior (Before Fix)
+```bash
+$ reed server:start
+# Server starts successfully
+
+$ reed server:start
+# ERROR: Server already running (PID: 1234)
+```
+
+**Issue**: User had to manually run `reed server:stop` before starting again.
+
+### Implementation Steps
+
+#### Step 1: Analyze Existing Code
+**File**: `src/reedcms/cli/server_commands.rs`  
+**Finding**: `server_start()` checks for running instances but returns error instead of stopping them:
+
+```rust
+if is_process_running(&pid) {
+    return Err(ReedError::ServerError {
+        component: "server_start".to_string(),
+        reason: format!("Server already running (PID: {})", pid),
+    });
+}
+```
+
+#### Step 2: Extract Stop Logic to Helper Function
+**Action**: Created `stop_server_by_pid()` helper function from `server_stop()` logic
+
+**Function Signature**:
+```rust
+fn stop_server_by_pid(pid: &str) -> ReedResult<()>
+```
+
+**Implementation**:
+- Send SIGTERM signal for graceful shutdown
+- Wait up to 5 seconds for process to stop
+- Force SIGKILL if still running after timeout
+- Remove PID file after successful stop
+- Unix-only (returns error on non-Unix systems)
+
+#### Step 3: Modify server_start() Behavior
+**Change**: Replace error return with automatic stop
+
+**Before**:
+```rust
+if is_process_running(&pid) {
+    return Err(ReedError::ServerError { ... });
+}
+```
+
+**After**:
+```rust
+if is_process_running(&pid) {
+    output.push_str(&format!("⚠ Found running server (PID: {}), stopping it first...\n", pid));
+    stop_server_by_pid(&pid)?;
+    std::thread::sleep(std::time::Duration::from_millis(500));
+    output.push_str("✓ Previous instance stopped\n");
+}
+```
+
+**Wait Time**: Added 500ms sleep after stop to ensure clean shutdown before spawning new process.
+
+#### Step 4: Test Auto-Stop Functionality
+
+**Test 1**: Start with existing instance
+```bash
+$ reed server:start
+🚀 Starting ReedCMS server in background...
+⚠ Found running server (PID: 5976), stopping it first...
+✓ Previous instance stopped
+✓ Configuration validated
+✓ Environment: PROD
+✓ Server started in background
+PID: 6961
+```
+
+**Result**: ✅ Existing instance stopped, new instance started
+
+**Test 2**: Consecutive starts
+```bash
+$ reed server:start
+# Stops PID 6961, starts 7066
+
+$ reed server:start  
+# Stops PID 7066, starts 7234
+```
+
+**Result**: ✅ Each call stops previous and starts fresh instance
+
+### Solution Summary
+
+**Root Cause**: `server_start()` treated existing instances as errors instead of stopping them  
+**Solution**: Auto-stop existing instances before starting new one  
+**Result**: ✅ Only one server instance can run at a time (enforced automatically)
+
+**Benefits**:
+- **User-Friendly**: No manual `server:stop` needed
+- **Idempotent**: `reed server:start` always results in exactly one running instance
+- **Safe**: Graceful shutdown with SIGTERM, force kill only if needed
+- **Clear Feedback**: Shows when stopping previous instance
+
+**Files Modified**:
+- `src/reedcms/cli/server_commands.rs` - Added `stop_server_by_pid()` helper and modified `server_start()`
+
+**Commit**: `[REED-09-01] – feat: auto-stop running server instances on start`
+
+---
+
 ## Lessons Learned
 
 ### 1. Comment Out, Don't Delete

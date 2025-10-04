@@ -5,6 +5,8 @@
 //!
 //! Provides HTTP server foundation with configurable workers and port binding.
 
+use crate::reedcms::assets::server::routes::configure_public_routes;
+use crate::reedcms::assets::startup::prepare_assets;
 use crate::reedcms::auth::SiteProtection;
 use crate::reedcms::response::builder::build_response;
 use crate::reedcms::reedstream::{ReedError, ReedResult};
@@ -43,6 +45,9 @@ pub async fn start_http_server(port: u16, workers: Option<usize>) -> ReedResult<
     println!("   Port: {}", port);
     println!("   Workers: {}", worker_count);
 
+    // Prepare assets (generate bundles, session hash, etc.)
+    prepare_assets()?;
+
     let server = HttpServer::new(|| {
         App::new()
             .wrap(middleware::Logger::default())
@@ -71,8 +76,10 @@ pub async fn start_http_server(port: u16, workers: Option<usize>) -> ReedResult<
 /// Configures application routes.
 ///
 /// ## Routes
+/// - GET /public/* → serve_public_asset (static files)
 /// - GET /* → handle_request (catch-all)
 fn configure_routes(cfg: &mut web::ServiceConfig) {
+    configure_public_routes(cfg);
     cfg.service(web::resource("/{path:.*}").route(web::get().to(handle_request)));
 }
 

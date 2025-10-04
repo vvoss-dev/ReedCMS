@@ -188,8 +188,20 @@ fn remove_unnecessary_semicolons(css: &str) -> String {
 /// Matches: #AABBCC where A=A, B=B, C=C
 /// Replaces with: #ABC
 fn shorten_hex_colours(css: &str) -> String {
-    let re = Regex::new(r"#([0-9a-fA-F])\1([0-9a-fA-F])\2([0-9a-fA-F])\3").unwrap();
-    re.replace_all(css, "#$1$2$3").to_string()
+    let re = Regex::new(
+        r"#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])",
+    )
+    .unwrap();
+    re.replace_all(css, |caps: &regex::Captures| {
+        let chars: Vec<&str> = (1..=6).map(|i| caps.get(i).unwrap().as_str()).collect();
+        // Check if pairs are identical: AA BB CC pattern
+        if chars[0] == chars[1] && chars[2] == chars[3] && chars[4] == chars[5] {
+            format!("#{}{}{}", chars[0], chars[2], chars[4])
+        } else {
+            caps.get(0).unwrap().as_str().to_string()
+        }
+    })
+    .to_string()
 }
 
 /// Removes units from zero values.

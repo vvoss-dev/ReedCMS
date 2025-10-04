@@ -25,7 +25,8 @@ pub use precompress::{
     precompress_asset,
 };
 pub use routes::{
-    configure_static_routes, serve_css, serve_font, serve_image, serve_js, serve_source_map,
+    configure_public_routes, configure_static_routes, serve_css, serve_font, serve_image, serve_js,
+    serve_source_map,
 };
 pub use static_server::{
     detect_mime_type, generate_etag, get_cache_control, serve_static_asset, validate_path,

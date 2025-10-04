@@ -126,3 +126,51 @@ pub fn configure_static_routes(cfg: &mut web::ServiceConfig) {
             .route("/maps/{filename:.+}", web::get().to(serve_source_map)),
     );
 }
+
+/// Configures /public/* routes for serving all public assets.
+///
+/// ## Input
+/// - `cfg`: Actix-Web service configuration
+///
+/// ## Routes
+/// - /public/static/styles/* → Static CSS files
+/// - /public/static/assets/* → Static images, fonts, etc.
+/// - /public/session/styles/* → Generated CSS bundles
+///
+/// ## Example Usage
+/// ```rust
+/// HttpServer::new(|| {
+///     App::new()
+///         .configure(configure_public_routes)
+/// })
+/// ```
+pub fn configure_public_routes(cfg: &mut web::ServiceConfig) {
+    cfg.service(
+        web::resource("/public/{path:.*}")
+            .route(web::get().to(serve_public_asset))
+    );
+}
+
+/// Serves files from public/ directory.
+///
+/// ## Input
+/// - `req`: HTTP request
+/// - `path`: Path parameter from route
+///
+/// ## Output
+/// - `HttpResponse`: Asset response with caching headers
+///
+/// ## Example Routes
+/// - /public/static/styles/layers.css → public/static/styles/layers.css
+/// - /public/session/styles/landing.a3f5b2c8.mouse.css → public/session/styles/landing.a3f5b2c8.mouse.css
+async fn serve_public_asset(req: HttpRequest, path: web::Path<String>) -> HttpResponse {
+    let file_path = path.into_inner();
+
+    match serve_static_asset(&req, &file_path, "public").await {
+        Ok(response) => response,
+        Err(e) => {
+            eprintln!("Public asset error: {} - {}", file_path, e);
+            HttpResponse::NotFound().body(format!("Asset not found: {}", file_path))
+        }
+    }
+}

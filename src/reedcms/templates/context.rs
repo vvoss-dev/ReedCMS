@@ -81,7 +81,10 @@ pub fn build_context(
 
     // Config object
     let mut config = HashMap::new();
-    config.insert("session_hash", serde_json::json!("dev42")); // TODO: Generate real hash
+    // Get actual session hash from ReedBase
+    let session_hash = crate::reedcms::assets::css::session_hash::get_session_hash()
+        .unwrap_or_else(|_| "dev42".to_string());
+    config.insert("session_hash", serde_json::json!(session_hash));
     config.insert("dev_mode", serde_json::json!(cfg!(debug_assertions))); // True in debug builds
     ctx.insert("config".to_string(), serde_json::json!(config));
 
