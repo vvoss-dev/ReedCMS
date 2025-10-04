@@ -33,3 +33,7 @@ lost-in-the-middle@de|wissen/lost-in-the-middle|German Lost in the Middle knowle
 lost-in-the-middle@en|knowledge/lost-in-the-middle|English Lost in the Middle knowledge article
 seo@de|wissen/suchmaschinenoptimierung|German SEO knowledge article
 seo@en|knowledge/search-engine-optimization|English SEO knowledge article
+page@de|page|German generic page route
+page@en|page|English generic page route
+apache-license@de|wissen/apache-lizenz|German Apache License knowledge article
+apache-license@en|knowledge/apache-license|English Apache License knowledge article
