@@ -115,6 +115,10 @@ pub enum ReedError {
     /// Build operation error.
     #[error("Build error in component '{component}': {reason}")]
     BuildError { component: String, reason: String },
+
+    /// File watcher error.
+    #[error("Watcher error: {reason}")]
+    WatcherError { reason: String },
 }
 
 /// Standard Request structure for all module communications.

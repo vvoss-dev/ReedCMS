@@ -1141,3 +1141,16 @@ src/reedcms/build/cache_bust.rs|186|is_already_hashed|pub(crate) fn is_already_h
 src/reedcms/build/cache_bust.rs|207|write_manifest|pub(crate) fn write_manifest(manifest: &AssetManifest) -> ReedResult<()>|Writes asset manifest to JSON file.|manifest: &AssetManifest|ReedResult<()>|active
 src/reedcms/build/cache_bust.rs|222|load_manifest|pub fn load_manifest() -> ReedResult<AssetManifest>|Loads asset manifest from JSON file.|None|ReedResult<AssetManifest>|active
 src/reedcms/build/cache_bust.rs|248|get_hashed_filename|pub fn get_hashed_filename(original: &str) -> Option<String>|Gets hashed filename for original asset.|original: &str|Option<String>|active
+src/reedcms/build/change_detect.rs|10|RebuildScope|pub enum RebuildScope|Rebuild scope enum (AllCss, SpecificCss, AllJs, SpecificJs, Template, Config, None).|None|enum|active
+src/reedcms/build/change_detect.rs|47|detect_rebuild_scope|pub fn detect_rebuild_scope(path: &str) -> RebuildScope|Detects what needs rebuilding based on changed file path.|path: &str|RebuildScope|active
+src/reedcms/build/change_detect.rs|93|extract_layout_variant|pub fn extract_layout_variant(path: &str, asset_type: &str) -> Option<(String, String)>|Extracts layout and variant from file path.|path: &str; asset_type: &str|Option<(String, String)>|active
+src/reedcms/build/watcher.rs|56|start_watcher|pub fn start_watcher() -> ReedResult<()>|Starts file watcher for development mode with 300ms debouncing.|None|ReedResult<()>|active
+src/reedcms/build/watcher.rs|99|watch_directory|fn watch_directory<W: Watcher>(watcher: &mut W, path: &str) -> ReedResult<()>|Watches directory recursively (.reed non-recursive).|watcher: &mut W; path: &str|ReedResult<()>|active
+src/reedcms/build/watcher.rs|121|handle_file_event|fn handle_file_event(event: DebouncedEvent) -> ReedResult<()>|Handles debounced file system event.|event: DebouncedEvent|ReedResult<()>|active
+src/reedcms/build/watcher.rs|150|handle_file_change|fn handle_file_change(path: &str) -> ReedResult<()>|Routes file change to appropriate rebuild handler.|path: &str|ReedResult<()>|active
+src/reedcms/build/watcher.rs|175|rebuild_all_css|fn rebuild_all_css() -> ReedResult<()>|Rebuilds all CSS bundles (reuses bundle_all_css).|None|ReedResult<()>|active
+src/reedcms/build/watcher.rs|201|rebuild_specific_css|fn rebuild_specific_css(layout: &str, variant: &str) -> ReedResult<()>|Rebuilds specific CSS bundle (reuses bundle_css).|layout: &str; variant: &str|ReedResult<()>|active
+src/reedcms/build/watcher.rs|226|rebuild_all_js|fn rebuild_all_js() -> ReedResult<()>|Rebuilds all JS bundles (reuses bundle_all_js).|None|ReedResult<()>|active
+src/reedcms/build/watcher.rs|252|rebuild_specific_js|fn rebuild_specific_js(layout: &str, variant: &str) -> ReedResult<()>|Rebuilds specific JS bundle (reuses bundle_js).|layout: &str; variant: &str|ReedResult<()>|active
+src/reedcms/build/watcher.rs|279|reload_template|fn reload_template() -> ReedResult<()>|Placeholder for template hot-reload (REED-05-02).|None|ReedResult<()>|active
+src/reedcms/build/watcher.rs|292|reload_config|fn reload_config() -> ReedResult<()>|Placeholder for config reload (REED-02-01).|None|ReedResult<()>|active
