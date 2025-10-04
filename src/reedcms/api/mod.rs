@@ -12,6 +12,7 @@
 //! - `set_handlers` - POST endpoint implementations
 //! - `batch_handlers` - Batch operation endpoints
 //! - `list_handlers` - List operation endpoints
+//! - `security` - Security matrix, rate limiting, API keys, middleware
 //!
 //! ## Endpoints
 //! - `/api/v1/text/get` - Retrieve text data
@@ -53,6 +54,7 @@ pub mod get_handlers;
 pub mod list_handlers;
 pub mod responses;
 pub mod routes;
+pub mod security;
 pub mod set_handlers;
 
 // Re-export commonly used types
@@ -61,3 +63,6 @@ pub use responses::{
 };
 
 pub use routes::configure_api_routes;
+
+// Re-export security components
+pub use security::{check_rate_limit, ApiKeyManager, SecurityMatrix, SecurityMiddleware};

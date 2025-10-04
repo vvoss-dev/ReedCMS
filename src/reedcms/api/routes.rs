@@ -39,6 +39,7 @@ use crate::reedcms::api::set_handlers;
 use crate::reedcms::api::batch_handlers;
 use crate::reedcms::api::list_handlers;
 use crate::reedcms::auth::middleware::AuthMiddleware;
+use crate::reedcms::api::security::SecurityMiddleware;
 
 /// Configures all API routes under /api/v1 scope.
 ///
@@ -72,6 +73,7 @@ pub fn configure_api_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/api/v1")
             .wrap(AuthMiddleware::authenticated())
+            .wrap(SecurityMiddleware::new())
             // Text operations
             .service(
                 web::scope("/text")
