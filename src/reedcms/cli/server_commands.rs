@@ -114,7 +114,7 @@ pub fn server_start(
         .map(|s| s.as_str())
         .unwrap_or("PROD");
 
-    // Check if PID file exists
+    // Check if PID file exists and stop running instance
     let pid_file = ".reed/server.pid";
     if std::path::Path::new(pid_file).exists() {
         let pid = fs::read_to_string(pid_file)
@@ -124,10 +124,15 @@ pub fn server_start(
 
         // Check if process is actually running
         if is_process_running(&pid) {
-            return Err(ReedError::ServerError {
-                component: "server_start".to_string(),
-                reason: format!("Server already running (PID: {})", pid),
-            });
+            output.push_str(&format!("⚠ Found running server (PID: {}), stopping it first...\n", pid));
+
+            // Stop the running instance
+            stop_server_by_pid(&pid)?;
+
+            // Wait a moment for graceful shutdown
+            std::thread::sleep(std::time::Duration::from_millis(500));
+
+            output.push_str("✓ Previous instance stopped\n");
         } else {
             // Stale PID file, remove it
             fs::remove_file(pid_file).ok();
@@ -222,6 +227,62 @@ pub fn server_start(
             .as_secs(),
         metrics: None,
     })
+}
+
+/// Internal function to stop server by PID.
+///
+/// ## Input
+/// - pid: Process ID as string
+///
+/// ## Output
+/// - Success if server stopped
+///
+/// ## Error Conditions
+/// - Process not running
+/// - Cannot send kill signal
+fn stop_server_by_pid(pid: &str) -> ReedResult<()> {
+    if !is_process_running(pid) {
+        return Err(ReedError::ServerError {
+            component: "stop_server_by_pid".to_string(),
+            reason: format!("Process not running (PID: {})", pid),
+        });
+    }
+
+    // Send SIGTERM signal
+    #[cfg(unix)]
+    {
+        use std::process::Command;
+        let kill_result = Command::new("kill").arg("-TERM").arg(pid).status();
+
+        if kill_result.is_ok() {
+            // Wait for graceful shutdown (max 5 seconds)
+            for _ in 0..50 {
+                std::thread::sleep(std::time::Duration::from_millis(100));
+                if !is_process_running(pid) {
+                    break;
+                }
+            }
+
+            // Force kill if still running
+            if is_process_running(pid) {
+                Command::new("kill").arg("-KILL").arg(pid).status().ok();
+            }
+        }
+    }
+
+    #[cfg(not(unix))]
+    {
+        return Err(ReedError::ServerError {
+            component: "stop_server_by_pid".to_string(),
+            reason: "Server stop not supported on non-Unix systems".to_string(),
+        });
+    }
+
+    // Remove PID file
+    let pid_file = ".reed/server.pid";
+    fs::remove_file(pid_file).ok();
+
+    Ok(())
 }
 
 /// Stops running server.
