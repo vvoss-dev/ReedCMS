@@ -56,6 +56,24 @@ pub fn build_context(
     );
     client.insert("breakpoint", serde_json::json!(&client_info.breakpoint));
     client.insert("device_type", serde_json::json!(&client_info.device_type));
+
+    // Optional screen dimensions from cookie
+    if let Some(vw) = client_info.viewport_width {
+        client.insert("viewport_width", serde_json::json!(vw));
+    }
+    if let Some(vh) = client_info.viewport_height {
+        client.insert("viewport_height", serde_json::json!(vh));
+    }
+    if let Some(sw) = client_info.screen_width {
+        client.insert("screen_width", serde_json::json!(sw));
+    }
+    if let Some(sh) = client_info.screen_height {
+        client.insert("screen_height", serde_json::json!(sh));
+    }
+    if let Some(dpr) = client_info.dpr {
+        client.insert("dpr", serde_json::json!(dpr));
+    }
+
     ctx.insert("client".to_string(), serde_json::json!(client));
 
     // Layout name
@@ -64,6 +82,7 @@ pub fn build_context(
     // Config object
     let mut config = HashMap::new();
     config.insert("session_hash", serde_json::json!("dev42")); // TODO: Generate real hash
+    config.insert("dev_mode", serde_json::json!(cfg!(debug_assertions))); // True in debug builds
     ctx.insert("config".to_string(), serde_json::json!(config));
 
     // Optional page metadata (templates use these with fallbacks)

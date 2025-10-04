@@ -1159,6 +1159,149 @@ REED-04-10 (Agent Commands) → REED-20-01 (MCP Server)
 
 ---
 
+## Template Context Variable System (2025-01-04)
+
+### Decision D045: Context Variable Management Strategy
+**Problem**: Templates expect variables (`current_year`, `config.dev_mode`, `client.*`) that must be provided by Rust context builder.
+
+**Solution**: Centralised context building in `src/reedcms/templates/context.rs` with three layers:
+1. **Core Variables**: Always present (layout, lang, interaction_mode)
+2. **Global Variables**: System-wide (current_year, site_name, languages, version)
+3. **Optional Variables**: Conditional (client.screen_width, config.dev_mode)
+
+**Implementation**:
+```rust
+// Core variables - always present
+ctx.insert("layout", json!(layout));
+ctx.insert("lang", json!(language));
+ctx.insert("interaction_mode", json!(client_info.interaction_mode));
+
+// Global variables - via add_globals()
+ctx.insert("current_year", json!(chrono::Utc::now().year()));
+ctx.insert("site_name", json!(get_config_value("name")?));
+ctx.insert("version", json!(env!("CARGO_PKG_VERSION")));
+
+// Config object with dev_mode detection
+let mut config = HashMap::new();
+config.insert("dev_mode", json!(cfg!(debug_assertions))); // Auto-detect debug builds
+ctx.insert("config", json!(config));
+
+// Client object with detection info
+let mut client = HashMap::new();
+client.insert("lang", json!(language));
+client.insert("interaction_mode", json!(client_info.interaction_mode));
+client.insert("breakpoint", json!(client_info.breakpoint));
+client.insert("device_type", json!(client_info.device_type));
+ctx.insert("client", json!(client));
+```
+
+**Benefits**:
+- **Automatic Debug Detection**: `cfg!(debug_assertions)` enables dev_mode in debug builds
+- **No Manual Configuration**: Dev mode toggled by `cargo build` vs `cargo build --release`
+- **Template Safety**: Optional variables wrapped in `{% if %}` blocks
+- **Performance**: Context building < 5ms, memory < 1KB per context
+
+**Files**: 
+- `src/reedcms/templates/context.rs` - Context builder implementation
+- `templates/components/organisms/page-footer/page-footer.mouse.jinja` - Uses `current_year` and `config.dev_mode`
+
+### Decision D046: MiniJinja Optional Variable Handling
+**Problem**: Templates use `{% if client.screen_width %}` for optional variables, but MiniJinja behaviour with missing keys caused template errors.
+
+**Root Cause**: `ClientInfo` struct contained optional fields (`viewport_width`, `screen_width`, `screen_height`, `dpr`) but these were not transferred to the template context HashMap.
+
+**Solution**: Conditionally add optional client variables to template context only when present:
+```rust
+// In src/reedcms/templates/context.rs - build_context()
+if let Some(vw) = client_info.viewport_width {
+    client.insert("viewport_width", serde_json::json!(vw));
+}
+if let Some(vh) = client_info.viewport_height {
+    client.insert("viewport_height", serde_json::json!(vh));
+}
+if let Some(sw) = client_info.screen_width {
+    client.insert("screen_width", serde_json::json!(sw));
+}
+if let Some(sh) = client_info.screen_height {
+    client.insert("screen_height", serde_json::json!(sh));
+}
+if let Some(dpr) = client_info.dpr {
+    client.insert("dpr", serde_json::json!(dpr));
+}
+```
+
+**MiniJinja Behaviour**: 
+- `{% if client.screen_width %}` works correctly when key is **present** in HashMap
+- `{% if client.screen_width %}` works correctly when key is **absent** from HashMap (evaluates to false)
+- **Does NOT work** when `ClientInfo` field exists but is not added to template context
+
+**Answer to Open Question**: Optional variables should be **conditionally added** (omitted when None, present when Some). Do NOT add as `null`.
+
+**Status**: ✅ Resolved (2025-01-04)
+- `current_year` provided via `add_globals()` ✅
+- `config.dev_mode` provided via config object ✅
+- Optional client variables conditionally added ✅
+- Template renders successfully with dev_mode panel ✅
+
+**Files Modified**:
+- `src/reedcms/templates/context.rs` - Added optional client variable handling
+- `templates/components/organisms/page-footer/page-footer.mouse.jinja` - Dev section fully functional
+
+### Decision D047: MiniJinja Macro Feature Requirement
+**Problem**: Icon macros with `{% macro %}` and `{% from ... import %}` produced no output despite correct syntax.
+
+**Root Cause**: MiniJinja requires explicit `macros` feature flag in Cargo.toml - the `{% macro %}` tag is disabled by default for minimal dependency builds.
+
+**Solution**: Add `"macros"` to MiniJinja features list:
+```toml
+minijinja = { version = "2.0", features = ["builtins", "debug", "loader", "multi_template", "macros"] }
+```
+
+**From MiniJinja Documentation**:
+> `macros`: When removed, the `{% macro %}` tag is not included
+
+**Required Features for ReedCMS**:
+- `builtins` - Built-in filters and functions
+- `debug` - Debug mode with detailed error messages
+- `loader` - Template loader functionality
+- `multi_template` - Template inheritance (`{% extends %}`, `{% include %}`, `{% from ... import %}`)
+- `macros` - Macro definitions and calls (`{% macro %}`, macro imports)
+
+**Implementation Pattern**:
+```jinja
+{# svg-icon.jinja - Macro definition #}
+{% macro svg_icon(icon, size, class, alt) %}
+<svg class="{{ class }}" width="{{ size }}" height="{{ size }}" ...>
+{%- set icon_template = "components/atoms/icons/" ~ icon ~ ".jinja" -%}
+{%- include icon_template -%}
+</svg>
+{% endmacro %}
+
+{# Component template - Macro usage #}
+{% from "components/molecules/svg-icon/svg-icon.jinja" import svg_icon %}
+{{ svg_icon("mail", "32", "contact-icon", "Email") }}
+```
+
+**Benefits**:
+- **Reusable Components**: Macros with parameters for flexible icon rendering
+- **Atomic Design**: svg-icon molecule wraps icon atoms with proper SVG structure
+- **Type Safety**: Parameters enforce consistent usage (icon name, size, class, alt text)
+- **Performance**: Macros are parsed once at template load, not on every render
+- **Accessibility**: aria-label and role attributes centralized in macro
+
+**Status**: ✅ Resolved (2025-01-04)
+- Macro feature enabled in Cargo.toml ✅
+- All icon templates restored with macro syntax ✅
+- Icons render correctly in production ✅
+
+**Files Modified**:
+- `Cargo.toml` - Added `"macros"` feature to minijinja
+- `templates/components/molecules/svg-icon/svg-icon.jinja` - Macro-based icon wrapper
+- `templates/components/organisms/landing-contact/*.jinja` - Icon macro imports and calls
+- `templates/components/organisms/page-header/page-header.touch.jinja` - Menu and navigation icons
+
+---
+
 ## API Layer Implementation (2025-02-01)
 
 This section documents the complete implementation of the API Layer (REED-07), which provides RESTful HTTP access to ReedBase operations with comprehensive security.

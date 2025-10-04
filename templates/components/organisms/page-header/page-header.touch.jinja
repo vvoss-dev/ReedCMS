@@ -1,6 +1,7 @@
 {# Copyright (c) 2025 Vivian Voss - All rights reserved #}
 {# Page Header Organism - Touch interaction mode #}
 
+{% from "components/molecules/svg-icon/svg-icon.jinja" import svg_icon %}
 {% set pages = ["knowledge", "portfolio", "blog", "impressum"] %}
 
 <!-- This site renders different HTML based on your interaction mode -->
@@ -38,7 +39,7 @@
 
         <details class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
             <summary class="nav-toggle-title">
-                {% include "components/molecules/svg-icon/svg-icon.jinja" with {icon: "menu", size: "24", class: "menu-icon"} %}
+                {{ svg_icon("menu", "24", "menu-icon", "Menu") }}
             </summary>
 
             {# Navigation menu - ReedCMS route filter #}
@@ -48,7 +49,7 @@
                         <a href="/{{ client.lang }}/{{ pagekey | route('auto') }}/"
                             class="grid-2 gap-x-1"
                             {% if current_pagekey == pagekey %}aria-current="page"{% endif %}>
-                            {% include "components/molecules/svg-icon/svg-icon.jinja" with {icon: "chevrons-right", size: "16", class: "nav-chevron"} %}
+                            {{ svg_icon("chevrons-right", "16", "nav-chevron", "Navigate to") }}
                             <span>{{ ("page.header.menu." ~ pagekey) | text('auto') }}</span>
                         </a>
                     </li>
