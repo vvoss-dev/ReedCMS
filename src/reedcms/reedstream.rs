@@ -87,6 +87,30 @@ pub enum ReedError {
     /// Data parsing error (distinct from validation).
     #[error("Parse error for input '{input}': {reason}")]
     ParseError { input: String, reason: String },
+
+    /// File not found error.
+    #[error("File not found: {path}, reason: {reason}")]
+    FileNotFound { path: String, reason: String },
+
+    /// Directory not found error.
+    #[error("Directory not found: {path}, reason: {reason}")]
+    DirectoryNotFound { path: String, reason: String },
+
+    /// Write operation error.
+    #[error("Write error to path '{path}': {reason}")]
+    WriteError { path: String, reason: String },
+
+    /// Compression operation error.
+    #[error("Compression failed: {reason}")]
+    CompressionFailed { reason: String },
+
+    /// Security violation (e.g., path traversal attempt).
+    #[error("Security violation: {reason}")]
+    SecurityViolation { reason: String },
+
+    /// Invalid metadata error.
+    #[error("Invalid metadata: {reason}")]
+    InvalidMetadata { reason: String },
 }
 
 /// Standard Request structure for all module communications.
