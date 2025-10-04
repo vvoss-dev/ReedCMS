@@ -1101,3 +1101,25 @@ src/reedcms/assets/server/routes.rs|45|serve_image|pub async fn serve_image(req:
 src/reedcms/assets/server/routes.rs|59|serve_font|pub async fn serve_font(req: HttpRequest, path: web::Path<String>) -> HttpResponse|Handler for serving fonts.|req: HttpRequest; path: web::Path<String>|HttpResponse|active
 src/reedcms/assets/server/routes.rs|73|serve_source_map|pub async fn serve_source_map(req: HttpRequest, path: web::Path<String>) -> HttpResponse|Handler for serving source maps.|req: HttpRequest; path: web::Path<String>|HttpResponse|active
 src/reedcms/assets/server/routes.rs|92|configure_static_routes|pub fn configure_static_routes(cfg: &mut web::ServiceConfig)|Configures all static asset routes for Actix-Web application.|cfg: &mut web::ServiceConfig|None|active
+src/reedcms/build/compiler.rs|38|build_release|pub fn build_release() -> ReedResult<BuildInfo>|Compiles ReedCMS binary for release with LTO and optimisations.|None|ReedResult<BuildInfo>|active
+src/reedcms/build/compiler.rs|135|clean_previous_builds|fn clean_previous_builds() -> ReedResult<()>|Cleans previous build artefacts.|None|ReedResult<()>|active
+src/reedcms/build/compiler.rs|159|run_cargo_build|fn run_cargo_build() -> ReedResult<()>|Runs cargo build with release profile.|None|ReedResult<()>|active
+src/reedcms/build/compiler.rs|192|should_use_upx|fn should_use_upx() -> bool|Checks if UPX compression should be used.|None|bool|active
+src/reedcms/build/compiler.rs|208|compress_with_upx|fn compress_with_upx(binary_path: &str) -> ReedResult<usize>|Compresses binary with UPX.|binary_path: &str|ReedResult<usize>|active
+src/reedcms/build/compiler.rs|242|calculate_sha256|fn calculate_sha256(path: &str) -> ReedResult<String>|Calculates SHA256 checksum of binary.|path: &str|ReedResult<String>|active
+src/reedcms/build/compiler.rs|262|calculate_md5|fn calculate_md5(path: &str) -> ReedResult<String>|Calculates MD5 checksum of binary.|path: &str|ReedResult<String>|active
+src/reedcms/build/compiler.rs|273|BuildInfo|pub struct BuildInfo|Build information structure.|None|struct|active
+src/reedcms/build/compiler.rs|295|write_build_info|fn write_build_info(info: &BuildInfo) -> ReedResult<()>|Writes build info to JSON file.|info: &BuildInfo|ReedResult<()>|active
+src/reedcms/build/packager.rs|35|package_release|pub fn package_release(build_info: &BuildInfo) -> ReedResult<PackageInfo>|Packages release binary with assets.|build_info: &BuildInfo|ReedResult<PackageInfo>|active
+src/reedcms/build/packager.rs|118|copy_dir_recursive|fn copy_dir_recursive(src: &str, dst: &str) -> ReedResult<()>|Recursively copies directory.|src: &str; dst: &str|ReedResult<()>|active
+src/reedcms/build/packager.rs|167|create_tar_gz_archive|fn create_tar_gz_archive(package_name: &str, package_dir: &str) -> ReedResult<String>|Creates tar.gz archive.|package_name: &str; package_dir: &str|ReedResult<String>|active
+src/reedcms/build/packager.rs|200|calculate_archive_sha256|fn calculate_archive_sha256(path: &str) -> ReedResult<String>|Calculates SHA256 checksum of archive.|path: &str|ReedResult<String>|active
+src/reedcms/build/packager.rs|222|PackageInfo|pub struct PackageInfo|Package information structure.|None|struct|active
+src/reedcms/build/version.rs|18|get_version|pub fn get_version() -> &'static str|Gets current ReedCMS version.|None|&'static str|active
+src/reedcms/build/version.rs|37|get_build_metadata|pub fn get_build_metadata() -> BuildMetadata|Gets full build metadata.|None|BuildMetadata|active
+src/reedcms/build/version.rs|62|get_version_with_suffix|pub fn get_version_with_suffix(suffix: Option<&str>) -> String|Gets version with optional build suffix.|suffix: Option<&str>|String|active
+src/reedcms/build/version.rs|81|parse_version|pub fn parse_version(version: &str) -> Option<(u32, u32, u32)>|Parses semantic version into components.|version: &str|Option<(u32, u32, u32)>|active
+src/reedcms/build/version.rs|101|is_compatible|pub fn is_compatible(version_a: &str, version_b: &str) -> bool|Checks if version is compatible with another version.|version_a: &str; version_b: &str|bool|active
+src/reedcms/build/version.rs|111|BuildMetadata|pub struct BuildMetadata|Build metadata structure.|None|struct|active
+src/reedcms/build/version.rs|127|full_version|pub fn full_version(&self) -> String|Gets full version string with package name.|None|String|active
+src/reedcms/build/version.rs|141|build_info_string|pub fn build_info_string(&self) -> String|Gets build information as formatted string.|None|String|active

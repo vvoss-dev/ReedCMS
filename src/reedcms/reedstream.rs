@@ -111,6 +111,10 @@ pub enum ReedError {
     /// Invalid metadata error.
     #[error("Invalid metadata: {reason}")]
     InvalidMetadata { reason: String },
+
+    /// Build operation error.
+    #[error("Build error in component '{component}': {reason}")]
+    BuildError { component: String, reason: String },
 }
 
 /// Standard Request structure for all module communications.

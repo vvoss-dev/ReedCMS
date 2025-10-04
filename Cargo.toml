@@ -29,5 +29,21 @@ md5 = "0.7"
 regex = "1.10"
 flate2 = "1.0"
 brotli = "3.3"
+tar = "0.4"
+walkdir = "2.4"
 
 [dev-dependencies]
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = true
+panic = "abort"
+
+[profile.dev]
+opt-level = 0
+debug = true
+
+[profile.dev.package."*"]
+opt-level = 2
