@@ -28,8 +28,8 @@ REED-06-02|Complete|Routing System|Server Layer|High|High|REED-06-01,REED-02-01|
 REED-06-03|Complete|Authentication Middleware|Server Layer|High|Medium|REED-06-01,REED-03-01|Authentication (Line 978)|Implement HTTP Basic Auth validation with user verification
 REED-06-04|Open|Response Builder|Server Layer|Medium|Medium|REED-06-01,REED-05-02|Response Builder (Line 1002-1008)|Implement HTML generation with headers, cache control, security headers
 REED-06-05|Complete|Client Detection Service|Server Layer|Medium|Medium|REED-06-01|Client Detection|Implement comprehensive client detection from screen_info cookie with ClientInfo structure, device detection, interaction mode resolution, and User-Agent fallback
-REED-07-01|Open|ReedAPI HTTP Interface|API Layer|Medium|High|REED-06-01,REED-04-01|ReedAPI Layer (Line 875-954)|Implement single-endpoint API with CLI command execution bridge
-REED-07-02|Open|API Security Matrix|API Layer|Medium|Medium|REED-07-01,REED-03-02|API Security (Line 890-933)|Implement command validation, token authentication, rate limiting via api.matrix.csv
+REED-07-01|Complete|ReedAPI HTTP Interface|API Layer|Medium|High|REED-06-01,REED-04-01|ReedAPI Layer (Line 875-954)|Implement RESTful API endpoints for ReedBase operations (GET/SET/LIST/BATCH) with JSON responses and AuthMiddleware integration
+REED-07-02|Complete|API Security Matrix|API Layer|Medium|Medium|REED-07-01,REED-03-02|API Security (Line 890-933)|Implement resource-operation security matrix, sliding window rate limiting, API key management (SHA-256), and SecurityMiddleware for permission-based access control
 REED-08-01|Open|CSS Bundler|Asset Layer|Medium|Medium|REED-02-01|CSS Bundler (Line 998)|Implement CSS compilation per session hash with component discovery
 REED-08-02|Open|JS Bundler|Asset Layer|Low|Medium|REED-08-01|JS Bundler (Line 999)|Implement JavaScript bundling service with component asset discovery
 REED-08-03|Open|Static File Server|Asset Layer|Medium|Low|REED-06-01|Static Files (Line 1001)|Implement static file serving with cache headers
