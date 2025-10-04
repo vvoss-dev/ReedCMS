@@ -330,16 +330,78 @@ async fn fetch_single_key(
 /// - < 50ms typical
 async fn set_single_key(
     key: &str,
-    _value: &str,
-    _description: &Option<String>,
-    _cache_type: &str,
+    value: &str,
+    description: &Option<String>,
+    cache_type: &str,
     _language: &Option<String>,
     _environment: &Option<String>,
 ) -> ApiBatchResult<String> {
-    // Note: SET operations require mutable cache access through ReedBase dispatcher.
-    // Full implementation requires REED-02-01 (ReedBase with mutable HashMap cache).
-    ApiBatchResult::failure(
+    use crate::reedcms::csv::{read_csv, write_csv, CsvRecord};
+    use std::collections::HashMap;
+    use std::path::Path;
+
+    // Determine CSV file path
+    let csv_path = match cache_type {
+        "text" => ".reed/text.csv",
+        "route" => ".reed/routes.csv",
+        "meta" => ".reed/meta.csv",
+        "config" => ".reed/server.csv",
+        _ => {
+            return ApiBatchResult::failure(
+                key.to_string(),
+                format!("Invalid cache type: {}", cache_type),
+            );
+        }
+    };
+
+    // Create backup before modification (only once per batch, but safe to call multiple times)
+    if let Err(e) = crate::reedcms::backup::create_backup(Path::new(csv_path)) {
+        return ApiBatchResult::failure(
+            key.to_string(),
+            format!("Backup failed: {}", e),
+        );
+    }
+
+    // Read current CSV data using existing csv module
+    let records = match read_csv(csv_path) {
+        Ok(r) => r,
+        Err(e) => {
+            return ApiBatchResult::failure(
+                key.to_string(),
+                format!("CSV read failed: {}", e),
+            );
+        }
+    };
+
+    // Convert to HashMap for easy update
+    let mut data: HashMap<String, (String, Option<String>)> = records
+        .into_iter()
+        .map(|r| (r.key, (r.value, r.description)))
+        .collect();
+
+    // Update value
+    data.insert(
         key.to_string(),
-        "SET operations not yet implemented (REED-02-01 pending)".to_string(),
-    )
+        (value.to_string(), description.clone()),
+    );
+
+    // Convert back to CsvRecord vector and sort
+    let mut updated_records: Vec<CsvRecord> = data
+        .into_iter()
+        .map(|(k, (v, d))| CsvRecord {
+            key: k,
+            value: v,
+            description: d,
+        })
+        .collect();
+    updated_records.sort_by(|a, b| a.key.cmp(&b.key));
+
+    // Write back using existing csv module (atomic write)
+    match write_csv(Path::new(csv_path), &updated_records) {
+        Ok(_) => ApiBatchResult::success(key.to_string(), "Key set successfully".to_string()),
+        Err(e) => ApiBatchResult::failure(
+            key.to_string(),
+            format!("CSV write failed: {}", e),
+        ),
+    }
 }

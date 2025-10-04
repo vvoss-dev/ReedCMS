@@ -225,17 +225,124 @@ pub async fn list_layouts(
 /// - Filtering with early termination
 /// - < 50ms for < 10,000 keys
 async fn fetch_key_list(
-    _cache_type: &str,
-    _query: &ListQuery,
+    cache_type: &str,
+    query: &ListQuery,
 ) -> Result<ApiResponse<ListResponse>, ApiError> {
-    // Note: Currently ReedBase get functions return single values, not full caches.
-    // Full implementation requires REED-02-01 (ReedBase with HashMap cache access).
-    Err(ApiError::new(
-        "NOT_IMPLEMENTED".to_string(),
-        "List operations require full ReedBase cache access (REED-02-01 pending)".to_string(),
-    ))
+    // Determine CSV file path based on cache type
+    let csv_path = match cache_type {
+        "text" => ".reed/text.csv",
+        "route" => ".reed/routes.csv",
+        "meta" => ".reed/meta.csv",
+        _ => {
+            return Err(ApiError::new(
+                "INVALID_CACHE_TYPE".to_string(),
+                format!("Invalid cache type: {}", cache_type),
+            ));
+        }
+    };
+
+    // Read all keys from CSV file
+    let all_keys = match read_keys_from_csv(csv_path).await {
+        Ok(keys) => keys,
+        Err(e) => {
+            return Err(ApiError::new(
+                "CSV_READ_FAILED".to_string(),
+                format!("Failed to read keys from {}: {}", csv_path, e),
+            ));
+        }
+    };
+
+    // Apply filters
+    let filtered_keys = apply_filters(&all_keys, query);
+
+    // Apply pagination
+    let limit = query.limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT);
+    let offset = query.offset.unwrap_or(0);
+    let total = filtered_keys.len();
+
+    let paginated_keys: Vec<String> = filtered_keys
+        .into_iter()
+        .skip(offset)
+        .take(limit)
+        .collect();
+
+    let count = paginated_keys.len();
+
+    // Build response
+    let list_response = ListResponse {
+        keys: paginated_keys,
+        total,
+        count,
+        offset,
+        limit,
+    };
+
+    Ok(ApiResponse::new(list_response))
 }
 
+/// Reads all keys from a CSV file.
+///
+/// ## Arguments
+/// - `csv_path`: Path to CSV file
+///
+/// ## Returns
+/// - `Result<Vec<String>, String>`: List of keys or error
+///
+/// ## Performance
+/// - O(n) where n is number of lines in CSV
+/// - < 10ms for < 10,000 lines
+async fn read_keys_from_csv(csv_path: &str) -> Result<Vec<String>, String> {
+    use crate::reedcms::csv::read_csv;
+
+    let records = read_csv(csv_path)
+        .map_err(|e| format!("Failed to read CSV {}: {}", csv_path, e))?;
+
+    let keys: Vec<String> = records.into_iter().map(|r| r.key).collect();
+
+    Ok(keys)
+}
+
+/// Applies filters to key list.
+///
+/// ## Arguments
+/// - `keys`: List of all keys
+/// - `query`: Filter parameters
+///
+/// ## Returns
+/// - Filtered list of keys
+///
+/// ## Performance
+/// - O(n) where n is number of keys
+/// - Early termination where possible
+fn apply_filters(keys: &[String], query: &ListQuery) -> Vec<String> {
+    keys.iter()
+        .filter(|key| {
+            // Prefix filter
+            if let Some(prefix) = &query.prefix {
+                if !key.starts_with(prefix) {
+                    return false;
+                }
+            }
+
+            // Language filter
+            if let Some(language) = &query.language {
+                if !key.ends_with(&format!("@{}", language)) {
+                    return false;
+                }
+            }
+
+            // Environment filter (checking for @env or @lang@env patterns)
+            if let Some(environment) = &query.environment {
+                if !key.contains(&format!("@{}", environment)) {
+                    return false;
+                }
+            }
+
+            true
+        })
+        .cloned()
+        .collect()
+}
 /// Internal helper: Fetch list of available layouts.
 ///
 /// ## Arguments
@@ -249,12 +356,69 @@ async fn fetch_key_list(
 /// - O(n) where n is number of layout directories
 /// - < 10ms typical
 async fn fetch_layout_list(
-    _query: &ListQuery,
+    query: &ListQuery,
 ) -> Result<ApiResponse<ListResponse>, ApiError> {
-    // Note: Layout listing requires registry cache access.
-    // Full implementation requires REED-02-01 (ReedBase with HashMap cache access).
-    Err(ApiError::new(
-        "NOT_IMPLEMENTED".to_string(),
-        "Layout listing requires registry cache access (REED-02-01 pending)".to_string(),
-    ))
+    // Read layout names from templates/layouts directory
+    use std::fs;
+
+    let layouts_dir = "templates/layouts";
+
+    let entries = match fs::read_dir(layouts_dir) {
+        Ok(entries) => entries,
+        Err(e) => {
+            return Err(ApiError::new(
+                "DIRECTORY_READ_FAILED".to_string(),
+                format!("Failed to read layouts directory: {}", e),
+            ));
+        }
+    };
+
+    // Extract layout directory names
+    let mut layouts: Vec<String> = Vec::new();
+    for entry in entries {
+        if let Ok(entry) = entry {
+            if let Ok(file_type) = entry.file_type() {
+                if file_type.is_dir() {
+                    if let Some(name) = entry.file_name().to_str() {
+                        layouts.push(name.to_string());
+                    }
+                }
+            }
+        }
+    }
+
+    layouts.sort();
+
+    // Apply prefix filter if specified
+    let filtered_layouts = if let Some(prefix) = &query.prefix {
+        layouts.into_iter()
+            .filter(|layout| layout.starts_with(prefix))
+            .collect()
+    } else {
+        layouts
+    };
+
+    // Apply pagination
+    let limit = query.limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT);
+    let offset = query.offset.unwrap_or(0);
+    let total = filtered_layouts.len();
+
+    let paginated_layouts: Vec<String> = filtered_layouts
+        .into_iter()
+        .skip(offset)
+        .take(limit)
+        .collect();
+
+    let count = paginated_layouts.len();
+
+    // Build response
+    let list_response = ListResponse {
+        keys: paginated_layouts,
+        total,
+        count,
+        offset,
+        limit,
+    };
+
+    Ok(ApiResponse::new(list_response))
 }

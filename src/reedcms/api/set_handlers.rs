@@ -271,13 +271,110 @@ pub async fn set_config(
 /// - O(n) CSV write (where n is total records)
 /// - < 50ms typical
 async fn persist_to_reedbase(
-    _body: &SetRequest,
-    _cache_type: &str,
+    body: &SetRequest,
+    cache_type: &str,
 ) -> Result<ApiSuccess, ApiError> {
-    // Note: SET operations require mutable cache access through ReedBase dispatcher.
-    // Full implementation requires REED-02-01 (ReedBase with mutable HashMap cache).
-    Err(ApiError::new(
-        "NOT_IMPLEMENTED".to_string(),
-        "SET operations require ReedBase dispatcher with mutable cache access (REED-02-01 pending)".to_string(),
+    // Try to use ReedBase cache first (when REED-02-01 is complete)
+    // For now, fallback to direct CSV modification
+
+    // TODO: Replace with ReedBase dispatcher call when available
+    // if let Ok(reedbase) = get_reedbase_instance() {
+    //     return set_via_cache(reedbase, body, cache_type).await;
+    // }
+
+    // Fallback: Direct CSV modification (works without cache)
+    set_via_csv_direct(body, cache_type).await
+}
+
+/// Direct CSV modification fallback (when cache not available).
+///
+/// ## Arguments
+/// - `body`: The SET request body
+/// - `cache_type`: Which cache to update
+///
+/// ## Returns
+/// - `Ok(ApiSuccess)`: Successful persistence
+/// - `Err(ApiError)`: Error during persistence
+async fn set_via_csv_direct(
+    body: &SetRequest,
+    cache_type: &str,
+) -> Result<ApiSuccess, ApiError> {
+    use crate::reedcms::csv::{read_csv, write_csv, CsvRecord};
+    use std::collections::HashMap;
+    use std::path::Path;
+
+    // Determine CSV file path
+    let csv_path = match cache_type {
+        "text" => ".reed/text.csv",
+        "route" => ".reed/routes.csv",
+        "meta" => ".reed/meta.csv",
+        "config" => ".reed/server.csv",
+        _ => {
+            return Err(ApiError::new(
+                "INVALID_CACHE_TYPE".to_string(),
+                format!("Invalid cache type: {}", cache_type),
+            ));
+        }
+    };
+
+    // Create backup before modification
+    if let Err(e) = crate::reedcms::backup::create_backup(Path::new(csv_path)) {
+        return Err(ApiError::new(
+            "BACKUP_FAILED".to_string(),
+            format!("Failed to create backup: {}", e),
+        ));
+    }
+
+    // Read current CSV data using existing csv module
+    let records = read_csv(csv_path).map_err(|e| {
+        ApiError::new(
+            "CSV_READ_FAILED".to_string(),
+            format!("Failed to read CSV: {}", e),
+        )
+    })?;
+
+    // Convert to HashMap for easy update
+    let mut data: HashMap<String, (String, Option<String>)> = records
+        .into_iter()
+        .map(|r| (r.key, (r.value, r.description)))
+        .collect();
+
+    // Update or insert new value
+    data.insert(
+        body.key.clone(),
+        (body.value.clone(), body.description.clone()),
+    );
+
+    // Convert back to CsvRecord vector and sort
+    let mut updated_records: Vec<CsvRecord> = data
+        .into_iter()
+        .map(|(key, (value, description))| CsvRecord {
+            key,
+            value,
+            description,
+        })
+        .collect();
+    updated_records.sort_by(|a, b| a.key.cmp(&b.key));
+
+    // Write back using existing csv module (atomic write)
+    write_csv(Path::new(csv_path), &updated_records).map_err(|e| {
+        ApiError::new(
+            "CSV_WRITE_FAILED".to_string(),
+            format!("Failed to write CSV: {}", e),
+        )
+    })?;
+
+    Ok(ApiSuccess::with_key(
+        format!("{} key set successfully", capitalize(cache_type)),
+        body.key.clone(),
     ))
+}
+
+/// Capitalises first letter of string.
+fn capitalize(s: &str) -> String {
+    let mut chars = s.chars();
+    match chars.next() {
+        None => String::new(),
+        Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
+    }
 }
