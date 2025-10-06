@@ -1,37 +1,37 @@
 key|value|comment
-landing@de|de|German homepage (/de/)
-landing@en|en|English homepage (/en/)
-portfolio@de|de/portfolio|German portfolio route
-portfolio@en|en/portfolio|English portfolio route
-knowledge@de|de/wissen|German knowledge section route
-knowledge@en|en/knowledge|English knowledge section route
-blog@de|de/blog|German blog section route
-blog@en|en/blog|English blog section route
-contact@de|de/contact|German contact route
-contact@en|en/contact|English contact route
-impressum@de|de/impressum|German legal notice route
-impressum@en|en/impressum|English legal notice route
-actix-web@de|de/wissen/actix-web-framework|German Actix Web knowledge article
-actix-web@en|en/knowledge/actix-web-framework|English Actix Web knowledge article
-aeo@de|de/wissen/answer-engine-optimization|German AEO knowledge article
-aeo@en|en/knowledge/answer-engine-optimization|English AEO knowledge article
-agility@de|de/wissen/agilitaet|German agility knowledge article
-agility@en|en/knowledge/agility|English agility knowledge article
-ai-visibility@de|de/wissen/ai-visibility|German AI visibility knowledge article
-ai-visibility@en|en/knowledge/ai-visibility|English AI visibility knowledge article
-apache@de|de/wissen/apache-webserver|German Apache knowledge article
-apache@en|en/knowledge/apache-webserver|English Apache knowledge article
-apache-license@de|de/wissen/apache-lizenz|German Apache License knowledge article
-apache-license@en|en/knowledge/apache-license|English Apache License knowledge article
-api@de|de/wissen/api|German API knowledge article
-api@en|en/knowledge/api|English API knowledge article
-bastille@de|de/wissen/bastille-jail-verwaltung|German Bastille jail knowledge article
-bastille@en|en/knowledge/bastille-jail-management|English Bastille jail knowledge article
-geo@de|de/wissen/generative-engine-optimization|German GEO knowledge article
-geo@en|en/knowledge/generative-engine-optimization|English GEO knowledge article
-lost-in-the-middle@de|de/wissen/lost-in-the-middle|German Lost in the Middle knowledge article
-lost-in-the-middle@en|en/knowledge/lost-in-the-middle|English Lost in the Middle knowledge article
-seo@de|de/wissen/suchmaschinenoptimierung|German SEO knowledge article
-seo@en|en/knowledge/search-engine-optimization|English SEO knowledge article
-page@de|de/page|German generic page route
-page@en|en/page|English generic page route
+landing@de||German homepage (empty path, root /de/)
+landing@en||English homepage (empty path, root /en/)
+portfolio@de|portfolio|German portfolio route
+portfolio@en|portfolio|English portfolio route
+knowledge@de|wissen|German knowledge section route
+knowledge@en|knowledge|English knowledge section route
+blog@de|blog|German blog section route
+blog@en|blog|English blog section route
+contact@de|contact|German contact route
+contact@en|contact|English contact route
+impressum@de|impressum|German legal notice route
+impressum@en|impressum|English legal notice route
+actix-web@de|wissen/actix-web-framework|German Actix Web knowledge article
+actix-web@en|knowledge/actix-web-framework|English Actix Web knowledge article
+aeo@de|wissen/answer-engine-optimization|German AEO knowledge article
+aeo@en|knowledge/answer-engine-optimization|English AEO knowledge article
+agility@de|wissen/agilitaet|German agility knowledge article
+agility@en|knowledge/agility|English agility knowledge article
+ai-visibility@de|wissen/ai-visibility|German AI visibility knowledge article
+ai-visibility@en|knowledge/ai-visibility|English AI visibility knowledge article
+apache@de|wissen/apache-webserver|German Apache knowledge article
+apache@en|knowledge/apache-webserver|English Apache knowledge article
+apache-license@de|wissen/apache-lizenz|German Apache License knowledge article
+apache-license@en|knowledge/apache-license|English Apache License knowledge article
+api@de|wissen/api|German API knowledge article
+api@en|knowledge/api|English API knowledge article
+bastille@de|wissen/bastille-jail-verwaltung|German Bastille jail knowledge article
+bastille@en|knowledge/bastille-jail-management|English Bastille jail knowledge article
+geo@de|wissen/generative-engine-optimization|German GEO knowledge article
+geo@en|knowledge/generative-engine-optimization|English GEO knowledge article
+lost-in-the-middle@de|wissen/lost-in-the-middle|German Lost in the Middle knowledge article
+lost-in-the-middle@en|knowledge/lost-in-the-middle|English Lost in the Middle knowledge article
+seo@de|wissen/suchmaschinenoptimierung|German SEO knowledge article
+seo@en|knowledge/search-engine-optimization|English SEO knowledge article
+page@de|page|German generic page route
+page@en|page|English generic page route

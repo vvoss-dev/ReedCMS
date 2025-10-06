@@ -79,12 +79,8 @@ pub fn resolve_url(url: &str) -> ReedResult<RouteInfo> {
         });
     }
 
-    // Try exact match first
-    if let Some(mut route_info) = lookup_exact_route(&remaining_path)? {
-        // Override language if it was in the URL prefix
-        if path.starts_with("de/") || path.starts_with("en/") {
-            route_info.language = language;
-        }
+    // Try exact match first (with language filtering)
+    if let Some(route_info) = lookup_exact_route(&remaining_path, &language)? {
         return Ok(route_info);
     }
 
@@ -157,9 +153,10 @@ fn resolve_landing_page() -> ReedResult<RouteInfo> {
 ///
 /// ## Arguments
 /// - path: URL path without leading slash (e.g., "wissen", "blog")
+/// - language: Language code to filter routes (e.g., "de", "en")
 ///
 /// ## Returns
-/// - Some(RouteInfo) if route found
+/// - Some(RouteInfo) if route found for the given language
 /// - None if no match
 ///
 /// ## Performance
@@ -167,10 +164,14 @@ fn resolve_landing_page() -> ReedResult<RouteInfo> {
 /// - Future optimization: Build reverse index (route → layout@lang)
 ///
 /// ## Implementation Note
-/// Reads routes.csv directly and scans for matching value.
+/// Reads routes.csv directly and scans for matching value in the specified language.
 /// Format in CSV: `key|value|comment` where key = layout@lang, value = route
 /// Example: `knowledge@de|wissen|German knowledge route`
-fn lookup_exact_route(path: &str) -> ReedResult<Option<RouteInfo>> {
+///
+/// ## Language Filtering
+/// Only matches routes where the key ends with @{language}.
+/// This ensures /de/wissen matches knowledge@de (not knowledge@en).
+fn lookup_exact_route(path: &str, language: &str) -> ReedResult<Option<RouteInfo>> {
     // Read routes.csv directly
     let csv_path = ".reed/routes.csv";
     let entries = match read_csv(csv_path) {
@@ -178,7 +179,7 @@ fn lookup_exact_route(path: &str) -> ReedResult<Option<RouteInfo>> {
         Err(_) => return Ok(None),
     };
 
-    // Scan through routes to find matching value
+    // Scan through routes to find matching value in the correct language
     for record in entries {
         let route_value = record.value.trim();
 
@@ -186,11 +187,14 @@ fn lookup_exact_route(path: &str) -> ReedResult<Option<RouteInfo>> {
         if route_value == path {
             // Parse key: "layout@lang" → (layout, lang)
             if let Some((layout, lang)) = parse_route_key(&record.key) {
-                return Ok(Some(RouteInfo {
-                    layout,
-                    language: lang,
-                    params: HashMap::new(),
-                }));
+                // Only return if language matches
+                if lang == language {
+                    return Ok(Some(RouteInfo {
+                        layout,
+                        language: lang,
+                        params: HashMap::new(),
+                    }));
+                }
             }
         }
     }
