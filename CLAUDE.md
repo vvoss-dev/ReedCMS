@@ -367,13 +367,20 @@ cargo build --release
 # 2. Check .env (should be ENVIRONMENT=dev for development)
 cat .env
 
-# 3. Run setup
+# 3. Run setup (installs reed command system-wide)
 ./scripts/setup.sh
+# → Will ask for sudo password
 
-# Verify
+# 4. Verify installation
 reed --version
 man reed
+
+# 5. Start development server
+reed server:io --port 8333
+# → Server runs on http://localhost:8333
 ```
+
+**IMPORTANT**: Always use `reed` command, never `./target/release/reed` directly. The setup script ensures `reed` is always available system-wide.
 
 **Uninstall**:
 ```bash

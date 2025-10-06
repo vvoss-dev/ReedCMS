@@ -36,18 +36,25 @@ ReedCMS follows a layered architecture:
 ## Quick Start
 
 ```bash
-# Install ReedCMS
-cargo install reedcms
+# 1. Clone and build
+git clone https://github.com/vvoss-dev/ReedCMS.git
+cd ReedCMS
+cargo build --release
 
-# Initialize new project
-reed init
+# 2. Install reed command system-wide
+./scripts/setup.sh
+# → Will ask for sudo password
 
-# Start development server
-reed server:start
+# 3. Start development server
+reed server:io --port 8333
+# → Server runs on http://localhost:8333
 
-# Build assets
-reed build:all
+# 4. Test commands
+reed data:get knowledge.title@en
+man reed
 ```
+
+**Note**: The `reed` command is installed system-wide. Always use `reed`, never `./target/release/reed` directly.
 
 ## Documentation
 

@@ -12,11 +12,22 @@ cargo build --release
 
 # 2. Check your .env file
 cat .env
-# Should show: ENVIRONMENT=dev (or prod)
+# Should show: ENVIRONMENT=dev (for development)
 
-# 3. Run setup
+# 3. Install reed command system-wide
 ./scripts/setup.sh
+# → Will ask for sudo password
+
+# 4. Start development server
+reed server:io --port 8333
+# → Server runs on http://localhost:8333
+
+# 5. Test it's working
+reed data:get knowledge.title@en
+man reed
 ```
+
+**IMPORTANT**: Always use the `reed` command. Setup installs it system-wide so it's available from any directory.
 
 ---
 
