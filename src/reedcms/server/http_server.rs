@@ -76,11 +76,42 @@ pub async fn start_http_server(port: u16, workers: Option<usize>) -> ReedResult<
 /// Configures application routes.
 ///
 /// ## Routes
+/// - GET / → handle_root_redirect (language-specific landing page)
 /// - GET /public/* → serve_public_asset (static files)
 /// - GET /* → handle_request (catch-all)
 fn configure_routes(cfg: &mut web::ServiceConfig) {
     configure_public_routes(cfg);
+    cfg.service(web::resource("/").route(web::get().to(handle_root_redirect)));
     cfg.service(web::resource("/{path:.*}").route(web::get().to(handle_request)));
+}
+
+/// Handles root URL redirect to language-specific landing page.
+///
+/// ## Process
+/// 1. Detect language from Accept-Language header or default
+/// 2. Redirect / → /de/ or /en/
+/// 3. Use 301 Moved Permanently for SEO
+///
+/// ## Language Detection
+/// - Accept-Language header first (user preference)
+/// - Default language from config as fallback
+///
+/// ## SEO Benefit
+/// - Proper language URL structure
+/// - Search engines can index language variants separately
+///
+/// ## Performance
+/// - < 5ms redirect response
+async fn handle_root_redirect(req: HttpRequest) -> HttpResponse {
+    use crate::reedcms::routing::language::detect_language;
+
+    let lang = detect_language(&req);
+
+    println!("Root redirect: / → /{}/", lang);
+
+    HttpResponse::MovedPermanently()
+        .append_header(("Location", format!("/{}/", lang)))
+        .finish()
 }
 
 /// Main request handler.

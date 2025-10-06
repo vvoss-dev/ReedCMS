@@ -1,5 +1,6 @@
 key|value|comment
 project.name|ReedCMS|Project name
 project.url|http://127.0.0.1:8333|Base URL
+project.default_language|de|Default website language
 project.languages|de,en|Available languages
 project.session_hash|1daac786|Current asset bundle session hash
