@@ -57,6 +57,9 @@ D040,Compression method priority,"Brotli > Gzip > None based on Accept-Encoding 
 D041,Long-lived cache headers,"CSS/JS: 1 year immutable, Images: 30 days, leveraging session hash versioning",2025-02-04,Active
 D042,Path traversal prevention,"Canonicalization-based security check before serving any file",2025-02-04,Active
 D043,Security headers standard,"X-Content-Type-Options: nosniff, X-Frame-Options: DENY on all static assets",2025-02-04,Active
+D048,Language-filtered route lookup,"Route lookup filters by language parameter to prevent cross-language matching",2025-10-06,Active
+D049,Path-segment-only routes.csv,"Store only path segments (wissen, knowledge) without language prefixes in routes.csv",2025-10-06,Active
+D050,Root URL language redirect,"/ redirects to /de/ or /en/ based on Accept-Language header with 301 for SEO",2025-10-06,Active
 ```
 
 ---

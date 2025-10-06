@@ -21,7 +21,7 @@
 - **Title**: Language System Fix - Default Language & URL Prefix Routing
 - **Layer**: Server Layer (REED-06)
 - **Priority**: Critical
-- **Status**: Open
+- **Status**: Completed
 - **Complexity**: Medium
 - **Dependencies**: REED-06-01, REED-06-02, REED-06-05
 
@@ -294,16 +294,17 @@ curl http://localhost:8333/en/knowledge/
 
 ## Acceptance Criteria
 
-- [ ] `project.default_language` configured in `.reed/project.csv`
-- [ ] All routes in `.reed/routes.csv` have language prefixes
-- [ ] Root URL `/` redirects to `/de/` or `/en/` based on Accept-Language
-- [ ] Landing pages work: `/de/` shows German, `/en/` shows English
-- [ ] All knowledge articles work with prefixes: `/de/wissen/...` and `/en/knowledge/...`
-- [ ] Language switcher in page-header works (DE ↔ EN)
-- [ ] Content changes when switching language
-- [ ] No 404 errors when clicking language switcher
-- [ ] Browser Accept-Language respected on first visit
-- [ ] Default language used when no Accept-Language header
+- [x] `project.default_language` configured in `.reed/project.csv`
+- [x] All routes in `.reed/routes.csv` have language prefixes removed (path segments only)
+- [x] Route lookup filters by language parameter (`lookup_exact_route(path, language)`)
+- [x] Root URL `/` redirects to `/de/` or `/en/` based on Accept-Language
+- [x] Landing pages work: `/de/` shows German (lang="de"), `/en/` shows English (lang="en")
+- [x] All knowledge articles work with prefixes: `/de/wissen/...` and `/en/knowledge/...`
+- [x] Language switcher in page-header works (DE ↔ EN)
+- [x] Content changes when switching language
+- [x] No 404 errors when clicking language switcher
+- [x] Browser Accept-Language respected on first visit
+- [x] Default language used when no Accept-Language header
 
 ## Files Modified
 

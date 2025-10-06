@@ -1773,8 +1773,15 @@ Request → AuthMiddleware (REED-06-03: HTTP Basic Auth)
 
 #### 15. **Request Router Services** (`src/reedcms/routing/`)
 - `resolver.rs` - URL → Layout + Language resolution service via .reed/routes.csv
+  - **Language Filtering** (REED-06-06): `lookup_exact_route(path, language)` filters routes by language parameter
+  - **Path Segments**: routes.csv stores path segments only (`wissen`, `knowledge`) without language prefixes
+  - **URL Structure**: `/de/wissen` → extracts `lang=de`, `path=wissen` → matches `knowledge@de|wissen`
+  - **Prevents Cross-Language Matching**: Ensures `/de/wissen` matches only `knowledge@de`, not `knowledge@en`
 - `matcher.rs` - Pattern matching service for dynamic routes
 - `language.rs` - Language detection and routing service
+  - **Detection Priority**: URL prefix → Accept-Language → Default config → Fallback
+  - **Default Language**: `.reed/project.csv` contains `project.default_language|de`
+  - **Root Redirect**: `/` redirects to `/de/` or `/en/` based on Accept-Language header
 
 #### 16. **Template Engine Services** (`src/reedcms/templates/`)
 - `minijinja_setup.rs` - MiniJinja environment configuration service
