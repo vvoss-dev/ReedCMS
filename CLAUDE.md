@@ -347,7 +347,7 @@ ReedCMS provides three installation modes:
 
 1. **Development Mode** (`scripts/setup-dev.sh`):
    - Creates symlinks: `/usr/local/bin/reed` → `target/release/reed`
-   - Man pages: symlinks to `man/*.1`
+   - Man pages: symlinks to `src/man/*.1`
    - Auto-updates when you run `cargo build --release`
    - Requires: sudo (for `/usr/local/bin` access)
    - **Best for**: Active development

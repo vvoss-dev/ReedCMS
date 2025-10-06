@@ -808,7 +808,7 @@ System integration scripts for binary and man page installation.
 
 1. **Development Mode** (`setup-dev.sh`):
    - Binary: `/usr/local/bin/reed` → `target/release/reed` (symlink)
-   - Man pages: `/usr/local/share/man/man1/*.1` → `man/*.1` (symlinks)
+   - Man pages: `/usr/local/share/man/man1/*.1` → `src/man/*.1` (symlinks)
    - Auto-updates when `cargo build --release` runs
    - Requires sudo for `/usr/local/bin` access
 

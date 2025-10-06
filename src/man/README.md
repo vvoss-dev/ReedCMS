@@ -17,13 +17,13 @@ gem install ronn-ng
 
 ```bash
 # Generate man page from .ronn source
-ronn --roff --pipe man/reed.1.ronn > man/reed.1
+ronn --roff --pipe src/man/reed.1.ronn > src/man/reed.1
 
 # View generated man page
-man man/reed.1
+man src/man/reed.1
 
 # Install to system
-sudo cp man/reed.1 /usr/share/man/man1/
+sudo cp src/man/reed.1 /usr/share/man/man1/
 sudo mandb  # Update man database
 ```
 
@@ -41,13 +41,13 @@ $(brew --prefix)/share/man/man1/
 
 **Custom MANPATH:**
 ```bash
-export MANPATH=/path/to/reedcms/man:$MANPATH
+export MANPATH=/path/to/reedcms/src/man:$MANPATH
 ```
 
 ## File Structure
 
 ```
-man/
+src/man/
 ├── README.md           # This file
 ├── reed.1.ronn         # Main reed CLI man page (Markdown source)
 └── reed.1              # Generated groff man page (binary format)
@@ -63,7 +63,7 @@ The man pages are generated from the main `.ronn` file:
 
 ```bash
 # View local man page (without installation)
-man ./man/reed.1
+man ./src/man/reed.1
 
 # View installed man page
 man reed

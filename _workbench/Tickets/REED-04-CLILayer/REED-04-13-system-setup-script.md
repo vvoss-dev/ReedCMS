@@ -59,13 +59,13 @@ which reed                          # Shows /usr/local/bin/reed
 
 **1. Development Mode** (`scripts/setup-dev.sh`):
 - Symlinks binary from `target/release/reed` → `/usr/local/bin/reed`
-- Symlinks man pages from `man/*.1` → `/usr/local/share/man/man1/`
+- Symlinks man pages from `src/man/*.1` → `/usr/local/share/man/man1/`
 - No file copying, uses symlinks for live development
 - Updates automatically when `cargo build --release` runs
 
 **2. System Installation** (`scripts/install-system.sh`):
 - Copies binary to `/usr/local/bin/reed`
-- Copies man pages to `/usr/local/share/man/man1/`
+- Copies man pages from `src/man/*.1` to `/usr/local/share/man/man1/`
 - Sets proper permissions (755 for binary, 644 for man pages)
 - Updates man database with `mandb`
 - Production-ready installation
@@ -73,7 +73,7 @@ which reed                          # Shows /usr/local/bin/reed
 **3. User Installation** (`scripts/install-user.sh`):
 - Installs to user directories (no sudo required)
 - Binary → `~/.local/bin/reed`
-- Man pages → `~/.local/share/man/man1/`
+- Man pages from `src/man/*.1` → `~/.local/share/man/man1/`
 - Updates user's shell PATH if needed
 
 ### Directory Structure

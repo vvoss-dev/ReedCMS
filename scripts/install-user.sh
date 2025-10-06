@@ -16,7 +16,7 @@ NC='\033[0m' # No Colour
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 BINARY_PATH="${PROJECT_ROOT}/target/release/reed"
-MAN_DIR="${PROJECT_ROOT}/man"
+MAN_DIR="${PROJECT_ROOT}/src/man"
 
 USER_BIN_DIR="${HOME}/.local/bin"
 USER_MAN_DIR="${HOME}/.local/share/man/man1"
