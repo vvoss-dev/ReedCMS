@@ -1,173 +1,117 @@
 # ReedCMS Installation Scripts
 
-This directory contains installation and setup scripts for ReedCMS CLI integration.
+This directory contains installation scripts for ReedCMS CLI integration.
 
-## Available Scripts
+## Quick Start
 
-### Development Setup
+**The installation mode is controlled by the `ENVIRONMENT` variable in `.env`:**
 
-**`setup-dev.sh`** - Development mode (symlinks, auto-updates)
 ```bash
-# Creates symlinks to target/release/reed and man pages
-# Symlinks update automatically when you rebuild
-# Requires: sudo (for /usr/local/bin access)
+# 1. Build the binary
+cargo build --release
 
-./scripts/setup-dev.sh
+# 2. Check your .env file
+cat .env
+# Should show: ENVIRONMENT=dev (or prod)
+
+# 3. Run setup
+./scripts/setup.sh
 ```
 
-**Use when:**
-- Actively developing ReedCMS
+---
+
+## Installation Modes
+
+### Development Mode (ENVIRONMENT=dev)
+
+**Uses symlinks** - automatically updates when you rebuild
+
+```bash
+# In .env:
+ENVIRONMENT=dev
+
+# Run setup:
+./scripts/setup.sh
+
+# Now rebuilding updates the command automatically:
+cargo build --release  # reed command uses new binary immediately
+```
+
+**What it does:**
+- Creates symlink: `/usr/local/bin/reed` → `target/release/reed`
+- Creates symlinks: `/usr/local/share/man/man1/*.1` → `src/man/*.1`
+- Requires: sudo (for `/usr/local/bin` access)
+- Auto-updates: Yes - symlinks always point to latest build
+
+**Best for:**
+- Active development
 - Testing changes frequently
-- Want automatic updates after rebuilds
-
-**Locations:**
-- Binary: `/usr/local/bin/reed` → `target/release/reed` (symlink)
-- Man pages: `/usr/local/share/man/man1/reed*.1` → `man/*.1` (symlinks)
+- Local machine setup
 
 ---
 
-### System-Wide Installation
+### Production Mode (ENVIRONMENT=prod)
 
-**`install-system.sh`** - Production installation (copies files)
+**Copies files** - stable installation
+
 ```bash
-# Copies binary and man pages to system directories
-# Requires: sudo
+# In .env:
+ENVIRONMENT=prod
 
-sudo ./scripts/install-system.sh
+# Run setup with sudo:
+sudo ./scripts/setup.sh
 ```
 
-**Use when:**
-- Installing ReedCMS for all users
-- Production server deployment
-- Stable installation needed
+**What it does:**
+- Copies binary to `/usr/local/bin/reed` (755 permissions)
+- Copies man pages to `/usr/local/share/man/man1/` (644 permissions)
+- Updates man database with `mandb`
+- Requires: sudo
+- Auto-updates: No - files are copies
 
-**Locations:**
-- Binary: `/usr/local/bin/reed` (file copy)
-- Man pages: `/usr/local/share/man/man1/reed*.1` (file copies)
-
-**Uninstall:**
-```bash
-sudo ./scripts/uninstall-system.sh
-```
+**Best for:**
+- Production deployment
+- Server installation
+- Stable system-wide installation
 
 ---
 
-### User-Local Installation
+##Scripts
 
-**`install-user.sh`** - User-only installation (no sudo required)
-```bash
-# Installs to user's home directory
-# No root privileges needed
-
-./scripts/install-user.sh
-```
-
-**Use when:**
-- No sudo access available
-- Personal installation only
-- Don't want to affect other users
-
-**Locations:**
-- Binary: `~/.local/bin/reed`
-- Man pages: `~/.local/share/man/man1/reed*.1`
-
-**Requirements:**
-- `~/.local/bin` must be in your `PATH`
-- `~/.local/share/man` should be in your `MANPATH`
-
-**Shell configuration (if needed):**
-```bash
-# Add to ~/.bashrc or ~/.zshrc
-export PATH="${HOME}/.local/bin:${PATH}"
-export MANPATH="${HOME}/.local/share/man:${MANPATH}"
-```
-
-**Uninstall:**
-```bash
-./scripts/uninstall-user.sh
-```
+| Script | Purpose |
+|--------|---------|
+| `setup.sh` | Install reed binary and man pages (reads ENVIRONMENT from .env) |
+| `uninstall.sh` | Remove all installed files (binary + man pages) |
+| `build-man-pages.sh` | Compile `.ronn` sources to `.1` man pages |
 
 ---
 
-## Prerequisites
-
-### For All Scripts
-1. **Build ReedCMS binary:**
-   ```bash
-   cargo build --release
-   ```
-
-2. **Man pages exist:**
-   ```bash
-   # Man pages should be in man/ directory
-   ls man/*.1
-   
-   # If missing, build them:
-   ./scripts/build-man-pages.sh
-   ```
-
-### For Man Page Building
-Install `ronn-ng` (Ruby gem):
-```bash
-gem install ronn-ng
-```
-
----
-
-## Installation Comparison
-
-| Feature | setup-dev.sh | install-system.sh | install-user.sh |
-|---------|-------------|-------------------|-----------------|
-| **Requires sudo** | Yes | Yes | No |
-| **File type** | Symlinks | Copies | Copies |
-| **Auto-updates** | Yes | No | No |
-| **All users** | Yes | Yes | No |
-| **Best for** | Development | Production | Limited access |
-
----
-
-## Verification
-
-After installation, verify with:
+## Usage After Installation
 
 ```bash
-# Check binary location
-which reed
-
-# Test command
-reed --version
+# Run from anywhere
+reed data:get knowledge.title@en
 
 # View man page
 man reed
 
-# Check man page location
-man -w reed
+# Check installation
+which reed              # Shows: /usr/local/bin/reed
+man -w reed             # Shows: /usr/local/share/man/man1/reed.1
 ```
 
 ---
 
-## Manual Installation
+## Uninstall
 
-If scripts don't work for your system, install manually:
-
-### Binary
 ```bash
-# System-wide (requires sudo)
-sudo install -m 755 target/release/reed /usr/local/bin/reed
-
-# User-local (no sudo)
-install -m 755 target/release/reed ~/.local/bin/reed
+sudo ./scripts/uninstall.sh
 ```
 
-### Man Pages
-```bash
-# System-wide (requires sudo)
-sudo install -m 644 man/reed.1 /usr/local/share/man/man1/reed.1
-sudo mandb
-
-# User-local (no sudo)
-install -m 644 man/reed.1 ~/.local/share/man/man1/reed.1
-```
+Removes:
+- `/usr/local/bin/reed` (file or symlink)
+- `/usr/local/share/man/man1/reed*.1` (all reed man pages)
+- Updates man database
 
 ---
 
@@ -175,125 +119,111 @@ install -m 644 man/reed.1 ~/.local/share/man/man1/reed.1
 
 ### "reed: command not found"
 
-**For system installation:**
-- Ensure `/usr/local/bin` is in your PATH
-- Check: `echo $PATH | grep /usr/local/bin`
-- Add if missing: `export PATH="/usr/local/bin:$PATH"`
-
-**For user installation:**
-- Ensure `~/.local/bin` is in your PATH
-- Add to shell config: `export PATH="${HOME}/.local/bin:${PATH}"`
-- Reload shell: `source ~/.bashrc` or `source ~/.zshrc`
-
-### "man reed" not working
-
-**Check if man pages are installed:**
+**Check installation:**
 ```bash
-# System installation
-ls /usr/local/share/man/man1/reed*.1
-
-# User installation
-ls ~/.local/share/man/man1/reed*.1
+ls -la /usr/local/bin/reed
 ```
+
+**If symlink is broken (dev mode):**
+```bash
+# Rebuild binary
+cargo build --release
+
+# Or re-run setup
+./scripts/setup.sh
+```
+
+###"man reed" not working
 
 **Update man database:**
 ```bash
-# System-wide
 sudo mandb
-
-# For user installation, ensure MANPATH is set
-export MANPATH="${HOME}/.local/share/man:${MANPATH}"
 ```
 
-### "Permission denied" errors
-
-**For system scripts:**
-- Use `sudo`: `sudo ./scripts/install-system.sh`
-
-**For user scripts:**
-- Don't use sudo: `./scripts/install-user.sh`
-- Ensure `~/.local/bin` and `~/.local/share/man/man1` are writable
-
-### Symlinks not updating (dev setup)
-
-**Rebuild binary:**
+**Check man page exists:**
 ```bash
-cargo build --release
+ls -la /usr/local/share/man/man1/reed.1
 ```
 
-**Verify symlink:**
+### Permission errors
+
+**setup.sh requires sudo:**
 ```bash
-ls -la /usr/local/bin/reed
-# Should show: /usr/local/bin/reed -> /path/to/ReedCMS/target/release/reed
+# Both dev and prod modes need sudo for /usr/local/bin access
+./scripts/setup.sh  # Will prompt for sudo when needed
 ```
 
----
+### Switching between dev and prod
 
-## Script Permissions
-
-Make scripts executable:
 ```bash
-chmod +x scripts/*.sh
+# 1. Uninstall current
+sudo ./scripts/uninstall.sh
+
+# 2. Change .env
+# Edit .env: ENVIRONMENT=dev (or prod)
+
+# 3. Reinstall
+./scripts/setup.sh
 ```
-
----
-
-## Platform Support
-
-**Tested on:**
-- macOS (Darwin)
-- Linux (Debian/Ubuntu)
-- Linux (Fedora/RHEL)
-
-**Not tested:**
-- Windows (use WSL)
-- BSD variants
 
 ---
 
 ## Development Workflow
 
-**Recommended setup for ReedCMS development:**
+**Recommended for ReedCMS development:**
 
-1. **Initial setup:**
-   ```bash
-   cargo build --release
-   ./scripts/setup-dev.sh
-   ```
+```bash
+# One-time setup
+cargo build --release
+./scripts/setup.sh      # With ENVIRONMENT=dev in .env
 
-2. **Make changes to code**
+# Daily work
+# 1. Make code changes
+# 2. Rebuild
+cargo build --release
 
-3. **Rebuild:**
-   ```bash
-   cargo build --release
-   # Binary automatically updates via symlink
-   ```
+# 3. Test immediately (symlink auto-updates!)
+reed data:get test.key@en
+```
 
-4. **Test immediately:**
-   ```bash
-   reed data:get test.key@en
-   ```
-
-**No reinstallation needed!** Symlinks ensure `reed` command always uses latest build.
+**No reinstallation needed!** Dev mode symlinks ensure `reed` command always uses latest build.
 
 ---
 
 ## CI/CD Integration
-
-**In CI/CD pipelines:**
 
 ```yaml
 # GitHub Actions example
 - name: Build ReedCMS
   run: cargo build --release
 
+- name: Set production mode
+  run: echo "ENVIRONMENT=prod" > .env
+
 - name: Install for testing
-  run: sudo ./scripts/install-system.sh
+  run: sudo ./scripts/setup.sh
 
 - name: Run integration tests
   run: |
     reed --version
     man reed
+```
+
+---
+
+## Manual Installation
+
+If scripts don't work, install manually:
+
+```bash
+# Binary
+sudo cp target/release/reed /usr/local/bin/reed
+sudo chmod 755 /usr/local/bin/reed
+
+# Man page
+sudo cp src/man/reed.1 /usr/local/share/man/man1/reed.1
+sudo chmod 644 /usr/local/share/man/man1/reed.1
+sudo mandb
 ```
 
 ---

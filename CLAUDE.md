@@ -341,32 +341,34 @@ Author: Vivian Voss <ask@vvoss.dev>
 
 ### System Setup and Installation
 
-**Setup Scripts** (in `scripts/` directory):
+**Setup Script** (single `scripts/setup.sh`):
 
-ReedCMS provides three installation modes:
+ReedCMS uses **one setup script** controlled by the `ENVIRONMENT` variable in `.env`:
 
-1. **Development Mode** (`scripts/setup-dev.sh`):
-   - Creates symlinks: `/usr/local/bin/reed` → `target/release/reed`
-   - Man pages: symlinks to `src/man/*.1`
-   - Auto-updates when you run `cargo build --release`
-   - Requires: sudo (for `/usr/local/bin` access)
-   - **Best for**: Active development
+**Development Mode** (`ENVIRONMENT=dev` in `.env`):
+- Creates symlinks: `/usr/local/bin/reed` → `target/release/reed`
+- Man pages: symlinks to `src/man/*.1`
+- Auto-updates when you run `cargo build --release`
+- Requires: sudo (for `/usr/local/bin` access)
+- **Best for**: Active development
 
-2. **System Installation** (`scripts/install-system.sh`):
-   - Copies binary to `/usr/local/bin/reed`
-   - Copies man pages to `/usr/local/share/man/man1/`
-   - Requires: sudo
-   - **Best for**: Production deployment, multi-user systems
+**Production Mode** (`ENVIRONMENT=prod` in `.env`):
+- Copies binary to `/usr/local/bin/reed` (755 permissions)
+- Copies man pages to `/usr/local/share/man/man1/` (644 permissions)
+- Stable installation, no auto-updates
+- Requires: sudo
+- **Best for**: Production deployment
 
-3. **User Installation** (`scripts/install-user.sh`):
-   - Installs to `~/.local/bin/reed` and `~/.local/share/man/man1/`
-   - No sudo required
-   - **Best for**: Personal use without admin access
-
-**Quick Setup for Development**:
+**Quick Setup**:
 ```bash
+# 1. Build binary
 cargo build --release
-./scripts/setup-dev.sh
+
+# 2. Check .env (should be ENVIRONMENT=dev for development)
+cat .env
+
+# 3. Run setup
+./scripts/setup.sh
 
 # Verify
 reed --version
@@ -375,9 +377,10 @@ man reed
 
 **Uninstall**:
 ```bash
-sudo ./scripts/uninstall-system.sh    # For system installation
-./scripts/uninstall-user.sh           # For user installation
+sudo ./scripts/uninstall.sh
 ```
+
+**Switch modes**: Edit `.env`, run `sudo ./scripts/uninstall.sh`, then `./scripts/setup.sh`
 
 See `scripts/README.md` for detailed documentation.
 

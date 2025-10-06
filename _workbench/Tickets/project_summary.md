@@ -789,40 +789,31 @@ reed config:export --force        # CSV → TOML (for git)
 ---
 
 ### REED-04-13: System Setup Scripts ✅ Complete
-**Status**: Implemented | **Files**: `scripts/*.sh` (6 scripts + README)
+**Status**: Implemented & Tested | **Files**: `scripts/*.sh` (3 scripts + README)
 
-System integration scripts for binary and man page installation.
+Single unified setup script controlled by `ENVIRONMENT` variable in `.env`.
 
 **Available Scripts**:
 
-| Script | Mode | Requires Sudo | Purpose | File Operations |
-|--------|------|---------------|---------|-----------------|
-| `setup-dev.sh` | Development | Yes | Creates symlinks for live development | Symlinks only |
-| `install-system.sh` | Production | Yes | System-wide installation (all users) | File copies |
-| `install-user.sh` | User-local | No | User-only installation | File copies |
-| `uninstall-system.sh` | Uninstall | Yes | Remove system installation | File removal |
-| `uninstall-user.sh` | Uninstall | No | Remove user installation | File removal |
-| `build-man-pages.sh` | Build | No | Compile `.ronn` → `.1` man pages | File generation |
+| Script | Purpose | Requires Sudo |
+|--------|---------|---------------|
+| `setup.sh` | Install reed + man pages (reads ENVIRONMENT from .env) | Yes |
+| `uninstall.sh` | Remove all installed files | Yes |
+| `build-man-pages.sh` | Compile `.ronn` → `.1` man pages | No |
 
-**Installation Modes**:
+**Installation Modes** (controlled by `.env`):
 
-1. **Development Mode** (`setup-dev.sh`):
+1. **Development Mode** (`ENVIRONMENT=dev`):
    - Binary: `/usr/local/bin/reed` → `target/release/reed` (symlink)
    - Man pages: `/usr/local/share/man/man1/*.1` → `src/man/*.1` (symlinks)
    - Auto-updates when `cargo build --release` runs
-   - Requires sudo for `/usr/local/bin` access
+   - Best for: Active development
 
-2. **System Installation** (`install-system.sh`):
+2. **Production Mode** (`ENVIRONMENT=prod`):
    - Binary: `/usr/local/bin/reed` (copy, 755 permissions)
    - Man pages: `/usr/local/share/man/man1/*.1` (copies, 644 permissions)
    - Updates man database with `mandb`
-   - Production-ready installation
-
-3. **User Installation** (`install-user.sh`):
-   - Binary: `~/.local/bin/reed` (copy)
-   - Man pages: `~/.local/share/man/man1/*.1` (copies)
-   - No sudo required
-   - Requires `~/.local/bin` in PATH and `~/.local/share/man` in MANPATH
+   - Best for: Production deployment
 
 **Usage After Installation**:
 ```bash
@@ -842,21 +833,29 @@ man reed                    # Displays man page
 man -w reed                 # Shows man page location
 ```
 
-**Shell Configuration** (for user installation):
+**Quick Setup**:
 ```bash
-# Add to ~/.bashrc or ~/.zshrc
-export PATH="${HOME}/.local/bin:${PATH}"
-export MANPATH="${HOME}/.local/share/man:${MANPATH}"
+cargo build --release
+cat .env                # Check: ENVIRONMENT=dev
+./scripts/setup.sh      # Installs based on ENVIRONMENT
+```
+
+**Switch Modes**:
+```bash
+# 1. Edit .env: change ENVIRONMENT=dev to ENVIRONMENT=prod
+# 2. Uninstall current setup
+sudo ./scripts/uninstall.sh
+# 3. Reinstall with new mode
+./scripts/setup.sh
 ```
 
 **Files**:
-- `scripts/setup-dev.sh` - Development symlink setup (128 lines)
-- `scripts/install-system.sh` - System installation (103 lines)
-- `scripts/install-user.sh` - User installation (147 lines)
-- `scripts/uninstall-system.sh` - System uninstall (72 lines)
-- `scripts/uninstall-user.sh` - User uninstall (64 lines)
-- `scripts/build-man-pages.sh` - Man page builder (exists)
-- `scripts/README.md` - Complete installation documentation
+- `scripts/setup.sh` - Unified setup (reads .env) (180 lines)
+- `scripts/uninstall.sh` - Remove installation (85 lines)
+- `scripts/build-man-pages.sh` - Compile .ronn sources (94 lines)
+- `scripts/README.md` - Complete documentation
+- `src/man/reed.1` - Pre-compiled man page
+- `src/man/reed.1.ronn` - Man page source
 
 ---
 

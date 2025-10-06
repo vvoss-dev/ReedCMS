@@ -2,8 +2,8 @@
 # Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
 # SPDX-License-Identifier: Apache-2.0
 
-# ReedCMS System Uninstallation
-# Removes binary and man pages from system directories (requires sudo)
+# ReedCMS Uninstallation Script
+# Removes reed binary and man pages from system
 
 set -euo pipefail
 
@@ -11,26 +11,29 @@ set -euo pipefail
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
 NC='\033[0m' # No Colour
 
-echo "ReedCMS System Uninstallation"
-echo "============================="
+echo -e "${BLUE}ReedCMS Uninstallation${NC}"
+echo "======================"
 echo ""
 
-# Check if running with sudo
-if [ "$EUID" -ne 0 ]; then
-    echo -e "${RED}Error: This script requires root privileges${NC}"
-    echo "Please run with sudo: sudo $0"
-    exit 1
+# Check for sudo if needed
+if [ -f /usr/local/bin/reed ] || [ -L /usr/local/bin/reed ]; then
+    if [ "$EUID" -ne 0 ]; then
+        echo -e "${RED}Error: Uninstallation requires root privileges${NC}"
+        echo "Run with: sudo ./scripts/uninstall.sh"
+        exit 1
+    fi
 fi
 
 # Remove binary
 echo "Removing binary..."
 if [ -f /usr/local/bin/reed ]; then
-    rm /usr/local/bin/reed
+    sudo rm /usr/local/bin/reed
     echo -e "${GREEN}✓ Binary removed: /usr/local/bin/reed${NC}"
 elif [ -L /usr/local/bin/reed ]; then
-    rm /usr/local/bin/reed
+    sudo rm /usr/local/bin/reed
     echo -e "${GREEN}✓ Binary symlink removed: /usr/local/bin/reed${NC}"
 else
     echo -e "${YELLOW}Binary not found at /usr/local/bin/reed${NC}"
@@ -43,7 +46,7 @@ removed_count=0
 
 for man_file in /usr/local/share/man/man1/reed*.1; do
     if [ -f "${man_file}" ] || [ -L "${man_file}" ]; then
-        rm "${man_file}"
+        sudo rm "${man_file}"
         man_name=$(basename "${man_file}")
         echo -e "${GREEN}✓ Man page removed: ${man_name}${NC}"
         ((removed_count++))
@@ -58,7 +61,7 @@ fi
 echo ""
 echo "Updating man database..."
 if command -v mandb &> /dev/null; then
-    mandb -q 2>/dev/null || true
+    sudo mandb -q 2>/dev/null || true
     echo -e "${GREEN}✓ Man database updated${NC}"
 else
     echo -e "${YELLOW}Warning: mandb not found${NC}"
@@ -83,4 +86,4 @@ else
 fi
 
 echo ""
-echo -e "${GREEN}System uninstallation complete!${NC}"
+echo -e "${GREEN}Uninstallation complete!${NC}"
