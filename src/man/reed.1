@@ -1,0 +1,73 @@
+.\" Generated from reed.1.ronn
+.TH "REED" "1" "October 2025" "" ""
+.SH "NAME"
+\fBreed\fR \- High\-Performance Headless Rust CMS
+.SH "SYNOPSIS"
+\fBreed\fR \fIcommand\fR:\fIaction\fR [\fIargs\fR\.\.\.] [\fIflags\fR\.\.\.]
+.SH "DESCRIPTION"
+ReedCMS is a high\-performance headless CMS written in Rust, designed for speed, reliability, and developer experience\. The \fBreed\fR command\-line interface provides comprehensive access to all CMS operations\.
+.SH "COMMANDS"
+.TP
+\fBdata\fR
+Manage content data in ReedBase key\-value store
+.TP
+\fBlayout\fR
+Create and manage page layouts
+.TP
+\fBuser\fR
+User account management
+.TP
+\fBrole\fR
+Role and permission management
+.TP
+\fBtaxonomy\fR
+Taxonomy and content organisation
+.TP
+\fBserver\fR
+HTTP server operations
+.TP
+\fBbuild\fR
+Build and asset compilation
+.SH "GLOBAL OPTIONS"
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Display help information
+.TP
+\fB\-v\fR, \fB\-\-version\fR
+Display version information
+.TP
+\fB\-\-verbose\fR
+Enable verbose output
+.TP
+\fB\-\-json\fR
+Output in JSON format
+.SH "EXAMPLES"
+Get text content:
+.IP "" 4
+.nf
+$ reed data:get knowledge\.title@en
+.fi
+.IP "" 0
+.P
+Set text content:
+.IP "" 4
+.nf
+$ reed data:set knowledge\.title@en "Knowledge Base"
+.fi
+.IP "" 0
+.SH "FILES"
+.TP
+\fB\.reed/\fR
+ReedBase CSV database directory
+.TP
+\fB\.reed/text\.csv\fR
+Text content storage
+.TP
+\fBtemplates/\fR
+MiniJinja template directory
+.SH "AUTHOR"
+Vivian Voss <ask@vvoss\.dev>
+.SH "COPYRIGHT"
+Copyright 2025 Vivian Voss\. Licensed under the Apache License, Version 2\.0\.
+.br
+SPDX\-License\-Identifier: Apache\-2\.0
