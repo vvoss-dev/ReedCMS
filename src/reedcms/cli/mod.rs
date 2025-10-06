@@ -5,6 +5,7 @@
 
 pub mod agent_commands;
 pub mod build_commands;
+pub mod config_commands;
 pub mod data_commands;
 pub mod help;
 pub mod layout_commands;

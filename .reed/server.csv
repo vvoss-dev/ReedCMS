@@ -1,3 +1,11 @@
-key|value|comment
-server.port|8333|HTTP server port
-server.workers|10|Number of worker threads
+key|value
+server.host|127.0.0.1
+server.performance.enable_compression|true
+server.performance.enable_http2|true
+server.performance.keep_alive|75
+server.port|8333
+server.security.allowed_origins|
+server.security.enable_cors|false
+server.security.enable_rate_limit|true
+server.security.requests_per_minute|60
+server.workers|4

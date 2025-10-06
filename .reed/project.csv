@@ -1,6 +1,18 @@
-key|value|comment
-project.name|ReedCMS|Project name
-project.url|http://127.0.0.1:8333|Base URL
-project.default_language|de|Default website language
-project.languages|de,en|Available languages
-project.session_hash|1daac786|Current asset bundle session hash
+key|value
+project.assets.css_bundle|true
+project.assets.css_minify|true
+project.build.clean_before|true
+project.build.parallel|true
+project.default_language|de
+project.description|High-Performance Headless Rust CMS
+project.languages|de,en
+project.languages.available|de,en
+project.languages.default|de
+project.languages.fallback_chain|true
+project.name|ReedCMS
+project.routing.trailing_slash|true
+project.routing.url_prefix|true
+project.session_hash|1daac786
+project.templates.auto_reload|true
+project.templates.cache_templates|true
+project.url|http://localhost:8333

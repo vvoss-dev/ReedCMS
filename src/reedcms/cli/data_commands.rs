@@ -510,3 +510,152 @@ fn matches_pattern(key: &str, pattern: &str) -> bool {
     // Exact match
     key == pattern
 }
+
+/// Sets server configuration value.
+///
+/// ## Arguments
+/// - args[0]: key (e.g., "default_port")
+/// - args[1]: value
+/// - flags["desc"]: Description (mandatory)
+///
+/// ## Output
+/// - Confirmation message
+///
+/// ## Performance
+/// - < 10ms
+///
+/// ## Example Usage
+/// ```bash
+/// reed set:server default_port "8333" --desc "Default HTTP port"
+/// ```
+pub fn set_server(
+    args: &[String],
+    flags: &HashMap<String, String>,
+) -> ReedResult<ReedResponse<String>> {
+    if args.len() < 2 {
+        return Err(ReedError::InvalidCommand {
+            command: "set:server".to_string(),
+            reason: "Requires 2 arguments: key value".to_string(),
+        });
+    }
+
+    let description = flags.get("desc").ok_or_else(|| ReedError::InvalidCommand {
+        command: "set:server".to_string(),
+        reason: "--desc flag is mandatory".to_string(),
+    })?;
+
+    if description.len() < 10 {
+        return Err(ReedError::ValidationError {
+            field: "desc".to_string(),
+            value: description.clone(),
+            constraint: "Description must be at least 10 characters".to_string(),
+        });
+    }
+
+    let key = format!("server.{}", &args[0]);
+    let value = &args[1];
+
+    let csv_path = ".reed/server.csv";
+    let records = read_csv(csv_path)?;
+    let mut cache: HashMap<String, String> =
+        records.into_iter().map(|r| (r.key, r.value)).collect();
+
+    let request = ReedRequest {
+        key: key.clone(),
+        language: None,
+        environment: None,
+        context: Some("server".to_string()),
+        value: Some(value.clone()),
+        description: Some(description.clone()),
+    };
+
+    let response = crate::reedcms::reedbase::set::set(request, &mut cache, csv_path)?;
+
+    let output = format!(
+        "✓ Server config set: {} = \"{}\"\n  Description: {}",
+        key, value, description
+    );
+
+    Ok(ReedResponse {
+        data: output,
+        source: "cli::data_commands::set_server".to_string(),
+        cached: false,
+        timestamp: response.timestamp,
+        metrics: None,
+    })
+}
+
+/// Sets project configuration value.
+///
+/// ## Arguments
+/// - args[0]: key (e.g., "name", "default_language")
+/// - args[1]: value
+/// - flags["desc"]: Description (mandatory)
+///
+/// ## Output
+/// - Confirmation message
+///
+/// ## Performance
+/// - < 10ms
+///
+/// ## Example Usage
+/// ```bash
+/// reed set:project name "ReedCMS" --desc "Project name"
+/// reed set:project default_language "de" --desc "Default language"
+/// ```
+pub fn set_project(
+    args: &[String],
+    flags: &HashMap<String, String>,
+) -> ReedResult<ReedResponse<String>> {
+    if args.len() < 2 {
+        return Err(ReedError::InvalidCommand {
+            command: "set:project".to_string(),
+            reason: "Requires 2 arguments: key value".to_string(),
+        });
+    }
+
+    let description = flags.get("desc").ok_or_else(|| ReedError::InvalidCommand {
+        command: "set:project".to_string(),
+        reason: "--desc flag is mandatory".to_string(),
+    })?;
+
+    if description.len() < 10 {
+        return Err(ReedError::ValidationError {
+            field: "desc".to_string(),
+            value: description.clone(),
+            constraint: "Description must be at least 10 characters".to_string(),
+        });
+    }
+
+    let key = format!("project.{}", &args[0]);
+    let value = &args[1];
+
+    let csv_path = ".reed/project.csv";
+    let records = read_csv(csv_path)?;
+    let mut cache: HashMap<String, String> =
+        records.into_iter().map(|r| (r.key, r.value)).collect();
+
+    let request = ReedRequest {
+        key: key.clone(),
+        language: None,
+        environment: None,
+        context: Some("project".to_string()),
+        value: Some(value.clone()),
+        description: Some(description.clone()),
+    };
+
+    let response = crate::reedcms::reedbase::set::set(request, &mut cache, csv_path)?;
+
+    let output = format!(
+        "✓ Project config set: {} = \"{}\"\n  Description: {}",
+        key, value, description
+    );
+
+    Ok(ReedResponse {
+        data: output,
+        source: "cli::data_commands::set_project".to_string(),
+        cached: false,
+        timestamp: response.timestamp,
+        metrics: None,
+    })
+}

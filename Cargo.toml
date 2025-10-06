@@ -36,6 +36,7 @@ brotli = "3.3"
 tar = "0.4"
 walkdir = "2.4"
 notify = "4.0"
+toml = "0.8"
 
 [dev-dependencies]
 

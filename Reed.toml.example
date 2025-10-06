@@ -1,0 +1,106 @@
+# Reed.toml.example - Complete Configuration Reference
+# This file shows ALL available configuration options with their defaults
+# Copy settings you want to change to Reed.toml (not this file!)
+#
+# WORKFLOW:
+# 1. Initial setup: Copy needed settings to Reed.toml
+# 2. Run: reed config:sync (writes Reed.toml → .reed/*.csv)
+# 3. Runtime changes: Use reed set:project / reed set:server commands
+# 4. Backup config: reed config:export (writes .reed/*.csv → Reed.toml)
+#
+# IMPORTANT:
+# - Reed.toml is only read during 'reed config:sync' (manual command)
+# - CSV files (.reed/*.csv) are the single source of truth at runtime
+# - Server startup reads ONLY from CSV files, never from Reed.toml
+# - CLI commands (set:*) write ONLY to CSV files
+
+# ============================================================================
+# PROJECT CONFIGURATION
+# ============================================================================
+
+[project]
+# Basic project information
+name = "ReedCMS"                          # Project name (required)
+url = "http://localhost:8333"             # Project URL (required)
+description = "High-Performance Headless Rust CMS"  # Optional description
+
+# Language Configuration
+[project.languages]
+default = "de"                            # Default language (required)
+available = ["de", "en"]                  # Available languages (required)
+fallback_chain = true                     # Enable language fallback (de → en)
+
+# URL Structure
+[project.routing]
+url_prefix = true                         # Use /de/... /en/... structure
+trailing_slash = true                     # Enforce trailing slash: /page/
+
+# Template Configuration
+[project.templates]
+auto_reload = true                        # Auto-reload templates (DEV only)
+cache_templates = true                    # Cache compiled templates (PROD only)
+
+# Asset Configuration
+[project.assets]
+css_minify = true                         # Minify CSS in PROD
+css_bundle = true                         # Bundle CSS files
+
+# Build Configuration
+[project.build]
+clean_before = true                       # Clean target/ before build
+parallel = true                           # Use parallel processing
+
+# ============================================================================
+# SERVER CONFIGURATION
+# ============================================================================
+# IMPORTANT: Server binding (port vs socket) controlled by .env:
+#   ENVIRONMENT=dev  → localhost:8333 (HTTP server)
+#   ENVIRONMENT=prod → /tmp/reed.sock (Unix socket)
+
+[server]
+workers = 4                               # Worker threads (0 = auto-detect)
+
+# Security Configuration
+[server.security]
+enable_cors = false                       # Enable CORS headers
+allowed_origins = []                      # CORS allowed origins (empty = none)
+enable_rate_limit = true                  # Enable rate limiting
+requests_per_minute = 60                  # Max requests per IP per minute
+
+# Performance Configuration
+[server.performance]
+enable_compression = true                 # Enable gzip/brotli compression
+enable_http2 = true                       # Enable HTTP/2 support
+keep_alive = 75                           # Keep-alive timeout (seconds)
+
+# ============================================================================
+# USAGE EXAMPLES
+# ============================================================================
+
+# Example 1: Initial Project Setup
+# ---------------------------------
+# 1. Edit Reed.toml with your project settings
+# 2. Run: reed config:sync
+# 3. Result: Settings written to .reed/project.csv and .reed/server.csv
+
+# Example 2: Change Setting via CLI (Recommended)
+# ------------------------------------------------
+# reed set:project name "My New Project Name"
+# Result: Updated in .reed/project.csv immediately
+
+# Example 3: Backup Current Config
+# ---------------------------------
+# reed config:export
+# Result: Current CSV values exported to Reed.toml
+
+# Example 4: Production Deployment
+# ---------------------------------
+# 1. Set ENVIRONMENT=prod in .env
+# 2. Server binds to /tmp/reed.sock (Unix socket)
+# 3. Reads config from .reed/*.csv files
+
+# Example 5: Development Mode
+# ----------------------------
+# 1. Set ENVIRONMENT=dev in .env
+# 2. Server binds to localhost:8333 (HTTP)
+# 3. Reads config from .reed/*.csv files

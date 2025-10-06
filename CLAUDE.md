@@ -63,6 +63,11 @@ ReedCMS/
 │   └── csv/                    # Universal CSV handler
 │
 └── _workbench/                 # Development resources
+    ├── Archive/                # Project archives
+    │   ├── Legacy/
+    │   │   └── libs/           # Legacy system backups (archived source)
+    │   └── ReedCMS/
+    │       └── Planning/       # Archived planning documents from ReedCMS development
     └── Tickets/                # Implementation tickets (REED-XX-YY)
 ```
 
@@ -495,6 +500,161 @@ reed build:release
 3. Check for warnings (`cargo clippy`)
 4. Reference correct ticket number
 5. Use proper commit message format
+
+## Configuration Management (REED-04-12)
+
+### Configuration Architecture
+
+**CRITICAL: CSV files are the single source of truth at runtime!**
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│ Configuration Priority & Data Flow                           │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  Reed.toml.example     Reed.toml          .reed/*.csv        │
+│  (documentation)       (bootstrap)        (runtime truth)    │
+│        │                   │                     │           │
+│        │                   │                     │           │
+│        └──[read]──────┐    │                     │           │
+│                       ▼    │                     │           │
+│                   Developer ────[config:sync]───►│           │
+│                       │    └─────[--force]──────►│           │
+│                       │                          │           │
+│                       │◄─────[config:export]─────┤           │
+│                       │                          │           │
+│                       └─────[set:project]───────►│           │
+│                       └─────[set:server]────────►│           │
+│                                                  │           │
+│                       Server Start ───[reads]───►│           │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Configuration Files
+
+1. **`Reed.toml.example`** (Documentation)
+   - Complete reference with ALL available options
+   - Includes defaults, descriptions, usage examples
+   - NEVER edited directly - for reference only
+   - Versioned in git
+
+2. **`Reed.toml`** (Bootstrap Configuration)
+   - Minimal file with only project-specific overrides
+   - Used ONLY during `reed config:sync` command
+   - Can be versioned in git for team sharing
+   - NOT read during server startup
+
+3. **`.reed/project.csv`** and **`.reed/server.csv`** (Runtime Truth)
+   - Single source of truth during runtime
+   - Read by server on startup
+   - Modified by CLI commands (`set:project`, `set:server`)
+   - NOT versioned in git (local configuration)
+   - Backed up automatically before modifications
+
+4. **`.env`** (Environment Control)
+   - Controls server binding mode
+   - `ENVIRONMENT=dev` → localhost:8333 (HTTP)
+   - `ENVIRONMENT=prod` → /tmp/reed.sock (Unix socket)
+
+### Configuration Workflow
+
+#### Initial Project Setup
+```bash
+# 1. Copy settings you need from Reed.toml.example to Reed.toml
+cp Reed.toml.example Reed.toml
+vim Reed.toml  # Edit your settings
+
+# 2. Sync to CSV files (creates .reed/*.csv)
+reed config:sync --force
+
+# 3. CSV files are now active - server will read from them
+reed server:start
+```
+
+#### Runtime Configuration Changes (Recommended)
+```bash
+# Change a setting via CLI (writes directly to CSV)
+reed set:project name "My New Project Name"
+
+# Change server setting
+reed set:server workers 8
+
+# Changes are IMMEDIATE - restart server to apply
+reed server:restart
+```
+
+#### Backup Current Configuration
+```bash
+# Export current CSV values to Reed.toml
+reed config:export --force
+
+# Result: Reed.toml now contains current CSV values
+# Can be committed to git for backup/versioning
+```
+
+#### Reset to Defaults
+```bash
+# WARNING: This overwrites CSV with Reed.toml values!
+reed config:export           # Backup first!
+reed config:sync --force     # Reset from Reed.toml
+```
+
+### Configuration Commands
+
+| Command | Direction | Purpose | Safety |
+|---------|-----------|---------|--------|
+| `reed config:sync` | TOML → CSV | Bootstrap from Reed.toml | ⚠️ Overwrites CSV! Shows warning |
+| `reed config:export` | CSV → TOML | Backup CSV to Reed.toml | ✅ Safe (only writes TOML) |
+| `reed set:project` | Direct → CSV | Runtime config change | ✅ Safe (immediate, no TOML) |
+| `reed set:server` | Direct → CSV | Runtime config change | ✅ Safe (immediate, no TOML) |
+| `reed config:show` | Read CSV | Display current config | ✅ Read-only |
+| `reed config:validate` | Read TOML | Validate Reed.toml syntax | ✅ Read-only |
+
+### Important Rules
+
+1. **Server startup NEVER reads Reed.toml** - only reads `.reed/*.csv`
+2. **CLI commands NEVER write to Reed.toml** - only write to `.reed/*.csv`
+3. **`config:sync` is DESTRUCTIVE** - shows warning, requires `--force`
+4. **CSV backups are automatic** - 32 XZ-compressed backups kept
+5. **Always use `config:export` before `config:sync`** to avoid data loss
+
+### Example Scenarios
+
+**Scenario 1: Team Configuration Sharing**
+```bash
+# Developer A: Share configuration with team
+reed config:export --force     # CSV → Reed.toml
+git add Reed.toml
+git commit -m "Update project configuration"
+git push
+
+# Developer B: Apply team configuration
+git pull
+reed config:sync --force       # Reed.toml → CSV
+reed server:restart
+```
+
+**Scenario 2: Production Deployment**
+```bash
+# Local development
+reed set:project url "https://example.com"
+reed config:export --force     # Save to Reed.toml
+
+# Deploy to production
+scp Reed.toml server:/app/
+ssh server
+cd /app
+reed config:sync --force       # Apply production config
+ENVIRONMENT=prod reed server:start
+```
+
+**Scenario 3: Lost Configuration Recovery**
+```bash
+# If .reed/*.csv files are lost/corrupted
+reed config:sync --force       # Restore from Reed.toml
+# All values from Reed.toml written to CSV
+```
 
 ## Project-Specific Notes
 

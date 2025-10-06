@@ -144,6 +144,8 @@ pub fn create_router() -> Router {
     router.register("set", "text", data_commands::set_text);
     router.register("set", "route", data_commands::set_route);
     router.register("set", "meta", data_commands::set_meta);
+    router.register("set", "server", data_commands::set_server);
+    router.register("set", "project", data_commands::set_project);
 
     // Get commands
     router.register("get", "text", |args, _flags| data_commands::get_text(args));
@@ -253,6 +255,14 @@ pub fn create_router() -> Router {
     use super::agent_commands;
     router.register("agent", "add", agent_commands::add);
     router.register("agent", "list", agent_commands::list);
+
+    // REED-04-12: Config commands
+    use super::config_commands;
+    router.register("config", "sync", config_commands::config_sync);
+    router.register("config", "export", config_commands::config_export);
+    router.register("config", "init", config_commands::config_init);
+    router.register("config", "show", config_commands::config_show);
+    router.register("config", "validate", config_commands::config_validate);
     router.register("agent", "show", agent_commands::show);
     router.register("agent", "test", agent_commands::test);
     router.register("agent", "update", agent_commands::update);

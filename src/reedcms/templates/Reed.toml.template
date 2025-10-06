@@ -1,0 +1,57 @@
+# Reed.toml - ReedCMS Project Configuration
+# This file is the single source of truth for project defaults
+# Changes here are synced to .reed/ CSV files via `reed config:sync`
+#
+# IMPORTANT: Server binding (port vs socket) is controlled by .env file:
+# - ENVIRONMENT=dev → Runs on localhost:8333 (HTTP server)
+# - ENVIRONMENT=prod → Runs on Unix socket /tmp/reed.sock
+
+[project]
+name = "ReedCMS"
+url = "http://localhost:8333"
+description = "High-Performance Headless Rust CMS"
+
+# Language Configuration
+[project.languages]
+default = "de"                    # Default language for website
+available = ["de", "en"]          # Available languages
+fallback_chain = true             # Enable de → en fallback
+
+# URL Structure
+[project.routing]
+url_prefix = true                 # Use /de/... /en/... structure
+trailing_slash = true             # /wissen/ vs /wissen
+
+# Template Configuration
+[project.templates]
+auto_reload = true                # Auto-reload templates (DEV only)
+cache_templates = true            # Cache compiled templates (PROD only)
+
+# Asset Configuration
+[project.assets]
+css_minify = true                 # Minify CSS (PROD only)
+css_bundle = true                 # Bundle CSS files
+
+# Build Configuration
+[project.build]
+clean_before = true               # Clean before build
+parallel = true                   # Parallel build processing
+
+# Server Configuration (environment-dependent via .env)
+# DEV (ENVIRONMENT=dev):  localhost:8333
+# PROD (ENVIRONMENT=prod): /tmp/reed.sock
+[server]
+workers = 4                       # Worker thread count (0 = auto)
+
+# Security Configuration
+[server.security]
+enable_cors = false               # Enable CORS
+allowed_origins = []              # Allowed CORS origins
+enable_rate_limit = true          # Enable rate limiting
+requests_per_minute = 60          # Rate limit threshold
+
+# Performance Configuration
+[server.performance]
+enable_compression = true         # Enable gzip/brotli compression
+enable_http2 = true               # Enable HTTP/2
+keep_alive = 75                   # Keep-alive timeout in seconds
