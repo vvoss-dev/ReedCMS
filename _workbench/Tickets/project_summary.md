@@ -788,6 +788,78 @@ reed config:export --force        # CSV → TOML (for git)
 
 ---
 
+### REED-04-13: System Setup Scripts ✅ Complete
+**Status**: Implemented | **Files**: `scripts/*.sh` (6 scripts + README)
+
+System integration scripts for binary and man page installation.
+
+**Available Scripts**:
+
+| Script | Mode | Requires Sudo | Purpose | File Operations |
+|--------|------|---------------|---------|-----------------|
+| `setup-dev.sh` | Development | Yes | Creates symlinks for live development | Symlinks only |
+| `install-system.sh` | Production | Yes | System-wide installation (all users) | File copies |
+| `install-user.sh` | User-local | No | User-only installation | File copies |
+| `uninstall-system.sh` | Uninstall | Yes | Remove system installation | File removal |
+| `uninstall-user.sh` | Uninstall | No | Remove user installation | File removal |
+| `build-man-pages.sh` | Build | No | Compile `.ronn` → `.1` man pages | File generation |
+
+**Installation Modes**:
+
+1. **Development Mode** (`setup-dev.sh`):
+   - Binary: `/usr/local/bin/reed` → `target/release/reed` (symlink)
+   - Man pages: `/usr/local/share/man/man1/*.1` → `man/*.1` (symlinks)
+   - Auto-updates when `cargo build --release` runs
+   - Requires sudo for `/usr/local/bin` access
+
+2. **System Installation** (`install-system.sh`):
+   - Binary: `/usr/local/bin/reed` (copy, 755 permissions)
+   - Man pages: `/usr/local/share/man/man1/*.1` (copies, 644 permissions)
+   - Updates man database with `mandb`
+   - Production-ready installation
+
+3. **User Installation** (`install-user.sh`):
+   - Binary: `~/.local/bin/reed` (copy)
+   - Man pages: `~/.local/share/man/man1/*.1` (copies)
+   - No sudo required
+   - Requires `~/.local/bin` in PATH and `~/.local/share/man` in MANPATH
+
+**Usage After Installation**:
+```bash
+# From anywhere in the system
+reed data:get knowledge.title@en
+
+# Access man pages
+man reed
+man reed-data
+```
+
+**Verification Commands**:
+```bash
+which reed                  # Shows binary location
+reed --version              # Tests binary execution
+man reed                    # Displays man page
+man -w reed                 # Shows man page location
+```
+
+**Shell Configuration** (for user installation):
+```bash
+# Add to ~/.bashrc or ~/.zshrc
+export PATH="${HOME}/.local/bin:${PATH}"
+export MANPATH="${HOME}/.local/share/man:${MANPATH}"
+```
+
+**Files**:
+- `scripts/setup-dev.sh` - Development symlink setup (128 lines)
+- `scripts/install-system.sh` - System installation (103 lines)
+- `scripts/install-user.sh` - User installation (147 lines)
+- `scripts/uninstall-system.sh` - System uninstall (72 lines)
+- `scripts/uninstall-user.sh` - User uninstall (64 lines)
+- `scripts/build-man-pages.sh` - Man page builder (exists)
+- `scripts/README.md` - Complete installation documentation
+
+---
+
 ## CLI Command Reference
 
 ### Complete CLI Command Table
