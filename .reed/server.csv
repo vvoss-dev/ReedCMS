@@ -1,8 +1,8 @@
 key|value
-server.bind_address@dev|127.0.0.1:8333
-server.bind_address@prod|
-server.domain.dev|vvoss.local
-server.domain.prod|vvoss.dev
+server.dev.domain|vvoss.local
+server.dev.io|127.0.0.1:8333
+server.prod.domain|vvoss.dev
+server.prod.io|/var/run/reedcms/web.sock
 server.performance.enable_compression|true
 server.performance.enable_http2|true
 server.performance.keep_alive|75
@@ -10,5 +10,4 @@ server.security.allowed_origins|
 server.security.enable_cors|false
 server.security.enable_rate_limit|true
 server.security.requests_per_minute|60
-server.socket_path@prod|/var/run/reedcms/web.sock
 server.workers|4

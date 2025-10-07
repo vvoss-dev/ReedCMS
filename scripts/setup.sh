@@ -150,7 +150,7 @@ if [ "${ENVIRONMENT}" = "dev" ]; then
     echo "Configuring development domain..."
 
     # Read domain from .reed/server.csv
-    DEV_DOMAIN=$(grep '^server\.domain\.dev|' "${PROJECT_ROOT}/.reed/server.csv" | cut -d'|' -f2)
+    DEV_DOMAIN=$(grep '^server\.dev\.domain|' "${PROJECT_ROOT}/.reed/server.csv" | cut -d'|' -f2)
 
     if [ -z "${DEV_DOMAIN}" ]; then
         echo -e "${YELLOW}⚠ No dev domain found in .reed/server.csv, skipping /etc/hosts configuration${NC}"
