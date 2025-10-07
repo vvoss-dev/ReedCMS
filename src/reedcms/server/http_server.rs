@@ -45,6 +45,15 @@ pub async fn start_http_server(port: u16, workers: Option<usize>) -> ReedResult<
     println!("   Port: {}", port);
     println!("   Workers: {}", worker_count);
 
+    // Initialize ReedBase caches
+    println!("   Initializing ReedBase caches...");
+    crate::reedcms::reedbase::cache::init_text_cache()?;
+    crate::reedcms::reedbase::cache::init_route_cache()?;
+    crate::reedcms::reedbase::cache::init_meta_cache()?;
+    crate::reedcms::reedbase::cache::init_project_cache()?;
+    crate::reedcms::reedbase::cache::init_server_cache()?;
+    println!("   ✓ Caches initialized");
+
     // Prepare assets (generate bundles, session hash, etc.)
     prepare_assets()?;
 

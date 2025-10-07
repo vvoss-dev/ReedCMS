@@ -262,6 +262,15 @@ pub async fn start_socket_server(socket_path: &str, workers: Option<usize>) -> R
     println!("   Socket: {}", socket_path);
     println!("   Workers: {}", worker_count);
 
+    // Initialize ReedBase caches
+    println!("   Initializing ReedBase caches...");
+    crate::reedcms::reedbase::cache::init_text_cache()?;
+    crate::reedcms::reedbase::cache::init_route_cache()?;
+    crate::reedcms::reedbase::cache::init_meta_cache()?;
+    crate::reedcms::reedbase::cache::init_project_cache()?;
+    crate::reedcms::reedbase::cache::init_server_cache()?;
+    println!("   ✓ Caches initialized");
+
     // Create socket directory if it doesn't exist
     let socket_dir = Path::new(socket_path)
         .parent()

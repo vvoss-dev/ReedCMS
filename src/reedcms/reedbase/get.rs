@@ -104,13 +104,29 @@ pub fn get(
 /// - `ReedResult<ReedResponse<String>>`: Text value
 ///
 /// ## Performance
-/// - O(1) HashMap lookup (when cache is implemented)
-/// - < 100μs typical
-///
-/// ## Note
-/// Placeholder implementation - reads directly from .reed/text.csv
-/// Full ReedBase cache implementation pending REED-02-01
+/// - O(1) HashMap lookup from cache
+/// - < 1μs typical
 pub fn text(request: &ReedRequest) -> ReedResult<ReedResponse<String>> {
+    // Try cache first
+    if super::cache::is_initialized() {
+        let lang = request.language.as_deref().unwrap_or("de");
+        match super::cache::get_text(&request.key, lang, request.environment.as_deref()) {
+            Ok(value) => {
+                return Ok(ReedResponse {
+                    data: value,
+                    source: format!("{}@{}", request.key, lang),
+                    cached: true,
+                    timestamp: current_timestamp(),
+                    metrics: None,
+                });
+            }
+            Err(_) => {
+                // Cache miss - fall through to CSV read
+            }
+        }
+    }
+
+    // Fallback to CSV if cache not initialized or key not found
     read_from_csv(".reed/text.csv", request)
 }
 
@@ -123,13 +139,29 @@ pub fn text(request: &ReedRequest) -> ReedResult<ReedResponse<String>> {
 /// - `ReedResult<ReedResponse<String>>`: Route path segment
 ///
 /// ## Performance
-/// - O(1) HashMap lookup (when cache is implemented)
-/// - < 100μs typical
-///
-/// ## Note
-/// Placeholder implementation - reads directly from .reed/routes.csv
-/// Full ReedBase cache implementation pending REED-02-01
+/// - O(1) HashMap lookup from cache
+/// - < 1μs typical
 pub fn route(request: &ReedRequest) -> ReedResult<ReedResponse<String>> {
+    // Try cache first
+    if super::cache::is_initialized() {
+        let lang = request.language.as_deref().unwrap_or("de");
+        match super::cache::get_route(&request.key, lang, request.environment.as_deref()) {
+            Ok(value) => {
+                return Ok(ReedResponse {
+                    data: value,
+                    source: format!("{}@{}", request.key, lang),
+                    cached: true,
+                    timestamp: current_timestamp(),
+                    metrics: None,
+                });
+            }
+            Err(_) => {
+                // Cache miss - fall through to CSV read
+            }
+        }
+    }
+
+    // Fallback to CSV if cache not initialized or key not found
     read_from_csv(".reed/routes.csv", request)
 }
 
@@ -142,13 +174,28 @@ pub fn route(request: &ReedRequest) -> ReedResult<ReedResponse<String>> {
 /// - `ReedResult<ReedResponse<String>>`: Meta value
 ///
 /// ## Performance
-/// - O(1) HashMap lookup (when cache is implemented)
-/// - < 100μs typical
-///
-/// ## Note
-/// Placeholder implementation - reads directly from .reed/meta.csv
-/// Full ReedBase cache implementation pending REED-02-01
+/// - O(1) HashMap lookup from cache
+/// - < 1μs typical
 pub fn meta(request: &ReedRequest) -> ReedResult<ReedResponse<String>> {
+    // Try cache first
+    if super::cache::is_initialized() {
+        match super::cache::get_meta(&request.key, request.environment.as_deref()) {
+            Ok(value) => {
+                return Ok(ReedResponse {
+                    data: value,
+                    source: request.key.clone(),
+                    cached: true,
+                    timestamp: current_timestamp(),
+                    metrics: None,
+                });
+            }
+            Err(_) => {
+                // Cache miss - fall through to CSV read
+            }
+        }
+    }
+
+    // Fallback to CSV if cache not initialized or key not found
     read_from_csv(".reed/meta.csv", request)
 }
 
@@ -161,13 +208,28 @@ pub fn meta(request: &ReedRequest) -> ReedResult<ReedResponse<String>> {
 /// - `ReedResult<ReedResponse<String>>`: Config value
 ///
 /// ## Performance
-/// - O(1) HashMap lookup (when cache is implemented)
-/// - < 100μs typical
-///
-/// ## Note
-/// Placeholder implementation - reads directly from .reed/project.csv
-/// Full ReedBase cache implementation pending REED-02-01
+/// - O(1) HashMap lookup from cache
+/// - < 1μs typical
 pub fn project(request: &ReedRequest) -> ReedResult<ReedResponse<String>> {
+    // Try cache first
+    if super::cache::is_initialized() {
+        match super::cache::get_project(&request.key, request.environment.as_deref()) {
+            Ok(value) => {
+                return Ok(ReedResponse {
+                    data: value,
+                    source: request.key.clone(),
+                    cached: true,
+                    timestamp: current_timestamp(),
+                    metrics: None,
+                });
+            }
+            Err(_) => {
+                // Cache miss - fall through to CSV read
+            }
+        }
+    }
+
+    // Fallback to CSV if cache not initialized or key not found
     read_from_csv(".reed/project.csv", request)
 }
 
@@ -180,13 +242,28 @@ pub fn project(request: &ReedRequest) -> ReedResult<ReedResponse<String>> {
 /// - `ReedResult<ReedResponse<String>>`: Config value
 ///
 /// ## Performance
-/// - O(1) HashMap lookup (when cache is implemented)
-/// - < 100μs typical
-///
-/// ## Note
-/// Placeholder implementation - reads directly from .reed/server.csv
-/// Full ReedBase cache implementation pending REED-02-01
+/// - O(1) HashMap lookup from cache
+/// - < 1μs typical
 pub fn server(request: &ReedRequest) -> ReedResult<ReedResponse<String>> {
+    // Try cache first
+    if super::cache::is_initialized() {
+        match super::cache::get_server(&request.key, request.environment.as_deref()) {
+            Ok(value) => {
+                return Ok(ReedResponse {
+                    data: value,
+                    source: request.key.clone(),
+                    cached: true,
+                    timestamp: current_timestamp(),
+                    metrics: None,
+                });
+            }
+            Err(_) => {
+                // Cache miss - fall through to CSV read
+            }
+        }
+    }
+
+    // Fallback to CSV if cache not initialized or key not found
     read_from_csv(".reed/server.csv", request)
 }
 
