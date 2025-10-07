@@ -35,18 +35,20 @@ workers = 4
 [server.dev]
 domain = "vvoss.local"
 io = "127.0.0.1:8333"
+enable_cors = true
+allowed_origins = ["*"]
+enable_rate_limit = false
+enable_compression = false
+enable_http2 = true
+keep_alive = 75
 
 [server.prod]
 domain = "vvoss.dev"
 io = "/var/run/reedcms/web.sock"
-
-[server.security]
 enable_cors = false
 allowed_origins = []
 enable_rate_limit = true
 requests_per_minute = 60
-
-[server.performance]
 enable_compression = true
 enable_http2 = true
 keep_alive = 75
