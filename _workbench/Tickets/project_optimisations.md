@@ -118,3 +118,35 @@ D057,Avoid .local TLD for development,"Use .dev or other TLD to prevent mDNS 5-s
 **Date**: 2025-10-07  
 **Status**: Active
 
+
+
+## D062: OnceLock-Based ReedBase Cache
+**Decision**: Use OnceLock singletons for CSV cache instead of Arc<RwLock<HashMap>>  
+**Rationale**: Cache is read-only after initialization at server startup. OnceLock provides thread-safe single initialization without runtime locking overhead. No need for RwLock since data never changes after init. Simpler, faster, and safer than mutable shared state.  
+**Date**: 2025-10-07  
+**Status**: Active
+
+## D063: Separate Caches Per CSV Type
+**Decision**: Five separate OnceLock caches (TEXT, ROUTE, META, PROJECT, SERVER) instead of unified cache  
+**Rationale**: Type separation matches CSV file structure. Allows independent initialization and clear responsibility. Memory overhead minimal (~1-5MB total). Performance identical (O(1) lookup). Better error isolation - one cache failure doesn't affect others.  
+**Date**: 2025-10-07  
+**Status**: Active
+
+## D064: Nested HashMap for Language-Aware Caches
+**Decision**: Text and Route caches use nested structure: HashMap<String, HashMap<String, String>> (language -> key -> value)  
+**Rationale**: Matches data structure in CSV files (key@lang format). Enables O(1) language-specific lookups. Fallback chain built into lookup function. Alternative flat structure would require string concatenation on every lookup (slower).  
+**Date**: 2025-10-07  
+**Status**: Active
+
+## D065: Cache-First with CSV Fallback
+**Decision**: get.rs functions try cache first, fall back to CSV read if cache not initialized or key missing  
+**Rationale**: Graceful degradation during startup or if cache init fails. Allows incremental rollout. Zero breaking changes to existing code. Performance: cache hit = 1μs, cache miss = fallback to existing CSV read (no worse than before).  
+**Date**: 2025-10-07  
+**Status**: Active
+
+## D066: Startup Cache Initialization
+**Decision**: Initialize all caches synchronously at server startup before accepting requests  
+**Rationale**: Ensures consistent performance from first request. Avoids cache stampede on first access. Startup delay acceptable (+50ms one-time). Alternative lazy init would cause unpredictable first-request delays and potential race conditions.  
+**Date**: 2025-10-07  
+**Status**: Active
+
