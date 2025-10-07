@@ -407,13 +407,19 @@ pub fn config_export(
         }
         toml_content.push('\n');
 
-        // Security
-        if server_values.contains_key("server.security.enable_cors") {
-            toml_content.push_str("[server.security]\n");
-            if let Some(cors) = server_values.get("server.security.enable_cors") {
+        // Dev environment
+        if server_values.contains_key("server.dev.domain") {
+            toml_content.push_str("[server.dev]\n");
+            if let Some(domain) = server_values.get("server.dev.domain") {
+                toml_content.push_str(&format!("domain = \"{}\"\n", domain));
+            }
+            if let Some(io) = server_values.get("server.dev.io") {
+                toml_content.push_str(&format!("io = \"{}\"\n", io));
+            }
+            if let Some(cors) = server_values.get("server.dev.enable_cors") {
                 toml_content.push_str(&format!("enable_cors = {}\n", cors));
             }
-            if let Some(origins) = server_values.get("server.security.allowed_origins") {
+            if let Some(origins) = server_values.get("server.dev.allowed_origins") {
                 if origins.is_empty() {
                     toml_content.push_str("allowed_origins = []\n");
                 } else {
@@ -421,25 +427,57 @@ pub fn config_export(
                     toml_content.push_str(&format!("allowed_origins = {:?}\n", origins_list));
                 }
             }
-            if let Some(rate) = server_values.get("server.security.enable_rate_limit") {
+            if let Some(rate) = server_values.get("server.dev.enable_rate_limit") {
                 toml_content.push_str(&format!("enable_rate_limit = {}\n", rate));
             }
-            if let Some(rpm) = server_values.get("server.security.requests_per_minute") {
+            if let Some(rpm) = server_values.get("server.dev.requests_per_minute") {
                 toml_content.push_str(&format!("requests_per_minute = {}\n", rpm));
+            }
+            if let Some(comp) = server_values.get("server.dev.enable_compression") {
+                toml_content.push_str(&format!("enable_compression = {}\n", comp));
+            }
+            if let Some(http2) = server_values.get("server.dev.enable_http2") {
+                toml_content.push_str(&format!("enable_http2 = {}\n", http2));
+            }
+            if let Some(keep) = server_values.get("server.dev.keep_alive") {
+                toml_content.push_str(&format!("keep_alive = {}\n", keep));
             }
             toml_content.push('\n');
         }
 
-        // Performance
-        if server_values.contains_key("server.performance.enable_compression") {
-            toml_content.push_str("[server.performance]\n");
-            if let Some(comp) = server_values.get("server.performance.enable_compression") {
+        // Prod environment
+        if server_values.contains_key("server.prod.domain") {
+            toml_content.push_str("[server.prod]\n");
+            if let Some(domain) = server_values.get("server.prod.domain") {
+                toml_content.push_str(&format!("domain = \"{}\"\n", domain));
+            }
+            if let Some(io) = server_values.get("server.prod.io") {
+                toml_content.push_str(&format!("io = \"{}\"\n", io));
+            }
+            if let Some(cors) = server_values.get("server.prod.enable_cors") {
+                toml_content.push_str(&format!("enable_cors = {}\n", cors));
+            }
+            if let Some(origins) = server_values.get("server.prod.allowed_origins") {
+                if origins.is_empty() {
+                    toml_content.push_str("allowed_origins = []\n");
+                } else {
+                    let origins_list: Vec<&str> = origins.split(',').collect();
+                    toml_content.push_str(&format!("allowed_origins = {:?}\n", origins_list));
+                }
+            }
+            if let Some(rate) = server_values.get("server.prod.enable_rate_limit") {
+                toml_content.push_str(&format!("enable_rate_limit = {}\n", rate));
+            }
+            if let Some(rpm) = server_values.get("server.prod.requests_per_minute") {
+                toml_content.push_str(&format!("requests_per_minute = {}\n", rpm));
+            }
+            if let Some(comp) = server_values.get("server.prod.enable_compression") {
                 toml_content.push_str(&format!("enable_compression = {}\n", comp));
             }
-            if let Some(http2) = server_values.get("server.performance.enable_http2") {
+            if let Some(http2) = server_values.get("server.prod.enable_http2") {
                 toml_content.push_str(&format!("enable_http2 = {}\n", http2));
             }
-            if let Some(keep) = server_values.get("server.performance.keep_alive") {
+            if let Some(keep) = server_values.get("server.prod.keep_alive") {
                 toml_content.push_str(&format!("keep_alive = {}\n", keep));
             }
         }
@@ -513,27 +551,45 @@ fn format_server_section(config: &crate::reedcms::config::toml_parser::ReedConfi
         "[server]
   workers: {} (0 = auto)
 
-  Note: Server binding controlled by ENVIRONMENT in .env:
-    - ENVIRONMENT=dev  → localhost:8333 (HTTP)
-    - ENVIRONMENT=prod → /tmp/reed.sock (Unix socket)
-
-  [server.security]
+  [server.dev]
+    domain: {}
+    io: {}
     enable_cors: {}
     allowed_origins: {}
     enable_rate_limit: {}
     requests_per_minute: {}
+    enable_compression: {}
+    enable_http2: {}
+    keep_alive: {}
 
-  [server.performance]
+  [server.prod]
+    domain: {}
+    io: {}
+    enable_cors: {}
+    allowed_origins: {}
+    enable_rate_limit: {}
+    requests_per_minute: {}
     enable_compression: {}
     enable_http2: {}
     keep_alive: {}",
         config.server.workers,
-        config.server.security.enable_cors,
-        config.server.security.allowed_origins.join(", "),
-        config.server.security.enable_rate_limit,
-        config.server.security.requests_per_minute,
-        config.server.performance.enable_compression,
-        config.server.performance.enable_http2,
-        config.server.performance.keep_alive,
+        config.server.dev.domain,
+        config.server.dev.io,
+        config.server.dev.enable_cors,
+        config.server.dev.allowed_origins.join(", "),
+        config.server.dev.enable_rate_limit,
+        config.server.dev.requests_per_minute,
+        config.server.dev.enable_compression,
+        config.server.dev.enable_http2,
+        config.server.dev.keep_alive,
+        config.server.prod.domain,
+        config.server.prod.io,
+        config.server.prod.enable_cors,
+        config.server.prod.allowed_origins.join(", "),
+        config.server.prod.enable_rate_limit,
+        config.server.prod.requests_per_minute,
+        config.server.prod.enable_compression,
+        config.server.prod.enable_http2,
+        config.server.prod.keep_alive,
     )
 }

@@ -4,6 +4,7 @@
 
 [project]
 name = "ReedCMS"
+url = "https://vvoss.dev"
 description = "High-Performance Headless Rust CMS"
 
 

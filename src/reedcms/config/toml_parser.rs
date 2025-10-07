@@ -81,35 +81,31 @@ pub struct BuildConfig {
 }
 
 /// Server configuration.
-/// IMPORTANT: host/port vs socket is determined by ENVIRONMENT variable in .env
-/// - ENVIRONMENT=dev → localhost:8333
-/// - ENVIRONMENT=prod → /tmp/reed.sock
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct ServerConfig {
     #[serde(default)]
     pub workers: usize,
     #[serde(default)]
-    pub security: SecurityConfig,
+    pub dev: ServerEnvironmentConfig,
     #[serde(default)]
-    pub performance: PerformanceConfig,
+    pub prod: ServerEnvironmentConfig,
 }
 
-/// Security configuration.
+/// Server environment-specific configuration.
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct SecurityConfig {
+pub struct ServerEnvironmentConfig {
+    #[serde(default)]
+    pub domain: String,
+    #[serde(default)]
+    pub io: String,
     #[serde(default)]
     pub enable_cors: bool,
     #[serde(default)]
     pub allowed_origins: Vec<String>,
-    #[serde(default = "default_true")]
+    #[serde(default)]
     pub enable_rate_limit: bool,
     #[serde(default = "default_rate_limit")]
     pub requests_per_minute: u32,
-}
-
-/// Performance configuration.
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct PerformanceConfig {
     #[serde(default = "default_true")]
     pub enable_compression: bool,
     #[serde(default = "default_true")]

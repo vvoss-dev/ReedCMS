@@ -151,38 +151,76 @@ fn sync_server_config(config: &ReedConfig) -> ReedResult<Vec<String>> {
         }
     }
 
-    // Server settings (NO host/port - controlled by ENVIRONMENT in .env)
-    let values = vec![
-        ("server.workers", config.server.workers.to_string()),
+    // Server global settings
+    let mut values = vec![("server.workers", config.server.workers.to_string())];
+
+    // Dev environment settings
+    values.extend(vec![
+        ("server.dev.domain", config.server.dev.domain.clone()),
+        ("server.dev.io", config.server.dev.io.clone()),
         (
-            "server.security.enable_cors",
-            config.server.security.enable_cors.to_string(),
+            "server.dev.enable_cors",
+            config.server.dev.enable_cors.to_string(),
         ),
         (
-            "server.security.allowed_origins",
-            config.server.security.allowed_origins.join(","),
+            "server.dev.allowed_origins",
+            config.server.dev.allowed_origins.join(","),
         ),
         (
-            "server.security.enable_rate_limit",
-            config.server.security.enable_rate_limit.to_string(),
+            "server.dev.enable_rate_limit",
+            config.server.dev.enable_rate_limit.to_string(),
         ),
         (
-            "server.security.requests_per_minute",
-            config.server.security.requests_per_minute.to_string(),
+            "server.dev.requests_per_minute",
+            config.server.dev.requests_per_minute.to_string(),
         ),
         (
-            "server.performance.enable_compression",
-            config.server.performance.enable_compression.to_string(),
+            "server.dev.enable_compression",
+            config.server.dev.enable_compression.to_string(),
         ),
         (
-            "server.performance.enable_http2",
-            config.server.performance.enable_http2.to_string(),
+            "server.dev.enable_http2",
+            config.server.dev.enable_http2.to_string(),
         ),
         (
-            "server.performance.keep_alive",
-            config.server.performance.keep_alive.to_string(),
+            "server.dev.keep_alive",
+            config.server.dev.keep_alive.to_string(),
         ),
-    ];
+    ]);
+
+    // Prod environment settings
+    values.extend(vec![
+        ("server.prod.domain", config.server.prod.domain.clone()),
+        ("server.prod.io", config.server.prod.io.clone()),
+        (
+            "server.prod.enable_cors",
+            config.server.prod.enable_cors.to_string(),
+        ),
+        (
+            "server.prod.allowed_origins",
+            config.server.prod.allowed_origins.join(","),
+        ),
+        (
+            "server.prod.enable_rate_limit",
+            config.server.prod.enable_rate_limit.to_string(),
+        ),
+        (
+            "server.prod.requests_per_minute",
+            config.server.prod.requests_per_minute.to_string(),
+        ),
+        (
+            "server.prod.enable_compression",
+            config.server.prod.enable_compression.to_string(),
+        ),
+        (
+            "server.prod.enable_http2",
+            config.server.prod.enable_http2.to_string(),
+        ),
+        (
+            "server.prod.keep_alive",
+            config.server.prod.keep_alive.to_string(),
+        ),
+    ]);
 
     for (key, value) in values {
         let request = ReedRequest {
