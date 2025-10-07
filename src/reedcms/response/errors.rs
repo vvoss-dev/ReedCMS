@@ -19,8 +19,7 @@
 
 use crate::reedcms::reedstream::ReedError;
 use actix_web::HttpResponse;
-use minijinja::{context, Environment};
-use std::sync::OnceLock;
+use minijinja::context;
 
 /// Builds 404 Not Found HTTP response.
 ///
@@ -137,12 +136,20 @@ pub fn build_500_response(error: ReedError) -> HttpResponse {
 ///
 /// ## Performance
 /// - ~10-20ms (template loading + rendering)
+///
+/// ## Note
+/// - Error templates use default language "en" (not localized)
+/// - Error templates use "mouse" variant (simplest, most compatible)
 fn render_error_template(
     template_name: &str,
     code: u16,
     message: &str,
 ) -> Result<String, ReedError> {
-    let env = get_template_engine();
+    // Initialize engine with defaults for error templates
+    let env = crate::reedcms::templates::engine::init_template_engine(
+        "en".to_string(),
+        "mouse".to_string(),
+    )?;
 
     // Load template
     let template = env
@@ -187,38 +194,4 @@ fn is_dev_environment() -> bool {
         .unwrap_or_else(|_| "PROD".to_string())
         .to_uppercase()
         == "DEV"
-}
-
-/// Gets template engine singleton.
-///
-/// ## Output
-/// - `&'static Environment<'static>`: Global template engine instance
-///
-/// ## Initialisation
-/// - Uses `OnceLock` for thread-safe lazy initialisation
-/// - Initialises on first access with default language "en" and mode "mouse"
-/// - Panics if initialisation fails
-///
-/// ## Note
-/// - Template engine needs language and mode at init time
-/// - Using defaults: lang="en", mode="mouse"
-/// - Filters are added at init time but work for all languages via runtime lookup
-///
-/// ## Performance
-/// - First call: ~1-5ms (initialisation)
-/// - Subsequent calls: < 1μs (static reference)
-///
-/// ## Error Handling
-/// - Panics if template engine initialisation fails
-/// - Should not happen in production (templates validated at startup)
-fn get_template_engine() -> &'static Environment<'static> {
-    static ENGINE: OnceLock<Environment<'static>> = OnceLock::new();
-    ENGINE.get_or_init(|| {
-        // Initialise with defaults - filters handle runtime language
-        crate::reedcms::templates::engine::init_template_engine(
-            "en".to_string(),
-            "mouse".to_string(),
-        )
-        .expect("Failed to initialise template engine")
-    })
 }

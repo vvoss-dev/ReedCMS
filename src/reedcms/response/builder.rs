@@ -231,22 +231,40 @@ fn render_template(
         .and_then(|v| v.as_str())
         .unwrap_or("mouse");
 
-    // Get base environment singleton (fast)
-    let base_env = get_template_engine();
+    // Create NEW environment per request (Legacy pattern)
+    // This is intentional - MiniJinja requires functions to be registered
+    // BEFORE template parsing for {% extends %} to work correctly
+    use crate::reedcms::templates::functions;
+    use minijinja::{AutoEscape, Environment, UndefinedBehavior};
 
-    // Clone environment (cheap - only metadata)
-    let mut env = base_env.clone();
+    let mut env = Environment::new();
 
-    // Add ONLY request-specific filters (those that need language)
-    // Meta/config filters and organism/molecule/atom functions are already in base env
-    env.add_filter(
-        "text",
-        filters::text::make_text_filter(lang.to_string()),
-    );
-    env.add_filter(
-        "route",
-        filters::route::make_route_filter(lang.to_string()),
-    );
+    // Set template loader
+    env.set_loader(crate::reedcms::templates::engine::template_loader);
+
+    // Configure auto-escape
+    env.set_auto_escape_callback(|name| {
+        if name.ends_with(".jinja") || name.ends_with(".html") {
+            AutoEscape::Html
+        } else {
+            AutoEscape::None
+        }
+    });
+
+    // Enable strict mode
+    env.set_undefined_behavior(UndefinedBehavior::Strict);
+
+    // Add filters with request language
+    env.add_filter("text", filters::text::make_text_filter(lang.to_string()));
+    env.add_filter("route", filters::route::make_route_filter(lang.to_string()));
+    env.add_filter("meta", filters::meta::make_meta_filter());
+    env.add_filter("config", filters::config::make_config_filter());
+
+    // Add functions with request variant
+    env.add_function("organism", functions::make_organism_function(variant.to_string()));
+    env.add_function("molecule", functions::make_molecule_function(variant.to_string()));
+    env.add_function("atom", functions::make_atom_function(variant.to_string()));
+    env.add_function("layout", functions::make_layout_function(variant.to_string()));
 
     // Load template
     let template = env
@@ -263,43 +281,4 @@ fn render_template(
             template: template_name.to_string(),
             reason: format!("Render error: {}", e),
         })
-}
-
-/// Gets base template engine singleton.
-///
-/// ## Output
-/// - `&'static Environment<'static>`: Global base template engine
-///
-/// ## Initialization
-/// - Initializes once with base configuration (no filters/functions)
-/// - Templates loaded once
-/// - Filters/functions added per request via clone
-///
-/// ## Performance
-/// - First call: ~50-100ms (template loading)
-/// - Subsequent calls: < 1μs (static reference)
-fn get_template_engine() -> &'static Environment<'static> {
-    static ENGINE: OnceLock<Environment<'static>> = OnceLock::new();
-    ENGINE.get_or_init(|| {
-        use minijinja::{AutoEscape, UndefinedBehavior};
-
-        let mut env = Environment::new();
-
-        // Set template loader
-        env.set_loader(crate::reedcms::templates::engine::template_loader);
-
-        // Configure auto-escape for HTML
-        env.set_auto_escape_callback(|name| {
-            if name.ends_with(".jinja") || name.ends_with(".html") {
-                AutoEscape::Html
-            } else {
-                AutoEscape::None
-            }
-        });
-
-        // Enable strict mode (undefined variables error)
-        env.set_undefined_behavior(UndefinedBehavior::Strict);
-
-        env
-    })
 }

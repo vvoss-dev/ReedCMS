@@ -61,9 +61,10 @@ pub fn make_text_filter(
         };
 
         // Call ReedBase text service
+        // Legacy pattern: Return key as fallback if not found (instead of error)
         match crate::reedcms::reedbase::get::text(&req) {
             Ok(response) => Ok(response.data),
-            Err(err) => Err(convert_reed_error_to_jinja(err, "text", key)),
+            Err(_) => Ok(key.to_string()), // Fallback: return key itself
         }
     }
 }

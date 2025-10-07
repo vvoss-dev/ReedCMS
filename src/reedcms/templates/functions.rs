@@ -69,16 +69,31 @@ pub fn make_atom_function(
     }
 }
 
-/// Creates layout path resolver function.
+/// Creates layout path resolver function with variant support.
 ///
-/// ## Note
-/// Layouts do NOT use interaction_mode variants.
+/// ## Arguments
+/// - interaction_mode: Current interaction mode (mouse/touch/reader)
+///
+/// ## Resolution Order
+/// 1. Try variant-specific: layouts/{name}/{name}.{variant}.jinja
+/// 2. Fallback: layouts/{name}/{name}.jinja (legacy support)
 ///
 /// ## Example
 /// ```jinja
 /// {% extends layout("page") %}
 /// ```
-/// Resolves to: layouts/page/page.jinja
-pub fn make_layout_function() -> impl Fn(&str) -> String + Send + Sync + 'static {
-    move |name: &str| -> String { format!("layouts/{}/{}.jinja", name, name) }
+/// Resolves to: layouts/page/page.mouse.jinja (or page.jinja if variant doesn't exist)
+pub fn make_layout_function(
+    interaction_mode: String,
+) -> impl Fn(&str) -> String + Send + Sync + 'static {
+    move |name: &str| -> String {
+        // Try variant-specific layout first
+        let variant_path = format!("layouts/{}/{}.{}.jinja", name, name, interaction_mode);
+        if std::path::Path::new(&format!("templates/{}", variant_path)).exists() {
+            return variant_path;
+        }
+
+        // Fallback to non-variant layout (legacy support)
+        format!("layouts/{}/{}.jinja", name, name)
+    }
 }

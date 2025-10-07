@@ -40,7 +40,7 @@ pub fn build_context(
     let mut ctx = HashMap::new();
 
     // Core variables
-    ctx.insert("layout".to_string(), serde_json::json!(layout));
+    ctx.insert("pagekey".to_string(), serde_json::json!(layout));
     ctx.insert("lang".to_string(), serde_json::json!(language));
     ctx.insert(
         "interaction_mode".to_string(),
@@ -92,6 +92,19 @@ pub fn build_context(
     ctx.insert("page_title".to_string(), serde_json::Value::Null);
     ctx.insert("page_description".to_string(), serde_json::Value::Null);
     ctx.insert("current_pagekey".to_string(), serde_json::json!(layout));
+
+    // Page object (for legacy template compatibility)
+    let mut page = HashMap::new();
+    // Get latest update from git or use current date
+    let latest_update = std::process::Command::new("git")
+        .args(&["log", "-1", "--format=%cd", "--date=short"])
+        .output()
+        .ok()
+        .and_then(|output| String::from_utf8(output.stdout).ok())
+        .map(|s| s.trim().to_string())
+        .unwrap_or_else(|| chrono::Local::now().format("%Y-%m-%d").to_string());
+    page.insert("latest_update", serde_json::json!(latest_update));
+    ctx.insert("page".to_string(), serde_json::json!(page));
 
     // Add globals
     add_globals(&mut ctx)?;

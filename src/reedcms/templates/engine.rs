@@ -68,7 +68,10 @@ pub fn init_template_engine(
         "atom",
         functions::make_atom_function(interaction_mode.clone()),
     );
-    env.add_function("layout", functions::make_layout_function());
+    env.add_function(
+        "layout",
+        functions::make_layout_function(interaction_mode.clone()),
+    );
 
     // Configure auto-escape for HTML
     env.set_auto_escape_callback(|name| {

@@ -65,6 +65,7 @@ pub fn make_route_filter(
         };
 
         // Call ReedBase route service
+        // Legacy pattern: Return key as fallback if not found
         match crate::reedcms::reedbase::get::route(&req) {
             Ok(response) => {
                 // Handle empty route (landing page) - return empty string
@@ -77,7 +78,7 @@ pub fn make_route_filter(
                     Ok(response.data)
                 }
             }
-            Err(err) => Err(convert_reed_error_to_jinja(err, "route", key)),
+            Err(_) => Ok(key.to_string()), // Fallback: return key itself
         }
     }
 }

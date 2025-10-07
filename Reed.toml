@@ -34,7 +34,7 @@ parallel = true
 workers = 4
 
 [server.dev]
-domain = "vvoss.local"
+domain = "vvoss.dev"
 io = "127.0.0.1:8333"
 enable_cors = true
 allowed_origins = ["*"]
