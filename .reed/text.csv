@@ -170,10 +170,10 @@ page-header.main.label@de|Hauptnavigation|Main navigation aria label
 page-header.main.label@en|Main navigation|Main navigation aria label
 page-header.home.label@de|Startseite|Home link aria label
 page-header.home.label@en|Home|Home link aria label
-page-header.logo.title@de|Effektive Software-Architektur|Logo subtitle/tagline text
-page-header.logo.title@en|Effective Software Architecture|Logo subtitle/tagline text
-page-header.logo.name@de|vvoss.dev|Logo name
-page-header.logo.name@en|vvoss.dev|Logo name
+page-header.logo.title@de|Principle Software Architect|Logo subtitle/tagline text
+page-header.logo.title@en|Principle Software Architect|Logo subtitle/tagline text
+page-header.logo.name@de|vivian voss|Logo name
+page-header.logo.name@en|vivian voss|Logo name
 page-header.knowledge.label@de|Technisches Wissen|Knowledge navigation label
 page-header.knowledge.label@en|Technical Knowledge|Knowledge navigation label
 page-header.knowledge.text@de|Wissen|Knowledge navigation text

@@ -109,10 +109,12 @@ pub fn server_start(
     let mut output = String::new();
     output.push_str("🚀 Starting ReedCMS server in background...\n\n");
 
+    // Detect environment from REED_ENV or flag
     let environment = flags
         .get("environment")
-        .map(|s| s.as_str())
-        .unwrap_or("PROD");
+        .map(|s| s.to_uppercase())
+        .or_else(|| std::env::var("REED_ENV").ok())
+        .unwrap_or_else(|| "DEV".to_string());
 
     // Check if PID file exists and stop running instance
     let pid_file = ".reed/server.pid";
