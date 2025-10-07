@@ -4,8 +4,9 @@
 
 [project]
 name = "ReedCMS"
-url = "http://localhost:8333"
 description = "High-Performance Headless Rust CMS"
+
+
 
 [project.languages]
 default = "de"

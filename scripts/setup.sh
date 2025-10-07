@@ -144,6 +144,52 @@ else
     echo -e "${YELLOW}Warning: mandb not found, man pages may not be indexed${NC}"
 fi
 
+# Configure /etc/hosts for development domain (dev mode only)
+if [ "${ENVIRONMENT}" = "dev" ]; then
+    echo ""
+    echo "Configuring development domain..."
+
+    # Read domain from .reed/server.csv
+    DEV_DOMAIN=$(grep '^server\.domain\.dev|' "${PROJECT_ROOT}/.reed/server.csv" | cut -d'|' -f2)
+
+    if [ -z "${DEV_DOMAIN}" ]; then
+        echo -e "${YELLOW}⚠ No dev domain found in .reed/server.csv, skipping /etc/hosts configuration${NC}"
+    else
+        HOSTS_FILE="/etc/hosts"
+        MARKER_COMMENT="# ReedCMS Development Domain - AUTO-MANAGED by setup.sh"
+        HOSTS_ENTRY="127.0.0.1\t${DEV_DOMAIN}"
+
+        # Check if our marker exists
+        if grep -q "^${MARKER_COMMENT}" "${HOSTS_FILE}" 2>/dev/null; then
+            # Update existing entry
+            CURRENT_DOMAIN=$(sudo grep -A 1 "^${MARKER_COMMENT}" "${HOSTS_FILE}" | tail -1 | awk '{print $2}')
+
+            if [ "${CURRENT_DOMAIN}" != "${DEV_DOMAIN}" ]; then
+                echo -e "${YELLOW}Updating /etc/hosts: ${CURRENT_DOMAIN} → ${DEV_DOMAIN}${NC}"
+                # Remove old entry (marker + next line)
+                sudo sed -i '' "/^${MARKER_COMMENT}/,+1d" "${HOSTS_FILE}"
+                # Add new entry
+                echo -e "${MARKER_COMMENT}\n${HOSTS_ENTRY}" | sudo tee -a "${HOSTS_FILE}" > /dev/null
+                echo -e "${GREEN}✓ Development domain updated: ${DEV_DOMAIN}${NC}"
+            else
+                echo -e "${GREEN}✓ Development domain already configured: ${DEV_DOMAIN}${NC}"
+            fi
+        else
+            # Add new entry
+            echo "Adding ${DEV_DOMAIN} to /etc/hosts..."
+            echo -e "\n${MARKER_COMMENT}\n${HOSTS_ENTRY}" | sudo tee -a "${HOSTS_FILE}" > /dev/null
+            echo -e "${GREEN}✓ Development domain configured: ${DEV_DOMAIN}${NC}"
+        fi
+
+        # Verify DNS resolution
+        if ping -c 1 "${DEV_DOMAIN}" > /dev/null 2>&1; then
+            echo -e "${GREEN}✓ Domain resolves correctly: ${DEV_DOMAIN}${NC}"
+        else
+            echo -e "${YELLOW}⚠ Domain may not resolve yet, try flushing DNS cache${NC}"
+        fi
+    fi
+fi
+
 # Verification
 echo ""
 echo "Verification:"
