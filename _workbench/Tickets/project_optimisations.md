@@ -63,6 +63,9 @@ D051,CSV as runtime truth,"CSV files are single source of truth at runtime, Reed
 D052,Bidirectional TOML-CSV sync,"config:sync (TOML→CSV) and config:export (CSV→TOML) for version control",2025-10-06,Active
 D053,Environment-based server binding,"ENVIRONMENT variable in .env controls dev (port) vs prod (socket) binding",2025-10-06,Active
 D054,Destructive sync protection,"config:sync requires --force flag and shows warning to prevent accidental overwrites",2025-10-06,Active
+D055,Template engine legacy pattern,"Base singleton environment + per-request clone + language-specific filters",2025-10-07,Active
+D056,Per-request filter registration,"Clone environment and add text/route filters with request language for correct routing",2025-10-07,Active
+D057,Avoid .local TLD for development,"Use .dev or other TLD to prevent mDNS 5-second timeout on macOS",2025-10-07,Active
 ```
 
 ---

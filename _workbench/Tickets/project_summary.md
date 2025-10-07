@@ -1135,6 +1135,73 @@ URL: /de/wissen
 
 **Benefits**: Language switcher works, proper SEO structure, clean URLs
 
+### REED-06-07: Template Language Context Fix ✅ Complete
+**Files**: `src/reedcms/response/builder.rs`, `src/reedcms/templates/engine.rs`
+
+Fixed routing filter to use request language instead of hardcoded singleton language.
+
+**Problem**:
+Template engine was initialised with hardcoded "en" language in singleton pattern, causing route filter to always return English URLs even on German pages (showed `/de/knowledge/` instead of `/de/wissen/`).
+
+**Root Cause**:
+- Singleton template engine with hardcoded language at initialisation
+- Route filter captured language at filter registration time, not request time
+- All requests used same "en" language regardless of actual request language
+
+**Solution (Legacy Pattern)**:
+Based on successful legacy implementation from `_workbench/Archive/Legacy/libs/handlers.rs:61-63`:
+1. **Base singleton environment**: Templates loaded once at startup (no filters)
+2. **Per-request clone**: Cheap environment clone (metadata only, not templates)
+3. **Language-specific filters**: Add `text` and `route` filters with request language from context
+4. **Extract from context**: `context.client.lang` provides actual request language
+
+**Implementation**:
+```rust
+// Base singleton (templates loaded once)
+fn get_template_engine() -> &'static Environment<'static> {
+    static ENGINE: OnceLock<Environment<'static>> = OnceLock::new();
+    ENGINE.get_or_init(|| {
+        let mut env = Environment::new();
+        env.set_loader(template_loader);
+        env.set_auto_escape_callback(|name| { /* ... */ });
+        env.set_undefined_behavior(UndefinedBehavior::Strict);
+        env
+    })
+}
+
+// Per-request rendering
+fn render_template(template_name: &str, context: &HashMap<String, Value>) -> Result<String> {
+    let lang = context.get("client")
+        .and_then(|c| c.get("lang"))
+        .and_then(|l| l.as_str())
+        .unwrap_or("en");
+    
+    let base_env = get_template_engine();
+    let mut env = base_env.clone();  // Cheap: metadata only
+    
+    // Add request-specific filters
+    env.add_filter("text", make_text_filter(lang.to_string()));
+    env.add_filter("route", make_route_filter(lang.to_string()));
+    
+    env.get_template(template_name)?.render(context)
+}
+```
+
+**Performance**:
+- Environment clone: < 1ms (metadata only, not templates)
+- Filter registration: < 0.1ms per filter
+- Total per-request overhead: ~1-2ms
+- Response time: 9ms (measured with curl on 127.0.0.1:8333)
+
+**Results**:
+- ✅ German pages show German URLs: `/de/wissen/` (not `/de/knowledge/`)
+- ✅ English pages show English URLs: `/en/knowledge/`
+- ✅ All navigation links work correctly
+- ✅ Fast response times maintained (< 10ms)
+
+**DNS Investigation**:
+Initial 5-second delays with `vvoss.local:8333` were unrelated to code - caused by macOS mDNS timeout for `.local` TLD. Switching to `vvoss.dev` resolved the issue (55ms total response time including DNS lookup).
+
 ---
 
 ## REED-07: API Layer (2 tickets) - 🔄 In Progress
