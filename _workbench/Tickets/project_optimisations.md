@@ -90,5 +90,31 @@ D057,Avoid .local TLD for development,"Use .dev or other TLD to prevent mDNS 5-s
 
 ---
 
-**Last Updated**: 2025-10-06  
+**Last Updated**: 2025-10-07  
 **Maintained By**: Vivian Voss <ask@vvoss.dev>
+
+
+## D058: Template Rendering Context Variable Naming
+**Decision**: Context variable for page layout renamed from `layout` to `pagekey`  
+**Rationale**: Variable `layout` was shadowing the `layout()` function in templates, causing "value of type string is not callable" errors. Legacy system used `pagekey` as variable name. Explicit separation of context variables and template functions prevents naming conflicts.  
+**Date**: 2025-10-07  
+**Status**: Active
+
+## D059: Page Object in Template Context
+**Decision**: Add `page` object with `latest_update` field to template context  
+**Rationale**: Legacy templates depend on `{{ page.latest_update }}` for displaying last modification date. Value retrieved from `git log -1 --format=%cd --date=short` for accurate tracking. Fallback to current date if git unavailable.  
+**Date**: 2025-10-07  
+**Status**: Active
+
+## D060: Text Filter Fallback Returns Key
+**Decision**: Text filter returns key itself when not found in CSV, instead of throwing error  
+**Rationale**: Legacy pattern shows missing keys visibly in rendered HTML (e.g., "knowledge.title@de" displays as-is). Templates with 100+ text() calls would fail completely on single missing key. Graceful degradation allows development to continue while identifying missing translations. Performance: Prevents 100+ error handling iterations per page.  
+**Date**: 2025-10-07  
+**Status**: Active
+
+## D061: Route Filter Fallback Returns Key
+**Decision**: Route filter returns key itself when not found in CSV, instead of throwing error  
+**Rationale**: Same as D060 for text filter. Missing routes become visible in navigation links. Prevents complete page failure on missing route definition. Consistency with text filter behaviour.  
+**Date**: 2025-10-07  
+**Status**: Active
+
