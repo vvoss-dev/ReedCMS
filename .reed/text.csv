@@ -1,10 +1,4 @@
 key|value|comment
-SVG_ICON_DEFAULT_ALT@DE|Icon|Default German alt text
-SVG_ICON_DEFAULT_ALT@EN|Icon|Default English alt text
-SVG_ICON_FEATHER_CREDIT@DE|Feather Icons von feathericons.com|German credit for Feather icons
-SVG_ICON_FEATHER_CREDIT@EN|Feather Icons from feathericons.com|English credit for Feather icons
-SVG_ICON_MISSING_ICON_ALT@DE|Fehlendes Icon|German alt text for missing icons
-SVG_ICON_MISSING_ICON_ALT@EN|Missing Icon|English alt text for missing icons
 actix.web.category.label@de|Kategorie|Content text for de locale
 actix.web.category.label@en|Category|Content text for en locale
 actix.web.category.value@de|Web-Framework|Content text for de locale
@@ -1072,3 +1066,9 @@ seo.syntax.value@de|Keywords, Backlinks, Meta-Tags (veraltet)|Content text for d
 seo.syntax.value@en|Keywords, Backlinks, Meta Tags (obsolete)|Content text for en locale
 seo.title@de|SEO|Content text for de locale
 seo.title@en|SEO|Content text for en locale
+svg.icon.default.alt@de|Icon|Default German alt text
+svg.icon.default.alt@en|Icon|Default English alt text
+svg.icon.missing.alt@de|Fehlendes Icon|German alt text for missing icons
+svg.icon.missing.alt@en|Missing Icon|English alt text for missing icons
+svg.icon.feather.credit@de|Feather Icons von feathericons.com|German credit for Feather icons
+svg.icon.feather.credit@en|Feather Icons from feathericons.com|English credit for Feather icons
