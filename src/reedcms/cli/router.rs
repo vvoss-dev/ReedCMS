@@ -158,6 +158,9 @@ pub fn create_router() -> Router {
     router.register("list", "text", |args, _flags| {
         data_commands::list_text(args)
     });
+
+    // Aggregate command
+    router.register("text", "aggregate", data_commands::aggregate_text);
     router.register("list", "route", |args, _flags| {
         data_commands::list_route(args)
     });

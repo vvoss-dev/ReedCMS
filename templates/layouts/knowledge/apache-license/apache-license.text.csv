@@ -1,63 +1,65 @@
 key|value|comment
-apache.license.title@de|Apache-Lizenz 2.0|Content text for de locale
-apache.license.title@en|Apache License 2.0|Content text for en locale
-apache.license.category.label@de|Kategorie|Content text for de locale
-apache.license.category.label@en|Category|Content text for en locale
-apache.license.category.value@de|Open-Source-Lizenz|Content text for de locale
-apache.license.category.value@en|Open Source License|Content text for en locale
-apache.license.stable.label@de|Version|Content text for de locale
-apache.license.stable.label@en|Version|Content text for en locale
-apache.license.stable.value@de|2.0 (seit 2004)|Content text for de locale
-apache.license.stable.value@en|2.0 (since 2004)|Content text for en locale
-apache.license.creator.label@de|Herausgeber|Content text for de locale
-apache.license.creator.label@en|Publisher|Content text for en locale
-apache.license.creator.value@de|Apache Software Foundation|Content text for de locale
-apache.license.creator.value@en|Apache Software Foundation|Content text for en locale
-apache.license.project.label@de|Volltext|Content text for de locale
-apache.license.project.label@en|Full Text|Content text for en locale
-apache.license.project.value@de|"<a href=""https://www.apache.org/licenses/LICENSE-2.0"" target=""_blank"">Apache License 2.0</a>"|Content text for de locale
-apache.license.project.value@en|"<a href=""https://www.apache.org/licenses/LICENSE-2.0"" target=""_blank"">Apache License 2.0</a>"|Content text for en locale
-apache.license.description@de|Die Apache-Lizenz 2.0 ist der pragmatische Kompromiss der Open-Source-Welt. Sie erlaubt praktisch alles: kommerzielle Nutzung, Modifikation, private Nutzung, Patentgewährung - solange der Copyright-Hinweis erhalten bleibt. Im Gegensatz zur GPL ist sie nicht viral: Du kannst Apache-lizenzierten Code in proprietäre Software einbauen ohne deine eigene Software öffnen zu müssen. Das macht sie zur Lieblingslizenz großer Unternehmen. Google (Android, Kubernetes), Microsoft (TypeScript, VS Code), Facebook (React Native) - alle nutzen Apache 2.0. Der Patentschutz ist clever: Wer dich verklagt, verliert automatisch die Lizenz. Diese Webseite nutzt Apache-lizenzierte Komponenten wie Actix-Web und kann sie problemlos mit proprietärem Code kombinieren.|Content text for de locale
-apache.license.description@en|Apache License 2.0 is the pragmatic compromise of the open-source world. It allows practically everything: commercial use, modification, private use, patent grant - as long as the copyright notice is preserved. Unlike GPL, it's not viral: you can embed Apache-licensed code in proprietary software without having to open your own software. This makes it the favorite license of large companies. Google (Android, Kubernetes), Microsoft (TypeScript, VS Code), Facebook (React Native) - all use Apache 2.0. The patent protection is clever: whoever sues you automatically loses the license. This website uses Apache-licensed components like Actix-Web and can easily combine them with proprietary code.|Content text for en locale
-apache.license.enterprise@de|Standard bei Google (Android, TensorFlow, Kubernetes), Microsoft (TypeScript, .NET Core), Facebook (React Native), Netflix (Hystrix), Uber (Jaeger) und praktisch jedem Enterprise-Open-Source-Projekt das kommerziell nutzbar sein soll.|Content text for de locale
-apache.license.enterprise@en|Standard at Google (Android, TensorFlow, Kubernetes), Microsoft (TypeScript, .NET Core), Facebook (React Native), Netflix (Hystrix), Uber (Jaeger), and practically every enterprise open-source project that should be commercially usable.|Content text for en locale
-apache.license.compare.title@de|Bewertung|Content text for de locale
-apache.license.compare.title@en|Assessment|Content text for en locale
-apache.license.compare.subtitle@de|Ehrliche Einschätzung der Lizenz|Content text for de locale
-apache.license.compare.subtitle@en|Honest assessment of the license|Content text for en locale
-apache.license.cons.title@de|Nachteile|Content text for de locale
-apache.license.cons.title@en|Disadvantages|Content text for en locale
-apache.license.cons.1@de|Keine Copyleft-Garantie|Content text for de locale
-apache.license.cons.1@en|No copyleft guarantee|Content text for en locale
-apache.license.cons.2@de|Komplexer als MIT-Lizenz|Content text for de locale
-apache.license.cons.2@en|More complex than MIT License|Content text for en locale
-apache.license.cons.3@de|NOTICE-Datei muss gepflegt werden|Content text for de locale
-apache.license.cons.3@en|NOTICE file must be maintained|Content text for en locale
-apache.license.cons.4@de|Inkompatibel mit GPL v2|Content text for de locale
-apache.license.cons.4@en|Incompatible with GPL v2|Content text for en locale
-apache.license.cons.5@de|Kein virales Copyleft für Puristen|Content text for de locale
-apache.license.cons.5@en|No viral copyleft for purists|Content text for en locale
-apache.license.pros.title@de|Vorteile|Content text for de locale
-apache.license.pros.title@en|Advantages|Content text for en locale
-apache.license.pros.1@de|Kann in proprietäre Software eingebaut werden|Content text for de locale
-apache.license.pros.1@en|Can be embedded in proprietary software|Content text for en locale
-apache.license.pros.2@de|Expliziter Patentschutz|Content text for de locale
-apache.license.pros.2@en|Explicit patent protection|Content text for en locale
-apache.license.pros.3@de|Kommerzielle Nutzung erlaubt|Content text for de locale
-apache.license.pros.3@en|Commercial use allowed|Content text for en locale
-apache.license.pros.4@de|Große Unternehmen vertrauen ihr|Content text for de locale
-apache.license.pros.4@en|Large companies trust it|Content text for en locale
-apache.license.pros.5@de|Nicht viral wie GPL|Content text for de locale
-apache.license.pros.5@en|Not viral like GPL|Content text for en locale
-apache.license.syntax.label@de|Pflichten|Content text for de locale
-apache.license.syntax.label@en|Obligations|Content text for en locale
-apache.license.syntax.value@de|Copyright + NOTICE erhalten|Content text for de locale
-apache.license.syntax.value@en|Preserve copyright + NOTICE|Content text for en locale
-apache.license.security.label@de|Rechtssicherheit|Content text for de locale
-apache.license.security.label@en|Legal Security|Content text for en locale
-apache.license.security.value@de|Sehr hoch, gerichtserprobt|Content text for de locale
-apache.license.security.value@en|Very high, court-tested|Content text for en locale
-apache.license.performance.label@de|Adoption|Content text for de locale
-apache.license.performance.label@en|Adoption|Content text for en locale
-apache.license.performance.value@de|Top 3 Open-Source-Lizenz|Content text for de locale
-apache.license.performance.value@en|Top 3 open source license|Content text for en locale
+knowledge-term.apache-license.title@de|Apache-Lizenz 2.0|Content text for de locale
+knowledge-term.apache-license.title@en|Apache License 2.0|Content text for en locale
+knowledge-term.apache-license.category.label@de|Kategorie|Content text for de locale
+knowledge-term.apache-license.category.label@en|Category|Content text for en locale
+knowledge-term.apache-license.category.value@de|Open-Source-Lizenz|Content text for de locale
+knowledge-term.apache-license.category.value@en|Open Source License|Content text for en locale
+knowledge-term.apache-license.stable.label@de|Version|Content text for de locale
+knowledge-term.apache-license.stable.label@en|Version|Content text for en locale
+knowledge-term.apache-license.stable.value@de|2.0 (seit 2004)|Content text for de locale
+knowledge-term.apache-license.stable.value@en|2.0 (since 2004)|Content text for en locale
+knowledge-term.apache-license.creator.label@de|Herausgeber|Content text for de locale
+knowledge-term.apache-license.creator.label@en|Publisher|Content text for en locale
+knowledge-term.apache-license.creator.value@de|Apache Software Foundation|Content text for de locale
+knowledge-term.apache-license.creator.value@en|Apache Software Foundation|Content text for en locale
+knowledge-term.apache-license.project.label@de|Volltext|Content text for de locale
+knowledge-term.apache-license.project.label@en|Full Text|Content text for en locale
+knowledge-term.apache-license.project.value@de|"<a href=""https://www.apache.org/licenses/LICENSE-2.0"" target=""_blank"">Apache License 2.0</a>"|Content text for de locale
+knowledge-term.apache-license.project.value@en|"<a href=""https://www.apache.org/licenses/LICENSE-2.0"" target=""_blank"">Apache License 2.0</a>"|Content text for en locale
+knowledge-term.apache-license.description@de|Die Apache-Lizenz 2.0 ist der pragmatische Kompromiss der Open-Source-Welt. Sie erlaubt praktisch alles: kommerzielle Nutzung, Modifikation, private Nutzung, Patentgewährung - solange der Copyright-Hinweis erhalten bleibt. Im Gegensatz zur GPL ist sie nicht viral: Du kannst Apache-lizenzierten Code in proprietäre Software einbauen ohne deine eigene Software öffnen zu müssen. Das macht sie zur Lieblingslizenz großer Unternehmen. Google (Android, Kubernetes), Microsoft (TypeScript, VS Code), Facebook (React Native) - alle nutzen Apache 2.0. Der Patentschutz ist clever: Wer dich verklagt, verliert automatisch die Lizenz. Diese Webseite nutzt Apache-lizenzierte Komponenten wie Actix-Web und kann sie problemlos mit proprietärem Code kombinieren.|Content text for de locale
+knowledge-term.apache-license.description@en|Apache License 2.0 is the pragmatic compromise of the open-source world. It allows practically everything: commercial use, modification, private use, patent grant - as long as the copyright notice is preserved. Unlike GPL, it's not viral: you can embed Apache-licensed code in proprietary software without having to open your own software. This makes it the favorite license of large companies. Google (Android, Kubernetes), Microsoft (TypeScript, VS Code), Facebook (React Native) - all use Apache 2.0. The patent protection is clever: whoever sues you automatically loses the license. This website uses Apache-licensed components like Actix-Web and can easily combine them with proprietary code.|Content text for en locale
+knowledge-term.apache-license.enterprise@de|Standard bei Google (Android, TensorFlow, Kubernetes), Microsoft (TypeScript, .NET Core), Facebook (React Native), Netflix (Hystrix), Uber (Jaeger) und praktisch jedem Enterprise-Open-Source-Projekt das kommerziell nutzbar sein soll.|Content text for de locale
+knowledge-term.apache-license.enterprise@en|Standard at Google (Android, TensorFlow, Kubernetes), Microsoft (TypeScript, .NET Core), Facebook (React Native), Netflix (Hystrix), Uber (Jaeger), and practically every enterprise open-source project that should be commercially usable.|Content text for en locale
+knowledge-term.apache-license.compare.title@de|Bewertung|Content text for de locale
+knowledge-term.apache-license.compare.title@en|Assessment|Content text for en locale
+knowledge-term.apache-license.compare.subtitle@de|Ehrliche Einschätzung der Lizenz|Content text for de locale
+knowledge-term.apache-license.compare.subtitle@en|Honest assessment of the license|Content text for en locale
+knowledge-term.apache-license.cons.title@de|Nachteile|Content text for de locale
+knowledge-term.apache-license.cons.title@en|Disadvantages|Content text for en locale
+knowledge-term.apache-license.cons.1@de|Keine Copyleft-Garantie|Content text for de locale
+knowledge-term.apache-license.cons.1@en|No copyleft guarantee|Content text for en locale
+knowledge-term.apache-license.cons.2@de|Komplexer als MIT-Lizenz|Content text for de locale
+knowledge-term.apache-license.cons.2@en|More complex than MIT License|Content text for en locale
+knowledge-term.apache-license.cons.3@de|NOTICE-Datei muss gepflegt werden|Content text for de locale
+knowledge-term.apache-license.cons.3@en|NOTICE file must be maintained|Content text for en locale
+knowledge-term.apache-license.cons.4@de|Inkompatibel mit GPL v2|Content text for de locale
+knowledge-term.apache-license.cons.4@en|Incompatible with GPL v2|Content text for en locale
+knowledge-term.apache-license.cons.5@de|Kein virales Copyleft für Puristen|Content text for de locale
+knowledge-term.apache-license.cons.5@en|No viral copyleft for purists|Content text for en locale
+knowledge-term.apache-license.pros.title@de|Vorteile|Content text for de locale
+knowledge-term.apache-license.pros.title@en|Advantages|Content text for en locale
+knowledge-term.apache-license.pros.1@de|Kann in proprietäre Software eingebaut werden|Content text for de locale
+knowledge-term.apache-license.pros.1@en|Can be embedded in proprietary software|Content text for en locale
+knowledge-term.apache-license.pros.2@de|Expliziter Patentschutz|Content text for de locale
+knowledge-term.apache-license.pros.2@en|Explicit patent protection|Content text for en locale
+knowledge-term.apache-license.pros.3@de|Kommerzielle Nutzung erlaubt|Content text for de locale
+knowledge-term.apache-license.pros.3@en|Commercial use allowed|Content text for en locale
+knowledge-term.apache-license.pros.4@de|Große Unternehmen vertrauen ihr|Content text for de locale
+knowledge-term.apache-license.pros.4@en|Large companies trust it|Content text for en locale
+knowledge-term.apache-license.pros.5@de|Nicht viral wie GPL|Content text for de locale
+knowledge-term.apache-license.pros.5@en|Not viral like GPL|Content text for en locale
+knowledge-term.apache-license.syntax.label@de|Pflichten|Content text for de locale
+knowledge-term.apache-license.syntax.label@en|Obligations|Content text for en locale
+knowledge-term.apache-license.syntax.value@de|Copyright + NOTICE erhalten|Content text for de locale
+knowledge-term.apache-license.syntax.value@en|Preserve copyright + NOTICE|Content text for en locale
+knowledge-term.apache-license.security.label@de|Rechtssicherheit|Content text for de locale
+knowledge-term.apache-license.security.label@en|Legal Security|Content text for en locale
+knowledge-term.apache-license.security.value@de|Sehr hoch, gerichtserprobt|Content text for de locale
+knowledge-term.apache-license.security.value@en|Very high, court-tested|Content text for en locale
+knowledge-term.apache-license.performance.label@de|Adoption|Content text for de locale
+knowledge-term.apache-license.performance.label@en|Adoption|Content text for en locale
+knowledge-term.apache-license.performance.value@de|Top 3 Open-Source-Lizenz|Content text for de locale
+knowledge-term.apache-license.performance.value@en|Top 3 open source license|Content text for en locale
+knowledge-term.apache-license@de|Apache-Lizenz 2.0|Index display name
+knowledge-term.apache-license@en|Apache License 2.0|Index display name

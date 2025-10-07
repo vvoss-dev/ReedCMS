@@ -194,7 +194,7 @@ pub fn minify_css(css: &str) -> ReedResult<String> {
 |--------------|--------|-------|---------|
 | Comments | `/* Header styles */` | _(removed)_ | 100% |
 | Whitespace | `body {\n  margin: 0;\n}` | `body{margin:0}` | ~50% |
-| Colour codes | `color: #ffffff;` | `color:#fff` | 33% |
+| Colour codes | `colour: #ffffff;` | `colour:#fff` | 33% |
 | Zero values | `margin: 0px;` | `margin:0` | 25% |
 | **Total** | **10 KB** | **3 KB** | **~70%** |
 

@@ -45,6 +45,16 @@ pub async fn start_http_server(port: u16, workers: Option<usize>) -> ReedResult<
     println!("   Port: {}", port);
     println!("   Workers: {}", worker_count);
 
+    // Aggregate component text.csv files
+    println!("   Aggregating component text files...");
+    match crate::reedcms::reedbase::init::aggregate_text_csv() {
+        Ok(response) => println!("   ✓ {}", response.data),
+        Err(e) => {
+            eprintln!("   ⚠ Warning: Text aggregation failed: {}", e);
+            eprintln!("   Continuing with existing .reed/text.csv if present");
+        }
+    }
+
     // Initialize ReedBase caches
     println!("   Initializing ReedBase caches...");
     crate::reedcms::reedbase::cache::init_text_cache()?;

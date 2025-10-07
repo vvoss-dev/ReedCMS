@@ -113,7 +113,7 @@ reed server:io --port 8333
 | `config:export` | Export CSV → TOML | ✅ Complete |
 | `config:show` | Show current config | ✅ Complete |
 | `config:validate` | Validate TOML | ✅ Complete |
-| `config:init` | Initialize new config | ✅ Complete |
+| `config:init` | Initialise new config | ✅ Complete |
 | **Server** | | |
 | `server:io` | Start HTTP/socket server | ✅ Complete |
 | **Taxonomy** | | 🔄 In Progress |

@@ -10,28 +10,28 @@
 <section class="section header grid-1 padding-y-1 padding-x-1">
     <nav class="nav-content breakbox grid-1 gap-y-1"
          role="navigation"
-         aria-label="{{ 'page.header.main.label' | text('auto') or ('Main navigation') }}">
+         aria-label="{{ 'page-header.main.label' | text('auto') or ('Main navigation') }}">
 
         <div class="logo-wrapper grid-2 gap-x-1">
             {# Logo with red dots #}
-            <a href="/{{ client.lang }}/" class="logo-container flex-x gap-1" aria-label="{{ 'page.header.home.label' | text('auto') or ('Home') }} - {{ 'page.header.logo.title' | text('auto') }}">
+            <a href="/{{ client.lang }}/" class="logo-container flex-x gap-1" aria-label="{{ 'page-header.home.label' | text('auto') or ('Home') }} - {{ 'page-header.logo.title' | text('auto') }}">
                 <div class="logo-dots flex-x" aria-hidden="true">
                     <div class="dot"></div>
                     <div class="dot"></div>
                 </div>
                 <div class="logo-text grid-1">
-                    <span class="logo-name">{{ 'page.header.logo.name' | text('auto') }}</span>
-                    <span class="subtitle">{{ 'page.header.logo.title' | text('auto') }}</span>
+                    <span class="logo-name">{{ 'page-header.logo.name' | text('auto') }}</span>
+                    <span class="subtitle">{{ 'page-header.logo.title' | text('auto') }}</span>
                 </div>
             </a>
 
             {# Language switcher touch only - ReedCMS route filter #}
             {% if client.lang == "en" %}
-                <a class="lang-switch" href="/de/{% if current_pagekey %}{{ current_pagekey | route('de') }}{% endif %}" aria-label="{{ 'page.header.lang.switch' | text('auto') }}" lang="de">
+                <a class="lang-switch" href="/de/{% if current_pagekey %}{{ current_pagekey | route('de') }}{% endif %}" aria-label="{{ 'page-header.lang.switch' | text('auto') }}" lang="de">
                     DE
                 </a>
             {% else %}
-                <a class="lang-switch" href="/en/{% if current_pagekey %}{{ current_pagekey | route('en') }}{% endif %}" aria-label="{{ 'page.header.lang.switch' | text('auto') }}" lang="en">
+                <a class="lang-switch" href="/en/{% if current_pagekey %}{{ current_pagekey | route('en') }}{% endif %}" aria-label="{{ 'page-header.lang.switch' | text('auto') }}" lang="en">
                     EN
                 </a>
             {% endif %}
@@ -50,7 +50,7 @@
                             class="grid-2 gap-x-1"
                             {% if current_pagekey == pagekey %}aria-current="page"{% endif %}>
                             {{ svg_icon("chevrons-right", "16", "nav-chevron", "Navigate to") }}
-                            <span>{{ ("page.header.menu." ~ pagekey) | text('auto') }}</span>
+                            <span>{{ ("page-header.menu." ~ pagekey) | text('auto') }}</span>
                         </a>
                     </li>
                 {% endfor %}

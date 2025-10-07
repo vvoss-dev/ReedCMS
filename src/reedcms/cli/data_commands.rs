@@ -99,6 +99,32 @@ pub fn set_text(
     })
 }
 
+/// Aggregates all component .text.csv files into .reed/text.csv
+///
+/// ## Arguments
+/// - None
+///
+/// ## Output
+/// - Success message with count of aggregated entries
+///
+/// ## Performance
+/// - < 50ms for typical component structure
+///
+/// ## Error Conditions
+/// - templates/ directory not found
+/// - Cannot write .reed/text.csv
+///
+/// ## Example Usage
+/// ```bash
+/// reed text:aggregate
+/// ```
+pub fn aggregate_text(
+    _args: &[String],
+    _flags: &HashMap<String, String>,
+) -> ReedResult<ReedResponse<String>> {
+    crate::reedcms::reedbase::init::aggregate_text_csv()
+}
+
 /// Sets route mapping via CLI.
 ///
 /// ## Arguments

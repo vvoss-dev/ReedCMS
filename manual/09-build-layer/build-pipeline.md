@@ -392,7 +392,7 @@ fn calculate_content_hash(content: &[u8]) -> String {
 
     let mut hasher = Sha256::new();
     hasher.update(content);
-    let result = hasher.finalize();
+    let result = hasher.finalise();
 
     // First 8 characters of hex hash
     format!("{:x}", result)[..8].to_string()

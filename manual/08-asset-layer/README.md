@@ -301,7 +301,7 @@ cargo build --release
 ./target/release/reedcms server:start
 ```
 
-**Optimization:**
+**Optimisation:**
 - Minification enabled
 - Long cache headers
 - Compression (gzip/brotli)

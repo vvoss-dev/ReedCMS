@@ -37,7 +37,7 @@ The API Layer provides RESTful HTTP endpoints for external integrations, featuri
                     │
                     ▼
 ┌──────────────────────────────────────────────────┐
-│         Authorization (Security Matrix)          │
+│         Authorisation (Security Matrix)          │
 │   Check Permission: text[r--], user[rwx]         │
 └───────────────────┬──────────────────────────────┘
                     │
@@ -518,10 +518,10 @@ console.log(data.data);  // "Welcome"
 | Operation | Time | Notes |
 |-----------|------|-------|
 | Authentication | < 100ms | Argon2 verification |
-| Authorization check | < 1ms | Permission lookup |
+| Authorisation check | < 1ms | Permission lookup |
 | Rate limit check | < 1ms | Sliding window |
 | Data retrieval | < 100μs | ReedBase cache |
-| JSON serialization | < 1ms | serde_json |
+| JSON serialisation | < 1ms | serde_json |
 | **Total** | < 110ms | First request (auth) |
 | **Cached** | < 5ms | Subsequent requests |
 

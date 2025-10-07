@@ -287,7 +287,7 @@ fn calculate_sha256(path: &str) -> ReedResult<String> {
     let content = fs::read(path)?;
     let mut hasher = Sha256::new();
     hasher.update(&content);
-    Ok(format!("{:x}", hasher.finalize()))
+    Ok(format!("{:x}", hasher.finalise()))
 }
 ```
 
@@ -304,7 +304,7 @@ fn calculate_md5(path: &str) -> ReedResult<String> {
     let content = fs::read(path)?;
     let mut hasher = Md5::new();
     hasher.update(&content);
-    Ok(format!("{:x}", hasher.finalize()))
+    Ok(format!("{:x}", hasher.finalise()))
 }
 ```
 
@@ -317,7 +317,7 @@ fn calculate_md5(path: &str) -> ReedResult<String> {
 ### Structure
 
 ```rust
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialise)]
 pub struct BuildInfo {
     pub version: String,
     pub binary_path: String,

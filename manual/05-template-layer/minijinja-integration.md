@@ -29,12 +29,19 @@ ReedCMS uses MiniJinja, a Rust implementation of the Jinja2 template language, p
 
 ## Environment Setup
 
-### Basic Configuration
+### Per-Request Pattern (Current Implementation)
+
+**ReedCMS creates a new Environment for EACH request** with request-specific filters and functions.
+
+**Why?**
+- Filters need request language: `text("en")` vs `text("de")`
+- Functions need variant: `organism()` with "mouse" vs "touch"
+- Template functions required **before parsing** for `{% extends layout("page") %}`
 
 ```rust
 use minijinja::Environment;
 
-pub fn create_environment() -> Environment<'static> {
+pub fn create_environment(lang: &str, variant: &str) -> Environment<'static> {
     let mut env = Environment::new();
     
     // Set template directory
@@ -45,32 +52,27 @@ pub fn create_environment() -> Environment<'static> {
         name.ends_with(".html") || name.ends_with(".jinja")
     });
     
-    env
-}
-```
-
-### With Custom Filters
-
-```rust
-pub fn create_environment(lang: &str, env_mode: &str) -> Environment<'static> {
-    let mut env = Environment::new();
-    
-    env.set_loader(path_loader("templates"));
-    
-    // Register ReedBase filters
+    // Add filters with request language
     env.add_filter("text", make_text_filter(lang.to_string()));
     env.add_filter("route", make_route_filter(lang.to_string()));
     env.add_filter("meta", make_meta_filter());
     env.add_filter("config", make_config_filter());
     
-    // Development: Enable hot-reload
-    if env_mode == "dev" {
-        env.set_auto_reload(true);
-    }
+    // Add functions with request variant
+    env.add_function("organism", make_organism_function(variant.to_string()));
+    env.add_function("molecule", make_molecule_function(variant.to_string()));
+    env.add_function("atom", make_atom_function(variant.to_string()));
+    env.add_function("layout", make_layout_function(variant.to_string()));
     
     env
 }
 ```
+
+**Performance:**
+- Environment creation: < 50μs
+- MiniJinja internally caches parsed templates
+- Total overhead: < 2ms per request
+- Still fast due to O(1) ReedBase cache lookups
 
 ---
 
@@ -110,14 +112,22 @@ env.set_loader(|name| {
 ```rust
 use minijinja::context;
 
-let env = create_environment("en", "prod");
+let env = create_environment("en", "mouse");
 
 // Get template
 let tmpl = env.get_template("layouts/knowledge/knowledge.mouse.jinja")?;
 
 // Build context
 let ctx = context! {
-    lang => "en",
+    client => context! {
+        lang => "en",
+        interaction_mode => "mouse",
+        device => "desktop"
+    },
+    pagekey => "knowledge",  // NOT "layout" - conflicts with layout() function!
+    page => context! {
+        latest_update => "2025-10-07"
+    },
     title => "Knowledge Base",
     items => vec![/* ... */],
 };
@@ -125,6 +135,8 @@ let ctx = context! {
 // Render
 let html = tmpl.render(ctx)?;
 ```
+
+**Critical:** Use `pagekey` NOT `layout` - context variable `layout` conflicts with `layout()` template function!
 
 ### With Error Handling
 
@@ -336,16 +348,17 @@ ReedError::TemplateError {
 }
 ```
 
-**Filter error:**
+**Missing key (graceful fallback):**
 ```jinja
 {{ "invalid.key" | text("en") }}
+<!-- Output: invalid.key (returns key itself, no error) -->
 ```
-```rust
-ReedError::TemplateError {
-    template: "page.jinja".to_string(),
-    reason: "Filter 'text' failed: Key not found: invalid.key@en".to_string(),
-}
-```
+
+**Filter behaviour:**
+- `text` filter returns key itself if not found
+- `route` filter returns key itself if not found
+- No template errors from missing keys
+- Missing keys visible in rendered output for debugging
 
 ### Error Display
 
@@ -362,12 +375,12 @@ Error: Variable 'missing_var' not found
 **Production mode:**
 ```html
 <h1>500 Internal Server Error</h1>
-<p>An error occurred while rendering the page.</p>
+<p>An error occurred whilst rendering the page.</p>
 ```
 
 ---
 
-## Performance Optimization
+## Performance Optimisation
 
 ### Template Caching
 

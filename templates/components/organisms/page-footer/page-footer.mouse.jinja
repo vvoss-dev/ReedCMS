@@ -7,7 +7,7 @@
     <section class="footer-content grid-1 gap-y-2">
         {# Tech stack description #}
         <div class="footer-tech">
-            {{ 'page.footer.tech.description' | text('auto') }}
+            {{ 'page-footer.tech.description' | text('auto') }}
         </div>
 
         {# Complete technology logos showcase #}
@@ -22,27 +22,27 @@
 
         {# Copyright #}
         <div class="footer-copyright">
-            © {{ current_year }} Vivian Voss. {{ 'page.footer.copyright.text' | text('auto') }}
+            © {{ current_year }} Vivian Voss. {{ 'page-footer.copyright.text' | text('auto') }}
         </div>
 
         {# Development info (only in dev mode) #}
         {% if config.dev_mode %}
         <div class="footer-dev">
             <details>
-                <summary>{{ 'page.footer.dev.info.title' | text('auto') }}</summary>
+                <summary>{{ 'page-footer.dev.info.title' | text('auto') }}</summary>
                 <ul>
-                    <li>{{ 'page.footer.dev.language' | text('auto') }}: {{ client.lang }}</li>
-                    <li>{{ 'page.footer.dev.device' | text('auto') }}: {{ client.device_type }}</li>
-                    <li>{{ 'page.footer.dev.breakpoint' | text('auto') }}: {{ client.breakpoint }}</li>
-                    <li>{{ 'page.footer.dev.mode' | text('auto') }}: {{ client.interaction_mode }}</li>
+                    <li>{{ 'page-footer.dev.language' | text('auto') }}: {{ client.lang }}</li>
+                    <li>{{ 'page-footer.dev.device' | text('auto') }}: {{ client.device_type }}</li>
+                    <li>{{ 'page-footer.dev.breakpoint' | text('auto') }}: {{ client.breakpoint }}</li>
+                    <li>{{ 'page-footer.dev.mode' | text('auto') }}: {{ client.interaction_mode }}</li>
                     {% if client.screen_width %}
-                    <li>{{ 'page.footer.dev.screen' | text('auto') }}: {{ client.screen_width }}×{{ client.screen_height }}</li>
+                    <li>{{ 'page-footer.dev.screen' | text('auto') }}: {{ client.screen_width }}×{{ client.screen_height }}</li>
                     {% endif %}
                     {% if client.viewport_width %}
-                    <li>{{ 'page.footer.dev.viewport' | text('auto') }}: {{ client.viewport_width }}×{{ client.viewport_height }}</li>
+                    <li>{{ 'page-footer.dev.viewport' | text('auto') }}: {{ client.viewport_width }}×{{ client.viewport_height }}</li>
                     {% endif %}
                     {% if client.dpr %}
-                    <li>{{ 'page.footer.dev.dpr' | text('auto') }}: {{ client.dpr }}</li>
+                    <li>{{ 'page-footer.dev.dpr' | text('auto') }}: {{ client.dpr }}</li>
                     {% endif %}
                 </ul>
             </details>

@@ -285,7 +285,7 @@ ReedResponse {
 
 ### Examples
 
-**Initialize text cache:**
+**Initialise text cache:**
 ```rust
 let request = ReedRequest {
     context: Some("text".to_string()),
@@ -299,7 +299,7 @@ let cache: HashMap<String, String> = response.data;
 println!("Loaded {} text entries", cache.len());
 ```
 
-**Initialize all caches:**
+**Initialise all caches:**
 ```rust
 // Text
 let text_cache = init(ReedRequest {
@@ -479,7 +479,7 @@ let reedbase = ReedBase::new(
     ".reed/meta.csv",
 );
 
-// Initialize caches
+// Initialise caches
 reedbase.init()?;
 
 // Get text

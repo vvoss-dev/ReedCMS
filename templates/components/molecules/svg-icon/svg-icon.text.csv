@@ -1,7 +1,7 @@
 key|value|comment
-svg.icon.default.alt@de|Icon|Default German alt text
-svg.icon.default.alt@en|Icon|Default English alt text
-svg.icon.missing.alt@de|Fehlendes Icon|German alt text for missing icons
-svg.icon.missing.alt@en|Missing Icon|English alt text for missing icons
-svg.icon.feather.credit@de|Feather Icons von feathericons.com|German credit for Feather icons
-svg.icon.feather.credit@en|Feather Icons from feathericons.com|English credit for Feather icons
+svg-icon.default.alt@de|Icon|Default German alt text
+svg-icon.default.alt@en|Icon|Default English alt text
+svg-icon.missing.alt@de|Fehlendes Icon|German alt text for missing icons
+svg-icon.missing.alt@en|Missing Icon|English alt text for missing icons
+svg-icon.feather.credit@de|Feather Icons von feathericons.com|German credit for Feather icons
+svg-icon.feather.credit@en|Feather Icons from feathericons.com|English credit for Feather icons

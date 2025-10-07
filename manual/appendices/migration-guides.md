@@ -29,7 +29,7 @@ reed server:start --test
 
 ### Key Nomenclature Changes
 
-**Scenario**: Renaming keys while preserving values
+**Scenario**: Renaming keys whilst preserving values
 
 ```bash
 # Example: knowledge.title → kb.title

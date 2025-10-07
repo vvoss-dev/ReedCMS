@@ -79,10 +79,19 @@ Retrieve text content from `.reed/text.csv` with language support.
 **Key not found:**
 ```jinja
 {{ "invalid.key" | text("en") }}
-<!-- Error: Key not found: invalid.key@en -->
+<!-- Output: invalid.key (returns key itself as fallback) -->
 ```
 
-**Template fails to render** - error displayed based on environment (dev/prod).
+**Fallback behaviour:**
+- **Missing keys return the key itself** - no error thrown
+- Templates render successfully even with missing translations
+- Missing keys visible in rendered output for easy debugging
+- Production-safe: no template crashes from missing keys
+
+**Why this approach?**
+- Development: Missing keys immediately visible as `"missing.key"` in browser
+- Production: Graceful degradation - shows key instead of error page
+- No need for exhaustive key definitions during development
 
 ---
 
@@ -99,6 +108,8 @@ Retrieve text content from `.reed/text.csv` with language support.
 ### Purpose
 
 Retrieve URL path for a layout from `.reed/routes.csv`.
+
+**Fallback:** Returns key itself if route not found (same as text filter).
 
 ### Examples
 
@@ -278,7 +289,7 @@ Retrieve configuration values from `.reed/server.csv` and `.reed/project.csv`.
 
 ---
 
-## Performance Optimization
+## Performance Optimisation
 
 ### Cache Filter Results
 
@@ -318,21 +329,22 @@ Retrieve configuration values from `.reed/server.csv` and `.reed/project.csv`.
 
 ## Error Handling
 
-### Missing Keys
+### Missing Keys (Graceful Fallback)
 
-**Development mode:**
-```
-Filter Error: text
-Key: invalid.key@en
-Reason: Key not found in .reed/text.csv
-Template: layouts/knowledge/knowledge.mouse.jinja
-Line: 42
+**Both text and route filters:**
+```jinja
+{{ "nonexistent.key" | text("en") }}
+<!-- Output: nonexistent.key -->
+
+{{ "invalid.route" | route("de") }}
+<!-- Output: invalid.route -->
 ```
 
-**Production mode:**
-```
-500 Internal Server Error
-```
+**No errors thrown** - templates always render successfully.
+
+**In development:** Missing keys clearly visible in browser output for debugging.
+
+**In production:** Graceful degradation - shows key identifier instead of crashing.
 
 ### Invalid Arguments
 

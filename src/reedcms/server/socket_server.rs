@@ -262,6 +262,16 @@ pub async fn start_socket_server(socket_path: &str, workers: Option<usize>) -> R
     println!("   Socket: {}", socket_path);
     println!("   Workers: {}", worker_count);
 
+    // Aggregate component text.csv files
+    println!("   Aggregating component text files...");
+    match crate::reedcms::reedbase::init::aggregate_text_csv() {
+        Ok(response) => println!("   ✓ {}", response.data),
+        Err(e) => {
+            eprintln!("   ⚠ Warning: Text aggregation failed: {}", e);
+            eprintln!("   Continuing with existing .reed/text.csv if present");
+        }
+    }
+
     // Initialize ReedBase caches
     println!("   Initializing ReedBase caches...");
     crate::reedcms::reedbase::cache::init_text_cache()?;
