@@ -99,7 +99,7 @@ pub fn init_template_engine(
 ///
 /// ## Note
 /// The name parameter is the full relative path from templates/ directory.
-fn template_loader(name: &str) -> Result<Option<String>, Error> {
+pub fn template_loader(name: &str) -> Result<Option<String>, Error> {
     let path = format!("templates/{}", name);
 
     if !Path::new(&path).exists() {
