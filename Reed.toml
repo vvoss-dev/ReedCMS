@@ -32,6 +32,14 @@ parallel = true
 [server]
 workers = 4
 
+[server.domain]
+dev = "vvoss.local"
+prod = "vvoss.dev"
+
+[server.bind]
+address_dev = "127.0.0.1:8333"
+socket_prod = "/var/run/reedcms/reedcms.sock"
+
 [server.security]
 enable_cors = false
 allowed_origins = []
