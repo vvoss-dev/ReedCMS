@@ -19,6 +19,30 @@ use std::collections::HashMap;
 use std::fs;
 use std::process::{Command, Stdio};
 
+/// Load environment variable from .env file.
+///
+/// ## Input
+/// - key: Environment variable name
+///
+/// ## Output
+/// - Value from .env file or None
+fn load_env_var(key: &str) -> Option<String> {
+    if let Ok(content) = fs::read_to_string(".env") {
+        for line in content.lines() {
+            let line = line.trim();
+            if line.starts_with('#') || line.is_empty() {
+                continue;
+            }
+            if let Some((k, v)) = line.split_once('=') {
+                if k.trim() == key {
+                    return Some(v.trim().to_string());
+                }
+            }
+        }
+    }
+    None
+}
+
 /// Starts ReedCMS server in interactive mode.
 ///
 /// ## Input
@@ -109,12 +133,13 @@ pub fn server_start(
     let mut output = String::new();
     output.push_str("🚀 Starting ReedCMS server in background...\n\n");
 
-    // Detect environment from REED_ENV or flag
+    // Detect environment: flag > REED_ENV > .env ENVIRONMENT > PROD (fail-safe)
     let environment = flags
         .get("environment")
         .map(|s| s.to_uppercase())
         .or_else(|| std::env::var("REED_ENV").ok())
-        .unwrap_or_else(|| "DEV".to_string());
+        .or_else(|| load_env_var("ENVIRONMENT").map(|s| s.to_uppercase()))
+        .unwrap_or_else(|| "PROD".to_string());
 
     // Check if PID file exists and stop running instance
     let pid_file = ".reed/server.pid";

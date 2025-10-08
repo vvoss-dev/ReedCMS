@@ -35,11 +35,14 @@ impl Default for ServerConfig {
 
 /// Loads server configuration from .reed/server.csv.
 ///
-/// ## Configuration Keys
-/// - server.bind_type: "http" or "unix"
-/// - server.bind_address: "127.0.0.1:8333"
-/// - server.socket_path: "/var/run/reedcms/web.sock"
+/// ## Configuration Keys (environment-aware)
+/// - server.{env}.io: "127.0.0.1:8333" or "/var/run/reed.sock"
 /// - server.workers: "4"
+///
+/// ## Environment Detection
+/// 1. REED_ENV environment variable
+/// 2. .env file ENVIRONMENT key
+/// 3. Default: "prod"
 ///
 /// ## Performance
 /// - Load time: < 10ms
@@ -51,19 +54,26 @@ impl Default for ServerConfig {
 pub fn load_server_config() -> ReedResult<ServerConfig> {
     let mut config = ServerConfig::default();
 
-    // Load bind_type
-    if let Ok(bind_type) = get_config_value("server.bind_type") {
-        config.bind_type = Some(bind_type);
-    }
+    // Detect environment
+    let env = std::env::var("REED_ENV")
+        .ok()
+        .or_else(|| load_env_var("ENVIRONMENT"))
+        .unwrap_or_else(|| "prod".to_string())
+        .to_lowercase();
 
-    // Load bind_address
-    if let Ok(bind_address) = get_config_value("server.bind_address") {
-        config.bind_address = Some(bind_address);
-    }
-
-    // Load socket_path
-    if let Ok(socket_path) = get_config_value("server.socket_path") {
-        config.socket_path = Some(socket_path);
+    // Load environment-specific io setting
+    let io_key = format!("server.{}.io", env);
+    if let Ok(io_value) = get_config_value(&io_key) {
+        // Parse io value: either "IP:PORT" or "/path/to/socket"
+        if io_value.starts_with('/') {
+            // Unix socket
+            config.bind_type = Some("unix".to_string());
+            config.socket_path = Some(io_value);
+        } else {
+            // HTTP binding
+            config.bind_type = Some("http".to_string());
+            config.bind_address = Some(io_value);
+        }
     }
 
     // Load workers
@@ -74,6 +84,24 @@ pub fn load_server_config() -> ReedResult<ServerConfig> {
     }
 
     Ok(config)
+}
+
+/// Load environment variable from .env file.
+fn load_env_var(key: &str) -> Option<String> {
+    if let Ok(content) = std::fs::read_to_string(".env") {
+        for line in content.lines() {
+            let line = line.trim();
+            if line.starts_with('#') || line.is_empty() {
+                continue;
+            }
+            if let Some((k, v)) = line.split_once('=') {
+                if k.trim() == key {
+                    return Some(v.trim().to_string());
+                }
+            }
+        }
+    }
+    None
 }
 
 /// Gets configuration value from ReedBase.
