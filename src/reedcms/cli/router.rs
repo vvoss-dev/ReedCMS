@@ -273,5 +273,12 @@ pub fn create_router() -> Router {
     router.register("agent", "generate", agent_commands::generate);
     router.register("agent", "translate", agent_commands::translate);
 
+    // REED-10-04: Backup commands
+    use super::backup_commands;
+    router.register("backup", "list", backup_commands::backup_list_handler);
+    router.register("backup", "restore", backup_commands::backup_restore_handler);
+    router.register("backup", "verify", backup_commands::backup_verify_handler);
+    router.register("backup", "prune", backup_commands::backup_prune_handler);
+
     router
 }
