@@ -14,7 +14,7 @@
             {% set label_key = "landing.metrics.item" ~ item_num ~ ".label" %}
             {% set desc_key = "landing.metrics.item" ~ item_num ~ ".description" %}
             <dt>{{ label_key | text('auto') }}</dt>
-            <dd>{{ number_key | text('auto') }} - {{ desc_key | text('auto') }}</dd>
+            <dd>{{ number_key | text('auto') | safe }} - {{ desc_key | text('auto') | safe }}</dd>
         {% endfor %}
     </dl>
 </section>
