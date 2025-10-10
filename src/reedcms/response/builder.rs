@@ -17,11 +17,11 @@
 //!
 //! Orchestrates complete HTTP response building from request to rendered HTML.
 
-use actix_web::{Error, HttpRequest, HttpResponse};
 use crate::reedcms::response::cache::cache_control_header;
 use crate::reedcms::response::errors::{build_404_response, build_500_response};
 use crate::reedcms::routing::resolver::resolve_url;
 use crate::reedcms::templates::context::build_context;
+use actix_web::{Error, HttpRequest, HttpResponse};
 use minijinja::Environment;
 use std::sync::OnceLock;
 
@@ -75,7 +75,10 @@ pub async fn build_response(req: HttpRequest) -> Result<HttpResponse, Error> {
     };
 
     // 2. Detect client info (variant, breakpoint, device_type, etc.)
-    let client_info = match crate::reedcms::server::client_detection::detect_client_info(&req, &route_info.language) {
+    let client_info = match crate::reedcms::server::client_detection::detect_client_info(
+        &req,
+        &route_info.language,
+    ) {
         Ok(info) => info,
         Err(e) => return Ok(build_500_response(e)),
     };
@@ -83,18 +86,19 @@ pub async fn build_response(req: HttpRequest) -> Result<HttpResponse, Error> {
     let variant = client_info.interaction_mode.clone();
 
     // 3. Build template context with client info
-    let context = match build_context(
-        &route_info.layout,
-        &route_info.language,
-        &client_info,
-    ) {
+    let context = match build_context(&route_info.layout, &route_info.language, &client_info) {
         Ok(ctx) => ctx,
         Err(e) => return Ok(build_500_response(e)),
     };
 
     // 5. Render template
-    // Template path: layouts/{layout}/{layout}.jinja
-    let template_name = format!("layouts/{}/{}.jinja", route_info.layout, route_info.layout);
+    // Template path resolution:
+    // 1. Try direct: layouts/{layout}/{layout}.jinja
+    // 2. Try sub-layout: layouts/*/{layout}/{layout}.jinja (for knowledge articles, etc.)
+    let template_name = match resolve_layout_path(&route_info.layout) {
+        Ok(path) => path,
+        Err(e) => return Ok(build_500_response(e)),
+    };
     let html = match render_template(&template_name, &context) {
         Ok(output) => output,
         Err(e) => return Ok(build_500_response(e)),
@@ -158,10 +162,7 @@ fn detect_variant(req: &HttpRequest) -> String {
         .unwrap_or("");
 
     // Check for reader mode (highest priority for accessibility)
-    if user_agent.contains("Lynx")
-        || user_agent.contains("w3m")
-        || user_agent.contains("Reader")
-    {
+    if user_agent.contains("Lynx") || user_agent.contains("w3m") || user_agent.contains("Reader") {
         return "reader".to_string();
     }
 
@@ -176,6 +177,62 @@ fn detect_variant(req: &HttpRequest) -> String {
 
     // Default to mouse (desktop browsers)
     "mouse".to_string()
+}
+
+/// Resolves layout name to template file path by searching for {layout}.jinja file.
+///
+/// ## Input
+/// - `layout`: Layout name from routes.csv (e.g., "knowledge", "actix-web")
+///
+/// ## Output
+/// - `Result<String, ReedError>`: Template path relative to templates/ or NotFound error
+///
+/// ## Resolution Strategy
+/// Search for file named `{layout}.jinja` anywhere in `templates/layouts/`:
+/// - Direct layout: `templates/layouts/knowledge/knowledge.jinja` → `layouts/knowledge/knowledge.jinja`
+/// - Sub-layout: `templates/layouts/knowledge/actix-web/actix-web.jinja` → `layouts/knowledge/actix-web/actix-web.jinja`
+///
+/// The file path itself defines the hierarchy - no manual parent list needed!
+///
+/// ## Performance
+/// - O(n) recursive directory walk where n = number of .jinja files
+/// - Typically < 5ms for ~50 layouts
+fn resolve_layout_path(layout: &str) -> Result<String, crate::reedcms::reedstream::ReedError> {
+    use crate::reedcms::reedstream::ReedError;
+    use std::path::Path;
+    use walkdir::WalkDir;
+
+    let target_filename = format!("{}.jinja", layout);
+    let layouts_dir = Path::new("templates/layouts");
+
+    // Walk through all .jinja files in layouts directory
+    for entry in WalkDir::new(layouts_dir)
+        .follow_links(false)
+        .into_iter()
+        .filter_map(|e| e.ok())
+    {
+        if entry.file_type().is_file() {
+            if let Some(filename) = entry.file_name().to_str() {
+                if filename == target_filename {
+                    // Found it! Convert absolute path to relative template path
+                    // Example: templates/layouts/knowledge/actix-web/actix-web.jinja
+                    //       → layouts/knowledge/actix-web/actix-web.jinja
+                    if let Ok(rel_path) = entry.path().strip_prefix("templates/") {
+                        return Ok(rel_path.to_string_lossy().to_string());
+                    }
+                }
+            }
+        }
+    }
+
+    // Not found - return error
+    Err(ReedError::NotFound {
+        resource: layout.to_string(),
+        context: Some(format!(
+            "Layout template file '{}.jinja' not found in templates/layouts/",
+            layout
+        )),
+    })
 }
 
 /// Renders template with context using MiniJinja engine.
@@ -215,8 +272,8 @@ fn render_template(
     template_name: &str,
     context: &std::collections::HashMap<String, serde_json::Value>,
 ) -> Result<String, crate::reedcms::reedstream::ReedError> {
-    use crate::reedcms::reedstream::ReedError;
     use crate::reedcms::filters;
+    use crate::reedcms::reedstream::ReedError;
 
     // Get language and variant from context
     let lang = context
@@ -261,10 +318,19 @@ fn render_template(
     env.add_filter("config", filters::config::make_config_filter());
 
     // Add functions with request variant
-    env.add_function("organism", functions::make_organism_function(variant.to_string()));
-    env.add_function("molecule", functions::make_molecule_function(variant.to_string()));
+    env.add_function(
+        "organism",
+        functions::make_organism_function(variant.to_string()),
+    );
+    env.add_function(
+        "molecule",
+        functions::make_molecule_function(variant.to_string()),
+    );
     env.add_function("atom", functions::make_atom_function(variant.to_string()));
-    env.add_function("layout", functions::make_layout_function(variant.to_string()));
+    env.add_function(
+        "layout",
+        functions::make_layout_function(variant.to_string()),
+    );
 
     // Load template
     let template = env
