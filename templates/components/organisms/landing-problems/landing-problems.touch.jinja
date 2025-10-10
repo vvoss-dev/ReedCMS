@@ -25,7 +25,7 @@
                 <div class="problem-card padding-2">
                     <div class="problem-number">{{ number_key | text('auto') }}</div>
                     <h3 class="problem-title margin-y-2">{{ title_key | text('auto') }}</h3>
-                    <p>{{ desc_key | text('auto') }}</p>
+                    <p>{{ desc_key | text('auto') | safe }}</p>
                 </div>
             {% endfor %}
         </div>

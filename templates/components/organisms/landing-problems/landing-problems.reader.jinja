@@ -14,7 +14,7 @@
         {% set desc_key = "landing.problems.card" ~ card_num ~ ".description" %}
         <article>
             <h3>{{ number_key | text('auto') }}. {{ title_key | text('auto') }}</h3>
-            <p>{{ desc_key | text('auto') }}</p>
+            <p>{{ desc_key | text('auto') | safe }}</p>
         </article>
     {% endfor %}
 </section>

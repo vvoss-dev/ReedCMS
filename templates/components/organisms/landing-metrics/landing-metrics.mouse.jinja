@@ -24,12 +24,12 @@
             <div class="metric-item grid-1 gap-y-1">
                 <div class="metric-number">{{ 'landing.metrics.item2.number' | text('auto') }}</div>
                 <p class="metric-label">{{ 'landing.metrics.item2.label' | text('auto') }}</p>
-                <p class="metric-description">{{ 'landing.metrics.item2.description' | text('auto') }}</p>
+                <p class="metric-description">{{ 'landing.metrics.item2.description' | text('auto') | safe }}</p>
             </div>
             <div class="metric-item grid-1 gap-y-1">
                 <div class="metric-number">{{ 'landing.metrics.item1.number' | text('auto') }}</div>
                 <p class="metric-label">{{ 'landing.metrics.item1.label' | text('auto') }}</p>
-                <p class="metric-description">{{ 'landing.metrics.item1.description' | text('auto') }}</p>
+                <p class="metric-description">{{ 'landing.metrics.item1.description' | text('auto') | safe }}</p>
             </div>
         </div>
     </article>
