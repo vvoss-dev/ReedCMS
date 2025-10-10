@@ -89,7 +89,14 @@ pub fn parse_row(line: &str) -> ReedResult<CsvRecord> {
         return Err(parse_error(line, "Key cannot be empty"));
     }
 
+    // Handle quoted values and unescape double quotes (CSV standard)
     let value = parts[1].trim();
+    let value = if value.starts_with('"') && value.ends_with('"') {
+        // Remove outer quotes and unescape inner double quotes: "" → "
+        value[1..value.len() - 1].replace("\"\"", "\"")
+    } else {
+        value.to_string()
+    };
     let description = if parts.len() >= 3 {
         let desc = parts[2].trim();
         if desc.is_empty() {
@@ -103,7 +110,7 @@ pub fn parse_row(line: &str) -> ReedResult<CsvRecord> {
 
     Ok(CsvRecord {
         key: key.to_string(),
-        value: value.to_string(),
+        value,
         description,
     })
 }

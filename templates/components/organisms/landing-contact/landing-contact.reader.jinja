@@ -5,5 +5,5 @@
     <h2>{{ 'landing.contact.title' | text('auto') }}</h2>
     <p>{{ 'landing.contact.subtitle' | text('auto') }}</p>
     <p>Email: {{ 'landing.contact.email' | text('auto') }}</p>
-    <p>{{ 'landing.contact.availability' | text('auto') }}</p>
+    <p>{{ 'landing.contact.availability' | text('auto') | safe }}</p>
 </section>
