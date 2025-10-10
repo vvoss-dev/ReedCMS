@@ -11,6 +11,7 @@ pub mod build;
 pub mod cli;
 pub mod config;
 pub mod csv;
+pub mod debug;
 pub mod filters;
 pub mod matrix;
 pub mod monitor;

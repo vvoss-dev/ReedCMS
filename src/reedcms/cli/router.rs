@@ -275,10 +275,18 @@ pub fn create_router() -> Router {
 
     // REED-10-04: Backup commands
     use super::backup_commands;
+    use super::debug_commands;
+
     router.register("backup", "list", backup_commands::backup_list_handler);
     router.register("backup", "restore", backup_commands::backup_restore_handler);
     router.register("backup", "verify", backup_commands::backup_verify_handler);
     router.register("backup", "prune", backup_commands::backup_prune_handler);
+
+    // Debug commands
+    router.register("debug", "request", debug_commands::debug_request_handler);
+    router.register("debug", "cache", debug_commands::debug_cache_handler);
+    router.register("debug", "route", debug_commands::debug_route_handler);
+    router.register("debug", "config", debug_commands::debug_config_handler);
 
     router
 }
