@@ -308,53 +308,28 @@ fn load_flat_csv(path: &str) -> ReedResult<HashMap<String, String>> {
 /// 1. key with environment: lookup in language map
 /// 2. key without environment: lookup in language map
 /// 3. NotFound error
+///
+/// ## Note
+/// This function now uses the extracted environment module.
 fn lookup_with_env(
     cache: &HashMap<String, HashMap<String, String>>,
     key: &str,
     language: &str,
     environment: Option<&str>,
 ) -> ReedResult<String> {
-    // Get language-specific map
-    let lang_map = cache.get(language).ok_or_else(|| ReedError::NotFound {
-        resource: "language".to_string(),
-        context: Some(language.to_string()),
-    })?;
-
-    // Try with environment suffix first
-    if let Some(env) = environment {
-        let env_key = format!("{}@{}", key, env);
-        if let Some(value) = lang_map.get(&env_key) {
-            return Ok(value.clone());
-        }
-    }
-
-    // Fallback: try without environment
-    lang_map
-        .get(key)
-        .cloned()
-        .ok_or_else(|| ReedError::NotFound {
-            resource: key.to_string(),
-            context: Some(format!("language={}", language)),
-        })
+    use crate::reedcms::reedbase::environment;
+    environment::resolve_with_fallback(cache, key, language, environment)
 }
 
 /// Lookup with environment fallback in flat HashMap
+///
+/// ## Note
+/// This function now uses the extracted environment module.
 fn lookup_flat_with_env(
     cache: &HashMap<String, String>,
     key: &str,
     environment: Option<&str>,
 ) -> ReedResult<String> {
-    // Try with environment suffix first
-    if let Some(env) = environment {
-        let env_key = format!("{}@{}", key, env);
-        if let Some(value) = cache.get(&env_key) {
-            return Ok(value.clone());
-        }
-    }
-
-    // Fallback: try without environment
-    cache.get(key).cloned().ok_or_else(|| ReedError::NotFound {
-        resource: key.to_string(),
-        context: None,
-    })
+    use crate::reedcms::reedbase::environment;
+    environment::resolve_flat_with_fallback(cache, key, environment)
 }

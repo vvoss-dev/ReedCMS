@@ -85,44 +85,17 @@ static META_CACHE: OnceLock<HashMap<String, String>> = OnceLock::new();
 - Keys: `site.title`, `cache.ttl`, `og.image`
 - Values: Metadata strings (no language variants)
 
-**Project Cache:**
+### Thread Safety
+
+**RwLock (Read-Write Lock):**
 ```rust
-static PROJECT_CACHE: OnceLock<HashMap<String, String>> = OnceLock::new();
-```
-- Flat structure: Key → Value
-- Keys: Project configuration settings
-- Values: Configuration strings
+use std::sync::RwLock;
 
-**Server Cache:**
-```rust
-static SERVER_CACHE: OnceLock<HashMap<String, String>> = OnceLock::new();
-```
-- Flat structure: Key → Value
-- Keys: Server configuration settings
-- Values: Configuration strings
+// Multiple concurrent readers
+let value = cache.read().unwrap().get(key);
 
-### Thread Safety with OnceLock
-
-**OnceLock Pattern:**
-```rust
-use std::sync::OnceLock;
-
-static CACHE: OnceLock<HashMap<String, String>> = OnceLock::new();
-
-// Initialise once at startup
-pub fn init_cache() -> ReedResult<()> {
-    let data = load_from_csv()?;
-    CACHE.set(data).map_err(|_| ReedError::ConfigError {
-        component: "CACHE".to_string(),
-        reason: "Already initialised".to_string(),
-    })?;
-    Ok(())
-}
-
-// Read without locks (zero overhead)
-pub fn get_cached(key: &str) -> Option<String> {
-    CACHE.get()?.get(key).cloned()
-}
+// Single writer (blocks all)
+cache.write().unwrap().insert(key, value);
 ```
 
 **Benefits:**
@@ -223,30 +196,35 @@ Request: `get_text("missing.key", "en", "prod")`
 
 **Server startup (http_server.rs):**
 ```rust
-pub async fn start_http_server(port: u16, workers: Option<usize>) -> ReedResult<()> {
-    println!("🚀 Starting ReedCMS HTTP server...");
-    println!("   Port: {}", port);
-    
-    // Initialise all ReedBase caches
-    println!("   Initialising ReedBase caches...");
-    crate::reedcms::reedbase::cache::init_text_cache()?;
-    crate::reedcms::reedbase::cache::init_route_cache()?;
-    crate::reedcms::reedbase::cache::init_meta_cache()?;
-    crate::reedcms::reedbase::cache::init_project_cache()?;
-    crate::reedcms::reedbase::cache::init_server_cache()?;
-    println!("   ✓ Caches initialised");
-    
-    // Server now ready with warm cache
-    start_actix_server(port, workers).await
-}
+let reedbase = ReedBase::new(
+    ".reed/text.csv",
+    ".reed/routes.csv",
+    ".reed/meta.csv",
+);
+
+// Load all CSV files into caches at startup
+reedbase.init()?;
 ```
 
 **Benefits:**
-- All CSV data loaded into memory at startup
-- First request is fast (no lazy loading delay)
-- Predictable performance from start
+- Warm cache from start
+- Predictable startup time
+- All keys available immediately
 
-**Performance:** < 30ms total for all 5 caches
+**Performance:** < 30ms for 3,000 records
+
+**Lazy loading (automatic):**
+```rust
+// First access to empty cache triggers CSV load
+let text = reedbase.get(request)?;
+```
+
+**Benefits:**
+- Faster startup (no init needed)
+- Only loads when needed
+
+**Drawback:**
+- First request slower (< 10ms delay)
 
 ### Lookup (Get)
 
@@ -403,10 +381,11 @@ Concurrent readers: Zero contention (no locks)
 Throughput: ~1,000,000 req/s per core
 ```
 
-**Comparison to RwLock:**
+**Write operations:**
 ```
-OnceLock:  < 1μs per read  (no lock)
-RwLock:    ~10μs per read  (read lock overhead)
+Writers block readers: ~50ms per write
+Max write throughput: ~20 writes/s
+```
 
 Performance gain: 10× faster
 ```
@@ -443,67 +422,66 @@ reed text:get nonexistent.key@en
 <!-- Tries: page.subtitle@dev → page.subtitle → "page.subtitle" -->
 ```
 
-**Filter implementation (filters/text.rs):**
-```rust
-pub fn make_text_filter(language: String) -> impl Filter {
-    move |key: String| -> Result<String, minijinja::Error> {
-        let req = ReedRequest {
-            key: key.clone(),
-            language: Some(language.clone()),
-            environment: None,
-            value: None,
-        };
-        
-        // Returns value from cache, or key itself if not found
-        match crate::reedcms::reedbase::get::text(&req) {
-            Ok(response) => Ok(response.data),
-            Err(_) => Ok(key), // Fallback to key
-        }
-    }
-}
-```
-
-### Server Request Handling
+### Server Initialisation
 
 ```rust
-// templates/context.rs - builds template context
-pub fn build_context(layout: &str, lang: &str, variant: &str) -> HashMap<String, Value> {
-    let mut ctx = HashMap::new();
-    
-    // All text() calls in templates use cache
-    // < 1μs per text lookup
-    // 100+ text() calls = ~100μs total
-    
-    ctx
-}
-```
+// Startup: Warm all caches
+let reedbase = ReedBase::new(/* ... */);
+reedbase.init()?;
+println!("Cache initialised in 28ms");
 
-**Performance impact:**
-```
-Before OnceLock cache: 100 text() calls = 100× CSV reads = ~1000ms
-After OnceLock cache:  100 text() calls = 100× HashMap lookups = ~100μs
-
-10,000× faster page rendering
+// Request handling: Fast lookups
+let title = reedbase.get(text_request)?;
+// < 100μs per request
 ```
 
 ---
 
 ## Cache Strategies
 
-### Startup Initialisation (Current Implementation)
+### Warm Cache at Startup
 
-**Production pattern:**
+**Recommended for production:**
 ```rust
-// Server startup automatically warms all caches
-start_http_server(3000, Some(4))?;
-// → Initialises 5 caches in < 30ms
-// → All subsequent requests use warm cache
+// src/main.rs
+fn main() -> ReedResult<()> {
+    let reedbase = ReedBase::new(/* ... */);
+    
+    // Warm cache
+    reedbase.init()?;
+    
+    // Start server with warm cache
+    start_server(reedbase)?;
+    
+    Ok(())
+}
 ```
 
-**Benefits:**
-- Predictable performance from first request
-- No lazy loading delays
-- All keys available immediately
+### Lazy Load on Demand
+
+**Suitable for development:**
+```rust
+// No init() call - cache empty at startup
+let reedbase = ReedBase::new(/* ... */);
+
+// First get() triggers CSV load
+let text = reedbase.get(request)?; // < 10ms
+let text2 = reedbase.get(request2)?; // < 100μs
+```
+
+### Hybrid Strategy
+
+**Best of both worlds:**
+```rust
+// Warm most-used caches
+reedbase.init_text()?;  // Warm text cache
+// Leave route/meta for lazy load
+
+// Or: Pre-load specific keys
+for key in critical_keys {
+    reedbase.get_text(key, "en")?;
+}
+```
 
 ---
 

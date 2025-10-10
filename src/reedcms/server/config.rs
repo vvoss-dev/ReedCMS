@@ -39,11 +39,6 @@ impl Default for ServerConfig {
 /// - server.{env}.io: "127.0.0.1:8333" or "/var/run/reed.sock"
 /// - server.workers: "4"
 ///
-/// ## Environment Detection
-/// 1. REED_ENV environment variable
-/// 2. .env file ENVIRONMENT key
-/// 3. Default: "prod"
-///
 /// ## Performance
 /// - Load time: < 10ms
 /// - Cached after first load
@@ -57,7 +52,7 @@ pub fn load_server_config() -> ReedResult<ServerConfig> {
     // Detect environment
     let env = std::env::var("REED_ENV")
         .ok()
-        .or_else(|| load_env_var("ENVIRONMENT"))
+        .or_else(|| crate::reedcms::cli::server_commands::load_env_var("ENVIRONMENT"))
         .unwrap_or_else(|| "prod".to_string())
         .to_lowercase();
 
@@ -84,24 +79,6 @@ pub fn load_server_config() -> ReedResult<ServerConfig> {
     }
 
     Ok(config)
-}
-
-/// Load environment variable from .env file.
-fn load_env_var(key: &str) -> Option<String> {
-    if let Ok(content) = std::fs::read_to_string(".env") {
-        for line in content.lines() {
-            let line = line.trim();
-            if line.starts_with('#') || line.is_empty() {
-                continue;
-            }
-            if let Some((k, v)) = line.split_once('=') {
-                if k.trim() == key {
-                    return Some(v.trim().to_string());
-                }
-            }
-        }
-    }
-    None
 }
 
 /// Gets configuration value from ReedBase.

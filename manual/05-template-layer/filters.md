@@ -331,20 +331,19 @@ Retrieve configuration values from `.reed/server.csv` and `.reed/project.csv`.
 
 ### Missing Keys (Graceful Fallback)
 
-**Both text and route filters:**
-```jinja
-{{ "nonexistent.key" | text("en") }}
-<!-- Output: nonexistent.key -->
-
-{{ "invalid.route" | route("de") }}
-<!-- Output: invalid.route -->
+**Development mode:**
+```
+Filter Error: text
+Key: invalid.key@en
+Reason: Key not found in .reed/text.csv
+Template: layouts/knowledge/knowledge.mouse.jinja
+Line: 42
 ```
 
-**No errors thrown** - templates always render successfully.
-
-**In development:** Missing keys clearly visible in browser output for debugging.
-
-**In production:** Graceful degradation - shows key identifier instead of crashing.
+**Production mode:**
+```
+500 Internal Server Error
+```
 
 ### Invalid Arguments
 

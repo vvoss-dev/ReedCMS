@@ -26,7 +26,7 @@ use std::process::{Command, Stdio};
 ///
 /// ## Output
 /// - Value from .env file or None
-fn load_env_var(key: &str) -> Option<String> {
+pub fn load_env_var(key: &str) -> Option<String> {
     if let Ok(content) = fs::read_to_string(".env") {
         for line in content.lines() {
             let line = line.trim();
@@ -151,7 +151,10 @@ pub fn server_start(
 
         // Check if process is actually running
         if is_process_running(&pid) {
-            output.push_str(&format!("⚠ Found running server (PID: {}), stopping it first...\n", pid));
+            output.push_str(&format!(
+                "⚠ Found running server (PID: {}), stopping it first...\n",
+                pid
+            ));
 
             // Stop the running instance
             stop_server_by_pid(&pid)?;
@@ -214,10 +217,12 @@ pub fn server_start(
     // Spawn background process
     let child = Command::new(exe_path)
         .args(&args)
-        .stdout(Stdio::from(log_file.try_clone().map_err(|e| ReedError::IoError {
-            operation: "clone".to_string(),
-            path: log_file_path.clone(),
-            reason: e.to_string(),
+        .stdout(Stdio::from(log_file.try_clone().map_err(|e| {
+            ReedError::IoError {
+                operation: "clone".to_string(),
+                path: log_file_path.clone(),
+                reason: e.to_string(),
+            }
         })?))
         .stderr(Stdio::from(log_file))
         .stdin(Stdio::null())
