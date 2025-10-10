@@ -8,13 +8,13 @@
             <div class="index-group">
                 <h3 class="index-letter">A</h3>
                 <div class="index-terms flex-y gap-1">
-                    <a href="{{ 'knowledge.actix.web.url' | text('auto') }}" class="index-term">{{ 'knowledge-term.actix-web' | text('auto') }}</a>
-                    <a href="{{ 'knowledge.aeo.url' | text('auto') }}" class="index-term">{{ 'knowledge-term.aeo' | text('auto') }}</a>
-                    <a href="{{ 'knowledge.agility.url' | text('auto') }}" class="index-term">{{ 'knowledge-term.agility' | text('auto') }}</a>
-                    <a href="{{ 'knowledge.ai.visibility.url' | text('auto') }}" class="index-term">{{ 'knowledge-term.ai-visibility' | text('auto') }}</a>
-                    <a href="{{ 'knowledge.apache.url' | text('auto') }}" class="index-term">{{ 'knowledge-term.apache' | text('auto') }}</a>
-                    <a href="{{ 'knowledge.apache.license.url' | text('auto') }}" class="index-term">{{ 'knowledge-term.apache-license' | text('auto') }}</a>
-                    <a href="{{ 'knowledge.api.url' | text('auto') }}" class="index-term">{{ 'knowledge-term.api' | text('auto') }}</a>
+                    <a href="/{{ client.lang }}/{{ 'actix-web' | route('auto') }}/" class="index-term">{{ 'knowledge-term.actix-web' | text('auto') }}</a>
+                    <a href="/{{ client.lang }}/{{ 'aeo' | route('auto') }}/" class="index-term">{{ 'knowledge-term.aeo' | text('auto') }}</a>
+                    <a href="/{{ client.lang }}/{{ 'agility' | route('auto') }}/" class="index-term">{{ 'knowledge-term.agility' | text('auto') }}</a>
+                    <a href="/{{ client.lang }}/{{ 'ai-visibility' | route('auto') }}/" class="index-term">{{ 'knowledge-term.ai-visibility' | text('auto') }}</a>
+                    <a href="/{{ client.lang }}/{{ 'apache' | route('auto') }}/" class="index-term">{{ 'knowledge-term.apache' | text('auto') }}</a>
+                    <a href="/{{ client.lang }}/{{ 'apache-license' | route('auto') }}/" class="index-term">{{ 'knowledge-term.apache-license' | text('auto') }}</a>
+                    <a href="/{{ client.lang }}/{{ 'api' | route('auto') }}/" class="index-term">{{ 'knowledge-term.api' | text('auto') }}</a>
                 </div>
             </div>
 
@@ -22,7 +22,7 @@
             <div class="index-group">
                 <h3 class="index-letter">B</h3>
                 <div class="index-terms flex-y gap-1">
-                    <a href="{{ 'knowledge.bastille.url' | text('auto') }}" class="index-term">{{ 'knowledge-term.bastille' | text('auto') or ("Bastille") }}</a>
+                    <a href="/{{ client.lang }}/{{ 'bastille' | route('auto') }}/" class="index-term">{{ 'knowledge-term.bastille' | text('auto') or ("Bastille") }}</a>
                     <a href="#" class="index-term">{{ 'knowledge-term.blink' | text('auto') }}</a>
                     <a href="#" class="index-term">{{ 'knowledge-term.bsd' | text('auto') }}</a>
                     <a href="#" class="index-term">{{ 'knowledge-term.browser' | text('auto') }}</a>
@@ -78,7 +78,7 @@
                     {% if client.lang == 'en' %}
                     <a href="#" class="index-term">{{ 'knowledge-term.gdpr' | text('auto') }}</a>
                     {% endif %}
-                    <a href="{{ 'knowledge.geo.url' | text('auto') }}" class="index-term">{{ 'knowledge-term.geo' | text('auto') }}</a>
+                    <a href="/{{ client.lang }}/{{ 'geo' | route('auto') }}/" class="index-term">{{ 'knowledge-term.geo' | text('auto') }}</a>
                     <a href="#" class="index-term">{{ 'knowledge-term.git' | text('auto') }}</a>
                 </div>
             </div>
@@ -124,7 +124,7 @@
                 <div class="index-terms flex-y gap-1">
                     <a href="#" class="index-term">{{ 'knowledge-term.lighthouse' | text('auto') }}</a>
                     <a href="#" class="index-term">{{ 'knowledge-term.linux' | text('auto') }}</a>
-                    <a href="{{ 'knowledge.lost.in.the.middle.url' | text('auto') }}" class="index-term">{{ 'knowledge-term.lost-in-the-middle' | text('auto') }}</a>
+                    <a href="/{{ client.lang }}/{{ 'lost-in-the-middle' | route('auto') }}/" class="index-term">{{ 'knowledge-term.lost-in-the-middle' | text('auto') }}</a>
                 </div>
             </div>
 
@@ -192,7 +192,7 @@
                 <h3 class="index-letter">S</h3>
                 <div class="index-terms flex-y gap-1">
                     <a href="#" class="index-term">{{ 'knowledge-term.scaling' | text('auto') }}</a>
-                    <a href="{{ 'knowledge.seo.url' | text('auto') }}" class="index-term">{{ 'knowledge-term.seo' | text('auto') }}</a>
+                    <a href="/{{ client.lang }}/{{ 'seo' | route('auto') }}/" class="index-term">{{ 'knowledge-term.seo' | text('auto') }}</a>
                     <a href="#" class="index-term">{{ 'knowledge-term.server' | text('auto') }}</a>
                     <a href="#" class="index-term">{{ 'knowledge-term.sql' | text('auto') }}</a>
                     <a href="#" class="index-term">{{ 'knowledge-term.svg' | text('auto') }}</a>

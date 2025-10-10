@@ -8,13 +8,13 @@
             <div class="index-group">
                 <h3>A</h3>
                 <ul>
-                    <li><a href="{{ 'knowledge.actix.web.url' | text('auto') }}">{{ 'knowledge.term.actix.web' | text('auto') }}</a></li>
-                    <li><a href="{{ 'knowledge.aeo.url' | text('auto') }}">{{ 'knowledge.term.aeo' | text('auto') }}</a></li>
-                    <li><a href="{{ 'knowledge.agility.url' | text('auto') }}">{{ 'knowledge.term.agility' | text('auto') }}</a></li>
-                    <li><a href="{{ 'knowledge.ai.visibility.url' | text('auto') }}">{{ 'knowledge.term.ai.visibility' | text('auto') }}</a></li>
-                    <li><a href="{{ 'knowledge.apache.url' | text('auto') }}">{{ 'knowledge.term.apache' | text('auto') }}</a></li>
-                    <li><a href="{{ 'knowledge.apache.license.url' | text('auto') }}">{{ 'knowledge.term.apache.license' | text('auto') }}</a></li>
-                    <li><a href="{{ 'knowledge.api.url' | text('auto') }}">{{ 'knowledge.term.api' | text('auto') }}</a></li>
+                    <li><a href="/{{ client.lang }}/{{ 'actix-web' | route('auto') }}/">{{ 'knowledge.term.actix.web' | text('auto') }}</a></li>
+                    <li><a href="/{{ client.lang }}/{{ 'aeo' | route('auto') }}/">{{ 'knowledge.term.aeo' | text('auto') }}</a></li>
+                    <li><a href="/{{ client.lang }}/{{ 'agility' | route('auto') }}/">{{ 'knowledge.term.agility' | text('auto') }}</a></li>
+                    <li><a href="/{{ client.lang }}/{{ 'ai-visibility' | route('auto') }}/">{{ 'knowledge.term.ai.visibility' | text('auto') }}</a></li>
+                    <li><a href="/{{ client.lang }}/{{ 'apache' | route('auto') }}/">{{ 'knowledge.term.apache' | text('auto') }}</a></li>
+                    <li><a href="/{{ client.lang }}/{{ 'apache-license' | route('auto') }}/">{{ 'knowledge.term.apache.license' | text('auto') }}</a></li>
+                    <li><a href="/{{ client.lang }}/{{ 'api' | route('auto') }}/">{{ 'knowledge.term.api' | text('auto') }}</a></li>
                 </ul>
             </div>
 
@@ -22,7 +22,7 @@
             <div class="index-group">
                 <h3>B</h3>
                 <ul>
-                    <li><a href="{{ 'knowledge.bastille.url' | text('auto') }}">{{ 'knowledge.term.bastille' | text('auto') or ("Bastille") }}</a></li>
+                    <li><a href="/{{ client.lang }}/{{ 'bastille' | route('auto') }}/">{{ 'knowledge.term.bastille' | text('auto') or ("Bastille") }}</a></li>
                     <li><a href="#">{{ 'knowledge.term.blink' | text('auto') }}</a></li>
                     <li><a href="#">{{ 'knowledge.term.bsd' | text('auto') }}</a></li>
                     <li><a href="#">{{ 'knowledge.term.browser' | text('auto') }}</a></li>
@@ -78,7 +78,7 @@
                     {% if client.lang == 'en' %}
                     <li><a href="#">{{ 'knowledge.term.gdpr' | text('auto') }}</a></li>
                     {% endif %}
-                    <li><a href="{{ 'knowledge.geo.url' | text('auto') }}">{{ 'knowledge.term.geo' | text('auto') }}</a></li>
+                    <li><a href="/{{ client.lang }}/{{ 'geo' | route('auto') }}/">{{ 'knowledge.term.geo' | text('auto') }}</a></li>
                     <li><a href="#">{{ 'knowledge.term.git' | text('auto') }}</a></li>
                 </ul>
             </div>
@@ -124,7 +124,7 @@
                 <ul>
                     <li><a href="#">{{ 'knowledge.term.lighthouse' | text('auto') }}</a></li>
                     <li><a href="#">{{ 'knowledge.term.linux' | text('auto') }}</a></li>
-                    <li><a href="{{ 'knowledge.lost.in.the.middle.url' | text('auto') }}">{{ 'knowledge.term.lost.in.the.middle' | text('auto') }}</a></li>
+                    <li><a href="/{{ client.lang }}/{{ 'lost-in-the-middle' | route('auto') }}/">{{ 'knowledge.term.lost.in.the.middle' | text('auto') }}</a></li>
                 </ul>
             </div>
 
@@ -192,7 +192,7 @@
                 <h3>S</h3>
                 <ul>
                     <li><a href="#">{{ 'knowledge.term.scaling' | text('auto') }}</a></li>
-                    <li><a href="{{ 'knowledge.seo.url' | text('auto') }}">{{ 'knowledge.term.seo' | text('auto') }}</a></li>
+                    <li><a href="/{{ client.lang }}/{{ 'seo' | route('auto') }}/">{{ 'knowledge.term.seo' | text('auto') }}</a></li>
                     <li><a href="#">{{ 'knowledge.term.server' | text('auto') }}</a></li>
                     <li><a href="#">{{ 'knowledge.term.sql' | text('auto') }}</a></li>
                     <li><a href="#">{{ 'knowledge.term.svg' | text('auto') }}</a></li>
