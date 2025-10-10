@@ -37,6 +37,7 @@ tar = "0.4"
 walkdir = "2.4"
 notify = "4.0"
 toml = "0.8"
+hostname = "0.3"
 
 [dev-dependencies]
 

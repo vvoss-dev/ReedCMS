@@ -13,6 +13,7 @@ pub mod config;
 pub mod csv;
 pub mod filters;
 pub mod matrix;
+pub mod monitor;
 pub mod reed;
 pub mod reedbase;
 pub mod reedstream;
