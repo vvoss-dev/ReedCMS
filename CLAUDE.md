@@ -400,7 +400,7 @@ Every implementation MUST follow these standards:
 2. **Principle**: KISS (Keep It Simple, Stupid)
 3. **File Naming**: One file = one clear responsibility
 4. **Functions**: One function = one distinctive job
-5. **Testing**: Separate `.test.rs` files, never inline `#[cfg(test)]`
+5. **Testing**: Separate test files as `{name}_test.rs` - never inline `#[cfg(test)]` modules
 6. **Avoid**: Swiss Army knife functions
 7. **Avoid**: Generic names like `handler.rs`, `middleware.rs`, `utils.rs`
 

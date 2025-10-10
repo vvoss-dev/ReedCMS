@@ -18,6 +18,11 @@ pub mod metrics;
 pub mod middleware;
 pub mod syslog;
 
+#[cfg(test)]
+mod core_test;
+#[cfg(test)]
+mod syslog_test;
+
 // Re-exports for convenience
 pub use core::{global_monitor, ReedMonitor};
 pub use health::{health_check, metrics_endpoint};
