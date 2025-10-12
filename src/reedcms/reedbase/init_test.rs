@@ -3,7 +3,7 @@
 
 #[cfg(test)]
 mod tests {
-    use crate::reedcms::reedbase::init;
+    use crate::reedcms::reedbase::init::init;
     use crate::reedcms::reedstream::ReedRequest;
     use std::fs;
     use std::path::PathBuf;

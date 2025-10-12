@@ -4,7 +4,7 @@
 #[cfg(test)]
 mod tests {
     use crate::reedcms::csv::read_csv;
-    use crate::reedcms::reedbase::set;
+    use crate::reedcms::reedbase::set::set;
     use crate::reedcms::reedstream::ReedRequest;
     use std::collections::HashMap;
     use std::fs;

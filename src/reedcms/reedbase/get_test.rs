@@ -3,7 +3,7 @@
 
 #[cfg(test)]
 mod tests {
-    use crate::reedcms::reedbase::get;
+    use crate::reedcms::reedbase::get::get;
     use crate::reedcms::reedstream::ReedRequest;
     use std::collections::HashMap;
 
