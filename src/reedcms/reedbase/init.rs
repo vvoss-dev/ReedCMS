@@ -6,7 +6,7 @@
 //! Provides init() function for loading CSV files into memory cache and
 //! aggregate_text_csv() for collecting component-local .text.csv files.
 
-use crate::reedcms::csv::{read_csv, write_csv, CsvRecord};
+use crate::reedcms::csv::{read_csv, write_csv};
 use crate::reedcms::reedstream::{
     current_timestamp, ReedError, ReedRequest, ReedResponse, ReedResult,
 };
