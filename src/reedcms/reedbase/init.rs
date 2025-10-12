@@ -51,6 +51,7 @@ use std::path::{Path, PathBuf};
 /// let response = init(request)?;
 /// let cache = response.data;
 /// ```
+#[allow(dead_code)]
 pub fn init(request: ReedRequest) -> ReedResult<ReedResponse<HashMap<String, String>>> {
     // Validate path is provided
     let path = request.value.ok_or_else(|| {
