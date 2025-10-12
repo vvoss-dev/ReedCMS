@@ -160,6 +160,7 @@ pub fn resolve_flat_with_fallback(
 ///
 /// ## Performance
 /// - < 1μs (simple string search)
+#[allow(dead_code)]
 pub fn has_environment_suffix(key: &str) -> bool {
     key.contains('@')
 }
@@ -174,6 +175,7 @@ pub fn has_environment_suffix(key: &str) -> bool {
 ///
 /// ## Performance
 /// - < 1μs (single string operation)
+#[allow(dead_code)]
 pub fn extract_base_key(key: &str) -> String {
     if let Some((base, _env)) = key.rsplit_once('@') {
         base.to_string()
@@ -196,6 +198,7 @@ pub fn extract_base_key(key: &str) -> String {
 ///
 /// ## Performance
 /// - < 1μs (simple validation)
+#[allow(dead_code)]
 pub fn validate_environment(env: &str) -> ReedResult<()> {
     if env.is_empty() {
         return Err(ReedError::ValidationError {
@@ -233,6 +236,7 @@ pub fn build_env_key(base: &str, environment: &str) -> String {
 }
 
 /// Module identification for environment subsystem.
+#[allow(dead_code)]
 pub fn subsystem_name() -> &'static str {
     "reedbase::environment"
 }
@@ -248,6 +252,7 @@ pub fn subsystem_name() -> &'static str {
 /// ## Returns
 /// - Ok: System healthy
 /// - Err: Specific component failure
+#[allow(dead_code)]
 pub fn health_check() -> ReedResult<String> {
     // Test environment suffix detection
     if !has_environment_suffix("test@dev") {
