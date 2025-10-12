@@ -10,7 +10,7 @@ use crate::reedcms::reedstream::ReedResult;
 use std::fs;
 
 use super::minifier::{calculate_reduction, minify_js};
-use super::resolver::{DependencyResolver, Module};
+use super::resolver::DependencyResolver;
 use super::tree_shake::tree_shake;
 use crate::reedcms::assets::css::discovery::discover_layouts;
 use crate::reedcms::assets::css::session_hash::get_session_hash;

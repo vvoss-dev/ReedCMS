@@ -22,8 +22,6 @@ use crate::reedcms::response::errors::{build_404_response, build_500_response};
 use crate::reedcms::routing::resolver::resolve_url;
 use crate::reedcms::templates::context::build_context;
 use actix_web::{Error, HttpRequest, HttpResponse};
-use minijinja::Environment;
-use std::sync::OnceLock;
 
 /// Builds complete HTTP response for incoming request.
 ///

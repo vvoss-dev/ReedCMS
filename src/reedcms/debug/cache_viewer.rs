@@ -16,7 +16,9 @@
 //! ```
 
 use crate::reedcms::monitor::global_monitor;
-use std::collections::HashMap;
+// NOTE: HashMap import stringent for direct cache access but not yet implemented
+// Uncomment when implementing direct ReedBase cache inspection (see line 70 comment)
+// use std::collections::HashMap;
 
 /// Cache view structure for debugging.
 #[derive(Debug, Clone)]

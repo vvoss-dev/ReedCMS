@@ -166,7 +166,7 @@ fn remove_unused_exports(js: &str, used_exports: &HashSet<String>) -> ReedResult
 
     // For now, just remove the 'export' keyword from unused functions
     // Full implementation would remove the entire function
-    for cap in export_fn_re.captures_iter(&js.clone()) {
+    for cap in export_fn_re.captures_iter(&js) {
         let fn_name = &cap[1];
         if !used_exports.contains(fn_name) {
             // Replace "export function name" with "function name"
