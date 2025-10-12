@@ -144,7 +144,7 @@ pub fn list_users(flags: &HashMap<String, String>) -> ReedResult<ReedResponse<St
     let output = match format {
         "json" => format_user_json(&users),
         "csv" => format_user_csv(&users),
-        "table" | _ => format_user_table(&users),
+        _ => format_user_table(&users),
     };
 
     Ok(ReedResponse {

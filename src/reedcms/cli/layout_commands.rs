@@ -11,6 +11,7 @@ use crate::reedcms::reedstream::{current_timestamp, ReedError, ReedResponse, Ree
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
+use std::str::FromStr;
 
 /// Template variant types.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -20,9 +21,10 @@ pub enum TemplateVariant {
     Reader,
 }
 
-impl TemplateVariant {
-    /// Converts string to variant.
-    pub fn from_str(s: &str) -> ReedResult<Self> {
+impl FromStr for TemplateVariant {
+    type Err = ReedError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "mouse" => Ok(Self::Mouse),
             "touch" => Ok(Self::Touch),
@@ -34,7 +36,9 @@ impl TemplateVariant {
             }),
         }
     }
+}
 
+impl TemplateVariant {
     /// Converts variant to string.
     pub fn as_str(&self) -> &'static str {
         match self {
@@ -141,7 +145,7 @@ fn parse_layout_config(flags: &HashMap<String, String>) -> ReedResult<LayoutConf
     // Parse variants (default: mouse,touch,reader)
     let variants = if let Some(vars) = flags.get("variants") {
         vars.split(',')
-            .map(|s| TemplateVariant::from_str(s.trim()))
+            .map(|s| s.trim().parse::<TemplateVariant>())
             .collect::<ReedResult<Vec<_>>>()?
     } else {
         vec![

@@ -12,6 +12,7 @@ use crate::reedcms::reedstream::{
 use std::collections::HashSet;
 use std::fs;
 use std::path::PathBuf;
+use std::str::FromStr;
 
 /// Entity types supported by taxonomy system.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -26,21 +27,10 @@ pub enum EntityType {
     Role,
 }
 
-impl EntityType {
-    pub fn as_str(&self) -> &str {
-        match self {
-            EntityType::User => "user",
-            EntityType::Content => "content",
-            EntityType::Template => "template",
-            EntityType::Route => "route",
-            EntityType::Site => "site",
-            EntityType::Project => "project",
-            EntityType::Asset => "asset",
-            EntityType::Role => "role",
-        }
-    }
+impl FromStr for EntityType {
+    type Err = ReedError;
 
-    pub fn from_str(s: &str) -> ReedResult<Self> {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "user" => Ok(EntityType::User),
             "content" => Ok(EntityType::Content),
@@ -55,6 +45,21 @@ impl EntityType {
                 s,
                 "must be user/content/template/route/site/project/asset/role",
             )),
+        }
+    }
+}
+
+impl EntityType {
+    pub fn as_str(&self) -> &str {
+        match self {
+            EntityType::User => "user",
+            EntityType::Content => "content",
+            EntityType::Template => "template",
+            EntityType::Route => "route",
+            EntityType::Site => "site",
+            EntityType::Project => "project",
+            EntityType::Asset => "asset",
+            EntityType::Role => "role",
         }
     }
 }
@@ -586,7 +591,7 @@ fn parse_entity_terms(record: &MatrixRecord) -> ReedResult<EntityTerms> {
         return Err(validation_error("entity_type", "", "missing"));
     };
 
-    let entity_type = EntityType::from_str(&entity_type_str)?;
+    let entity_type = entity_type_str.parse::<EntityType>()?;
 
     let term_ids = match record.fields.get("term_ids") {
         Some(MatrixValue::List(ids)) => ids.clone(),

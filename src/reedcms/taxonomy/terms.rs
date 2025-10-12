@@ -549,40 +549,36 @@ pub fn update_term(term_id: &str, update: TermUpdate) -> ReedResult<ReedResponse
         validate_term_name(term)?;
     }
 
-    if let Some(ref parent_id) = update.parent_id {
-        if let Some(ref pid) = parent_id {
-            // Verify parent exists
-            let parent_exists = records.iter().any(|r| {
-                if let Some(MatrixValue::Single(tid)) = r.fields.get("term_id") {
-                    tid == pid
-                } else {
-                    false
-                }
-            });
-
-            if !parent_exists {
-                return Err(validation_error(
-                    "parent_id",
-                    pid,
-                    "parent term does not exist",
-                ));
+    if let Some(Some(ref pid)) = update.parent_id {
+        // Verify parent exists
+        let parent_exists = records.iter().any(|r| {
+            if let Some(MatrixValue::Single(tid)) = r.fields.get("term_id") {
+                tid == pid
+            } else {
+                false
             }
+        });
 
-            // Check for circular reference
-            if pid == term_id {
-                return Err(validation_error(
-                    "parent_id",
-                    pid,
-                    "cannot set term as its own parent",
-                ));
-            }
+        if !parent_exists {
+            return Err(validation_error(
+                "parent_id",
+                pid,
+                "parent term does not exist",
+            ));
+        }
+
+        // Check for circular reference
+        if pid == term_id {
+            return Err(validation_error(
+                "parent_id",
+                pid,
+                "cannot set term as its own parent",
+            ));
         }
     }
 
-    if let Some(ref color) = update.color {
-        if let Some(ref c) = color {
-            validate_color(c)?;
-        }
+    if let Some(Some(ref c)) = update.color {
+        validate_color(c)?;
     }
 
     // Apply updates

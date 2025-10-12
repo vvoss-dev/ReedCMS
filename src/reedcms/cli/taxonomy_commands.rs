@@ -449,10 +449,10 @@ pub fn assign(
         });
     }
 
-    let entity_type = EntityType::from_str(entity_parts[0])?;
+    let entity_type = entity_parts[0].parse::<EntityType>()?;
     let entity_id = entity_parts[1];
 
-    let term_ids: Vec<String> = args[1..].iter().map(|s| s.clone()).collect();
+    let term_ids: Vec<String> = args[1..].to_vec();
     let assigned_by = flags
         .get("assigned-by")
         .map(|s| s.as_str())
@@ -507,11 +507,11 @@ pub fn unassign(args: &[String]) -> ReedResult<ReedResponse<String>> {
         });
     }
 
-    let entity_type = EntityType::from_str(entity_parts[0])?;
+    let entity_type = entity_parts[0].parse::<EntityType>()?;
     let entity_id = entity_parts[1];
 
     let term_ids = if args.len() > 1 {
-        Some(args[1..].iter().map(|s| s.clone()).collect())
+        Some(args[1..].to_vec())
     } else {
         None
     };
@@ -571,7 +571,7 @@ pub fn entities(
 
     let term_id = &args[0];
     let entity_type = if let Some(type_str) = flags.get("type") {
-        Some(EntityType::from_str(type_str)?)
+        Some(type_str.parse::<EntityType>()?)
     } else {
         None
     };

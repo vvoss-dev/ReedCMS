@@ -311,12 +311,12 @@ mod tests {
         assert_eq!(EntityType::Asset.as_str(), "asset");
         assert_eq!(EntityType::Role.as_str(), "role");
 
-        assert_eq!(EntityType::from_str("user").unwrap(), EntityType::User);
+        assert_eq!("user".parse::<EntityType>().unwrap(), EntityType::User);
         assert_eq!(
-            EntityType::from_str("content").unwrap(),
+            "content".parse::<EntityType>().unwrap(),
             EntityType::Content
         );
-        assert!(EntityType::from_str("invalid").is_err());
+        assert!("invalid".parse::<EntityType>().is_err());
     }
 
     #[test]

@@ -47,7 +47,7 @@ pub fn backup_list_handler(
 
     // Get optional CSV file filter - construct path
     let csv_path = args
-        .get(0)
+        .first()
         .map(|s| format!(".reed/{}", s))
         .unwrap_or_else(|| ".reed/text.csv".to_string());
 
@@ -103,7 +103,7 @@ pub fn backup_restore_handler(
     let start = std::time::Instant::now();
 
     // Get backup path (required)
-    let backup_path = args.get(0).ok_or_else(|| ReedError::ValidationError {
+    let backup_path = args.first().ok_or_else(|| ReedError::ValidationError {
         field: "backup_path".to_string(),
         value: "".to_string(),
         constraint: "Backup path is required".to_string(),
@@ -200,7 +200,7 @@ pub fn backup_verify_handler(
     let start = std::time::Instant::now();
 
     // Get backup path (required)
-    let backup_path = args.get(0).ok_or_else(|| ReedError::ValidationError {
+    let backup_path = args.first().ok_or_else(|| ReedError::ValidationError {
         field: "backup_path".to_string(),
         value: "".to_string(),
         constraint: "Backup path is required".to_string(),
@@ -261,7 +261,7 @@ pub fn backup_prune_handler(
 
     // Get CSV file path (default to text.csv)
     let csv_path = args
-        .get(0)
+        .first()
         .map(|s| format!(".reed/{}", s))
         .unwrap_or_else(|| ".reed/text.csv".to_string());
 

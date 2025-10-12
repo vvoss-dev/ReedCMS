@@ -31,7 +31,7 @@
 use actix_web::{web, HttpRequest, HttpResponse};
 use serde::{Deserialize, Serialize};
 
-use crate::reedcms::api::responses::{ApiResponse, ApiError};
+use crate::reedcms::api::responses::{ApiError, ApiResponse};
 
 /// Default maximum number of results.
 const DEFAULT_LIMIT: usize = 1000;
@@ -112,10 +112,7 @@ pub struct ListResponse {
 ///   }
 /// }
 /// ```
-pub async fn list_text(
-    _req: HttpRequest,
-    query: web::Query<ListQuery>,
-) -> HttpResponse {
+pub async fn list_text(_req: HttpRequest, query: web::Query<ListQuery>) -> HttpResponse {
     match fetch_key_list("text", &query).await {
         Ok(response) => HttpResponse::Ok().json(response),
         Err(error) => HttpResponse::InternalServerError().json(error),
@@ -157,10 +154,7 @@ pub async fn list_text(
 ///   }
 /// }
 /// ```
-pub async fn list_routes(
-    _req: HttpRequest,
-    query: web::Query<ListQuery>,
-) -> HttpResponse {
+pub async fn list_routes(_req: HttpRequest, query: web::Query<ListQuery>) -> HttpResponse {
     match fetch_key_list("route", &query).await {
         Ok(response) => HttpResponse::Ok().json(response),
         Err(error) => HttpResponse::InternalServerError().json(error),
@@ -200,10 +194,7 @@ pub async fn list_routes(
 ///   }
 /// }
 /// ```
-pub async fn list_layouts(
-    _req: HttpRequest,
-    query: web::Query<ListQuery>,
-) -> HttpResponse {
+pub async fn list_layouts(_req: HttpRequest, query: web::Query<ListQuery>) -> HttpResponse {
     match fetch_layout_list(&query).await {
         Ok(response) => HttpResponse::Ok().json(response),
         Err(error) => HttpResponse::InternalServerError().json(error),
@@ -260,11 +251,7 @@ async fn fetch_key_list(
     let offset = query.offset.unwrap_or(0);
     let total = filtered_keys.len();
 
-    let paginated_keys: Vec<String> = filtered_keys
-        .into_iter()
-        .skip(offset)
-        .take(limit)
-        .collect();
+    let paginated_keys: Vec<String> = filtered_keys.into_iter().skip(offset).take(limit).collect();
 
     let count = paginated_keys.len();
 
@@ -294,8 +281,8 @@ async fn fetch_key_list(
 async fn read_keys_from_csv(csv_path: &str) -> Result<Vec<String>, String> {
     use crate::reedcms::csv::read_csv;
 
-    let records = read_csv(csv_path)
-        .map_err(|e| format!("Failed to read CSV {}: {}", csv_path, e))?;
+    let records =
+        read_csv(csv_path).map_err(|e| format!("Failed to read CSV {}: {}", csv_path, e))?;
 
     let keys: Vec<String> = records.into_iter().map(|r| r.key).collect();
 
@@ -355,9 +342,7 @@ fn apply_filters(keys: &[String], query: &ListQuery) -> Vec<String> {
 /// ## Performance
 /// - O(n) where n is number of layout directories
 /// - < 10ms typical
-async fn fetch_layout_list(
-    query: &ListQuery,
-) -> Result<ApiResponse<ListResponse>, ApiError> {
+async fn fetch_layout_list(query: &ListQuery) -> Result<ApiResponse<ListResponse>, ApiError> {
     // Read layout names from templates/layouts directory
     use std::fs;
 
@@ -375,13 +360,11 @@ async fn fetch_layout_list(
 
     // Extract layout directory names
     let mut layouts: Vec<String> = Vec::new();
-    for entry in entries {
-        if let Ok(entry) = entry {
-            if let Ok(file_type) = entry.file_type() {
-                if file_type.is_dir() {
-                    if let Some(name) = entry.file_name().to_str() {
-                        layouts.push(name.to_string());
-                    }
+    for entry in entries.flatten() {
+        if let Ok(file_type) = entry.file_type() {
+            if file_type.is_dir() {
+                if let Some(name) = entry.file_name().to_str() {
+                    layouts.push(name.to_string());
                 }
             }
         }
@@ -391,7 +374,8 @@ async fn fetch_layout_list(
 
     // Apply prefix filter if specified
     let filtered_layouts = if let Some(prefix) = &query.prefix {
-        layouts.into_iter()
+        layouts
+            .into_iter()
             .filter(|layout| layout.starts_with(prefix))
             .collect()
     } else {

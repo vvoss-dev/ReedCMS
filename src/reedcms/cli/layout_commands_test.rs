@@ -49,18 +49,18 @@ mod tests {
     #[test]
     fn test_template_variant_from_str() {
         assert_eq!(
-            TemplateVariant::from_str("mouse").unwrap(),
+            "mouse".parse::<TemplateVariant>().unwrap(),
             TemplateVariant::Mouse
         );
         assert_eq!(
-            TemplateVariant::from_str("touch").unwrap(),
+            "touch".parse::<TemplateVariant>().unwrap(),
             TemplateVariant::Touch
         );
         assert_eq!(
-            TemplateVariant::from_str("reader").unwrap(),
+            "reader".parse::<TemplateVariant>().unwrap(),
             TemplateVariant::Reader
         );
-        assert!(TemplateVariant::from_str("invalid").is_err());
+        assert!("invalid".parse::<TemplateVariant>().is_err());
     }
 
     #[test]

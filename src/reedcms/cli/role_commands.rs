@@ -124,7 +124,7 @@ pub fn list_roles(flags: &HashMap<String, String>) -> ReedResult<ReedResponse<St
     let output = match format {
         "json" => format_role_json(&roles),
         "csv" => format_role_csv(&roles),
-        "table" | _ => format_role_table(&roles, show_permissions),
+        _ => format_role_table(&roles, show_permissions),
     };
 
     Ok(ReedResponse {
