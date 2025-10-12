@@ -521,15 +521,13 @@ fn matches_pattern(key: &str, pattern: &str) -> bool {
         return key.contains(middle);
     }
 
-    if pattern.starts_with('*') {
+    if let Some(suffix) = pattern.strip_prefix('*') {
         // *.suffix - ends with
-        let suffix = &pattern[1..];
         return key.ends_with(suffix);
     }
 
-    if pattern.ends_with('*') {
+    if let Some(prefix) = pattern.strip_suffix('*') {
         // prefix.* - starts with
-        let prefix = &pattern[..pattern.len() - 1];
         return key.starts_with(prefix);
     }
 

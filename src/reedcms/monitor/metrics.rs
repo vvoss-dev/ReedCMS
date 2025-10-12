@@ -27,15 +27,21 @@ pub struct Metrics {
     pub system: SystemMetrics,
 }
 
-impl Metrics {
-    /// Creates new metrics instance.
-    pub fn new() -> Self {
+impl Default for Metrics {
+    fn default() -> Self {
         Self {
             requests: RequestMetrics::new(),
             reedbase: ReedBaseMetrics::new(),
             templates: TemplateMetrics::new(),
             system: SystemMetrics::new(),
         }
+    }
+}
+
+impl Metrics {
+    /// Creates new metrics instance.
+    pub fn new() -> Self {
+        Self::default()
     }
 
     /// Records request metric.
@@ -71,7 +77,7 @@ impl Metrics {
 }
 
 /// Request metrics structure.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct RequestMetrics {
     pub total_count: u64,
     pub durations: Vec<Duration>,
@@ -81,12 +87,7 @@ pub struct RequestMetrics {
 
 impl RequestMetrics {
     pub fn new() -> Self {
-        Self {
-            total_count: 0,
-            durations: Vec::new(),
-            by_path: HashMap::new(),
-            status_codes: HashMap::new(),
-        }
+        Self::default()
     }
 
     pub fn record(&mut self, _method: &str, path: &str, status: u16, duration: Duration) {
@@ -131,7 +132,7 @@ impl RequestMetrics {
 }
 
 /// ReedBase metrics structure.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct ReedBaseMetrics {
     pub total_lookups: u64,
     pub cache_hits: u64,
@@ -140,11 +141,7 @@ pub struct ReedBaseMetrics {
 
 impl ReedBaseMetrics {
     pub fn new() -> Self {
-        Self {
-            total_lookups: 0,
-            cache_hits: 0,
-            durations: Vec::new(),
-        }
+        Self::default()
     }
 
     pub fn record(&mut self, _key: &str, duration: Duration, hit: bool) {
@@ -178,7 +175,7 @@ impl ReedBaseMetrics {
 }
 
 /// Template metrics structure.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct TemplateMetrics {
     pub render_count: u64,
     pub durations: Vec<Duration>,
@@ -186,10 +183,7 @@ pub struct TemplateMetrics {
 
 impl TemplateMetrics {
     pub fn new() -> Self {
-        Self {
-            render_count: 0,
-            durations: Vec::new(),
-        }
+        Self::default()
     }
 
     pub fn record(&mut self, _template: &str, duration: Duration) {
@@ -212,7 +206,7 @@ impl TemplateMetrics {
 }
 
 /// System metrics structure.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct SystemMetrics;
 
 impl SystemMetrics {

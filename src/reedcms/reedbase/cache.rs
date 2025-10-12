@@ -212,7 +212,7 @@ fn load_language_csv(path: &str) -> ReedResult<HashMap<String, HashMap<String, S
     let reader = BufReader::new(file);
     let mut cache: HashMap<String, HashMap<String, String>> = HashMap::new();
 
-    for (_line_num, line_result) in reader.lines().enumerate() {
+    for line_result in reader.lines() {
         let line = line_result.map_err(|e| ReedError::IoError {
             operation: "read_line".to_string(),
             path: path.to_string(),
@@ -238,13 +238,13 @@ fn load_language_csv(path: &str) -> ReedResult<HashMap<String, HashMap<String, S
         if let Some((base_key, lang)) = key_with_lang.rsplit_once('@') {
             cache
                 .entry(lang.to_string())
-                .or_insert_with(HashMap::new)
+                .or_default()
                 .insert(base_key.to_string(), value.to_string());
         } else {
             // No language suffix - store in "default" language
             cache
                 .entry("default".to_string())
-                .or_insert_with(HashMap::new)
+                .or_default()
                 .insert(key_with_lang.to_string(), value.to_string());
         }
     }

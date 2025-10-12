@@ -245,7 +245,7 @@ pub fn format_permission(perm: &Permission) -> String {
 pub fn format_permissions(perms: &[Permission]) -> String {
     perms
         .iter()
-        .map(|p| format_permission(p))
+        .map(format_permission)
         .collect::<Vec<_>>()
         .join(",")
 }

@@ -123,9 +123,7 @@ pub fn parse_screen_info_cookie(req: &HttpRequest) -> ReedResult<Option<ScreenIn
         for cookie_part in cookies_str.split(';') {
             let trimmed = cookie_part.trim();
 
-            if trimmed.starts_with("screen_info=") {
-                let value = &trimmed[12..]; // Skip "screen_info="
-
+            if let Some(value) = trimmed.strip_prefix("screen_info=") {
                 // URL-decode
                 if let Ok(decoded) = urlencoding::decode(value) {
                     // Parse JSON
@@ -260,9 +258,9 @@ fn detect_interaction_mode(
     if screen_info.is_none()
         || is_bot
         || device_type == "bot"
-        || screen_info.as_ref().map_or(false, |s| {
-            s.viewport_width < 1 || s.active_voices.unwrap_or(0) > 0
-        })
+        || screen_info
+            .as_ref()
+            .is_some_and(|s| s.viewport_width < 1 || s.active_voices.unwrap_or(0) > 0)
     {
         return "reader".to_string();
     }

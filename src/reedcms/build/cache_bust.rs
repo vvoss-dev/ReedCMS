@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 /// Asset manifest structure.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct AssetManifest {
     pub entries: HashMap<String, String>,
 }
@@ -19,9 +19,7 @@ pub struct AssetManifest {
 impl AssetManifest {
     /// Creates new empty manifest.
     pub fn new() -> Self {
-        Self {
-            entries: HashMap::new(),
-        }
+        Self::default()
     }
 }
 

@@ -74,7 +74,7 @@ pub fn server_io(
             config
                 .bind_address
                 .as_ref()
-                .and_then(|addr| addr.split(':').last())
+                .and_then(|addr| addr.split(':').next_back())
                 .and_then(|p| p.parse::<u16>().ok())
         })
         .unwrap_or(8333);
@@ -502,7 +502,7 @@ pub fn server_status(
 
                 if let Ok(ps) = ps_output {
                     let info = String::from_utf8_lossy(&ps.stdout);
-                    let parts: Vec<&str> = info.trim().split_whitespace().collect();
+                    let parts: Vec<&str> = info.split_whitespace().collect();
                     if parts.len() >= 2 {
                         output.push_str(&format!("Uptime: {}\n", parts[0]));
                         output.push_str(&format!("Memory: {} KB\n", parts[1]));

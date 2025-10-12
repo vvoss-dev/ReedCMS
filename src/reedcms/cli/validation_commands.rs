@@ -59,7 +59,7 @@ pub fn validate_routes(flags: &HashMap<String, String>) -> ReedResult<ReedRespon
     for entry in &routes {
         route_map
             .entry(entry.key.clone())
-            .or_insert_with(Vec::new)
+            .or_default()
             .push(entry.value.clone());
     }
 
@@ -355,7 +355,7 @@ pub fn validate_text(flags: &HashMap<String, String>) -> ReedResult<ReedResponse
         if let Some((base, lang)) = entry.key.rsplit_once('@') {
             key_bases
                 .entry(base.to_string())
-                .or_insert_with(Vec::new)
+                .or_default()
                 .push(lang.to_string());
         }
     }

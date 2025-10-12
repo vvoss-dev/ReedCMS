@@ -166,7 +166,7 @@ fn remove_unused_exports(js: &str, used_exports: &HashSet<String>) -> ReedResult
 
     // For now, just remove the 'export' keyword from unused functions
     // Full implementation would remove the entire function
-    for cap in export_fn_re.captures_iter(&js) {
+    for cap in export_fn_re.captures_iter(js) {
         let fn_name = &cap[1];
         if !used_exports.contains(fn_name) {
             // Replace "export function name" with "function name"
@@ -275,7 +275,7 @@ pub fn parse_import_names(content: &str) -> ReedResult<Vec<String>> {
     for cap in named_re.captures_iter(content) {
         let names = cap[1]
             .split(',')
-            .map(|s| s.trim().split_whitespace().next().unwrap_or("").to_string())
+            .map(|s| s.split_whitespace().next().unwrap_or("").to_string())
             .filter(|s| !s.is_empty());
         imports.extend(names);
     }

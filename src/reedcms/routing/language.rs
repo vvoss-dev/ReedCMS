@@ -76,7 +76,7 @@ pub fn extract_language_from_path(path: &str) -> Option<String> {
     let parts: Vec<&str> = path.trim_start_matches('/').split('/').collect();
 
     // Check if first segment is 2-letter language code
-    if parts.len() >= 1 && parts[0].len() == 2 {
+    if !parts.is_empty() && parts[0].len() == 2 {
         let potential_lang = parts[0];
 
         // Validate against supported languages

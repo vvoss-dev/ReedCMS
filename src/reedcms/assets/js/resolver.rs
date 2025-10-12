@@ -99,7 +99,7 @@ impl DependencyResolver {
         }
 
         // Sort modules in dependency order
-        Ok(self.topological_sort()?)
+        self.topological_sort()
     }
 
     /// Resolves single module and its dependencies recursively.

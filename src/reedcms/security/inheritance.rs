@@ -45,7 +45,7 @@ pub fn resolve_inheritance(role: &str) -> ReedResult<Vec<String>> {
             return Err(validation_error(
                 "role",
                 role,
-                &format!("Circular inheritance detected: {}", current),
+                format!("Circular inheritance detected: {}", current),
             ));
         }
 

@@ -34,9 +34,8 @@ pub struct BuildReport {
     pub size_reduction_percent: u32,
 }
 
-impl BuildReport {
-    /// Creates new empty build report.
-    pub fn new() -> Self {
+impl Default for BuildReport {
+    fn default() -> Self {
         Self {
             css_bundles: Vec::new(),
             js_bundles: Vec::new(),
@@ -48,6 +47,13 @@ impl BuildReport {
             total_size: 0,
             size_reduction_percent: 0,
         }
+    }
+}
+
+impl BuildReport {
+    /// Creates new empty build report.
+    pub fn new() -> Self {
+        Self::default()
     }
 
     /// Calculates totals from bundle data.

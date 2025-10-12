@@ -133,7 +133,7 @@ pub fn create_user(req: &ReedRequest) -> ReedResult<ReedResponse<UserInfo>> {
     // Parse context for additional user data
     let context_data: serde_json::Value = if let Some(ctx) = &req.context {
         serde_json::from_str(ctx)
-            .map_err(|e| validation_error("context", ctx, &format!("Invalid JSON: {}", e)))?
+            .map_err(|e| validation_error("context", ctx, format!("Invalid JSON: {}", e)))?
     } else {
         serde_json::json!({})
     };

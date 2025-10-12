@@ -352,14 +352,12 @@ pub fn list_terms(
                         continue;
                     }
                 }
-            } else {
-                if let Some(MatrixValue::Single(rec_pid)) = record.fields.get("parent_id") {
-                    if rec_pid.is_empty() || rec_pid != pid {
-                        continue;
-                    }
-                } else {
+            } else if let Some(MatrixValue::Single(rec_pid)) = record.fields.get("parent_id") {
+                if rec_pid.is_empty() || rec_pid != pid {
                     continue;
                 }
+            } else {
+                continue;
             }
         }
 

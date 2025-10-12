@@ -100,7 +100,7 @@ pub fn create_role(req: &ReedRequest) -> ReedResult<ReedResponse<RoleInfo>> {
     // Parse context for inherits and desc
     let context_data: serde_json::Value = if let Some(ctx) = &req.context {
         serde_json::from_str(ctx)
-            .map_err(|e| validation_error("context", ctx, &format!("Invalid JSON: {}", e)))?
+            .map_err(|e| validation_error("context", ctx, format!("Invalid JSON: {}", e)))?
     } else {
         serde_json::json!({})
     };
@@ -406,7 +406,7 @@ pub fn update_role(rolename: &str, updates: RoleUpdate) -> ReedResult<ReedRespon
             .max_by_key(|e| e.metadata().ok().and_then(|m| m.modified().ok()));
 
         if let Some(backup) = backup_files {
-            std::fs::copy(&backup.path(), roles_path).map_err(|e| {
+            std::fs::copy(backup.path(), roles_path).map_err(|e| {
                 crate::reedcms::reedstream::io_error(
                     "restore",
                     roles_path.to_string_lossy().to_string(),

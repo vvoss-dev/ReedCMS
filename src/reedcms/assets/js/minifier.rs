@@ -106,7 +106,7 @@ fn remove_js_comments(js: &str) -> String {
             if c == '/' && chars.peek() == Some(&'/') {
                 // Single-line comment
                 chars.next(); // Skip second '/'
-                while let Some(ch) = chars.next() {
+                for ch in chars.by_ref() {
                     if ch == '\n' {
                         result.push('\n'); // Preserve newline for ASI
                         break;
@@ -116,7 +116,7 @@ fn remove_js_comments(js: &str) -> String {
                 // Multi-line comment
                 chars.next(); // Skip '*'
                 let mut prev = ' ';
-                while let Some(ch) = chars.next() {
+                for ch in chars.by_ref() {
                     if prev == '*' && ch == '/' {
                         break;
                     }

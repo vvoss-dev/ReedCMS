@@ -97,7 +97,7 @@ pub fn build_context(
     let mut page = HashMap::new();
     // Get latest update from git or use current date
     let latest_update = std::process::Command::new("git")
-        .args(&["log", "-1", "--format=%cd", "--date=short"])
+        .args(["log", "-1", "--format=%cd", "--date=short"])
         .output()
         .ok()
         .and_then(|output| String::from_utf8(output.stdout).ok())
@@ -211,10 +211,7 @@ fn get_text_value(key: &str, language: &str) -> ReedResult<String> {
         description: None,
     };
 
-    match crate::reedcms::reedbase::get::text(&req) {
-        Ok(response) => Ok(response.data),
-        Err(e) => Err(e),
-    }
+    crate::reedcms::reedbase::get::text(&req).map(|response| response.data)
 }
 
 /// Gets meta value from ReedBase.

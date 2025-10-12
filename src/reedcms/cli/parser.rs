@@ -178,10 +178,8 @@ fn parse_args_and_flags(args: &[String]) -> ReedResult<(Vec<String>, HashMap<Str
     while i < args.len() {
         let arg = &args[i];
 
-        if arg.starts_with("--") {
+        if let Some(flag_name) = arg.strip_prefix("--") {
             // Parse long flag (--flag)
-            let flag_name = &arg[2..]; // Remove "--" prefix
-
             if flag_name.is_empty() {
                 return Err(ReedError::ParseError {
                     input: arg.clone(),

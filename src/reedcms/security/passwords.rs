@@ -90,11 +90,7 @@ pub fn hash_password(password: &str) -> ReedResult<String> {
 /// ```
 pub fn verify_password(password: &str, hash: &str) -> ReedResult<bool> {
     let parsed_hash = PasswordHash::new(hash).map_err(|e| {
-        validation_error(
-            "password_hash",
-            hash,
-            &format!("Invalid hash format: {}", e),
-        )
+        validation_error("password_hash", hash, format!("Invalid hash format: {}", e))
     })?;
 
     let argon2 = Argon2::default();

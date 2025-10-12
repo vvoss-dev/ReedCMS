@@ -309,7 +309,7 @@ fn format_backup_list(backups: &[BackupInfo]) -> String {
     for backup in backups {
         by_csv
             .entry(backup.original_name.clone())
-            .or_insert_with(Vec::new)
+            .or_default()
             .push(backup);
     }
 
