@@ -1,4 +1,4 @@
-# REED-90-03: Repair Compiler Warnings
+# REED-90-03: Analyse and Repair Compiler Warnings
 
 ## MANDATORY Development Standards
 
@@ -18,186 +18,310 @@
 
 ## Ticket Information
 - **ID**: REED-90-03
-- **Title**: Repair Compiler Warnings
+- **Title**: Analyse and Repair Compiler Warnings
 - **Layer**: Quality Layer (REED-90)
 - **Priority**: Medium
 - **Status**: Open
-- **Complexity**: Low
+- **Complexity**: Medium
 - **Dependencies**: None
 
 ## Summary Reference
-- **Section**: Code Quality
-- **Key Concepts**: Remove all compiler warnings from src/ tree
+- **Section**: Code Quality & Build Hygiene
+- **Key Concepts**: Systematic analysis of all compiler warnings, case-by-case decisions, clean build output
 
 ## Objective
-Remove all compiler warnings from the `src/` directory tree to maintain clean build output and prevent warning fatigue.
+Systematically analyse and resolve ALL compiler warnings in the `src/` directory tree. Each warning must be evaluated individually to determine the appropriate solution: removal, usage, or explicit suppression with justification.
 
-## Current Warnings (5 total)
+## Methodology
 
-### 1. Unused Import: `Module` in `src/reedcms/assets/js/bundler.rs:13`
-```rust
-use super::resolver::{DependencyResolver, Module};
-//                                           ^^^^^^ unused
+### Analysis Process for Each Warning
+
+For EVERY warning, follow this decision tree:
+
+```
+1. UNDERSTAND THE WARNING
+   ├─ What is the compiler telling us?
+   ├─ Why does this code exist?
+   └─ What was the original intent?
+   
+2. INVESTIGATE CONTEXT
+   ├─ Is this code actually used? (grep, git blame, test coverage)
+   ├─ Is this planned for future use? (check tickets, TODOs, project_summary.md)
+   ├─ Is this part of a public API?
+   └─ Would removing it break something?
+   
+3. DECIDE ON ACTION
+   ├─ REMOVE: Truly dead code with no purpose → delete it
+   ├─ USE: Code exists but isn't wired up → complete the implementation
+   ├─ SUPPRESS: Intentional design decision → add #[allow(...)] with comment explaining WHY
+   └─ REFACTOR: Code design issue → fix the root cause
+   
+4. VALIDATE DECISION
+   ├─ Does the solution align with project architecture?
+   ├─ Does it maintain KISS principle?
+   └─ Is the intent now clear to future developers?
 ```
 
-**Action**: Remove `Module` from import or mark with `#[allow(unused_imports)]` if planned for future use.
+### Interactive Decision Making
 
-### 2. Unused Import: `std::collections::HashMap` in `src/reedcms/debug/cache_viewer.rs:19`
-```rust
-use std::collections::HashMap;
-// ^^^^^^^^^^^^^^^^^^^^^^^^^ unused
+**CRITICAL**: For EACH warning, we will:
+1. Present the warning and context
+2. Analyse together why it exists
+3. Discuss the appropriate solution
+4. Implement the agreed-upon fix
+5. Verify no functionality broken
+
+This is NOT a batch operation. Each warning receives individual attention.
+
+## Current Warning Inventory
+
+### Compiler Warnings (cargo build --lib)
+```bash
+$ cargo build --lib 2>&1 | grep "warning:" | wc -l
+5
 ```
 
-**Action**: Remove import if truly unused, or use it if the functionality is incomplete.
+Known warnings (baseline):
+1. Unused import: `Module` (assets/js/bundler.rs:13)
+2. Unused import: `HashMap` (debug/cache_viewer.rs:19)
+3. Unused import: `Environment` (response/builder.rs:25)
+4. Unused import: `OnceLock` (response/builder.rs:26)
+5. Useless clone on reference (assets/js/tree_shake.rs:169)
 
-### 3. Unused Import: `minijinja::Environment` in `src/reedcms/response/builder.rs:25`
-```rust
-use minijinja::Environment;
-// ^^^^^^^^^^^^^^^^^^^^^^ unused
+### Clippy Warnings (cargo clippy --lib)
+```bash
+$ cargo clippy --lib 2>&1 | grep "warning:" | wc -l
+53
 ```
 
-**Action**: Remove import - legacy from old template engine approach.
-
-### 4. Unused Import: `std::sync::OnceLock` in `src/reedcms/response/builder.rs:26`
-```rust
-use std::sync::OnceLock;
-// ^^^^^^^^^^^^^^^^^^^ unused
-```
-
-**Action**: Remove import - legacy from singleton pattern that was replaced.
-
-### 5. Useless Clone: `src/reedcms/assets/js/tree_shake.rs:169`
-```rust
-for cap in export_fn_re.captures_iter(&js.clone()) {
-//                                        ^^^^^^^^ useless clone on reference
-```
-
-**Action**: Remove `.clone()` - `captures_iter()` already takes a reference, so cloning the reference does nothing.
-
-**Fix**:
-```rust
-// Before
-for cap in export_fn_re.captures_iter(&js.clone()) {
-
-// After
-for cap in export_fn_re.captures_iter(&js) {
-```
+**Note**: Clippy warnings are style/idiom suggestions, not compiler warnings. They should be addressed separately after compiler warnings are resolved.
 
 ## Implementation Strategy
 
-### Phase 1: Remove Unused Imports
-1. **bundler.rs**: Remove `Module` from import
-2. **cache_viewer.rs**: Remove `HashMap` import
-3. **builder.rs**: Remove `Environment` and `OnceLock` imports
+### Phase 1: Inventory and Documentation (Pre-Implementation)
+1. Generate complete warning list with locations
+2. Categorise warnings by type:
+   - Unused imports
+   - Dead code
+   - Useless operations
+   - Type/lifetime issues
+3. Document context for each warning
+4. Identify patterns (e.g., multiple unused imports in one file)
 
-### Phase 2: Fix Useless Clone
-1. **tree_shake.rs**: Remove `.clone()` call on line 169
+### Phase 2: Case-by-Case Analysis (Interactive)
+For EACH warning:
+1. **Read surrounding code** - understand context
+2. **Check git history** - why was this added? (`git log -p`)
+3. **Search for usage** - is it really unused? (`grep -r`)
+4. **Review documentation** - is it mentioned in project_summary.md or tickets?
+5. **Discuss solution** - what's the right approach?
+6. **Implement fix** - apply the agreed solution
+7. **Test immediately** - verify no breakage (`cargo test`)
+8. **Document decision** - add comment if using `#[allow(...)]`
 
-### Phase 3: Verification
-1. Run `cargo build --lib` and verify 0 warnings
-2. Run `cargo test` to ensure no functionality broken
-3. Run `cargo clippy` to check for additional issues
+### Phase 3: Verification (Post-Implementation)
+1. Run `cargo build --lib` - verify 0 warnings
+2. Run `cargo test --lib` - ensure all tests pass
+3. Run `cargo build --release` - check release build clean
+4. Update this ticket with decisions made
 
-## Files to Modify
+## Decision Documentation Template
 
-### 1. `src/reedcms/assets/js/bundler.rs`
+For each warning requiring `#[allow(...)]`, document:
+
 ```rust
-// Line 13 - Before
-use super::resolver::{DependencyResolver, Module};
-
-// Line 13 - After
-use super::resolver::DependencyResolver;
+// ALLOW: [Category] - [Reason]
+// Context: [Why this code exists]
+// Decision: [Why we chose to suppress rather than remove]
+// Date: 2025-10-12
+// Ticket: REED-90-03
+#[allow(dead_code)]
+pub fn example() { }
 ```
 
-### 2. `src/reedcms/debug/cache_viewer.rs`
+**Example (Good)**:
 ```rust
-// Line 19 - Remove entirely
-use std::collections::HashMap;
+// ALLOW: dead_code - Part of public API for future extension system
+// Context: Plugin API skeleton for REED-11 (Extension Layer)
+// Decision: Keep function signature stable, suppress warning until extensions implemented
+// Date: 2025-10-12
+// Ticket: REED-90-03
+#[allow(dead_code)]
+pub fn register_plugin(plugin: Plugin) -> ReedResult<()> {
+    todo!("Implementation blocked by REED-11-01")
+}
 ```
 
-### 3. `src/reedcms/response/builder.rs`
+**Example (Bad)**:
 ```rust
-// Line 25 - Remove entirely
-use minijinja::Environment;
-
-// Line 26 - Remove entirely  
-use std::sync::OnceLock;
+#[allow(dead_code)] // TODO: maybe use this later?
+pub fn something() { }
 ```
 
-### 4. `src/reedcms/assets/js/tree_shake.rs`
-```rust
-// Line 169 - Before
-for cap in export_fn_re.captures_iter(&js.clone()) {
+## Categories of Warnings
 
-// Line 169 - After
-for cap in export_fn_re.captures_iter(&js) {
+### A. Unused Imports
+**Typical Cause**: Refactoring removed usage but left import
+
+**Decision Matrix**:
+- Import truly unused → **REMOVE**
+- Import used in `#[cfg(test)]` → **Move to test module**
+- Import for future use → **SUPPRESS with justification**
+- Import part of re-export → **Keep but add comment**
+
+### B. Dead Code (Functions/Constants/Types)
+**Typical Cause**: Feature incomplete, legacy code, or part of API
+
+**Decision Matrix**:
+- Truly abandoned code → **REMOVE**
+- Part of public API (used externally) → **SUPPRESS with docs**
+- Planned for ticket → **SUPPRESS with ticket reference**
+- Should be private → **Change visibility**
+
+### C. Useless Operations
+**Typical Cause**: Misunderstanding of Rust semantics (clone, borrow, etc.)
+
+**Decision Matrix**:
+- Operation genuinely useless → **REMOVE**
+- Operation has subtle purpose → **Add explanatory comment**
+- Operation prevents future breakage → **Keep with comment**
+
+### D. Type/Pattern Issues
+**Typical Cause**: Overly complex types, unused pattern bindings
+
+**Decision Matrix**:
+- Simplify type → **REFACTOR**
+- Rename unused binding → **Use `_` prefix**
+- Pattern intentionally exhaustive → **Keep with comment**
+
+## Example Workflow for ONE Warning
+
 ```
+WARNING: unused import `Module`
+  --> src/reedcms/assets/js/bundler.rs:13:43
+
+STEP 1: Understand
+$ cat src/reedcms/assets/js/bundler.rs | head -20
+→ Imports DependencyResolver and Module from resolver
+
+STEP 2: Investigate Usage
+$ grep -rn "Module" src/reedcms/assets/js/
+→ Only appears in import, never used
+
+STEP 3: Check History
+$ git log -p --follow src/reedcms/assets/js/bundler.rs | grep -A 5 -B 5 "Module"
+→ Added 6 months ago, part of initial skeleton, never implemented
+
+STEP 4: Check Tickets
+$ grep -r "Module" _workbench/Tickets/
+→ No mentions, not planned
+
+STEP 5: Discuss
+User: "Was this planned for future use?"
+Assistant: "Appears to be abandoned skeleton code, no references"
+User: "Let's remove it then"
+
+STEP 6: Implement
+- Remove `Module` from import
+- Verify bundler tests still pass
+
+STEP 7: Commit
+[QUALITY] – fix: remove unused Module import from bundler.rs
+
+The Module type was part of an abandoned design. Resolver only
+needs DependencyResolver in current implementation.
+```
+
+## Acceptance Criteria
+
+- [ ] ALL compiler warnings analysed and documented
+- [ ] Each warning has a decision: REMOVE, USE, SUPPRESS, or REFACTOR
+- [ ] All `#[allow(...)]` attributes have explanatory comments
+- [ ] `cargo build --lib` produces 0 warnings
+- [ ] `cargo build --release` produces 0 warnings
+- [ ] All tests pass (`cargo test --lib`)
+- [ ] No functionality broken or regressed
+- [ ] Decisions documented in this ticket
+- [ ] BBC English throughout
+- [ ] Interactive discussion captured for each non-obvious case
+
+## Progress Tracking
+
+Use this section to track decisions as they're made:
+
+### Resolved Warnings
+
+| File | Line | Warning | Decision | Justification | Commit |
+|------|------|---------|----------|---------------|--------|
+| (populated as we work) | | | | | |
+
+### Suppressed Warnings (with #[allow(...)])
+
+| File | Line | Item | Reason | Ticket Reference |
+|------|------|------|--------|------------------|
+| (populated as we work) | | | | |
 
 ## Testing Requirements
 
-### Compilation Tests
-- [ ] `cargo build --lib` completes with 0 warnings
-- [ ] `cargo build --release` completes with 0 warnings
-- [ ] `cargo clippy` reports no issues
+### Per-Warning Testing
+After EACH fix:
+- [ ] Run `cargo build --lib` - verify warning gone
+- [ ] Run affected module's tests - verify functionality intact
 
-### Functional Tests
-- [ ] All existing tests pass: `cargo test`
-- [ ] JS bundler still works correctly
-- [ ] Cache viewer functionality intact
-- [ ] Response builder renders templates correctly
-- [ ] Tree shaking identifies exports correctly
+### Final Verification
+- [ ] `cargo build --lib` - 0 warnings
+- [ ] `cargo test --lib` - all tests pass
+- [ ] `cargo build --release` - 0 warnings
+- [ ] `cargo clippy --lib` - baseline for future tickets
 
-### Performance Tests
-- [ ] No performance regression after removing `.clone()`
-- [ ] Build time remains consistent
+## Git Commit Strategy
 
-## Acceptance Criteria
-- [ ] All 5 compiler warnings eliminated
-- [ ] No new warnings introduced
-- [ ] All tests pass (525 passing tests remain passing)
-- [ ] No functionality broken
-- [ ] Code remains clean and maintainable
-- [ ] BBC English in all documentation
-- [ ] Git commit follows format: `[QUALITY] – fix: remove all compiler warnings from src/ tree`
+Each warning (or logical group) gets its own commit:
+
+```
+[QUALITY] – fix: remove unused Module import from bundler.rs
+
+Analysis: Module type was part of abandoned dependency resolution
+design. Only DependencyResolver is used in current implementation.
+
+Decision: REMOVE - No future use planned, no ticket references.
+Verified: Bundler tests pass, no usage in codebase.
+```
 
 ## Implementation Notes
 
-### Why These Warnings Exist
-1. **Unused imports**: Legacy code from refactoring where imports were kept "just in case"
-2. **Useless clone**: Misunderstanding of reference semantics - cloning a reference doesn't clone the data
+### Why This Approach?
 
-### Benefits of Fixing
-1. **Clean build output**: Makes actual problems visible
-2. **Prevention of warning fatigue**: Developers ignore warnings when there are too many
-3. **Code hygiene**: Removes dead code and clarifies intent
-4. **Performance**: Removing useless clone eliminates unnecessary work
+**NOT a Batch Operation**: Each warning tells a story about the code's evolution. Batch-fixing warnings loses that context and may hide design issues.
+
+**Interactive Process**: Some decisions require architectural understanding. We discuss together rather than making assumptions.
+
+**Documentation Over Silence**: If we suppress a warning, future developers need to know WHY. "Dead code" isn't enough - WHY is it dead but kept?
+
+### Benefits
+
+1. **Clean Build Output**: Real problems become immediately visible
+2. **Code Understanding**: Forces deep code review and architectural clarity
+3. **Prevention of Warning Fatigue**: Developers don't ignore warnings
+4. **Quality Signal**: Zero-warning build is a quality indicator
+5. **Intentional Design**: Suppressed warnings become documented decisions
 
 ### Risk Assessment
-- **Risk Level**: Low
-- **Impact**: Positive (cleaner code, no functional changes)
-- **Rollback**: Simple git revert if issues arise
 
-## Git Commit Message Template
-```
-[QUALITY] – fix: remove all compiler warnings from src/ tree
-
-Eliminated 5 compiler warnings:
-- Removed unused Module import from bundler.rs
-- Removed unused HashMap import from cache_viewer.rs
-- Removed unused Environment import from builder.rs
-- Removed unused OnceLock import from builder.rs
-- Removed useless clone in tree_shake.rs (line 169)
-
-All tests pass. No functionality changed.
-Build output now clean with 0 warnings.
-```
+- **Risk Level**: Low to Medium (depends on individual warning)
+- **Impact**: Positive (cleaner code, clearer intent)
+- **Rollback**: Each commit is atomic and revertible
+- **Testing**: Continuous testing prevents breakage
 
 ## References
-- CLAUDE.md: Code quality standards
-- Rust documentation: https://doc.rust-lang.org/book/ch10-02-traits.html
-- Cargo book: https://doc.rust-lang.org/cargo/
+
+- CLAUDE.md: Development standards and KISS principle
+- Rust Book: https://doc.rust-lang.org/book/
+- Cargo Book: https://doc.rust-lang.org/cargo/
+- Rust Compiler Error Index: https://doc.rust-lang.org/error-index.html
 
 ## Notes
-This ticket is part of the Quality Layer (REED-90) which focuses on code cleanliness, maintainability, and build hygiene. Removing warnings is essential for maintaining a professional codebase where real issues are immediately visible.
 
-The warnings we previously fixed (dead_code) were intentionally kept with `#[allow(dead_code)]` because those functions are part of public APIs or planned for future use. The warnings in this ticket are genuinely unused code that should be removed.
+This ticket represents a shift from "fix warnings" to "understand and decide on warnings". The goal is not just a clean build, but a codebase where every line has clear intent and every suppression has documented reasoning.
+
+Previous tickets fixed `dead_code` warnings by adding `#[allow(dead_code)]` to functions that are genuinely part of public APIs or planned features. This ticket continues that pattern but applies it systematically to ALL warnings with proper analysis and documentation.
