@@ -78,6 +78,7 @@ pub fn make_text_filter(
 /// ## Context Preservation
 /// - Includes original error message
 /// - Adds filter name and key for debugging
+#[allow(dead_code)]
 fn convert_reed_error_to_jinja(err: ReedError, filter: &str, key: &str) -> minijinja::Error {
     use minijinja::ErrorKind;
 

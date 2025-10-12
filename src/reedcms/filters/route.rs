@@ -84,6 +84,7 @@ pub fn make_route_filter(
 }
 
 /// Converts ReedError to MiniJinja Error with context.
+#[allow(dead_code)]
 fn convert_reed_error_to_jinja(err: ReedError, filter: &str, key: &str) -> minijinja::Error {
     use minijinja::ErrorKind;
 

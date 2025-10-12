@@ -154,6 +154,7 @@ pub async fn build_response(req: HttpRequest) -> Result<HttpResponse, Error> {
 /// ## Fallback Behaviour
 /// - Missing User-Agent header → "mouse"
 /// - Invalid User-Agent header → "mouse"
+#[allow(dead_code)]
 fn detect_variant(req: &HttpRequest) -> String {
     let user_agent = req
         .headers()
