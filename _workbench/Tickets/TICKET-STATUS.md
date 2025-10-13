@@ -975,7 +975,7 @@
 
 ---
 
-## Layer 18: CLI Layer - ReedCLI (1/8 Complete, 7/8 Planned - 12.5%)
+## Layer 18: CLI Layer - ReedCLI (2/8 Complete, 6/8 Planned - 25%)
 
 ### 📋 REED-18-00: CLI Layer Overview
 **Status**: Planned  
@@ -991,10 +991,10 @@
 
 ---
 
-### 📋 REED-18-02: Registry Loader
-**Status**: Planned  
-**Commits**: 0 commits  
-**Analysis**: Ticket created for Reed.toml registry loading system.
+### ✅ REED-18-02: Registry Loader
+**Status**: Complete  
+**Commits**: Pending  
+**Analysis**: Implemented complete registry loader with TOML parsing, dependency validation (circular/missing detection), O(1) command lookups, and 100% test coverage (34 tests passing).
 
 ---
 

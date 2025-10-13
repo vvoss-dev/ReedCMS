@@ -54,7 +54,7 @@ REED-90-01|Open|Code Review|Quality Layer|High|High|REED-01-*,REED-02-*,REED-03-
 REED-90-02|Open|Manual Documentation|Quality Layer|High|High|REED-90-01|Manual Documentation|Create comprehensive manual/ documentation for all layers with ASCII diagrams, Mermaid charts, minimal code examples, and didactic BBC English content
 REED-18-00|Planned|CLI Layer Overview|CLI Layer (Presentation)|High|Low||CLI Architecture|Overview of ReedCLI presentation layer with 3-tier separation and Reed.toml registry system
 REED-18-01|Complete|Command Parser|CLI Layer (Presentation)|Critical|Medium||Parser System|Parse CLI input with quoted strings, flags, and tool inference
-REED-18-02|Planned|Registry Loader|CLI Layer (Presentation)|Critical|High|REED-18-01|Registry System|Load Reed.toml for dynamic command routing and tool discovery
+REED-18-02|Complete|Registry Loader|CLI Layer (Presentation)|Critical|High|REED-18-01|Registry System|Load Reed.toml for dynamic command routing and tool discovery
 REED-18-03|Planned|Adapter System|CLI Layer (Presentation)|High|High|REED-18-01,REED-18-02|CLI Adapters|Adapter system for integrating external Reed tools via Reed.toml configuration
 REED-18-04|Planned|Tool Integration|CLI Layer (Presentation)|High|Medium|REED-18-02,REED-18-03|Tool Routing|Route commands to tool handlers dynamically with exit code handling
 REED-18-05|Planned|Output Formatter|CLI Layer (Presentation)|High|Medium||Output Formatting|Format command output in table/JSON/CSV/plain formats

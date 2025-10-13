@@ -7,7 +7,7 @@ license = "Apache-2.0"
 description = "ReedCLI - Unified CLI for Reed tools (ReedBase, ReedCMS)"
 
 [dependencies]
-# No external dependencies for parser (KISS principle)
+toml = "0.8"  # TOML parser for Reed.toml registry files
 
 [dev-dependencies]
 # Test dependencies if needed
