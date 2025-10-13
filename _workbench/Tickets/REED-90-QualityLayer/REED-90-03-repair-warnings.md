@@ -11,6 +11,7 @@
 - **Functions**: One function = One distinctive job
 - **Shared Functions**: Same patterns = One shared function (CONFIG and SYSTEM use identical logic)
 - **Testing**: Separate test files as `{name}.test.rs` - never inline `#[cfg(test)]` modules
+- **Test Functions**: Move all test-only functions to `{name}.test.rs` - active code files must not contain test utilities
 - **Avoid**: Avoid Swiss Army knife functions
 - **Avoid**: Generic file names like `handler.rs`, `middleware.rs`, `utils.rs` - every topic (auth, login,...) has its own scoped rs service file
 - **Templates**: See `_workbench/Tickets/templates/service-template.md` for complete implementation guide
@@ -21,9 +22,10 @@
 - **Title**: Analyse and Repair Compiler Warnings
 - **Layer**: Quality Layer (REED-90)
 - **Priority**: Medium
-- **Status**: Open
+- **Status**: In Progress
 - **Complexity**: Medium
 - **Dependencies**: None
+- **Process Logs**: 251013-P01 (language/environment symmetry - resolved dead_code warnings)
 
 ## Summary Reference
 - **Section**: Code Quality & Build Hygiene
@@ -67,11 +69,34 @@ For EVERY warning, follow this decision tree:
 **CRITICAL**: For EACH warning, we will:
 1. Present the warning and context
 2. Analyse together why it exists
-3. Discuss the appropriate solution
-4. Implement the agreed-upon fix
-5. Verify no functionality broken
+3. **Check ticket requirements** in `_workbench/Tickets/` for planned usage
+4. **Check function registry** in `project_functions.csv` for relationships
+5. Discuss the appropriate solution
+6. Implement the agreed-upon fix
+7. Verify no functionality broken
+8. **Document in process log** if non-trivial decision
 
 This is NOT a batch operation. Each warning receives individual attention.
+
+### Process Logging Integration
+
+**MANDATORY**: Create process logs for warning cleanup work:
+
+1. **When to create process log:**
+   - Starting new file analysis (one log per file or logical group)
+   - Non-trivial warning requiring architectural decision
+   - Pattern affecting multiple files
+
+2. **Process log format:** `YYMMDD-PXX` (e.g., `251013-P03`, `251013-P04`)
+
+3. **Document in log:**
+   - Which warnings addressed
+   - Investigation steps (grep results, ticket checks, function registry lookups)
+   - Decision rationale
+   - Code changes made
+   - Test verification
+
+4. **Link to this ticket:** All process logs should reference REED-90-03 in summary
 
 ## Current Warning Inventory
 
@@ -114,10 +139,14 @@ For EACH warning:
 2. **Check git history** - why was this added? (`git log -p`)
 3. **Search for usage** - is it really unused? (`grep -r`)
 4. **Review documentation** - is it mentioned in project_summary.md or tickets?
-5. **Discuss solution** - what's the right approach?
-6. **Implement fix** - apply the agreed solution
-7. **Test immediately** - verify no breakage (`cargo test`)
-8. **Document decision** - add comment if using `#[allow(...)]`
+5. **Check function registry** - `grep "function_name" _workbench/Tickets/project_functions.csv`
+6. **Check related tickets** - search `_workbench/Tickets/` for file or function mentions
+7. **Identify test functions** - if function only used in tests, move to `{name}.test.rs`
+8. **Discuss solution** - what's the right approach?
+9. **Implement fix** - apply the agreed solution
+10. **Test immediately** - verify no breakage (`cargo test`)
+11. **Document decision** - add comment if using `#[allow(...)]`
+12. **Log in process** - document non-trivial decisions in `_workbench/Log/YYMMDD-PXX.csv`
 
 ### Phase 3: Verification (Post-Implementation)
 1. Run `cargo build --lib` - verify 0 warnings
@@ -165,9 +194,17 @@ pub fn something() { }
 
 **Decision Matrix**:
 - Import truly unused → **REMOVE**
-- Import used in `#[cfg(test)]` → **Move to test module**
-- Import for future use → **SUPPRESS with justification**
+- Import used only in test functions → **Move function to `{name}.test.rs`, remove import**
+- Import used in `#[cfg(test)]` blocks → **Move to `{name}.test.rs` file**
+- Import for future use (with ticket reference) → **SUPPRESS with justification**
 - Import part of re-export → **Keep but add comment**
+
+**Test Function Detection**:
+If import only used by functions that:
+- Have `_test` suffix in name
+- Only called from test code
+- Are test utilities/helpers
+→ **Move those functions to `{name}.test.rs` and remove import from main file**
 
 ### B. Dead Code (Functions/Constants/Types)
 **Typical Cause**: Feature incomplete, legacy code, or part of API
