@@ -1,0 +1,4 @@
+term_id|term|category|parent_id|description|color|icon|status|created_by|usage_count|created_at|updated_at|desc
+Topics:Languages|Languages|Topics|||||active|admin|0|2025-10-12T05:47:03.216687+00:00|2025-10-12T05:47:03.216687+00:00|Taxonomy term
+Topics:Programming|Programming|Topics|||||active|admin|0|2025-10-12T05:47:03.217206+00:00|2025-10-12T05:47:03.217206+00:00|Taxonomy term
+Topics:Rust|Rust|Topics|Topics:Programming||||active|admin|0|2025-10-12T05:47:03.217528+00:00|2025-10-12T05:47:03.217805+00:00|Taxonomy term

@@ -1,0 +1,9 @@
+entity_key|entity_type|entity_id|term_ids|assigned_by|assigned_at|updated_at|desc
+user:entity-0|user|entity-0|Category:Test|admin|2025-10-12T05:46:52.712131+00:00|2025-10-12T05:46:52.712131+00:00|Entity-term assignment
+content:entity-1|content|entity-1|Category:Test|admin|2025-10-12T05:46:52.712622+00:00|2025-10-12T05:46:52.712622+00:00|Entity-term assignment
+template:entity-2|template|entity-2|Category:Test|admin|2025-10-12T05:46:52.713091+00:00|2025-10-12T05:46:52.713091+00:00|Entity-term assignment
+route:entity-3|route|entity-3|Category:Test|admin|2025-10-12T05:46:52.713553+00:00|2025-10-12T05:46:52.713553+00:00|Entity-term assignment
+site:entity-4|site|entity-4|Category:Test|admin|2025-10-12T05:46:52.714337+00:00|2025-10-12T05:46:52.714337+00:00|Entity-term assignment
+project:entity-5|project|entity-5|Category:Test|admin|2025-10-12T05:46:52.714948+00:00|2025-10-12T05:46:52.714948+00:00|Entity-term assignment
+asset:entity-6|asset|entity-6|Category:Test|admin|2025-10-12T05:46:52.715506+00:00|2025-10-12T05:46:52.715506+00:00|Entity-term assignment
+role:entity-7|role|entity-7|Category:Test|admin|2025-10-12T05:46:52.716145+00:00|2025-10-12T05:46:52.716145+00:00|Entity-term assignment
