@@ -998,38 +998,38 @@
 
 ---
 
-### 📋 REED-18-03: Output Formatter
+### 📋 REED-18-03: Adapter System
 **Status**: Planned  
 **Commits**: 0 commits  
-**Analysis**: Ticket created for multi-format output system (table/JSON/CSV/plain).
+**Analysis**: Ticket created for CLI adapter system to integrate ReedBase/ReedCMS.
 
 ---
 
-### 📋 REED-18-04: Interactive Shell
-**Status**: Planned  
-**Commits**: 0 commits  
-**Analysis**: Ticket created for REPL shell with history and completion.
-
----
-
-### 📋 REED-18-05: Help System
-**Status**: Planned  
-**Commits**: 0 commits  
-**Analysis**: Ticket created for auto-generated help from Reed.toml.
-
----
-
-### 📋 REED-18-06: Tool Integration
+### 📋 REED-18-04: Tool Integration
 **Status**: Planned  
 **Commits**: 0 commits  
 **Analysis**: Ticket created for dynamic tool routing system.
 
 ---
 
-### 📋 REED-18-07: Adapter System
+### 📋 REED-18-05: Output Formatter
 **Status**: Planned  
 **Commits**: 0 commits  
-**Analysis**: Ticket created for CLI adapter system to integrate ReedBase/ReedCMS.
+**Analysis**: Ticket created for multi-format output system (table/JSON/CSV/plain).
+
+---
+
+### 📋 REED-18-06: Help System
+**Status**: Planned  
+**Commits**: 0 commits  
+**Analysis**: Ticket created for auto-generated help from Reed.toml.
+
+---
+
+### 📋 REED-18-07: Interactive Shell
+**Status**: Planned  
+**Commits**: 0 commits  
+**Analysis**: Ticket created for REPL shell with history and completion.
 
 ---
 
@@ -1063,31 +1063,31 @@
 
 ---
 
-### 📋 REED-19-04: Concurrent Write System
+### 📋 REED-19-04: Encoded Log System
+**Status**: Planned  
+**Commits**: 0 commits  
+**Analysis**: Ticket created for integer-coded version logs.
+
+---
+
+### 📋 REED-19-05: Concurrent Write System
 **Status**: Planned  
 **Commits**: 0 commits  
 **Analysis**: Ticket created for file-based locks and write queue.
 
 ---
 
-### 📋 REED-19-05: Row-Level CSV Merge
+### 📋 REED-19-06: Row-Level CSV Merge
 **Status**: Planned  
 **Commits**: 0 commits  
 **Analysis**: Ticket created for automatic merge of concurrent writes.
 
 ---
 
-### 📋 REED-19-06: Conflict Resolution
+### 📋 REED-19-07: Conflict Resolution
 **Status**: Planned  
 **Commits**: 0 commits  
 **Analysis**: Ticket created for conflict resolution strategies.
-
----
-
-### 📋 REED-19-07: Encoded Log System
-**Status**: Planned  
-**Commits**: 0 commits  
-**Analysis**: Ticket created for integer-coded version logs.
 
 ---
 
@@ -1105,31 +1105,31 @@
 
 ---
 
-### 📋 REED-19-10: Migration from REED-02
+### 📋 REED-19-10: CLI SQL Query Interface (ReedQL)
+**Status**: Planned  
+**Commits**: 0 commits  
+**Analysis**: Ticket created for SQL-like query language (CLI-only).
+
+---
+
+### 📋 REED-19-11: Migration from REED-02
 **Status**: Planned  
 **Commits**: 0 commits  
 **Analysis**: Ticket created for data migration from current REED-02 structure.
 
 ---
 
-### 📋 REED-19-11: Performance Testing
+### 📋 REED-19-12: Performance Testing
 **Status**: Planned  
 **Commits**: 0 commits  
 **Analysis**: Ticket created for comprehensive benchmarking suite.
 
 ---
 
-### 📋 REED-19-12: Complete Documentation
+### 📋 REED-19-13: Complete Documentation
 **Status**: Planned  
 **Commits**: 0 commits  
 **Analysis**: Ticket created for complete ReedBase documentation.
-
----
-
-### 📋 REED-19-13: CLI SQL Query Interface (ReedQL)
-**Status**: Planned  
-**Commits**: 0 commits  
-**Analysis**: Ticket created for SQL-like query language (CLI-only).
 
 ---
 

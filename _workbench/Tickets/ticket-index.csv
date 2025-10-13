@@ -55,22 +55,22 @@ REED-90-02|Open|Manual Documentation|Quality Layer|High|High|REED-90-01|Manual D
 REED-18-00|Planned|CLI Layer Overview|CLI Layer (Presentation)|High|Low||CLI Architecture|Overview of ReedCLI presentation layer with 3-tier separation and Reed.toml registry system
 REED-18-01|Planned|Command Parser|CLI Layer (Presentation)|Critical|Medium||Parser System|Parse CLI input with quoted strings, flags, and tool inference
 REED-18-02|Planned|Registry Loader|CLI Layer (Presentation)|Critical|High|REED-18-01|Registry System|Load Reed.toml for dynamic command routing and tool discovery
-REED-18-03|Planned|Output Formatter|CLI Layer (Presentation)|High|Medium||Output Formatting|Format command output in table/JSON/CSV/plain formats
-REED-18-04|Planned|Interactive Shell|CLI Layer (Presentation)|Medium|Medium|REED-18-01|REPL Shell|Interactive shell with history and command completion
-REED-18-05|Planned|Help System|CLI Layer (Presentation)|High|Low|REED-18-02|Help Generation|Auto-generate help from Reed.toml metadata
-REED-18-06|Planned|Tool Integration|CLI Layer (Presentation)|High|Medium|REED-18-02|Tool Routing|Route commands to tool handlers dynamically with exit code handling
-REED-18-07|Planned|Adapter System|CLI Layer (Presentation)|High|High|REED-18-01,REED-18-02|CLI Adapters|Adapter system for integrating external Reed tools via Reed.toml configuration
+REED-18-03|Planned|Adapter System|CLI Layer (Presentation)|High|High|REED-18-01,REED-18-02|CLI Adapters|Adapter system for integrating external Reed tools via Reed.toml configuration
+REED-18-04|Planned|Tool Integration|CLI Layer (Presentation)|High|Medium|REED-18-02,REED-18-03|Tool Routing|Route commands to tool handlers dynamically with exit code handling
+REED-18-05|Planned|Output Formatter|CLI Layer (Presentation)|High|Medium||Output Formatting|Format command output in table/JSON/CSV/plain formats
+REED-18-06|Planned|Help System|CLI Layer (Presentation)|High|Low|REED-18-02|Help Generation|Auto-generate help from Reed.toml metadata
+REED-18-07|Planned|Interactive Shell|CLI Layer (Presentation)|Medium|Medium|REED-18-01,REED-18-04|REPL Shell|Interactive shell with history and command completion
 REED-19-00|Planned|ReedBase Layer Overview|ReedBase Layer (Data)|High|Low||Database Architecture|Overview of ReedBase standalone database with versioning and concurrent writes
 REED-19-01|Planned|Registry & Dictionary|ReedBase Layer (Data)|Critical|Medium||Encoded Metadata|Dictionary system for integer-coded action/user metadata
 REED-19-02|Planned|Universal Table API|ReedBase Layer (Data)|Critical|High|REED-19-01|Table Structure|Universal table API with current.csv + binary deltas + version.log
 REED-19-03|Planned|Binary Delta Versioning|ReedBase Layer (Data)|High|High|REED-19-02|Delta System|Bsdiff binary deltas with XZ compression for 95% disk savings
-REED-19-04|Planned|Concurrent Write System|ReedBase Layer (Data)|High|High|REED-19-02|Write Concurrency|File-based advisory locks with write queue for concurrent access
-REED-19-05|Planned|Row-Level CSV Merge|ReedBase Layer (Data)|High|High|REED-19-04|Auto-Merge|Automatic row-level merge for non-conflicting concurrent writes
-REED-19-06|Planned|Conflict Resolution|ReedBase Layer (Data)|Medium|Medium|REED-19-05|Conflict Handling|Multiple resolution strategies (LastWriteWins, FirstWriteWins, Manual, KeepBoth)
-REED-19-07|Planned|Encoded Log System|ReedBase Layer (Data)|Medium|Medium|REED-19-01|Log Encoding|Integer-coded version logs for 50% smaller size and 5x faster parsing
+REED-19-04|Planned|Encoded Log System|ReedBase Layer (Data)|Medium|Medium|REED-19-01,REED-19-03|Log Encoding|Integer-coded version logs for 50% smaller size and 5x faster parsing
+REED-19-05|Planned|Concurrent Write System|ReedBase Layer (Data)|High|High|REED-19-02|Write Concurrency|File-based advisory locks with write queue for concurrent access
+REED-19-06|Planned|Row-Level CSV Merge|ReedBase Layer (Data)|High|High|REED-19-05|Auto-Merge|Automatic row-level merge for non-conflicting concurrent writes
+REED-19-07|Planned|Conflict Resolution|ReedBase Layer (Data)|Medium|Medium|REED-19-06|Conflict Handling|Multiple resolution strategies (LastWriteWins, FirstWriteWins, Manual, KeepBoth)
 REED-19-08|Planned|Schema Validation|ReedBase Layer (Data)|High|Medium|REED-19-02|Schema System|TOML schemas with type checking and constraints
 REED-19-09|Planned|Function System & Caching|ReedBase Layer (Data)|Medium|High|REED-19-02|Computed Columns|Rust functions for computed columns/aggregations with memoization cache
-REED-19-10|Planned|Migration from REED-02|ReedBase Layer (Data)|High|Medium|REED-19-01,REED-19-02,REED-19-03,REED-19-08|Data Migration|Migrate existing REED-02 data to new ReedBase format with rollback capability
-REED-19-11|Planned|Performance Testing|ReedBase Layer (Data)|High|High|All REED-19|Benchmarking|Comprehensive benchmarking suite with regression detection
-REED-19-12|Planned|Complete Documentation|ReedBase Layer (Data)|High|High|All REED-19|Documentation|Complete ReedBase documentation with user guide, API docs, and tutorials
-REED-19-13|Planned|CLI SQL Query Interface|ReedBase Layer (Data)|High|High|REED-19-02,REED-19-08,REED-19-09|ReedQL|SQL-like query language (CLI-only for security)
+REED-19-10|Planned|CLI SQL Query Interface|ReedBase Layer (Data)|High|High|REED-19-02,REED-19-08,REED-19-09|ReedQL|SQL-like query language (CLI-only for security)
+REED-19-11|Planned|Migration from REED-02|ReedBase Layer (Data)|High|Medium|REED-19-01,REED-19-02,REED-19-03,REED-19-04,REED-19-08|Data Migration|Migrate existing REED-02 data to new ReedBase format with rollback capability
+REED-19-12|Planned|Performance Testing|ReedBase Layer (Data)|High|High|All REED-19|Benchmarking|Comprehensive benchmarking suite with regression detection
+REED-19-13|Planned|Complete Documentation|ReedBase Layer (Data)|High|High|All REED-19|Documentation|Complete ReedBase documentation with user guide, API docs, and tutorials
