@@ -1,0 +1,15 @@
+step|category|action|details|result|file|line|decision
+01|investigation|identify_warnings|Found 9 dead_code warnings in src/reedcms/taxonomy/hierarchy.rs|All 9 public and private functions unused|taxonomy/hierarchy.rs|38,136,248,323,366,430,515,544,575,583|investigate_cause
+02|investigation|check_ticket|Read REED-02-06 (Taxonomy System) ticket|Hierarchy functions specified in ticket requirements|REED-02-06|n/a|check_implementation
+03|investigation|check_status|Checked TICKET-STATUS.md for REED-02-06|Marked Complete - 58/58 tests pass - commit 377c7ff|TICKET-STATUS.md|n/a|check_exports
+04|investigation|check_exports|Read taxonomy/mod.rs public exports|All hierarchy functions ARE exported publicly (lines 22-24)|taxonomy/mod.rs|22-24|check_usage
+05|investigation|check_usage|Searched entire codebase for hierarchy function calls|Only used in hierarchy_test.rs - not used in CLI or other modules|n/a|n/a|check_cli_ticket
+06|investigation|check_cli_ticket|Read REED-04-06 (CLI Taxonomy Commands) ticket|Ticket specifies --tree flag using get_tree() function|REED-04-06|n/a|check_cli_implementation
+07|investigation|check_cli_status|Checked TICKET-STATUS.md for REED-04-06|Marked Complete - commit db14155|TICKET-STATUS.md|n/a|verify_tree_flag
+08|investigation|verify_tree_flag|Searched taxonomy_commands.rs for --tree flag|NOT FOUND - feature not implemented|taxonomy_commands.rs|n/a|check_acceptance
+09|investigation|check_acceptance|Checked REED-04-06 acceptance criteria|All criteria UNCHECKED including "Hierarchical tree visualization"|REED-04-06|n/a|root_cause_identified
+10|root_cause|identify|REED-04-06 marked Complete but acceptance criteria unchecked|Ticket prematurely marked complete - CLI features incomplete|REED-04-06|n/a|determine_fix
+11|decision|categorize|Hierarchy functions are PUBLIC API for incomplete CLI features|Functions correct and tested (58 tests pass) - not dead code|hierarchy.rs|n/a|choose_approach
+12|decision|options|Option A: Add #[allow(dead_code)] until CLI complete|Suppresses warnings temporarily|n/a|n/a|evaluate_options
+13|decision|options|Option B: Implement missing CLI features (--tree, hierarchy commands)|Completes REED-04-06 properly but larger scope|n/a|n/a|evaluate_options
+14|decision|options|Option C: Update TICKET-STATUS to reflect incomplete status|Documents reality but doesn't fix warnings|n/a|n/a|ask_user

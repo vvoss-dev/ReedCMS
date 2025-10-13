@@ -126,6 +126,58 @@ ReedCMS/
 
 **WHY this rule exists**: The API SET handlers incident where 200+ lines of duplicate CSV code was written instead of using the existing 2-line `csv::read_csv()` and `csv::write_csv()` functions. This wasted tokens, created maintenance burden, and violated DRY principle.
 
+---
+
+### 0.5. Tracking File Maintenance - ALWAYS Keep Updated
+
+**⚠️ MANDATORY: Proactively update tracking files during development WITHOUT being asked**
+
+These files track project state and MUST be kept current:
+
+**When creating/modifying tickets:**
+1. ✅ **Update** `_workbench/Tickets/ticket-index.csv`
+   - Add new tickets with status (Planned/Open/Complete)
+   - Update existing ticket status when changed
+   - Include: ticket_id, status, title, layer, priority, complexity, depends_on, summary_reference, description
+
+2. ✅ **Update** `_workbench/Tickets/TICKET-STATUS.md`
+   - Add/update ticket section in relevant layer
+   - Update executive summary (total counts, percentages)
+   - Update "Last Updated" date to current date
+   - Include commit hashes for completed tickets
+
+**When implementing new public functions:**
+1. ✅ **Update** `_workbench/Tickets/project_functions.csv`
+   - Add: file_path, line_number, function_name, signature, description, inputs, return_type, status
+   - Only for PUBLIC functions (not internal helpers)
+
+**When doing significant work (bugfix, feature, refactor, investigation >30min):**
+1. ✅ **Create** `_workbench/Log/YYMMDD-PXX.csv` (e.g., 251013-P05.csv)
+   - Document: process_id, step, phase, action, file, description, result, commit_hash, notes
+   - Phases: investigation, architecture, decision, implementation, verification, commit, documentation
+
+2. ✅ **Update** `_workbench/Log/INDEX.csv`
+   - Add entry: process_id, title, category, tags, related_processes, files_affected, commits, status, duration_steps, summary
+   - Use lowercase-with-hyphens tags for searchability
+
+**Default Behavior:**
+- ✅ **DO update** these files proactively during relevant work
+- ✅ **DO create** process logs for non-trivial work
+- ❌ **DO NOT wait** for user to ask for updates
+- ❌ **DO NOT skip** tracking to save tokens
+
+**User will tell you IF:**
+- They don't want tracking for specific trivial work
+- They want to batch updates later
+
+**Benefits:**
+- Persistent project knowledge across sessions
+- Searchable history of decisions and implementations
+- Onboarding resource for new team members
+- Audit trail for debugging
+
+---
+
 ### 1. File Operation Safety
 **⚠️ CRITICAL: ALWAYS ASK USER BEFORE DESTRUCTIVE OPERATIONS**
 
