@@ -715,11 +715,12 @@ src/reedcms/api/
 - [ ] Concurrent requests: 1000/sec sustained
 
 ## Acceptance Criteria
-- [ ] All GET endpoints functional
-- [ ] All SET endpoints functional
-- [ ] Batch operations working
-- [ ] List operations implemented
-- [ ] Authentication required for all endpoints
+- [x] All GET endpoints functional
+- [x] All SET endpoints functional
+- [x] Batch operations working (251013-P03: wired to server)
+- [x] List operations implemented
+- [x] Authentication required for all endpoints (AuthMiddleware + SecurityMiddleware)
+- [x] API routes connected to HttpServer (251013-P03: fixed missing server integration)
 - [ ] Permission checking enforced
 - [ ] JSON request/response format correct
 - [ ] Error responses proper (404, 403, 500)

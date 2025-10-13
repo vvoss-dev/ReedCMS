@@ -8,10 +8,12 @@
 use crate::reedcms::assets::server::routes::configure_public_routes;
 use crate::reedcms::assets::startup::prepare_assets;
 use crate::reedcms::auth::SiteProtection;
-use crate::reedcms::response::builder::build_response;
 use crate::reedcms::reedstream::{ReedError, ReedResult};
+use crate::reedcms::response::builder::build_response;
 use crate::reedcms::server::client_detection::is_bot_request;
-use crate::reedcms::server::screen_detection::{generate_screen_detection_html, needs_screen_detection};
+use crate::reedcms::server::screen_detection::{
+    generate_screen_detection_html, needs_screen_detection,
+};
 use actix_web::{middleware, web, App, HttpRequest, HttpResponse, HttpServer};
 
 /// Starts HTTP server on specified port.
@@ -95,11 +97,18 @@ pub async fn start_http_server(port: u16, workers: Option<usize>) -> ReedResult<
 /// Configures application routes.
 ///
 /// ## Routes
+/// - /api/v1/* → API endpoints (text, route, meta, config, batch, list)
 /// - GET / → handle_root_redirect (language-specific landing page)
 /// - GET /public/* → serve_public_asset (static files)
 /// - GET /* → handle_request (catch-all)
 fn configure_routes(cfg: &mut web::ServiceConfig) {
+    // API routes (must be first to avoid catch-all capturing /api/* requests)
+    crate::reedcms::api::routes::configure_api_routes(cfg);
+
+    // Public asset routes
     configure_public_routes(cfg);
+
+    // Root redirect and catch-all (must be last)
     cfg.service(web::resource("/").route(web::get().to(handle_root_redirect)));
     cfg.service(web::resource("/{path:.*}").route(web::get().to(handle_request)));
 }
