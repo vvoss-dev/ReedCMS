@@ -125,10 +125,7 @@ pub struct BatchSetItem {
 ///   "failed": 0
 /// }
 /// ```
-pub async fn batch_get(
-    _req: HttpRequest,
-    body: web::Json<BatchGetRequest>,
-) -> HttpResponse {
+pub async fn batch_get(_req: HttpRequest, body: web::Json<BatchGetRequest>) -> HttpResponse {
     // Validate batch size
     if body.keys.is_empty() {
         return HttpResponse::BadRequest().json(ApiError::new(
@@ -140,7 +137,11 @@ pub async fn batch_get(
     if body.keys.len() > MAX_BATCH_SIZE {
         return HttpResponse::BadRequest().json(ApiError::new(
             "BATCH_TOO_LARGE".to_string(),
-            format!("Batch size {} exceeds maximum {}", body.keys.len(), MAX_BATCH_SIZE),
+            format!(
+                "Batch size {} exceeds maximum {}",
+                body.keys.len(),
+                MAX_BATCH_SIZE
+            ),
         ));
     }
 
@@ -148,12 +149,8 @@ pub async fn batch_get(
     let mut results = Vec::new();
 
     for key in &body.keys {
-        let result = fetch_single_key(
-            key,
-            &body.cache_type,
-            &body.language,
-            &body.environment,
-        ).await;
+        let result =
+            fetch_single_key(key, &body.cache_type, &body.language, &body.environment).await;
 
         results.push(result);
     }
@@ -214,10 +211,7 @@ pub async fn batch_get(
 ///   "failed": 0
 /// }
 /// ```
-pub async fn batch_set(
-    _req: HttpRequest,
-    body: web::Json<BatchSetRequest>,
-) -> HttpResponse {
+pub async fn batch_set(_req: HttpRequest, body: web::Json<BatchSetRequest>) -> HttpResponse {
     // Validate batch size
     if body.items.is_empty() {
         return HttpResponse::BadRequest().json(ApiError::new(
@@ -229,7 +223,11 @@ pub async fn batch_set(
     if body.items.len() > MAX_BATCH_SIZE {
         return HttpResponse::BadRequest().json(ApiError::new(
             "BATCH_TOO_LARGE".to_string(),
-            format!("Batch size {} exceeds maximum {}", body.items.len(), MAX_BATCH_SIZE),
+            format!(
+                "Batch size {} exceeds maximum {}",
+                body.items.len(),
+                MAX_BATCH_SIZE
+            ),
         ));
     }
 
@@ -244,7 +242,8 @@ pub async fn batch_set(
             &body.cache_type,
             &body.language,
             &body.environment,
-        ).await;
+        )
+        .await;
 
         results.push(result);
     }
@@ -300,27 +299,57 @@ async fn fetch_single_key(
 
     // Handle response
     match response {
-        Ok(reed_response) => {
-            ApiBatchResult::success(key.to_string(), reed_response.data)
-        }
-        Err(e) => {
-            ApiBatchResult::failure(
-                key.to_string(),
-                format!("Error: {}", e),
-            )
-        }
+        Ok(reed_response) => ApiBatchResult::success(key.to_string(), reed_response.data),
+        Err(e) => ApiBatchResult::failure(key.to_string(), format!("Error: {}", e)),
     }
+}
+
+/// Builds storage key with language and environment suffixes.
+///
+/// ## Arguments
+/// - `base_key`: Base key without suffixes
+/// - `cache_type`: Cache type (text/route require language)
+/// - `language`: Optional language suffix
+/// - `environment`: Optional environment suffix
+///
+/// ## Returns
+/// - Complete key with appropriate suffixes
+///
+/// ## Examples
+/// - text, key="page.title", lang=Some("en"), env=Some("dev") → "page.title@en@dev"
+/// - text, key="page.title", lang=Some("en"), env=None → "page.title@en"
+/// - meta, key="cache.ttl", lang=None, env=Some("dev") → "cache.ttl@dev"
+/// - config, key="port", lang=None, env=None → "port"
+fn build_storage_key(
+    base_key: &str,
+    cache_type: &str,
+    language: &Option<String>,
+    environment: &Option<String>,
+) -> String {
+    let mut key = base_key.to_string();
+
+    // Add language suffix for multilingual caches (text, route)
+    if (cache_type == "text" || cache_type == "route") && language.is_some() {
+        key = format!("{}@{}", key, language.as_ref().unwrap());
+    }
+
+    // Add environment suffix if provided (always optional)
+    if let Some(env) = environment {
+        key = format!("{}@{}", key, env);
+    }
+
+    key
 }
 
 /// Internal helper: Set a single key in ReedBase.
 ///
 /// ## Arguments
-/// - `key`: The key to set
+/// - `key`: The base key to set
 /// - `value`: The value to set
 /// - `description`: Optional description
 /// - `cache_type`: Which cache to update
-/// - `language`: Optional language override
-/// - `environment`: Optional environment override
+/// - `language`: Optional language suffix
+/// - `environment`: Optional environment suffix
 ///
 /// ## Returns
 /// - `ApiBatchResult<String>`: Success or failure for this key
@@ -328,17 +357,24 @@ async fn fetch_single_key(
 /// ## Performance
 /// - O(1) cache update + O(n) CSV write
 /// - < 50ms typical
+///
+/// ## Key Building
+/// - Automatically builds complete key with language and environment suffixes
+/// - Symmetrical to GET operation (GET splits, SET combines)
 async fn set_single_key(
     key: &str,
     value: &str,
     description: &Option<String>,
     cache_type: &str,
-    _language: &Option<String>,
-    _environment: &Option<String>,
+    language: &Option<String>,
+    environment: &Option<String>,
 ) -> ApiBatchResult<String> {
     use crate::reedcms::csv::{read_csv, write_csv, CsvRecord};
     use std::collections::HashMap;
     use std::path::Path;
+
+    // Build complete storage key with language and environment suffixes
+    let storage_key = build_storage_key(key, cache_type, language, environment);
 
     // Determine CSV file path
     let csv_path = match cache_type {
@@ -348,7 +384,7 @@ async fn set_single_key(
         "config" => ".reed/server.csv",
         _ => {
             return ApiBatchResult::failure(
-                key.to_string(),
+                storage_key,
                 format!("Invalid cache type: {}", cache_type),
             );
         }
@@ -356,20 +392,14 @@ async fn set_single_key(
 
     // Create backup before modification (only once per batch, but safe to call multiple times)
     if let Err(e) = crate::reedcms::backup::create_backup(Path::new(csv_path)) {
-        return ApiBatchResult::failure(
-            key.to_string(),
-            format!("Backup failed: {}", e),
-        );
+        return ApiBatchResult::failure(storage_key.clone(), format!("Backup failed: {}", e));
     }
 
     // Read current CSV data using existing csv module
     let records = match read_csv(csv_path) {
         Ok(r) => r,
         Err(e) => {
-            return ApiBatchResult::failure(
-                key.to_string(),
-                format!("CSV read failed: {}", e),
-            );
+            return ApiBatchResult::failure(storage_key.clone(), format!("CSV read failed: {}", e));
         }
     };
 
@@ -379,9 +409,9 @@ async fn set_single_key(
         .map(|r| (r.key, (r.value, r.description)))
         .collect();
 
-    // Update value
+    // Update value with complete storage key
     data.insert(
-        key.to_string(),
+        storage_key.clone(),
         (value.to_string(), description.clone()),
     );
 
@@ -398,10 +428,7 @@ async fn set_single_key(
 
     // Write back using existing csv module (atomic write)
     match write_csv(Path::new(csv_path), &updated_records) {
-        Ok(_) => ApiBatchResult::success(key.to_string(), "Key set successfully".to_string()),
-        Err(e) => ApiBatchResult::failure(
-            key.to_string(),
-            format!("CSV write failed: {}", e),
-        ),
+        Ok(_) => ApiBatchResult::success(storage_key.clone(), "Key set successfully".to_string()),
+        Err(e) => ApiBatchResult::failure(storage_key, format!("CSV write failed: {}", e)),
     }
 }

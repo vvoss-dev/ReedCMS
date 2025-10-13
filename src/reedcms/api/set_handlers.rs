@@ -34,7 +34,7 @@
 use actix_web::{web, HttpRequest, HttpResponse};
 use serde::Deserialize;
 
-use crate::reedcms::api::responses::{ApiSuccess, ApiError};
+use crate::reedcms::api::responses::{ApiError, ApiSuccess};
 
 /// Request body for SET operations.
 #[derive(Debug, Deserialize)]
@@ -95,10 +95,7 @@ pub struct SetRequest {
 ///   "key": "page.title@en"
 /// }
 /// ```
-pub async fn set_text(
-    _req: HttpRequest,
-    body: web::Json<SetRequest>,
-) -> HttpResponse {
+pub async fn set_text(_req: HttpRequest, body: web::Json<SetRequest>) -> HttpResponse {
     match persist_to_reedbase(&body, "text").await {
         Ok(response) => HttpResponse::Ok().json(response),
         Err(error) => HttpResponse::InternalServerError().json(error),
@@ -145,10 +142,7 @@ pub async fn set_text(
 ///   "key": "/about"
 /// }
 /// ```
-pub async fn set_route(
-    _req: HttpRequest,
-    body: web::Json<SetRequest>,
-) -> HttpResponse {
+pub async fn set_route(_req: HttpRequest, body: web::Json<SetRequest>) -> HttpResponse {
     match persist_to_reedbase(&body, "route").await {
         Ok(response) => HttpResponse::Ok().json(response),
         Err(error) => HttpResponse::InternalServerError().json(error),
@@ -195,10 +189,7 @@ pub async fn set_route(
 ///   "key": "page.title.meta@en"
 /// }
 /// ```
-pub async fn set_meta(
-    _req: HttpRequest,
-    body: web::Json<SetRequest>,
-) -> HttpResponse {
+pub async fn set_meta(_req: HttpRequest, body: web::Json<SetRequest>) -> HttpResponse {
     match persist_to_reedbase(&body, "meta").await {
         Ok(response) => HttpResponse::Ok().json(response),
         Err(error) => HttpResponse::InternalServerError().json(error),
@@ -246,10 +237,7 @@ pub async fn set_meta(
 ///   "key": "server.port"
 /// }
 /// ```
-pub async fn set_config(
-    _req: HttpRequest,
-    body: web::Json<SetRequest>,
-) -> HttpResponse {
+pub async fn set_config(_req: HttpRequest, body: web::Json<SetRequest>) -> HttpResponse {
     match persist_to_reedbase(&body, "config").await {
         Ok(response) => HttpResponse::Ok().json(response),
         Err(error) => HttpResponse::InternalServerError().json(error),
@@ -270,10 +258,7 @@ pub async fn set_config(
 /// - O(1) cache update
 /// - O(n) CSV write (where n is total records)
 /// - < 50ms typical
-async fn persist_to_reedbase(
-    body: &SetRequest,
-    cache_type: &str,
-) -> Result<ApiSuccess, ApiError> {
+async fn persist_to_reedbase(body: &SetRequest, cache_type: &str) -> Result<ApiSuccess, ApiError> {
     // Try to use ReedBase cache first (when REED-02-01 is complete)
     // For now, fallback to direct CSV modification
 
@@ -286,6 +271,43 @@ async fn persist_to_reedbase(
     set_via_csv_direct(body, cache_type).await
 }
 
+/// Builds storage key with language and environment suffixes.
+///
+/// ## Arguments
+/// - `base_key`: Base key without suffixes
+/// - `cache_type`: Cache type (text/route require language)
+/// - `language`: Optional language suffix
+/// - `environment`: Optional environment suffix
+///
+/// ## Returns
+/// - Complete key with appropriate suffixes
+///
+/// ## Examples
+/// - text, key="page.title", lang=Some("en"), env=Some("dev") → "page.title@en@dev"
+/// - text, key="page.title", lang=Some("en"), env=None → "page.title@en"
+/// - meta, key="cache.ttl", lang=None, env=Some("dev") → "cache.ttl@dev"
+/// - config, key="port", lang=None, env=None → "port"
+fn build_storage_key(
+    base_key: &str,
+    cache_type: &str,
+    language: &Option<String>,
+    environment: &Option<String>,
+) -> String {
+    let mut key = base_key.to_string();
+
+    // Add language suffix for multilingual caches (text, route)
+    if (cache_type == "text" || cache_type == "route") && language.is_some() {
+        key = format!("{}@{}", key, language.as_ref().unwrap());
+    }
+
+    // Add environment suffix if provided (always optional)
+    if let Some(env) = environment {
+        key = format!("{}@{}", key, env);
+    }
+
+    key
+}
+
 /// Direct CSV modification fallback (when cache not available).
 ///
 /// ## Arguments
@@ -295,13 +317,17 @@ async fn persist_to_reedbase(
 /// ## Returns
 /// - `Ok(ApiSuccess)`: Successful persistence
 /// - `Err(ApiError)`: Error during persistence
-async fn set_via_csv_direct(
-    body: &SetRequest,
-    cache_type: &str,
-) -> Result<ApiSuccess, ApiError> {
+///
+/// ## Key Building
+/// - Automatically builds complete key with language and environment suffixes
+/// - Symmetrical to GET operation (GET splits, SET combines)
+async fn set_via_csv_direct(body: &SetRequest, cache_type: &str) -> Result<ApiSuccess, ApiError> {
     use crate::reedcms::csv::{read_csv, write_csv, CsvRecord};
     use std::collections::HashMap;
     use std::path::Path;
+
+    // Build complete storage key with language and environment suffixes
+    let storage_key = build_storage_key(&body.key, cache_type, &body.language, &body.environment);
 
     // Determine CSV file path
     let csv_path = match cache_type {
@@ -339,9 +365,9 @@ async fn set_via_csv_direct(
         .map(|r| (r.key, (r.value, r.description)))
         .collect();
 
-    // Update or insert new value
+    // Update or insert new value with complete storage key
     data.insert(
-        body.key.clone(),
+        storage_key.clone(),
         (body.value.clone(), body.description.clone()),
     );
 
@@ -366,7 +392,7 @@ async fn set_via_csv_direct(
 
     Ok(ApiSuccess::with_key(
         format!("{} key set successfully", capitalize(cache_type)),
-        body.key.clone(),
+        storage_key,
     ))
 }
 
