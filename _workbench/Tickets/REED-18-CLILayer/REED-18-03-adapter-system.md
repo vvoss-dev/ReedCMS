@@ -1,4 +1,4 @@
-# REED-18-07: CLI Adapter System
+# REED-18-03: CLI Adapter System
 
 **Status**: Not Started  
 **Priority**: High  
@@ -54,14 +54,14 @@ User Input: "reed reedbase:query users 'SELECT *'"
     │
     ▼
 ┌─────────────────────────────────────────┐
-│ Adapter Registry (REED-18-07)           │
+│ Adapter Registry (REED-18-03)           │
 │ Loads Reed.toml adapter definitions     │
 │ Finds: reedbase → /usr/local/bin/reedbase│
 └─────────────────────────────────────────┘
     │
     ▼
 ┌─────────────────────────────────────────┐
-│ Adapter Executor (REED-18-07)           │
+│ Adapter Executor (REED-18-03)           │
 │ Executes: reedbase query users "SELECT *"│
 └─────────────────────────────────────────┘
     │
@@ -73,7 +73,7 @@ User Input: "reed reedbase:query users 'SELECT *'"
     │
     ▼
 ┌─────────────────────────────────────────┐
-│ Output Formatter (REED-18-03)           │
+│ Output Formatter (REED-18-06)           │
 │ Formats output for display              │
 └─────────────────────────────────────────┘
 ```
@@ -1076,7 +1076,7 @@ binary = "reedbase"
 handler = "query"
 ```
 
-**New format** (REED-18-07):
+**New format** (REED-18-03):
 ```toml
 [cli]
 adapters = ["reedbase"]

@@ -1,4 +1,4 @@
-# REED-19-06: Conflict Resolution
+# REED-19-07: Conflict Resolution
 
 ## MANDATORY Development Standards
 
@@ -17,13 +17,13 @@
 - **Testing**: See `_workbench/Tickets/templates/service-template.test.md` for test structure
 
 ## Ticket Information
-- **ID**: REED-19-06
+- **ID**: REED-19-07
 - **Title**: Conflict Resolution
 - **Layer**: ReedBase Layer (REED-19)
 - **Priority**: High
 - **Status**: Open
 - **Complexity**: Medium
-- **Dependencies**: REED-19-05 (Row-Level CSV Merge)
+- **Dependencies**: REED-19-06 (Row-Level CSV Merge)
 - **Estimated Time**: 5 days
 
 ## Objective
@@ -469,10 +469,10 @@ pub enum Resolution {
 }
 ```
 
-**`reedbase/src/types.rs`** (additions - already defined in REED-19-05, just documenting here)
+**`reedbase/src/types.rs`** (additions - already defined in REED-19-06, just documenting here)
 
 ```rust
-// Already defined in REED-19-05:
+// Already defined in REED-19-06:
 // pub struct Conflict { ... }
 ```
 
@@ -680,7 +680,7 @@ reed conflicts:resolve users 1736860900 --values "Alice,33,alice@example.com"
 ## Dependencies
 
 **Requires**: 
-- REED-19-05 (Row-Level CSV Merge - provides Conflict type)
+- REED-19-06 (Row-Level CSV Merge - provides Conflict type)
 
 **Blocks**: None
 

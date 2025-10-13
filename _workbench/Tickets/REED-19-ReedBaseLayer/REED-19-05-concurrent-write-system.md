@@ -1,4 +1,4 @@
-# REED-19-04: Concurrent Write System
+# REED-19-06: Concurrent Write System
 
 ## MANDATORY Development Standards
 
@@ -17,7 +17,7 @@
 - **Testing**: See `_workbench/Tickets/templates/service-template.test.md` for test structure
 
 ## Ticket Information
-- **ID**: REED-19-04
+- **ID**: REED-19-06
 - **Title**: Concurrent Write System
 - **Layer**: ReedBase Layer (REED-19)
 - **Priority**: Critical
@@ -774,7 +774,7 @@ reed admin:unlock users --force
 - REED-19-03 (Binary Delta Versioning - for delta generation during merge)
 
 **Blocks**: 
-- REED-19-05 (Row-Level CSV Merge - uses locking)
+- REED-19-06 (Row-Level CSV Merge - uses locking)
 
 ## References
 - Service Template: `_workbench/Tickets/templates/service-template.md`

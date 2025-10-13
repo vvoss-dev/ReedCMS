@@ -399,7 +399,7 @@ reed dict:reload
 - **Requires**: None (foundation ticket)
 
 ## Blocks
-- REED-19-07 (Encoded Log System - uses registries)
+- REED-19-04 (Encoded Log System - uses registries)
 
 ## References
 - Service Template: `_workbench/Tickets/templates/service-template.md`

@@ -1,4 +1,4 @@
-# REED-19-07: Encoded Log System
+# REED-19-04: Encoded Log System
 
 ## MANDATORY Development Standards
 
@@ -17,7 +17,7 @@
 - **Testing**: See `_workbench/Tickets/templates/service-template.test.md` for test structure
 
 ## Ticket Information
-- **ID**: REED-19-07
+- **ID**: REED-19-04
 - **Title**: Encoded Log System
 - **Layer**: ReedBase Layer (REED-19)
 - **Priority**: High

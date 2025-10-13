@@ -105,15 +105,15 @@ Functions can cache results:
 - **REED-19-01**: Registry & Dictionary System
 - **REED-19-02**: Universal Table API
 - **REED-19-03**: Binary Delta Versioning (bsdiff)
-- **REED-19-04**: Concurrent Write System
-- **REED-19-05**: Row-Level CSV Merge
-- **REED-19-06**: Conflict Resolution
-- **REED-19-07**: Encoded Log System
+- **REED-19-06**: Concurrent Write System
+- **REED-19-06**: Row-Level CSV Merge
+- **REED-19-07**: Conflict Resolution
+- **REED-19-04**: Encoded Log System
 - **REED-19-08**: Schema Validation
 - **REED-19-09**: Function System & Caching
-- **REED-19-10**: Migration from REED-02
-- **REED-19-11**: Performance Testing & Benchmarks
-- **REED-19-12**: Documentation
+- **REED-19-11**: Migration from REED-02
+- **REED-19-12**: Performance Testing & Benchmarks
+- **REED-19-13**: Documentation
 
 ## Impact Analysis
 
@@ -242,9 +242,9 @@ Migrates existing `.reed/` to new structure:
 **Conservative: 3-4 weeks full-time**
 
 - Week 1: Core tables + versioning (REED-19-01 to REED-19-03)
-- Week 2: Concurrent writes + merge (REED-19-04 to REED-19-06)
-- Week 3: Schemas + functions + logs (REED-19-07 to REED-19-09)
-- Week 4: Migration + testing + docs (REED-19-10 to REED-19-12)
+- Week 2: Concurrent writes + merge (REED-19-06 to REED-19-07)
+- Week 3: Schemas + functions + logs (REED-19-04 to REED-19-09)
+- Week 4: Migration + testing + docs (REED-19-11 to REED-19-13)
 
 **Aggressive: 2 weeks** (if parallel development)
 

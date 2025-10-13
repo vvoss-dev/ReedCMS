@@ -992,8 +992,8 @@ Not applicable - this is an internal registry loading module, not a CLI command.
 - REED-18-01 (Command Parser - for Command type)
 
 **Blocks**: 
-- REED-18-05 (Help System - needs registry for metadata)
-- REED-18-06 (Tool Integration - needs registry for command lookups)
+- REED-18-06 (Help System - needs registry for metadata)
+- REED-18-04 (Tool Integration - needs registry for command lookups)
 
 ## References
 - Service Template: `_workbench/Tickets/templates/service-template.md`

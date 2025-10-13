@@ -1,4 +1,4 @@
-# REED-18-04: Interactive Shell
+# REED-18-07: Interactive Shell
 
 ## MANDATORY Development Standards
 
@@ -17,13 +17,13 @@
 - **Testing**: See `_workbench/Tickets/templates/service-template.test.md` for test structure
 
 ## Ticket Information
-- **ID**: REED-18-04
+- **ID**: REED-18-07
 - **Title**: Interactive Shell
 - **Layer**: CLI Layer (REED-18)
 - **Priority**: Medium
 - **Status**: Open
 - **Complexity**: Medium
-- **Dependencies**: REED-18-01 (Command Parser), REED-18-03 (Output Formatter)
+- **Dependencies**: REED-18-01 (Command Parser), REED-18-06 (Output Formatter)
 - **Estimated Time**: 3 days
 
 ## Objective
@@ -228,7 +228,7 @@ fn handle_line(line: &str, rl: &mut Editor<()>) -> CliResult<bool> {
         return Ok(false);
     }
     
-    // Execute command (TODO: integrate with REED-18-06)
+    // Execute command (TODO: integrate with REED-18-04)
     if let Err(e) = execute_shell_command(trimmed) {
         eprintln!("Error: {}", e);
     }
@@ -259,7 +259,7 @@ fn is_exit_command(line: &str) -> bool {
     matches!(line, "exit" | "quit" | "\\q")
 }
 
-/// Execute shell command (stub for REED-18-06 integration).
+/// Execute shell command (stub for REED-18-04 integration).
 ///
 /// ## Input
 /// - `line`: Raw command line
@@ -268,14 +268,14 @@ fn is_exit_command(line: &str) -> bool {
 /// - `CliResult<()>`: Ok on success
 ///
 /// ## Performance
-/// - Depends on command execution (REED-18-06)
+/// - Depends on command execution (REED-18-04)
 ///
 /// ## Error Conditions
-/// - Depends on command execution (REED-18-06)
+/// - Depends on command execution (REED-18-04)
 fn execute_shell_command(line: &str) -> CliResult<()> {
     let command = parser::parse_shell_input(line)?;
     
-    // TODO: Route to tool handler (REED-18-06)
+    // TODO: Route to tool handler (REED-18-04)
     println!("Parsed command: {:?}", command);
     
     Ok(())
@@ -288,7 +288,7 @@ fn execute_shell_command(line: &str) -> CliResult<()> {
 /// Additional CLI errors.
 #[derive(Error, Debug)]
 pub enum CliError {
-    // ... (existing errors from REED-18-01, REED-18-02, REED-18-03)
+    // ... (existing errors from REED-18-01, REED-18-02, REED-18-06)
     
     #[error("Shell error: {reason}")]
     ShellError {
@@ -397,7 +397,7 @@ $
 
 **Requires**: 
 - REED-18-01 (Command Parser - for parsing shell input)
-- REED-18-03 (Output Formatter - for displaying results)
+- REED-18-06 (Output Formatter - for displaying results)
 
 **Blocks**: None (optional feature, doesn't block other tickets)
 
@@ -409,7 +409,7 @@ $
 ## Notes
 
 The shell does NOT:
-- Execute commands (that's REED-18-06's job - integration point is `execute_shell_command()`)
+- Execute commands (that's REED-18-04's job - integration point is `execute_shell_command()`)
 - Provide tab completion (future enhancement)
 - Support multi-line input (future enhancement)
 
@@ -418,4 +418,4 @@ The shell ONLY:
 - Manages command history
 - Handles exit/interrupt signals
 
-Integration with REED-18-06 (Tool Integration) happens in `execute_shell_command()`. The stub prints the parsed command; final implementation will route to tool handlers.
+Integration with REED-18-04 (Tool Integration) happens in `execute_shell_command()`. The stub prints the parsed command; final implementation will route to tool handlers.

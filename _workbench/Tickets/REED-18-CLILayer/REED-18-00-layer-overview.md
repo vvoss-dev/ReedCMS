@@ -110,13 +110,13 @@ reedcli/
 │   ├── parser.test.rs
 │   ├── registry.rs                # Reed.toml loader (REED-18-02)
 │   ├── registry.test.rs
-│   ├── formatter.rs               # Output formatting (REED-18-03)
+│   ├── formatter.rs               # Output formatting (REED-18-06)
 │   ├── formatter.test.rs
-│   ├── shell.rs                   # Interactive shell (REED-18-04)
+│   ├── shell.rs                   # Interactive shell (REED-18-07)
 │   ├── shell.test.rs
-│   ├── help.rs                    # Help generation (REED-18-05)
+│   ├── help.rs                    # Help generation (REED-18-06)
 │   ├── help.test.rs
-│   ├── integration.rs             # Tool invocation (REED-18-06)
+│   ├── integration.rs             # Tool invocation (REED-18-04)
 │   ├── integration.test.rs
 │   └── types.rs                   # Shared types
 └── tests/
@@ -228,28 +228,28 @@ Load and validate `Reed.toml`.
 - Command lookups (O(1) HashMap)
 - Dependency resolution
 
-### REED-18-03: Output Formatter
+### REED-18-06: Output Formatter
 Format command output for display.
 - Table formatting (ASCII borders, alignment)
 - JSON/CSV/Plain formatters
 - Colour coding for terminals
 - Pagination for large outputs
 
-### REED-18-04: Interactive Shell
+### REED-18-07: Interactive Shell
 Provide shell mode (`reed shell`).
 - Command history (↑/↓ keys)
 - Tab completion
 - Multi-line input
 - Persistent history file
 
-### REED-18-05: Help System
+### REED-18-06: Help System
 Generate help from registry metadata.
 - `reed help` - List all tools
 - `reed help <tool>` - List tool commands
 - `reed help <tool> <command>` - Command details
 - Auto-generated from Reed.toml
 
-### REED-18-06: Tool Integration
+### REED-18-04: Tool Integration
 Invoke tool handlers dynamically.
 - Function lookup by name
 - Argument marshalling
@@ -356,7 +356,7 @@ pub fn function(arg: Type) -> CliResult<Type> {
 ```
 
 ### Git Commits
-- Format: `[REED-18-XX] – type: description`
+- Format: `[REED-18-06] – type: description`
 - Types: feat, fix, docs, style, refactor, perf, test, chore
 - Example: `[REED-18-01] – feat: implement command parser with quoted arguments`
 
@@ -368,10 +368,10 @@ pub fn function(arg: Type) -> CliResult<Type> {
 |--------|--------|----------|
 | REED-18-01 | 2 days | Critical |
 | REED-18-02 | 3 days | Critical |
-| REED-18-03 | 2 days | High |
-| REED-18-04 | 3 days | Medium |
-| REED-18-05 | 2 days | High |
-| REED-18-06 | 3 days | Critical |
+| REED-18-06 | 2 days | High |
+| REED-18-07 | 3 days | Medium |
+| REED-18-06 | 2 days | High |
+| REED-18-04 | 3 days | Critical |
 | **Total** | **15 days** | |
 
 **Note**: Assumes full-time work. Can be parallelised after REED-18-01 and REED-18-02 are complete.

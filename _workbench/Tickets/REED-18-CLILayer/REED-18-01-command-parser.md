@@ -581,8 +581,8 @@ Not applicable - this is an internal parsing module, not a CLI command.
 **Requires**: None (foundation ticket)
 
 **Blocks**: 
-- REED-18-04 (Interactive Shell - needs parser)
-- REED-18-06 (Tool Integration - needs Command type)
+- REED-18-07 (Interactive Shell - needs parser)
+- REED-18-04 (Tool Integration - needs Command type)
 
 ## References
 - Service Template: `_workbench/Tickets/templates/service-template.md`
@@ -593,8 +593,8 @@ Not applicable - this is an internal parsing module, not a CLI command.
 
 The parser does NOT:
 - Validate commands against registry (that's REED-18-02's job)
-- Invoke tools (that's REED-18-06's job)
-- Format output (that's REED-18-03's job)
+- Invoke tools (that's REED-18-04's job)
+- Format output (that's REED-18-06's job)
 
 The parser ONLY:
 - Parses strings into structured `Command` type

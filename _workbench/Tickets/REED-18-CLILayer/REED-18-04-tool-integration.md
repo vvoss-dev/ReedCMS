@@ -1,4 +1,4 @@
-# REED-18-06: Tool Integration
+# REED-18-04: Tool Integration
 
 ## MANDATORY Development Standards
 
@@ -17,13 +17,13 @@
 - **Testing**: See `_workbench/Tickets/templates/service-template.test.md` for test structure
 
 ## Ticket Information
-- **ID**: REED-18-06
+- **ID**: REED-18-04
 - **Title**: Tool Integration
 - **Layer**: CLI Layer (REED-18)
 - **Priority**: Critical
 - **Status**: Open
 - **Complexity**: High
-- **Dependencies**: REED-18-01 (Parser), REED-18-02 (Registry), REED-18-03 (Formatter)
+- **Dependencies**: REED-18-01 (Parser), REED-18-02 (Registry), REED-18-06 (Formatter)
 - **Estimated Time**: 3 days
 
 ## Objective
@@ -496,7 +496,7 @@ Not applicable - this is the internal routing layer. All commands go through thi
 **Requires**: 
 - REED-18-01 (Command Parser - for Command type)
 - REED-18-02 (Registry Loader - for handler lookups)
-- REED-18-03 (Output Formatter - for response formatting)
+- REED-18-06 (Output Formatter - for response formatting)
 
 **Blocks**: None (but ReedBase/ReedCMS integration happens later)
 

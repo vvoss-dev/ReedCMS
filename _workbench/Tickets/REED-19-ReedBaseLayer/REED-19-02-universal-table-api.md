@@ -81,7 +81,7 @@ One file = Table struct and its methods ONLY.
 ///
 /// ## Thread Safety
 /// - Multiple readers: Yes (concurrent reads safe)
-/// - Multiple writers: NO (use WriteSession from REED-19-04)
+/// - Multiple writers: NO (use WriteSession from REED-19-06)
 pub struct Table {
     base_path: PathBuf,
     name: String,
@@ -487,8 +487,8 @@ mod tests {
 
 ## Blocks
 - REED-19-03 (Binary Delta Versioning - uses Table API)
-- REED-19-04 (Concurrent Writes - extends Table API)
-- REED-19-05 (Row-Level Merge - uses Table API)
+- REED-19-06 (Concurrent Writes - extends Table API)
+- REED-19-06 (Row-Level Merge - uses Table API)
 
 ## References
 - Service Template: `_workbench/Tickets/templates/service-template.md`
@@ -505,4 +505,4 @@ This consistency provides:
 - **Easy extension**: Add new tables without new code
 - **Testability**: Test once, applies to all tables
 
-**Implementation Note**: Keep Table struct simple. Complex operations (merge, conflict resolution) belong in separate modules (REED-19-04, REED-19-05).
+**Implementation Note**: Keep Table struct simple. Complex operations (merge, conflict resolution) belong in separate modules (REED-19-06, REED-19-06).

@@ -1,4 +1,4 @@
-# REED-18-03: Output Formatter
+# REED-18-06: Output Formatter
 
 ## MANDATORY Development Standards
 
@@ -17,7 +17,7 @@
 - **Testing**: See `_workbench/Tickets/templates/service-template.test.md` for test structure
 
 ## Ticket Information
-- **ID**: REED-18-03
+- **ID**: REED-18-06
 - **Title**: Output Formatter
 - **Layer**: CLI Layer (REED-18)
 - **Priority**: High
@@ -710,8 +710,8 @@ Not applicable - this is an internal formatting module, not a CLI command.
 **Requires**: None
 
 **Blocks**: 
-- REED-18-04 (Interactive Shell - needs formatter for output)
-- REED-18-06 (Tool Integration - needs formatter for responses)
+- REED-18-07 (Interactive Shell - needs formatter for output)
+- REED-18-04 (Tool Integration - needs formatter for responses)
 
 ## References
 - Service Template: `_workbench/Tickets/templates/service-template.md`

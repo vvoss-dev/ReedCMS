@@ -1,4 +1,4 @@
-# REED-19-05: Row-Level CSV Merge
+# REED-19-06: Row-Level CSV Merge
 
 ## MANDATORY Development Standards
 
@@ -17,13 +17,13 @@
 - **Testing**: See `_workbench/Tickets/templates/service-template.test.md` for test structure
 
 ## Ticket Information
-- **ID**: REED-19-05
+- **ID**: REED-19-06
 - **Title**: Row-Level CSV Merge
 - **Layer**: ReedBase Layer (REED-19)
 - **Priority**: Critical
 - **Status**: Open
 - **Complexity**: High
-- **Dependencies**: REED-19-04 (Concurrent Write System)
+- **Dependencies**: REED-19-06 (Concurrent Write System)
 - **Estimated Time**: 1 week
 
 ## Objective
@@ -796,10 +796,10 @@ reed debug:merge-stats users
 ## Dependencies
 
 **Requires**: 
-- REED-19-04 (Concurrent Write System - provides locking for merge)
+- REED-19-06 (Concurrent Write System - provides locking for merge)
 
 **Blocks**: 
-- REED-19-06 (Conflict Resolution - handles conflicts detected by merge)
+- REED-19-07 (Conflict Resolution - handles conflicts detected by merge)
 
 ## References
 - Service Template: `_workbench/Tickets/templates/service-template.md`

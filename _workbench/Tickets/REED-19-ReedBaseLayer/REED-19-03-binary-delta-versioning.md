@@ -560,7 +560,7 @@ reed rollback users 1736860800
 - REED-19-02 (Universal Table API - integration point)
 
 **Blocks**: 
-- REED-19-04 (Concurrent Write System - needs delta generation)
+- REED-19-06 (Concurrent Write System - needs delta generation)
 
 ## References
 - Service Template: `_workbench/Tickets/templates/service-template.md`
@@ -583,7 +583,7 @@ reed rollback users 1736860800
 - **Pro**: 95%+ disk savings, Git-like performance
 - **Pro**: Can store thousands of versions in < 100MB
 - **Con**: Rollback requires applying delta chain (slower than full snapshots)
-- **Con**: Corrupted delta breaks reconstruction (mitigated by periodic full snapshots in REED-19-06)
+- **Con**: Corrupted delta breaks reconstruction (mitigated by periodic full snapshots in REED-19-07)
 
 **Future Enhancements:**
 - Periodic full snapshots (every 100 deltas) for faster rollback

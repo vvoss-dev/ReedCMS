@@ -1,4 +1,4 @@
-# REED-18-05: Help System
+# REED-18-06: Help System
 
 ## MANDATORY Development Standards
 
@@ -17,7 +17,7 @@
 - **Testing**: See `_workbench/Tickets/templates/service-template.test.md` for test structure
 
 ## Ticket Information
-- **ID**: REED-18-05
+- **ID**: REED-18-06
 - **Title**: Help System
 - **Layer**: CLI Layer (REED-18)
 - **Priority**: High

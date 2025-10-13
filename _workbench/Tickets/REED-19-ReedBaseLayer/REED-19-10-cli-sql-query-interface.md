@@ -1,4 +1,4 @@
-# REED-19-13: CLI SQL-Like Query Interface (ReedQL)
+# REED-19-10: CLI SQL-Like Query Interface (ReedQL)
 
 **Status**: Not Started  
 **Priority**: High  
