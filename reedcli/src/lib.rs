@@ -5,6 +5,7 @@
 //!
 //! Provides command parsing, registry loading, and tool routing.
 
+pub mod adapters;
 pub mod parser;
 pub mod registry;
 pub mod types;

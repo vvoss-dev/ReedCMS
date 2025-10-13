@@ -62,6 +62,31 @@ pub enum CliError {
 
     /// Command not found for tool
     CommandNotFound { tool: String, command: String },
+
+    /// Adapter not found
+    AdapterNotFound { adapter: String },
+
+    /// Ambiguous command (multiple adapters provide it)
+    AmbiguousCommand {
+        command: String,
+        adapters: Vec<String>,
+    },
+
+    /// Adapter execution error
+    AdapterError { adapter: String, message: String },
+
+    /// Version mismatch
+    VersionMismatch {
+        adapter: String,
+        required: String,
+        actual: String,
+    },
+
+    /// Required adapter missing
+    RequiredAdapterMissing { adapter: String },
+
+    /// Invalid version format
+    InvalidVersion { version: String },
 }
 
 impl fmt::Display for CliError {
@@ -100,6 +125,37 @@ impl fmt::Display for CliError {
             }
             CliError::CommandNotFound { tool, command } => {
                 write!(f, "Command '{}' not found for tool '{}'", command, tool)
+            }
+            CliError::AdapterNotFound { adapter } => {
+                write!(f, "Adapter '{}' not found", adapter)
+            }
+            CliError::AmbiguousCommand { command, adapters } => {
+                write!(
+                    f,
+                    "Ambiguous command '{}'. Available: {}",
+                    command,
+                    adapters.join(", ")
+                )
+            }
+            CliError::AdapterError { adapter, message } => {
+                write!(f, "Adapter '{}' error: {}", adapter, message)
+            }
+            CliError::VersionMismatch {
+                adapter,
+                required,
+                actual,
+            } => {
+                write!(
+                    f,
+                    "Adapter '{}' version mismatch: required {}, found {}",
+                    adapter, required, actual
+                )
+            }
+            CliError::RequiredAdapterMissing { adapter } => {
+                write!(f, "Required adapter '{}' is missing", adapter)
+            }
+            CliError::InvalidVersion { version } => {
+                write!(f, "Invalid version format: '{}'", version)
             }
         }
     }
@@ -163,4 +219,169 @@ pub struct CommandSpec {
 
     /// Help text for command
     pub help: String,
+}
+
+// ============================================================================
+// Adapter System Types (REED-18-03)
+// ============================================================================
+
+/// Adapter registry with all configured adapters.
+#[derive(Debug, Clone)]
+pub struct AdapterRegistry {
+    /// Adapters mapped by name
+    pub adapters: HashMap<String, Adapter>,
+
+    /// CLI configuration from Reed.toml
+    pub cli_config: AdapterCliConfig,
+
+    /// Command index for fast lookup
+    pub command_index: CommandIndex,
+}
+
+/// Adapter definition.
+#[derive(Debug, Clone)]
+pub struct Adapter {
+    /// Adapter name
+    pub name: String,
+
+    /// Path to binary
+    pub binary: std::path::PathBuf,
+
+    /// Adapter description
+    pub description: String,
+
+    /// Version requirement (e.g., ">=0.1.0")
+    pub version_requirement: Option<String>,
+
+    /// Is this adapter required?
+    pub required: bool,
+
+    /// Command aliases (short → full)
+    pub aliases: HashMap<String, String>,
+
+    /// Available commands
+    pub commands: Vec<String>,
+
+    /// Has been validated?
+    pub validated: bool,
+}
+
+/// CLI configuration for adapters.
+#[derive(Debug, Clone)]
+pub struct AdapterCliConfig {
+    /// Ordered list of adapters
+    pub adapters: Vec<String>,
+
+    /// Allow namespace omission for unambiguous commands
+    pub namespace_omission: bool,
+}
+
+/// Command index for fast lookup.
+#[derive(Debug, Clone)]
+pub struct CommandIndex {
+    /// Maps command name to list of adapters that provide it
+    pub commands: HashMap<String, Vec<String>>,
+}
+
+/// Parsed command with optional adapter namespace.
+#[derive(Debug, Clone)]
+pub struct ParsedCommand {
+    /// Adapter name (None if no namespace)
+    pub adapter: Option<String>,
+
+    /// Command name
+    pub command: String,
+}
+
+/// Resolved command with confirmed adapter.
+#[derive(Debug, Clone)]
+pub struct ResolvedCommand {
+    /// Adapter name
+    pub adapter: String,
+
+    /// Command name
+    pub command: String,
+
+    /// Command arguments
+    pub args: Vec<String>,
+}
+
+/// Result from adapter execution.
+#[derive(Debug, Clone)]
+pub struct AdapterResult {
+    /// Exit code
+    pub exit_code: i32,
+
+    /// Standard output
+    pub stdout: String,
+
+    /// Standard error
+    pub stderr: String,
+
+    /// Execution duration in milliseconds
+    pub duration_ms: u64,
+}
+
+/// Adapter validation result.
+#[derive(Debug, Clone)]
+pub struct ValidationResult {
+    /// Is adapter valid?
+    pub valid: bool,
+
+    /// Error message if invalid
+    pub error: Option<String>,
+
+    /// Adapter version if valid
+    pub version: Option<String>,
+}
+
+/// Registry validation result.
+#[derive(Debug, Clone)]
+pub struct RegistryValidation {
+    /// Are all required adapters valid?
+    pub valid: bool,
+
+    /// Validation results per adapter
+    pub results: HashMap<String, ValidationResult>,
+}
+
+impl CommandIndex {
+    /// Create new empty command index.
+    pub fn new() -> Self {
+        Self {
+            commands: HashMap::new(),
+        }
+    }
+
+    /// Find adapter for command (returns None if ambiguous or not found).
+    pub fn find(&self, command: &str) -> Option<&str> {
+        match self.commands.get(command) {
+            Some(adapters) if adapters.len() == 1 => Some(&adapters[0]),
+            _ => None,
+        }
+    }
+
+    /// Get all adapters that provide this command.
+    pub fn find_all(&self, command: &str) -> Vec<&str> {
+        self.commands
+            .get(command)
+            .map(|adapters| adapters.iter().map(|s| s.as_str()).collect())
+            .unwrap_or_default()
+    }
+
+    /// Check if command is ambiguous (multiple adapters provide it).
+    pub fn is_ambiguous(&self, command: &str) -> bool {
+        self.commands
+            .get(command)
+            .map(|adapters| adapters.len() > 1)
+            .unwrap_or(false)
+    }
+
+    /// Add command to index.
+    pub fn add_command(&mut self, command: String, adapter: String) {
+        self.commands
+            .entry(command)
+            .or_insert_with(Vec::new)
+            .push(adapter);
+    }
 }
