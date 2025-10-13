@@ -523,10 +523,10 @@ P002|2025-10-13|Brief descriptive title|bugfix|tag1,tag2,tag3|P001|file1.rs, fil
 
 #### Step 4: Document Each Step
 ```csv
-# _workbench/Log/P002-251013-0830.csv
+# _workbench/Log/251013-P02.csv
 process_id|step|phase|action|file|description|result|commit_hash|notes
-P002|01|investigation|analyze_problem|src/file.rs|What I'm doing|What I found|n/a|Additional context
-P002|02|implementation|create_function|src/file.rs|Added function X|SUCCESS|abc1234|Technical details
+251013-P02|01|investigation|analyze_problem|src/file.rs|What I'm doing|What I found|n/a|Additional context
+251013-P02|02|implementation|create_function|src/file.rs|Added function X|SUCCESS|abc1234|Technical details
 ```
 
 **Phases:**
@@ -540,26 +540,33 @@ P002|02|implementation|create_function|src/file.rs|Added function X|SUCCESS|abc1
 
 #### Step 5: Update INDEX on Completion
 ```csv
-P002|2025-10-13|Title|bugfix|file1.rs, file2.rs|abc1234,def5678|completed|12|Final summary of what was achieved
+251013-P02|Title|bugfix|api,language,fix|251013-P01|file1.rs, file2.rs|abc1234,def5678|completed|12|Final summary of what was achieved
 ```
 
 ### Format Specifications
 
-**INDEX.csv columns:**
-1. `process_id` - PXXX (P001, P002, etc.)
-2. `date` - YYYY-MM-DD
-3. `title` - Brief title (< 80 chars)
-4. `category` - bugfix/feature/refactor/architecture/documentation/performance/security
-5. `tags` - 3-7 searchable keywords (comma-separated, lowercase-with-hyphens)
-6. `related_processes` - Related process IDs (comma-separated) or "n/a"
-7. `files_affected` - Main files changed (comma-separated)
-8. `commits` - Git commit hashes (comma-separated)
-9. `status` - completed/in-progress/paused/abandoned
-10. `duration_steps` - Total number of steps in detailed log
-11. `summary` - One-line summary of what was done
+**Process ID Format:** `YYMMDD-PXX`
+- `YYMMDD` - Date (251013 = 2025-10-13)
+- `PXX` - Daily counter (P01, P02, P03, etc.)
+- Example: `251013-P01` = October 13, 2025, first process
+- Example: `251014-P01` = October 14, 2025, first process
+
+**Filename:** `YYMMDD-PXX.csv` (e.g., `251013-P01.csv`, `251013-P02.csv`)
+
+**INDEX.csv columns (10 total):**
+1. `process_id` - YYMMDD-PXX format (date encoded in ID)
+2. `title` - Brief title (< 80 chars)
+3. `category` - bugfix/feature/refactor/architecture/documentation/performance/security
+4. `tags` - 3-7 searchable keywords (comma-separated, lowercase-with-hyphens)
+5. `related_processes` - Related process IDs (comma-separated, e.g., "251013-P01,251014-P01") or "n/a"
+6. `files_affected` - Main files changed (comma-separated)
+7. `commits` - Git commit hashes (comma-separated)
+8. `status` - completed/in-progress/paused/abandoned
+9. `duration_steps` - Total number of steps in detailed log
+10. `summary` - One-line summary of what was done
 
 **Detailed log columns:**
-1. `process_id` - PXXX (matches INDEX)
+1. `process_id` - YYMMDD-PXX (matches INDEX)
 2. `step` - Sequential number (01, 02, 03, ...)
 3. `phase` - Process phase (see list above)
 4. `action` - Specific action (analyze_problem, create_function, etc.)
@@ -584,13 +591,13 @@ P002|2025-10-13|Title|bugfix|file1.rs, file2.rs|abc1234,def5678|completed|12|Fin
 ```bash
 # 1. Find all SET handler work
 grep "set-handler" _workbench/Log/INDEX.csv
-# Result: P001 - Symmetrical language/environment
+# Result: 251013-P01 - Symmetrical language/environment
 
-# 2. Read P001's architecture decisions
-cat _workbench/Log/P001-251013-0723.csv | grep "architecture\|decision"
+# 2. Read 251013-P01's architecture decisions
+cat _workbench/Log/251013-P01.csv | grep "architecture\|decision"
 
-# 3. Check if anyone modified P001 after
-grep "related_processes.*P001" _workbench/Log/INDEX.csv
+# 3. Check if anyone modified 251013-P01 after
+grep "related_processes.*251013-P01" _workbench/Log/INDEX.csv
 ```
 
 **Token-efficient search:**

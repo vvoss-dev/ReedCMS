@@ -7,19 +7,20 @@ This directory contains detailed process logs for significant development activi
 ### `INDEX.csv` - Quick Overview
 **Purpose:** Fast lookup and search across all processes with tag-based references
 **Columns:**
-- `process_id` - Unique identifier (P001, P002, etc.)
-- `date` - Date of process (YYYY-MM-DD)
+- `process_id` - Unique identifier (YYMMDD-PXX format, e.g., 251013-P01, 251013-P02)
 - `title` - Brief descriptive title
 - `category` - Type of work (bugfix, feature, refactor, architecture, documentation)
 - `tags` - Searchable keywords (comma-separated, lowercase-with-hyphens)
-- `related_processes` - Related process IDs (comma-separated, e.g., "P003,P007" or "n/a")
+- `related_processes` - Related process IDs (comma-separated, e.g., "251013-P01,251014-P01" or "n/a")
 - `files_affected` - Comma-separated list of main files changed
 - `commits` - Git commit hash(es)
 - `status` - Current status (completed, in-progress, paused, abandoned)
 - `duration_steps` - Total number of steps in process
 - `summary` - One-line summary of what was done
 
-### `PXXX-YYMMDD-HHMM.csv` - Detailed Process Log
+**Note:** Date is encoded in `process_id` (YYMMDD prefix: 251013 = 2025-10-13)
+
+### `YYMMDD-PXX.csv` - Detailed Process Log
 **Purpose:** Step-by-step documentation of a specific process
 **Columns:**
 - `process_id` - Links back to INDEX
@@ -85,9 +86,9 @@ Tags enable fast, token-efficient discovery of related processes without reading
 **Format:** Comma-separated process IDs
 ```csv
 related_processes
-P003,P007      # Related to both P003 and P007
-P005           # Related to P005 only
-n/a            # No related processes
+251013-P01,251014-P01      # Related to both 251013-P01 and 251014-P01
+251015-P01                 # Related to 251015-P01 only
+n/a                        # No related processes
 ```
 
 ### ⚠️ MANDATORY: Check Before Starting New Work
@@ -105,8 +106,8 @@ grep "batch_handlers.rs" _workbench/Log/INDEX.csv
 grep "bugfix.*in-progress" _workbench/Log/INDEX.csv
 
 # Step 4: Follow related_processes chain
-# If P007 shows "related_processes: P003,P005", check those too
-grep "^P003\|^P005" _workbench/Log/INDEX.csv
+# If 251015-P02 shows "related_processes: 251013-P01,251014-P01", check those too
+grep "^251013-P01\|^251014-P01" _workbench/Log/INDEX.csv
 ```
 
 ### Research Workflow
@@ -123,10 +124,10 @@ grep "environment" _workbench/Log/INDEX.csv
 grep "routing" _workbench/Log/INDEX.csv
 
 # 3. Check their detailed logs for decisions
-cat _workbench/Log/P001-251013-0723.csv | grep -i "decision\|architecture"
+cat _workbench/Log/251013-P01.csv | grep -i "decision\|architecture"
 
 # 4. Check related_processes chain
-# If P001 shows related: P005, check P005 too
+# If 251013-P01 shows related: 251015-P01, check 251015-P01 too
 ```
 
 #### Scenario 2: Bug in Existing Feature
@@ -137,12 +138,12 @@ cat _workbench/Log/P001-251013-0723.csv | grep -i "decision\|architecture"
 # 1. Find processes that touched set-handlers AND language
 grep "set-handler" _workbench/Log/INDEX.csv | grep "language"
 
-# Result: P001 - Symmetrical language/environment in SET handlers
-# 2. Read P001 to understand original implementation
-cat _workbench/Log/P001-251013-0723.csv
+# Result: 251013-P01 - Symmetrical language/environment in SET handlers
+# 2. Read 251013-P01 to understand original implementation
+cat _workbench/Log/251013-P01.csv
 
 # 3. Check if anyone modified it after (related_processes)
-grep "related_processes.*P001" _workbench/Log/INDEX.csv
+grep "related_processes.*251013-P01" _workbench/Log/INDEX.csv
 ```
 
 #### Scenario 3: Extending Existing System
@@ -152,14 +153,14 @@ grep "related_processes.*P001" _workbench/Log/INDEX.csv
 
 # 1. Find environment system processes
 grep "environment" _workbench/Log/INDEX.csv
-# Result: P001
+# Result: 251013-P01
 
 # 2. Read architecture decisions
-cat _workbench/Log/P001-251013-0723.csv | grep "architecture"
+cat _workbench/Log/251013-P01.csv | grep "architecture"
 
-# 3. New process MUST reference P001
-# In new P002:
-# related_processes: P001
+# 3. New process MUST reference 251013-P01
+# In new 251013-P03:
+# related_processes: 251013-P01
 # tags: environment,season,suffix,extension
 ```
 
@@ -177,7 +178,7 @@ grep "batch_handlers.rs" _workbench/Log/INDEX.csv
 grep "api" _workbench/Log/INDEX.csv | grep "language"
 
 # Once found, open the detailed log
-cat _workbench/Log/P001-251013-0723.csv
+cat _workbench/Log/251013-P01.csv
 ```
 
 ### Token-Efficient Research:
@@ -191,10 +192,11 @@ grep "language" _workbench/Log/INDEX.csv
 
 ### Creating a new process log:
 ```bash
-# 1. Add entry to INDEX.csv with new process_id
-# 2. Create detailed log: PXXX-YYMMDD-HHMM.csv
-# 3. Document each step as you work
-# 4. Update INDEX status when complete
+# 1. Generate new process_id: YYMMDD-PXX (e.g., 251013-P03)
+# 2. Add entry to INDEX.csv with new process_id
+# 3. Create detailed log: YYMMDD-PXX.csv (e.g., 251013-P03.csv)
+# 4. Document each step as you work
+# 5. Update INDEX status when complete
 ```
 
 ### Categories:
@@ -216,12 +218,19 @@ grep "language" _workbench/Log/INDEX.csv
 
 ## Naming Convention
 
-Process logs use format: `PXXX-YYMMDD-HHMM.csv`
-- `PXXX` - Process ID (P001, P002, etc.)
+Process logs use format: `YYMMDD-PXX.csv`
 - `YYMMDD` - Date (251013 = 2025-10-13)
-- `HHMM` - Start time (0723 = 07:23)
+- `PXX` - Daily process counter (P01, P02, P03, etc.)
 
-Example: `P001-251013-0723.csv` = Process 1, started October 13, 2025 at 07:23
+Example: `251013-P01.csv` = October 13, 2025, first process of the day
+Example: `251013-P02.csv` = October 13, 2025, second process of the day
+Example: `251014-P01.csv` = October 14, 2025, first process of the day
+
+**Benefits:**
+- Chronologically sortable (alphabetical = chronological)
+- Date encoded in process_id (no redundant date column)
+- Automatic daily grouping (all 251013-* processes together)
+- Human-readable references (251013-P01 vs P001 or 1728891780)
 
 ## Maintenance
 
