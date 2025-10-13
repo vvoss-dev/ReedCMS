@@ -975,7 +975,7 @@
 
 ---
 
-## Layer 18: CLI Layer - ReedCLI (4/8 Complete, 4/8 Planned - 50%)
+## Layer 18: CLI Layer - ReedCLI (5/8 Complete, 3/8 Planned - 62.5%)
 
 ### 📋 REED-18-00: CLI Layer Overview
 **Status**: Planned  
@@ -1012,10 +1012,10 @@
 
 ---
 
-### 📋 REED-18-05: Output Formatter
-**Status**: Planned  
-**Commits**: 0 commits  
-**Analysis**: Ticket created for multi-format output system (table/JSON/CSV/plain).
+### ✅ REED-18-05: Output Formatter
+**Status**: Complete  
+**Commits**: Pending  
+**Analysis**: Implemented complete output formatter with table/JSON/CSV/plain formats. ASCII table with box-drawing characters (prettytable-rs), pretty-printed JSON, CSV with proper escaping, plain text. 100% test coverage (33 formatter tests passing). Terminal colour detection (NO_COLOR + TTY). Dependencies: prettytable-rs 0.10, atty 0.2.
 
 ---
 

@@ -7,9 +7,11 @@ license = "Apache-2.0"
 description = "ReedCLI - Unified CLI for Reed tools (ReedBase, ReedCMS)"
 
 [dependencies]
-toml = "0.8"        # TOML parser for Reed.toml registry files
-which = "6.0"       # Binary path resolution for adapter discovery
-serde_json = "1.0"  # JSON support for CommandOutput data
+toml = "0.8"          # TOML parser for Reed.toml registry files
+which = "6.0"         # Binary path resolution for adapter discovery
+serde_json = "1.0"    # JSON support for CommandOutput data
+prettytable-rs = "0.10"  # ASCII table formatting with box-drawing characters
+atty = "0.2"          # Terminal detection for colour support
 
 [dev-dependencies]
 # Test dependencies if needed
