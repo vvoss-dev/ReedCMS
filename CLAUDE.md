@@ -441,6 +441,124 @@ src/
 - See `_workbench/Tickets/templates/service-template.md` for complete guide
 - See `_workbench/Tickets/templates/service-template.test.md` for test structure
 
+## Process Logging System
+
+**⚠️ MANDATORY: ALL significant development activities MUST be logged**
+
+### When to Create a Process Log
+
+Create a new process log (PXXX) for:
+- ✅ Bug fixes (non-trivial)
+- ✅ New features or functionality
+- ✅ Architectural changes
+- ✅ Refactoring affecting multiple files
+- ✅ Performance optimizations
+- ✅ Security fixes
+- ✅ Complex investigations or debugging sessions
+
+**Skip logging for:**
+- ❌ Trivial typo fixes
+- ❌ Simple documentation updates (unless part of larger process)
+- ❌ Single-line code changes
+
+### Process Log Structure
+
+**Location:** `_workbench/Log/`
+
+**Two-level system:**
+1. **INDEX.csv** - Quick overview, one line per process
+2. **PXXX-YYMMDD-HHMM.csv** - Detailed step-by-step log
+
+### Workflow: Creating a Process Log
+
+#### Step 1: Start New Process
+```bash
+# 1. Determine next process ID
+grep "^P" _workbench/Log/INDEX.csv | tail -1  # Get last ID, increment
+
+# 2. Create detailed log file
+# Format: PXXX-YYMMDD-HHMM.csv
+# Example: P002-251013-0830.csv
+```
+
+#### Step 2: Add to INDEX
+```csv
+# _workbench/Log/INDEX.csv
+process_id|date|title|category|files_affected|commits|status|duration_steps|summary
+P002|2025-10-13|Brief descriptive title|bugfix|file1.rs, file2.rs|n/a|in-progress|0|What you're about to do
+```
+
+**Categories:** bugfix, feature, refactor, architecture, documentation, performance, security
+
+#### Step 3: Document Each Step
+```csv
+# _workbench/Log/P002-251013-0830.csv
+process_id|step|phase|action|file|description|result|commit_hash|notes
+P002|01|investigation|analyze_problem|src/file.rs|What I'm doing|What I found|n/a|Additional context
+P002|02|implementation|create_function|src/file.rs|Added function X|SUCCESS|abc1234|Technical details
+```
+
+**Phases:**
+- `investigation` - Problem analysis, root cause finding
+- `architecture` - System understanding, design decisions
+- `decision` - Choosing approach, documenting rationale
+- `implementation` - Writing code, making changes
+- `verification` - Testing, validation, checks
+- `commit` - Git operations
+- `documentation` - Creating/updating docs
+
+#### Step 4: Update INDEX on Completion
+```csv
+P002|2025-10-13|Title|bugfix|file1.rs, file2.rs|abc1234,def5678|completed|12|Final summary of what was achieved
+```
+
+### Format Specifications
+
+**INDEX.csv columns:**
+1. `process_id` - PXXX (P001, P002, etc.)
+2. `date` - YYYY-MM-DD
+3. `title` - Brief title (< 80 chars)
+4. `category` - bugfix/feature/refactor/architecture/documentation/performance/security
+5. `files_affected` - Main files changed (comma-separated)
+6. `commits` - Git commit hashes (comma-separated)
+7. `status` - completed/in-progress/paused/abandoned
+8. `duration_steps` - Total number of steps in detailed log
+9. `summary` - One-line summary of what was done
+
+**Detailed log columns:**
+1. `process_id` - PXXX (matches INDEX)
+2. `step` - Sequential number (01, 02, 03, ...)
+3. `phase` - Process phase (see list above)
+4. `action` - Specific action (analyze_problem, create_function, etc.)
+5. `file` - File(s) affected or "all"
+6. `description` - What you did (detailed)
+7. `result` - Outcome (SUCCESS, FAILED, description)
+8. `commit_hash` - Git hash or "n/a"
+9. `notes` - Additional context, technical details
+
+### Benefits of Process Logging
+
+✅ **Audit Trail** - Complete history of why changes were made
+✅ **Maintenance Reference** - Understand past decisions during future work
+✅ **Bug Investigation** - Trace back reasoning for implementations
+✅ **Knowledge Transfer** - Onboarding, team collaboration
+✅ **Compliance** - Document decision-making process
+✅ **Learning Resource** - Reference for similar problems
+
+### Example: Quick Search
+
+```bash
+# Find all processes related to "authentication"
+grep -i "authentication" _workbench/Log/INDEX.csv
+
+# Once found (e.g., P005), view details
+cat _workbench/Log/P005-251015-1420.csv
+```
+
+### Complete Documentation
+
+See `_workbench/Log/README.md` for complete process log system documentation.
+
 ## Ticket System
 
 ### Ticket Structure
