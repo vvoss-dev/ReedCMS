@@ -12,6 +12,7 @@ which = "6.0"         # Binary path resolution for adapter discovery
 serde_json = "1.0"    # JSON support for CommandOutput data
 prettytable-rs = "0.10"  # ASCII table formatting with box-drawing characters
 atty = "0.2"          # Terminal detection for colour support
+rustyline = "14.0"    # Interactive line editing with history support
 
 [dev-dependencies]
 # Test dependencies if needed

@@ -11,4 +11,5 @@ pub mod help;
 pub mod integration;
 pub mod parser;
 pub mod registry;
+pub mod shell;
 pub mod types;
