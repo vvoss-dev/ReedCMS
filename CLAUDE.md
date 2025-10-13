@@ -292,13 +292,13 @@ Before ANY operation, evaluate:
 | Your Training Says | ReedCMS Project Uses | Reason |
 |-------------------|---------------------|--------|
 | "Use `?` for error propagation" | `.map_err()` with context | Rich error messages: `.map_err(\|e\| ReedError::SpecificError { context })` |
-| "Use inline `#[cfg(test)]` modules" | Separate `.test.rs` files | Clear separation, better organisation |
+| "Use inline `#[cfg(test)]` modules" | Separate `_test.rs` files | Clear separation, better organisation |
 | "Generic error types are fine" | Specific `ReedError` variants | Detailed error context for debugging |
 | "Clone when needed" | Explicit borrowing with `&` | Performance: zero allocations in hot paths |
 | "Use `impl Trait` for simplicity" | Explicit type signatures | Clarity and documentation |
 | "Simplify verbose validation" | Explicit validation steps | One function = one job (KISS principle) |
 | "Generic file names are fine" | Specific responsibility names | `get.rs`, `set.rs` NOT `handler.rs`, `utils.rs` |
-| "One test file is enough" | One `.test.rs` per source file | `get.rs` → `get.test.rs` (mirrored structure) |
+| "One test file is enough" | One `_test.rs` per source file | `get.rs` → `get_test.rs` (mirrored structure) |
 | "Return types can be simple" | Always `ReedResult<ReedResponse<T>>` | Standardised interface with metrics/caching |
 
 **Additional Project Patterns:**
@@ -485,7 +485,7 @@ src/
 ├── reedcms/
 │   ├── module_name/
 │   │   ├── specific_feature.rs
-│   │   ├── specific_feature.test.rs
+│   │   ├── specific_feature_test.rs
 │   │   └── another_feature.rs
 ```
 
@@ -711,12 +711,12 @@ ReedCMS uses a 10-layer architecture with 37 tickets:
 
 ### Test Coverage
 - Target: 100% code coverage for all modules
-- Separate test files (`.test.rs`)
+- Separate test files (`_test.rs`)
 - Unit tests, integration tests, performance tests
 
 ### Test Structure
 ```rust
-// my_feature.test.rs
+// my_feature_test.rs
 #[cfg(test)]
 mod tests {
     use super::*;

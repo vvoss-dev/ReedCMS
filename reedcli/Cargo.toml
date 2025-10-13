@@ -1,0 +1,13 @@
+[package]
+name = "reedcli"
+version = "0.1.0"
+edition = "2021"
+authors = ["Vivian Voss <ask@vvoss.dev>"]
+license = "Apache-2.0"
+description = "ReedCLI - Unified CLI for Reed tools (ReedBase, ReedCMS)"
+
+[dependencies]
+# No external dependencies for parser (KISS principle)
+
+[dev-dependencies]
+# Test dependencies if needed
