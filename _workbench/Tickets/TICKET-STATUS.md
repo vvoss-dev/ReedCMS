@@ -645,7 +645,7 @@
 **Key Commits**:
 - `e2d72e6` - feat: implement ReedAPI HTTP Interface with RESTful endpoints
 - `4806021` - fix: restore full API functionality with CSV fallback using existing csv module
-- `TBD` - fix: wire configure_api_routes to HttpServer (251013-P03)
+- `0256b10` - fix: wire configure_api_routes to HttpServer (251013-P03)
 
 **Evidence**:
 - RESTful API endpoints (GET, SET, LIST, BATCH)
