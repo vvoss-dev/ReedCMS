@@ -481,16 +481,47 @@ grep "^P" _workbench/Log/INDEX.csv | tail -1  # Get last ID, increment
 # Example: P002-251013-0830.csv
 ```
 
-#### Step 2: Add to INDEX
+#### Step 2: Research Existing Processes (MANDATORY)
+
+**⚠️ BEFORE starting, ALWAYS check for related work:**
+
+```bash
+# 1. Search by tags (fastest, most reliable)
+grep -E "your-topic|your-component" _workbench/Log/INDEX.csv
+
+# 2. Search by files you'll modify
+grep "your_file.rs" _workbench/Log/INDEX.csv
+
+# 3. Check for in-progress work
+grep "in-progress" _workbench/Log/INDEX.csv
+
+# 4. Read relevant detailed logs to understand decisions
+cat _workbench/Log/PXXX-YYMMDD-HHMM.csv | grep "architecture\|decision"
+```
+
+**Why:** Avoid conflicts, understand existing decisions, maintain consistency.
+
+#### Step 3: Add to INDEX
 ```csv
 # _workbench/Log/INDEX.csv
-process_id|date|title|category|files_affected|commits|status|duration_steps|summary
-P002|2025-10-13|Brief descriptive title|bugfix|file1.rs, file2.rs|n/a|in-progress|0|What you're about to do
+process_id|date|title|category|tags|related_processes|files_affected|commits|status|duration_steps|summary
+P002|2025-10-13|Brief descriptive title|bugfix|tag1,tag2,tag3|P001|file1.rs, file2.rs|n/a|in-progress|0|What you're about to do
 ```
 
 **Categories:** bugfix, feature, refactor, architecture, documentation, performance, security
 
-#### Step 3: Document Each Step
+**Tags:** 3-7 lowercase-with-hyphens keywords (e.g., `api`, `language`, `set-handlers`, `dead-code`)
+- Technical: `api`, `reedbase`, `cache`, `csv`
+- Functional: `language`, `environment`, `routing`
+- Component: `set-handlers`, `get-handlers`, `batch-operations`
+- Issue: `dead-code`, `performance`, `bug`, `security-fix`
+
+**Related Processes:** Comma-separated process IDs or "n/a"
+- Link to processes you're continuing/extending
+- Link to processes you're modifying/fixing
+- Link to processes with conflicting decisions
+
+#### Step 4: Document Each Step
 ```csv
 # _workbench/Log/P002-251013-0830.csv
 process_id|step|phase|action|file|description|result|commit_hash|notes
@@ -507,7 +538,7 @@ P002|02|implementation|create_function|src/file.rs|Added function X|SUCCESS|abc1
 - `commit` - Git operations
 - `documentation` - Creating/updating docs
 
-#### Step 4: Update INDEX on Completion
+#### Step 5: Update INDEX on Completion
 ```csv
 P002|2025-10-13|Title|bugfix|file1.rs, file2.rs|abc1234,def5678|completed|12|Final summary of what was achieved
 ```
@@ -519,11 +550,13 @@ P002|2025-10-13|Title|bugfix|file1.rs, file2.rs|abc1234,def5678|completed|12|Fin
 2. `date` - YYYY-MM-DD
 3. `title` - Brief title (< 80 chars)
 4. `category` - bugfix/feature/refactor/architecture/documentation/performance/security
-5. `files_affected` - Main files changed (comma-separated)
-6. `commits` - Git commit hashes (comma-separated)
-7. `status` - completed/in-progress/paused/abandoned
-8. `duration_steps` - Total number of steps in detailed log
-9. `summary` - One-line summary of what was done
+5. `tags` - 3-7 searchable keywords (comma-separated, lowercase-with-hyphens)
+6. `related_processes` - Related process IDs (comma-separated) or "n/a"
+7. `files_affected` - Main files changed (comma-separated)
+8. `commits` - Git commit hashes (comma-separated)
+9. `status` - completed/in-progress/paused/abandoned
+10. `duration_steps` - Total number of steps in detailed log
+11. `summary` - One-line summary of what was done
 
 **Detailed log columns:**
 1. `process_id` - PXXX (matches INDEX)
@@ -545,14 +578,34 @@ P002|2025-10-13|Title|bugfix|file1.rs, file2.rs|abc1234,def5678|completed|12|Fin
 ✅ **Compliance** - Document decision-making process
 ✅ **Learning Resource** - Reference for similar problems
 
-### Example: Quick Search
+### Research Examples
 
+**Before modifying SET handlers:**
 ```bash
-# Find all processes related to "authentication"
-grep -i "authentication" _workbench/Log/INDEX.csv
+# 1. Find all SET handler work
+grep "set-handler" _workbench/Log/INDEX.csv
+# Result: P001 - Symmetrical language/environment
 
-# Once found (e.g., P005), view details
-cat _workbench/Log/P005-251015-1420.csv
+# 2. Read P001's architecture decisions
+cat _workbench/Log/P001-251013-0723.csv | grep "architecture\|decision"
+
+# 3. Check if anyone modified P001 after
+grep "related_processes.*P001" _workbench/Log/INDEX.csv
+```
+
+**Token-efficient search:**
+```bash
+# DON'T: Read all logs blindly (wastes tokens)
+# DO: Use tags to find relevant processes first
+grep "authentication" _workbench/Log/INDEX.csv
+
+# Then read ONLY those specific detailed logs
+```
+
+**Multi-tag search (AND logic):**
+```bash
+# Find processes touching BOTH api AND language
+grep "api" _workbench/Log/INDEX.csv | grep "language"
 ```
 
 ### Complete Documentation
