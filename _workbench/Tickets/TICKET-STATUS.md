@@ -975,7 +975,7 @@
 
 ---
 
-## Layer 18: CLI Layer - ReedCLI (5/8 Complete, 3/8 Planned - 62.5%)
+## Layer 18: CLI Layer - ReedCLI (6/8 Complete, 2/8 Planned - 75%)
 
 ### 📋 REED-18-00: CLI Layer Overview
 **Status**: Planned  
@@ -1019,10 +1019,10 @@
 
 ---
 
-### 📋 REED-18-06: Help System
-**Status**: Planned  
-**Commits**: 0 commits  
-**Analysis**: Ticket created for auto-generated help from Reed.toml.
+### ✅ REED-18-06: Help System
+**Status**: Complete  
+**Commits**: Pending  
+**Analysis**: Implemented complete help system auto-generated from Reed.toml registry. Three-level help (list tools, list commands, command details). Alphabetically sorted output. 100% test coverage (14 help tests passing). No hardcoded help strings - all from registry metadata.
 
 ---
 
