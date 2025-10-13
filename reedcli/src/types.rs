@@ -87,6 +87,21 @@ pub enum CliError {
 
     /// Invalid version format
     InvalidVersion { version: String },
+
+    /// Handler not found
+    HandlerNotFound { handler: String },
+
+    /// Tool error
+    ToolError { reason: String },
+
+    /// Invalid arguments
+    InvalidArgs { reason: String },
+
+    /// Format error
+    FormatError { reason: String },
+
+    /// Shell error
+    ShellError { reason: String },
 }
 
 impl fmt::Display for CliError {
@@ -156,6 +171,21 @@ impl fmt::Display for CliError {
             }
             CliError::InvalidVersion { version } => {
                 write!(f, "Invalid version format: '{}'", version)
+            }
+            CliError::HandlerNotFound { handler } => {
+                write!(f, "Handler '{}' not found", handler)
+            }
+            CliError::ToolError { reason } => {
+                write!(f, "Tool error: {}", reason)
+            }
+            CliError::InvalidArgs { reason } => {
+                write!(f, "Invalid arguments: {}", reason)
+            }
+            CliError::FormatError { reason } => {
+                write!(f, "Format error: {}", reason)
+            }
+            CliError::ShellError { reason } => {
+                write!(f, "Shell error: {}", reason)
             }
         }
     }
@@ -384,4 +414,37 @@ impl CommandIndex {
             .or_insert_with(Vec::new)
             .push(adapter);
     }
+}
+
+// ============================================================================
+// Tool Integration Types (REED-18-04)
+// ============================================================================
+
+/// Output format for command results.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OutputFormat {
+    /// Table format (default)
+    Table,
+
+    /// JSON format
+    Json,
+
+    /// CSV format
+    Csv,
+
+    /// Plain text format
+    Plain,
+}
+
+/// Command execution output.
+#[derive(Debug, Clone)]
+pub struct CommandOutput {
+    /// Result data (JSON-compatible)
+    pub data: serde_json::Value,
+
+    /// Output format
+    pub format: OutputFormat,
+
+    /// Exit code
+    pub exit_code: i32,
 }
