@@ -21,51 +21,62 @@
 - **Title**: Main Binary Integration
 - **Layer**: CLI Layer (REED-18)
 - **Priority**: Critical
-- **Status**: Open
+- **Status**: **BLOCKED** - Waiting for REED-19
 - **Complexity**: Medium
-- **Dependencies**: REED-18-08 (CommandProvider), REED-18-09 (ReedBase), REED-18-10 (ReedCMS)
-- **Estimated Time**: 2 days
+- **Dependencies**: 
+  - REED-18-08 (Command Provider Trait)
+  - **REED-19-** (Standalone ReedBase - MUST exist first)
+  - **REED-18-09** (ReedBase Adapter - MUST be complete)
+  - **REED-18-10** (ReedCMS Adapter - MUST be complete)
+- **Estimated Time**: 2 days (AFTER all adapters complete)
+
+## ⚠️ IMPORTANT: This Ticket is BLOCKED
+
+**This ticket CANNOT be implemented until:**
+1. **REED-19 (Standalone ReedBase) is complete**
+2. **REED-18-09 (ReedBase Adapter) is complete**
+3. **REED-18-10 (ReedCMS Adapter) is complete**
+
+This is the **final integration step** that brings everything together.
 
 ## Objective
 
-Integrate all adapters (ReedBase, ReedCMS) into the main `reed` binary, replacing the old hardcoded router with the new adapter-based system. The result: **identical CLI behaviour** with clean architecture.
+Integrate all adapters (ReedBase, ReedCMS) into the main `reed` binary using the new adapter-based system. The result: **clean modular architecture** with three separate tools working together via CLI.
 
 ## Requirements
 
 ### Core Functionality
 
 - **Auto-discover adapters** via Cargo features
-- **Register all 62 commands** from both adapters
-- **Maintain backwards compatibility** - all existing commands work identically
+- **Register all commands** from both adapters
 - **Feature flags** to enable/disable adapters
 - **Help system** shows all registered commands
 - **Error handling** with proper exit codes
 
-### Architecture
+### Architecture (After REED-19)
 
 ```
-src/main.rs
+CLI > ReedBase > ReedCMS
+
+reed binary (src/main.rs)
   ↓
-reedcli::Router::new()
+reedcli::discover_adapters()
+  ├─→ ReedBaseAdapter [REED-18-09]
+  │     ├─ Standalone database (REED-19)
+  │     └─ Commands: table:*, query, version:*, etc.
+  │
+  └─→ ReedCMSAdapter [REED-18-10]
+        ├─ Uses ReedBase as backend
+        └─ Commands: content:*, user:*, role:*, server:*, etc.
   ↓
-discover_adapters() [REED-18-08]
-  ├─→ ReedBaseAdapter::new() [REED-18-09]
-  │     └─→ registers 25 commands
-  └─→ ReedCMSAdapter::new() [REED-18-10]
-        └─→ registers 37 commands
-  ↓
-run_with_router() [reedcli]
-  ↓
-User sees: reed <command:action> (works identically to before)
+User sees: reed <command:action>
 ```
 
 ## Implementation Files
 
 ### Primary Implementation
 
-**`src/main.rs`** (REPLACE existing)
-
-One file = Binary entry point only. NO other responsibilities.
+**`src/main.rs`** (REPLACE when ready)
 
 ```rust
 // Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
@@ -102,20 +113,19 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     
     // Handle special cases
-    if args.len() == 1 || args.get(1).map(|s| s.as_str()) == Some("--help") || args.get(1).map(|s| s.as_str()) == Some("-h") {
+    if args.len() == 1 || args.get(1).map(|s| s.as_str()) == Some("--help") {
         print_general_help(&router);
         process::exit(0);
     }
     
-    if args.get(1).map(|s| s.as_str()) == Some("--version") || args.get(1).map(|s| s.as_str()) == Some("-v") {
+    if args.get(1).map(|s| s.as_str()) == Some("--version") {
         print_version(&router);
         process::exit(0);
     }
     
-    // Parse command
+    // Parse and run command
     let command_args = args.into_iter().skip(1).collect();
     
-    // Run CLI
     match run_cli(&router, command_args) {
         Ok(output) => {
             println!("{}", output);
@@ -129,113 +139,17 @@ fn main() {
     }
 }
 
-/// Run CLI with router and arguments.
-///
-/// ## Input
-/// - `router`: Router with registered commands
-/// - `args`: CLI arguments (excluding binary name)
-///
-/// ## Output
-/// - `CliResult<String>`: Command output or error
-///
-/// ## Performance
-/// - Depends on command execution
-/// - Routing overhead: < 1ms
-///
-/// ## Error Conditions
-/// - Parse errors
-/// - Unknown commands
-/// - Command execution errors
-fn run_cli(router: &Router, args: Vec<String>) -> CliResult<String> {
-    use reedcli::parser;
-    
-    // Parse command
-    let command = parser::parse_args(args)?;
-    
-    // Route and execute
-    let response = router.route(command)?;
-    
-    Ok(response.data)
-}
-
-/// Print general help.
-///
-/// ## Input
-/// - `router`: Router with registered commands
-fn print_general_help(router: &Router) {
-    println!("ReedCMS Command-Line Interface\n");
-    println!("Usage: reed <command:action> [args] [flags]\n");
-    println!("Available Adapters:");
-    
-    for adapter in router.adapters() {
-        println!("  {} v{} - {} ({} commands)", 
-            adapter.name, 
-            adapter.version, 
-            adapter.description,
-            adapter.command_count
-        );
-    }
-    
-    println!("\nGlobal Flags:");
-    println!("  --help, -h       Show this help");
-    println!("  --version, -v    Show version");
-    
-    println!("\nFor command-specific help:");
-    println!("  reed <command:action> --help");
-    
-    println!("\nExamples:");
-    println!("  reed set:text page.title \"Welcome\"");
-    println!("  reed user:create admin");
-    println!("  reed server:start");
-}
-
-/// Print version information.
-///
-/// ## Input
-/// - `router`: Router with registered commands
-fn print_version(router: &Router) {
-    println!("reed {}", env!("CARGO_PKG_VERSION"));
-    println!("\nAdapters:");
-    
-    for adapter in router.adapters() {
-        println!("  {} v{}", adapter.name, adapter.version);
-    }
-}
-
-/// Convert error to Unix exit code.
-///
-/// ## Input
-/// - `error`: CLI error
-///
-/// ## Output
-/// - `i32`: Exit code (0 = success, 1 = user error, 2 = system error)
-fn error_to_exit_code(error: &CliError) -> i32 {
-    use reedcli::types::CliError;
-    
-    match error {
-        // User errors (exit code 1)
-        CliError::EmptyCommand 
-        | CliError::UnmatchedQuote 
-        | CliError::InvalidFlag { .. }
-        | CliError::InvalidArgs { .. }
-        | CliError::UnknownCommand { .. } => 1,
-        
-        // System errors (exit code 2)
-        | CliError::RegistryNotFound { .. }
-        | CliError::InvalidRegistry { .. }
-        | CliError::ToolNotFound { .. }
-        | CliError::HandlerNotFound { .. }
-        | CliError::AdapterNotFound { .. }
-        | CliError::ShellError { .. } => 2,
-    }
-}
+// ... (helper functions as defined in original ticket)
 ```
 
-**`Cargo.toml`** (modifications)
+**`Cargo.toml`** (workspace structure)
 
 ```toml
+[workspace]
+members = ["reedcli", "reedbase", "reedcms"]
+
 [package]
-name = "reedcms"
+name = "reed"
 version = "0.1.0"
 edition = "2021"
 
@@ -244,147 +158,56 @@ name = "reed"
 path = "src/main.rs"
 
 [dependencies]
-# NEW: ReedCLI presentation layer
 reedcli = { path = "reedcli" }
 
-# NEW: Adapters (optional, controlled by features)
+# Adapters (optional via features)
 reedbase = { path = "reedbase", optional = true }
-# reedcms adapter is built-in (this crate)
-
-# Existing dependencies
-actix-web = "4"
-minijinja = "2"
-# ... etc
+reedcms = { path = "reedcms", optional = true }
 
 [features]
 default = ["reedbase-adapter", "reedcms-adapter"]
 
 # Adapter features
 reedbase-adapter = ["dep:reedbase", "reedcli/reedbase"]
-reedcms-adapter = ["reedcli/reedcms"]
-
-[workspace]
-members = ["reedcli", "reedbase"]
-```
-
-**`reedcli/Cargo.toml`** (additions for feature flags)
-
-```toml
-[dependencies]
-# ... existing dependencies
-
-# Optional adapter dependencies
-reedbase = { path = "../reedbase", optional = true }
-reedcms = { path = "../", optional = true }
-
-[features]
-# Adapter features
-reedbase = ["dep:reedbase"]
-reedcms = ["dep:reedcms"]
+reedcms-adapter = ["dep:reedcms", "reedcli/reedcms"]
 ```
 
 ## Testing Strategy
 
-### Integration Tests
-
-**`tests/cli_integration_test.rs`** (NEW)
+### Integration Tests (AFTER adapters ready)
 
 ```rust
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
-
-//! Integration tests for reed binary.
-
-use assert_cmd::Command;
-use predicates::prelude::*;
+// tests/cli_integration_test.rs
 
 #[test]
-fn test_help_shows_adapters() {
+fn test_reedbase_commands_available() {
     let mut cmd = Command::cargo_bin("reed").unwrap();
     
-    cmd.arg("--help")
+    // ReedBase commands from REED-19
+    cmd.arg("query")
+        .arg("SELECT * FROM text")
         .assert()
-        .success()
-        .stdout(predicate::str::contains("reedbase"))
-        .stdout(predicate::str::contains("reedcms"));
+        .success();
 }
 
 #[test]
-fn test_version() {
+fn test_reedcms_commands_available() {
     let mut cmd = Command::cargo_bin("reed").unwrap();
     
-    cmd.arg("--version")
+    // ReedCMS commands
+    cmd.arg("content:list")
         .assert()
-        .success()
-        .stdout(predicate::str::contains("reed"));
+        .success();
 }
 
 #[test]
-fn test_reedbase_command_available() {
-    let mut cmd = Command::cargo_bin("reed").unwrap();
+fn test_adapter_isolation() {
+    // Build with only ReedBase
+    // Verify ReedCMS commands are NOT available
     
-    // This should work if ReedBase adapter is registered
-    cmd.arg("list:text")
-        .assert()
-        .success(); // or specific output check
+    // Build with only ReedCMS  
+    // Verify it uses ReedBase correctly
 }
-
-#[test]
-fn test_reedcms_command_available() {
-    let mut cmd = Command::cargo_bin("reed").unwrap();
-    
-    // This should work if ReedCMS adapter is registered
-    cmd.arg("user:list")
-        .assert()
-        .success(); // or specific output check
-}
-
-#[test]
-fn test_unknown_command_fails() {
-    let mut cmd = Command::cargo_bin("reed").unwrap();
-    
-    cmd.arg("unknown:command")
-        .assert()
-        .failure()
-        .code(1); // User error
-}
-
-#[test]
-fn test_adapter_count() {
-    // Verify both adapters are registered
-    let mut cmd = Command::cargo_bin("reed").unwrap();
-    
-    cmd.arg("--help")
-        .assert()
-        .success()
-        .stdout(predicate::str::contains("25 commands")) // ReedBase
-        .stdout(predicate::str::contains("37 commands")); // ReedCMS
-}
-```
-
-### Manual Testing Checklist
-
-```bash
-# Test all 62 commands work identically
-reed set:text page.title "Test"
-reed get:text page.title
-reed list:text
-
-reed user:create testuser
-reed user:list
-reed role:create testrole
-
-reed server:status
-reed build:complete
-reed backup:list
-
-# Test help system
-reed --help
-reed set:text --help
-
-# Test error handling
-reed unknown:command  # Should exit 1
-reed set:text  # Missing args, should exit 1
 ```
 
 ## Performance Requirements
@@ -394,7 +217,6 @@ reed set:text  # Missing args, should exit 1
 | Binary startup | < 50ms |
 | Adapter discovery | < 5ms |
 | Command routing | < 1ms |
-| Help generation | < 10ms |
 
 ## Error Conditions
 
@@ -404,98 +226,117 @@ reed set:text  # Missing args, should exit 1
 
 ## Acceptance Criteria
 
+**⚠️ These criteria CANNOT be verified until REED-19, REED-18-09, REED-18-10 are complete:**
+
+- [ ] REED-19 (Standalone ReedBase) is complete
+- [ ] REED-18-09 (ReedBase Adapter) is complete
+- [ ] REED-18-10 (ReedCMS Adapter) is complete
 - [ ] Main binary discovers both adapters automatically
-- [ ] All 62 commands work identically to before
+- [ ] All commands work correctly
 - [ ] `reed --help` shows both adapters
 - [ ] `reed --version` shows adapter versions
 - [ ] Feature flags allow disabling adapters
 - [ ] Error handling with correct exit codes
 - [ ] Integration tests pass
-- [ ] Manual testing checklist complete
 - [ ] Performance targets met
 - [ ] All code in BBC English
-- [ ] Clean architecture maintained
-
-## Migration Path
-
-### Phase 1: Backup
-```bash
-# Backup old main.rs
-cp src/main.rs src/main.rs.backup
-```
-
-### Phase 2: Implementation
-1. Replace `src/main.rs` with new adapter-based version
-2. Update `Cargo.toml` with workspace and features
-3. Add integration tests
-
-### Phase 3: Testing
-```bash
-# Build with all adapters
-cargo build --release --all-features
-
-# Test binary
-./target/release/reed --help
-./target/release/reed list:text
-./target/release/reed user:list
-
-# Run integration tests
-cargo test --test cli_integration_test
-```
-
-### Phase 4: Validation
-- Run ALL existing CLI tests
-- Verify backwards compatibility
-- Check performance benchmarks
 
 ## Dependencies
 
-**Requires**: 
-- REED-18-08 (Command Provider Trait)
-- REED-18-09 (ReedBase Adapter - 25 commands)
-- REED-18-10 (ReedCMS Adapter - 37 commands)
+**CRITICAL BLOCKERS**: 
+- **REED-19-01 through REED-19-13** - Standalone ReedBase MUST exist
+- **REED-18-09** - ReedBase Adapter MUST be complete
+- **REED-18-10** - ReedCMS Adapter MUST be complete
 
-**Blocks**: None (this completes the adapter system)
+**Also Requires**:
+- REED-18-08 (Command Provider Trait)
+
+**Blocks**: Nothing (this is the final step)
 
 ## References
-- Service Template: `_workbench/Tickets/templates/service-template.md`
 - REED-18-08: Command Provider Trait
 - REED-18-09: ReedBase Adapter
 - REED-18-10: ReedCMS Adapter
+- REED-19-00: ReedBase Layer Overview
 
 ## Notes
 
-**Design Goals**:
-- **Zero behaviour change** - users see no difference
-- **Clean architecture** - adapters instead of hardcoded router
-- **Easy extension** - new adapters can be added via features
-- **Performance** - no overhead from adapter system
+**The Three-Tool Architecture:**
 
-**Feature Flag Benefits**:
-```toml
-# Build with only ReedBase
-cargo build --no-default-features --features reedbase-adapter
+After this ticket is complete, we will have:
 
-# Build with only ReedCMS
-cargo build --no-default-features --features reedcms-adapter
+1. **ReedCLI** (reedcli/)
+   - Presentation layer
+   - Parser, formatter, router
+   - CommandProvider trait
+   - NO business logic
 
-# Build with everything (default)
-cargo build
+2. **ReedBase** (reedbase/)
+   - Standalone database
+   - Binary deltas, versioning
+   - ReedQL query language
+   - Schema validation
+   - Can be used independently
+
+3. **ReedCMS** (src/reedcms/)
+   - Content management
+   - Uses ReedBase as backend
+   - Templates, server, assets
+   - User/role management
+
+**Dependency Chain**: `CLI → ReedBase → ReedCMS`
+
+Each tool can be:
+- Developed independently
+- Tested independently
+- Released independently
+- Used independently (ReedBase can be used without ReedCMS)
+
+**Example Usage After Integration:**
+
+```bash
+# ReedBase commands (direct database access)
+reed query "SELECT * FROM text WHERE key LIKE 'page.%'"
+reed table:list
+reed version:restore abc123
+
+# ReedCMS commands (use ReedBase backend)
+reed content:create --title "My Page"
+reed user:create admin
+reed server:start
+
+# Both adapters registered
+reed --help
+# Shows:
+#   reedbase v1.0.0 - Standalone database (25 commands)
+#   reedcms v1.0.0 - Content management (30 commands)
 ```
 
-**Backwards Compatibility**:
-- Old: `reed set:text page.title "Test"` ✅ Still works
-- Old: `reed user:create admin` ✅ Still works
-- Old: `reed --help` ✅ Still works
-- All 62 commands: ✅ Identical behaviour
+**Why This is the Last Step:**
 
-**What Changed**:
-- Implementation: Adapter-based instead of hardcoded
-- Architecture: Clean separation of concerns
-- Extensibility: Easy to add new adapters
+Until REED-19 exists, we cannot:
+- Test the adapter pattern with real tools
+- Verify the three-tool architecture works
+- Demonstrate the separation of concerns
+- Measure performance impact
 
-**What Stayed Same**:
-- CLI syntax: Identical
-- Commands: All 62 work exactly as before
-- Behaviour: No user-visible changes
-- Performance: Same speed (< 1ms routing overhead)
+**DO NOT implement this until all dependencies are ready!**
+
+## Timeline
+
+**Estimated Start**: After REED-19, REED-18-09, REED-18-10 complete (months from now)  
+**Estimated Duration**: 2 days  
+**Priority**: Critical (but BLOCKED)
+
+## Implementation Checklist (When Ready)
+
+- [ ] Verify REED-19 has CLI interface
+- [ ] Verify REED-18-09 adapter works
+- [ ] Verify REED-18-10 adapter works
+- [ ] Update Cargo.toml with workspace
+- [ ] Create new main.rs with adapter discovery
+- [ ] Add integration tests
+- [ ] Test all three tools together
+- [ ] Verify feature flags work
+- [ ] Performance benchmarks
+- [ ] Documentation update

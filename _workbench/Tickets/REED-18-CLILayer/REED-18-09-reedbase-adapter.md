@@ -21,56 +21,80 @@
 - **Title**: ReedBase Adapter
 - **Layer**: CLI Layer (REED-18)
 - **Priority**: Critical
-- **Status**: Open
-- **Complexity**: High
-- **Dependencies**: REED-18-08 (Command Provider Trait), REED-02-01 (ReedBase Core)
-- **Estimated Time**: 4 days
+- **Status**: **BLOCKED** - Waiting for REED-19
+- **Complexity**: Medium
+- **Dependencies**: 
+  - REED-18-08 (Command Provider Trait)
+  - **REED-19-01 through REED-19-13 (Standalone ReedBase - MUST be implemented first)**
+- **Estimated Time**: 2 days (AFTER REED-19 complete)
+
+## ⚠️ IMPORTANT: This Ticket is BLOCKED
+
+**This ticket CANNOT be implemented until REED-19 (Standalone ReedBase) is complete.**
+
+The ReedBase Adapter registers CLI commands for the **new standalone ReedBase database** with:
+- Binary delta versioning (REED-19-03)
+- Concurrent writes (REED-19-05)
+- ReedQL query language (REED-19-10)
+- Schema validation (REED-19-08)
+
+**The old REED-02 ReedBase is NOT relevant for this ticket.** This adapter is for the new revolutionary database system.
 
 ## Objective
 
-Create the **ReedBase Adapter** that implements CommandProvider trait and registers all 25 ReedBase CLI commands (data, config, backup, debug, migration, validation).
+Create the **ReedBase Adapter** that implements CommandProvider trait and registers all CLI commands provided by the new standalone ReedBase tool (REED-19).
+
+**Note**: The exact command list will be determined by REED-19 implementation. This ticket provides a template structure that must be updated once REED-19 defines its CLI interface.
 
 ## Requirements
 
-### Commands to Register (25 total)
+### Commands to Register (TBD - defined by REED-19)
 
-**Data Commands (12)**:
-- `set:text`, `set:route`, `set:meta`, `set:server`, `set:project`
-- `get:text`, `get:route`, `get:meta`
-- `list:text`, `list:route`, `list:meta`
-- `text:aggregate`
+**The command list depends on REED-19 implementation. Expected categories:**
 
-**Config Commands (5)**:
-- `config:sync`, `config:export`, `config:init`, `config:show`, `config:validate`
+**Table Operations**:
+- `table:create`, `table:list`, `table:show`, `table:delete`
+- `table:schema`, `table:validate`
 
-**Backup Commands (4)**:
-- `backup:list`, `backup:restore`, `backup:verify`, `backup:prune`
+**Data Operations**:
+- `query` (ReedQL - REED-19-10)
+- `insert`, `update`, `delete`
+- `import`, `export`
 
-**Debug Commands (2)**:
-- `debug:cache`, `debug:config`
+**Version Operations**:
+- `version:list`, `version:show`, `version:restore`
+- `version:diff`, `version:log`
 
-**Migration Commands (2)**:
-- `migrate:text`, `migrate:routes`
+**Schema Operations**:
+- `schema:apply`, `schema:validate`, `schema:show`
 
-**Validation Commands (4)**:
-- `validate:routes`, `validate:consistency`, `validate:text`, `validate:references`
+**Backup Operations**:
+- `backup:create`, `backup:list`, `backup:restore`
+- `backup:verify`, `backup:prune`
 
-### Architecture
+**Debug Operations**:
+- `debug:cache`, `debug:stats`, `debug:vacuum`
+
+**Performance Operations**:
+- `benchmark`, `analyze`, `optimize`
+
+**⚠️ This list is PROVISIONAL and WILL change based on REED-19 implementation!**
+
+## Architecture
 
 ```
-reedbase/
+reedbase/                       # Standalone ReedBase tool (REED-19)
 ├── src/
-│   ├── lib.rs                  # Public exports
-│   ├── adapter.rs              # CommandProvider impl (NEW)
-│   └── commands/               # Existing commands (MOVE HERE)
-│       ├── mod.rs              
-│       ├── data.rs             # Data commands
-│       ├── config.rs           # Config commands
-│       ├── backup.rs           # Backup commands
-│       ├── debug.rs            # Debug commands
-│       ├── migration.rs        # Migration commands
-│       └── validation.rs       # Validation commands
-└── Cargo.toml                  # Add reedcli dependency
+│   ├── cli/                    # CLI commands (defined by REED-19)
+│   │   ├── table_commands.rs
+│   │   ├── query_commands.rs
+│   │   ├── version_commands.rs
+│   │   ├── schema_commands.rs
+│   │   └── ...
+│   ├── adapter.rs              # CommandProvider impl (THIS TICKET)
+│   ├── lib.rs
+│   └── main.rs                 # ReedBase binary
+└── Cargo.toml
 ```
 
 ## Implementation Files
@@ -79,7 +103,7 @@ reedbase/
 
 **`reedbase/src/adapter.rs`**
 
-One file = Adapter implementation only. NO other responsibilities.
+This file will be created AFTER REED-19 defines the CLI interface.
 
 ```rust
 // Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
@@ -87,31 +111,18 @@ One file = Adapter implementation only. NO other responsibilities.
 
 //! ReedBase adapter for CLI command registration.
 //!
-//! Registers all ReedBase commands (data, config, backup, debug, migration, validation)
-//! with the CLI router.
+//! Registers all ReedBase commands with the CLI router.
 
 use reedcli::{CommandProvider, Router};
-use crate::commands;
+use crate::cli;
 
 /// ReedBase adapter.
 ///
-/// Implements CommandProvider to register all 25 ReedBase CLI commands.
+/// Implements CommandProvider to register all ReedBase CLI commands.
 pub struct ReedBaseAdapter;
 
 impl ReedBaseAdapter {
     /// Create new ReedBase adapter.
-    ///
-    /// ## Output
-    /// - `Self`: New adapter instance
-    ///
-    /// ## Performance
-    /// - O(1) operation
-    /// - < 1μs typical
-    ///
-    /// ## Example Usage
-    /// ```rust
-    /// let adapter = ReedBaseAdapter::new();
-    /// ```
     pub fn new() -> Self {
         Self
     }
@@ -119,49 +130,21 @@ impl ReedBaseAdapter {
 
 impl CommandProvider for ReedBaseAdapter {
     fn register_commands(&self, router: &mut Router) {
-        // Data commands (12)
-        router.register("set", "text", commands::data::set_text);
-        router.register("set", "route", commands::data::set_route);
-        router.register("set", "meta", commands::data::set_meta);
-        router.register("set", "server", commands::data::set_server);
-        router.register("set", "project", commands::data::set_project);
+        // TODO: Update this list based on REED-19 implementation
         
-        router.register("get", "text", commands::data::get_text);
-        router.register("get", "route", commands::data::get_route);
-        router.register("get", "meta", commands::data::get_meta);
+        // Example structure (WILL CHANGE):
+        // Table operations
+        router.register("table", "create", cli::table_commands::create);
+        router.register("table", "list", cli::table_commands::list);
         
-        router.register("list", "text", commands::data::list_text);
-        router.register("list", "route", commands::data::list_route);
-        router.register("list", "meta", commands::data::list_meta);
+        // Query operations
+        router.register("query", "", cli::query_commands::execute);
         
-        router.register("text", "aggregate", commands::data::aggregate_text);
+        // Version operations
+        router.register("version", "list", cli::version_commands::list);
+        router.register("version", "restore", cli::version_commands::restore);
         
-        // Config commands (5)
-        router.register("config", "sync", commands::config::config_sync);
-        router.register("config", "export", commands::config::config_export);
-        router.register("config", "init", commands::config::config_init);
-        router.register("config", "show", commands::config::config_show);
-        router.register("config", "validate", commands::config::config_validate);
-        
-        // Backup commands (4)
-        router.register("backup", "list", commands::backup::backup_list);
-        router.register("backup", "restore", commands::backup::backup_restore);
-        router.register("backup", "verify", commands::backup::backup_verify);
-        router.register("backup", "prune", commands::backup::backup_prune);
-        
-        // Debug commands (2)
-        router.register("debug", "cache", commands::debug::debug_cache);
-        router.register("debug", "config", commands::debug::debug_config);
-        
-        // Migration commands (2)
-        router.register("migrate", "text", commands::migration::migrate_text);
-        router.register("migrate", "routes", commands::migration::migrate_routes);
-        
-        // Validation commands (4)
-        router.register("validate", "routes", commands::validation::validate_routes);
-        router.register("validate", "consistency", commands::validation::validate_consistency);
-        router.register("validate", "text", commands::validation::validate_text);
-        router.register("validate", "references", commands::validation::validate_references);
+        // ... (complete list depends on REED-19)
     }
     
     fn name(&self) -> &str {
@@ -173,7 +156,7 @@ impl CommandProvider for ReedBaseAdapter {
     }
     
     fn description(&self) -> &str {
-        "ReedBase database operations"
+        "ReedBase standalone database with versioning and concurrent writes"
     }
 }
 
@@ -184,218 +167,35 @@ impl Default for ReedBaseAdapter {
 }
 ```
 
-**`reedbase/src/lib.rs`**
+## Implementation Strategy
 
-```rust
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
+### Phase 1: Wait for REED-19 (CURRENT)
+- **DO NOT implement this ticket yet**
+- Wait for REED-19-01 through REED-19-13 to be complete
+- Monitor REED-19 for CLI command definitions
 
-//! ReedBase library.
-//!
-//! Provides data access layer and CLI adapter.
+### Phase 2: Update Command List
+- Once REED-19 defines its CLI interface, update this ticket
+- List all actual commands that ReedBase provides
+- Update `register_commands()` implementation
 
-pub mod adapter;
-pub mod commands;
+### Phase 3: Implement Adapter
+- Create `reedbase/src/adapter.rs`
+- Implement CommandProvider trait
+- Register all ReedBase commands
+- Add tests
 
-// Re-export adapter for convenience
-pub use adapter::ReedBaseAdapter;
-```
-
-**`reedbase/src/commands/mod.rs`**
-
-```rust
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
-
-//! ReedBase CLI commands.
-
-pub mod data;
-pub mod config;
-pub mod backup;
-pub mod debug;
-pub mod migration;
-pub mod validation;
-```
-
-**`reedbase/src/commands/data.rs`**
-
-Move existing commands from `src/reedcms/cli/data_commands.rs`:
-
-```rust
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
-
-//! Data commands for ReedBase.
-//!
-//! Handles set, get, list, and aggregate operations.
-
-use reedcli::types::{CliResult, ReedResponse};
-use std::collections::HashMap;
-
-/// Set text value.
-///
-/// ## Input
-/// - `args`: [key, value, optional_lang]
-/// - `flags`: Optional --lang flag
-///
-/// ## Output
-/// - `ReedResponse<String>`: Success message
-///
-/// ## Example Usage
-/// ```bash
-/// reed set:text page.title "Welcome" --lang en
-/// ```
-pub fn set_text(args: &[String], flags: &HashMap<String, String>) -> CliResult<ReedResponse<String>> {
-    // Move existing implementation from src/reedcms/cli/data_commands.rs
-    todo!("Move existing set_text implementation")
-}
-
-// ... repeat for all 12 data commands
-```
-
-**`reedbase/Cargo.toml`** (additions)
-
-```toml
-[dependencies]
-# Existing dependencies
-# ... (csv, serde, etc.)
-
-# NEW: Add reedcli for CommandProvider trait
-reedcli = { path = "../reedcli" }
-```
-
-### Test Files
-
-**`reedbase/src/adapter_test.rs`**
-
-```rust
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use reedcli::Router;
-    
-    #[test]
-    fn test_adapter_creation() {
-        let adapter = ReedBaseAdapter::new();
-        assert_eq!(adapter.name(), "reedbase");
-        assert!(!adapter.version().is_empty());
-        assert_eq!(adapter.description(), "ReedBase database operations");
-    }
-    
-    #[test]
-    fn test_adapter_registers_25_commands() {
-        let mut router = Router::new();
-        let adapter = ReedBaseAdapter::new();
-        
-        let initial_count = router.command_count();
-        adapter.register_commands(&mut router);
-        let final_count = router.command_count();
-        
-        assert_eq!(final_count - initial_count, 25, "Should register exactly 25 commands");
-    }
-    
-    #[test]
-    fn test_data_commands_registered() {
-        let mut router = Router::new();
-        let adapter = ReedBaseAdapter::new();
-        adapter.register_commands(&mut router);
-        
-        // Verify data commands
-        assert!(router.has_command("set", "text"));
-        assert!(router.has_command("get", "text"));
-        assert!(router.has_command("list", "text"));
-        assert!(router.has_command("text", "aggregate"));
-    }
-    
-    #[test]
-    fn test_config_commands_registered() {
-        let mut router = Router::new();
-        let adapter = ReedBaseAdapter::new();
-        adapter.register_commands(&mut router);
-        
-        // Verify config commands
-        assert!(router.has_command("config", "sync"));
-        assert!(router.has_command("config", "export"));
-        assert!(router.has_command("config", "init"));
-        assert!(router.has_command("config", "show"));
-        assert!(router.has_command("config", "validate"));
-    }
-    
-    #[test]
-    fn test_backup_commands_registered() {
-        let mut router = Router::new();
-        let adapter = ReedBaseAdapter::new();
-        adapter.register_commands(&mut router);
-        
-        // Verify backup commands
-        assert!(router.has_command("backup", "list"));
-        assert!(router.has_command("backup", "restore"));
-        assert!(router.has_command("backup", "verify"));
-        assert!(router.has_command("backup", "prune"));
-    }
-    
-    #[test]
-    fn test_migration_commands_registered() {
-        let mut router = Router::new();
-        let adapter = ReedBaseAdapter::new();
-        adapter.register_commands(&mut router);
-        
-        // Verify migration commands
-        assert!(router.has_command("migrate", "text"));
-        assert!(router.has_command("migrate", "routes"));
-    }
-    
-    #[test]
-    fn test_validation_commands_registered() {
-        let mut router = Router::new();
-        let adapter = ReedBaseAdapter::new();
-        adapter.register_commands(&mut router);
-        
-        // Verify validation commands
-        assert!(router.has_command("validate", "routes"));
-        assert!(router.has_command("validate", "consistency"));
-        assert!(router.has_command("validate", "text"));
-        assert!(router.has_command("validate", "references"));
-    }
-}
-```
-
-## Migration Strategy
-
-### Phase 1: Setup Structure
-1. Create `reedbase/` directory as separate crate
-2. Create `src/adapter.rs`
-3. Create `src/commands/` directory structure
-4. Add reedcli dependency to Cargo.toml
-
-### Phase 2: Move Commands
-1. Copy `src/reedcms/cli/data_commands.rs` → `reedbase/src/commands/data.rs`
-2. Copy `src/reedcms/cli/config_commands.rs` → `reedbase/src/commands/config.rs`
-3. Copy `src/reedcms/cli/backup_commands.rs` → `reedbase/src/commands/backup.rs`
-4. Copy `src/reedcms/cli/debug_commands.rs` (cache, config only) → `reedbase/src/commands/debug.rs`
-5. Copy `src/reedcms/cli/migration_commands.rs` → `reedbase/src/commands/migration.rs`
-6. Copy `src/reedcms/cli/validation_commands.rs` → `reedbase/src/commands/validation.rs`
-
-### Phase 3: Adapt Signatures
-- Change return types to match `CommandHandler` signature
-- Ensure all functions accept `&[String]` and `&HashMap<String, String>`
-- Update imports to use `reedcli::types::{CliResult, ReedResponse}`
-
-### Phase 4: Testing
-- Run all existing command tests
-- Add adapter registration tests
-- Verify all 25 commands callable
+### Phase 4: Integration
+- Ensure reedbase crate exports adapter
+- Verify with REED-18-11 (Main Binary Integration)
 
 ## Performance Requirements
 
 | Operation | Target |
 |-----------|--------|
 | Adapter creation | < 1μs |
-| Register 25 commands | < 1ms |
-| Command execution | Same as original (no overhead) |
+| Register N commands | < N×10μs |
+| Command execution | No overhead from adapter |
 
 ## Error Conditions
 
@@ -403,23 +203,38 @@ None - adapter creation and registration are infallible.
 
 ## Acceptance Criteria
 
+**⚠️ These criteria CANNOT be verified until REED-19 is complete:**
+
+- [ ] REED-19-01 through REED-19-13 are complete
+- [ ] ReedBase CLI commands are defined
 - [ ] ReedBase adapter implements CommandProvider trait
-- [ ] All 25 commands registered correctly
-- [ ] Commands moved to `reedbase/src/commands/` structure
+- [ ] All ReedBase commands registered correctly
 - [ ] Command signatures match CommandHandler type
-- [ ] All existing command tests still pass
-- [ ] 7 new adapter tests pass
-- [ ] No duplicate commands with ReedCMS adapter
+- [ ] All ReedBase tests still pass
+- [ ] Adapter tests pass
 - [ ] All code in BBC English
 - [ ] All functions have complete documentation
 - [ ] Separate test file as `adapter_test.rs`
-- [ ] Cargo.toml has reedcli dependency
 
 ## Dependencies
 
-**Requires**: 
+**CRITICAL BLOCKERS**: 
+- **REED-19-01**: Registry & Dictionary - MUST be complete first
+- **REED-19-02**: Universal Table API - MUST be complete first
+- **REED-19-03**: Binary Delta Versioning - MUST be complete first
+- **REED-19-04**: Encoded Log System - MUST be complete first
+- **REED-19-05**: Concurrent Write System - MUST be complete first
+- **REED-19-06**: Row-Level CSV Merge - MUST be complete first
+- **REED-19-07**: Conflict Resolution - MUST be complete first
+- **REED-19-08**: Schema Validation - MUST be complete first
+- **REED-19-09**: Function System & Caching - MUST be complete first
+- **REED-19-10**: CLI SQL Query Interface (ReedQL) - MUST be complete first
+- **REED-19-11**: Migration from REED-02 - MUST be complete first
+- **REED-19-12**: Performance Testing - MUST be complete first
+- **REED-19-13**: Documentation - MUST be complete first
+
+**Also Requires**:
 - REED-18-08 (Command Provider Trait)
-- REED-02-01 (ReedBase Core - existing commands)
 
 **Blocks**: 
 - REED-18-11 (Main Binary Integration)
@@ -427,29 +242,39 @@ None - adapter creation and registration are infallible.
 ## References
 - Service Template: `_workbench/Tickets/templates/service-template.md`
 - REED-18-08: Command Provider Trait
-- REED-02-01: ReedBase Core Services
+- REED-19-00: ReedBase Layer Overview
 
 ## Notes
 
-**Design Decisions**:
-- Separate `reedbase/` crate for clean separation
-- Keep existing command implementations (just move, don't rewrite)
-- All 25 commands in one adapter (not split by category)
+**WHY this ticket is blocked:**
 
-**File Organization**:
-- `adapter.rs`: CommandProvider implementation ONLY
-- `commands/`: Command implementations (moved from cli/)
-- NO business logic in adapter (just registration)
+The old REED-02 ReedBase is a simple CSV-based system integrated into ReedCMS with basic commands like:
+- `set:text`, `get:text`, `list:text`
+- `config:sync`, `backup:list`
 
-**Command Mapping**:
-```
-Old Location                    → New Location
-src/reedcms/cli/data_commands   → reedbase/commands/data
-src/reedcms/cli/config_commands → reedbase/commands/config
-src/reedcms/cli/backup_commands → reedbase/commands/backup
-```
+The new REED-19 ReedBase is a **revolutionary standalone database** with:
+- Binary delta versioning
+- Concurrent writes with conflict resolution
+- ReedQL query language
+- Schema validation
+- Function system with caching
 
-**NOT in scope**:
-- Rewriting command implementations
-- Changing command behaviour
-- New commands (only existing 25)
+**We cannot write an adapter for something that doesn't exist yet!**
+
+The command set will be completely different. For example:
+- Old: `set:text page.title "Welcome"`
+- New: `query "UPDATE text SET value='Welcome' WHERE key='page.title'"`
+
+**Once REED-19 is implemented**, come back to this ticket and:
+1. Review the actual CLI commands ReedBase provides
+2. Update the command list in this ticket
+3. Implement the adapter
+4. Test integration
+
+**DO NOT try to adapt the old REED-02 system** - that defeats the entire purpose of REED-19!
+
+## Timeline
+
+**Estimated Start**: After REED-19-13 complete (weeks/months from now)  
+**Estimated Duration**: 2 days (once REED-19 is done)  
+**Priority**: Critical (but BLOCKED)
