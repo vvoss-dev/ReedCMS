@@ -161,6 +161,9 @@ Global database registry for easy access:
 - **REED-19-17**: Multi-Location Sync System (Rsync-based)
 - **REED-19-18**: P2P Latency Measurement & Load-Based Query Routing
 
+### Security & Compliance (19)
+- **REED-19-19**: YubiKey Encryption System (Pro Feature)
+
 ## Impact Analysis
 
 ### What Changes
