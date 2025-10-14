@@ -9,7 +9,7 @@
 
 ## Summary
 
-Complete reimplementation of ReedBase as a versioned, concurrent-write capable database system with binary delta compression, row-level conflict resolution, and function memoization.
+Complete reimplementation of ReedBase as a versioned, concurrent-write capable database system with binary delta compression, row-level conflict resolution, function memoization, and distributed P2P synchronisation.
 
 ## Motivation
 
@@ -20,6 +20,8 @@ Current ReedBase (REED-02) has limitations:
 - ❌ Inefficient full-file backups
 - ❌ No row-level operations
 - ❌ No function caching
+- ❌ No distributed deployment
+- ❌ No multi-location sync
 
 **New ReedBase** provides:
 - ✅ Git-like versioning with bsdiff deltas
@@ -28,6 +30,9 @@ Current ReedBase (REED-02) has limitations:
 - ✅ Binary delta compression (95%+ savings)
 - ✅ Function result caching
 - ✅ Encoded metadata (efficient logs)
+- ✅ Multi-location deployment (P2P)
+- ✅ Automatic synchronisation (rsync)
+- ✅ Load-based query routing
 
 ## Architecture
 
@@ -58,6 +63,15 @@ Current ReedBase (REED-02) has limitations:
 │       └── *.cache        # Function result caches
 │
 └── config.toml
+
+~/.reedbase/               # Global registry
+├── registry.toml          # Database registry
+├── routing/
+│   └── {db_name}/
+│       ├── latency.csv    # P2P latency measurements
+│       └── load.csv       # System load history
+└── sync/
+    └── {db_name}.log      # Sync daemon logs
 ```
 
 ## Key Concepts
@@ -100,24 +114,53 @@ Functions can cache results:
 - LRU eviction
 - 100-500x speedup for expensive operations
 
+### 6. P2P Distribution
+
+Fully decentralised multi-location deployment:
+- **NO master node** - all peers equal
+- Each node measures latency independently
+- Local-first with load-based forwarding
+- Automatic sync via rsync over SSH
+- Configurable topologies (Hub-Spoke, Mesh, Custom)
+
+### 7. Name-Based Registry
+
+Global database registry for easy access:
+- `~/.reedbase/registry.toml` - Single source of truth
+- Name-based resolution: `rdb db:query users_prod`
+- Tracks all locations per database
+- Explicit registration (no auto-discovery)
+
 ## Layer Tickets
 
+### Core Infrastructure (01-08)
 - **REED-19-01**: Registry & Dictionary System
 - **REED-19-02**: Universal Table API
 - **REED-19-03**: Binary Delta Versioning (bsdiff)
-- **REED-19-06**: Concurrent Write System
+- **REED-19-04**: Crash Recovery via CRC32 Validation & Delta Reconstruction
+- **REED-19-05**: Concurrent Write System
 - **REED-19-06**: Row-Level CSV Merge
 - **REED-19-07**: Conflict Resolution
-- **REED-19-04**: Encoded Log System
 - **REED-19-08**: RBKS v2 Key Validation
-- **REED-19-10**: Function System & Caching
+
+### Advanced Features (09-11)
 - **REED-19-09**: Column Schema Validation
-- **REED-19-11**: Smart Indices
+- **REED-19-10**: Smart Indices (100-1000x faster queries)
+- **REED-19-11**: Function System & Caching
+
+### Query Layer (12)
 - **REED-19-12**: CLI SQL-Like Query Interface (ReedQL)
+
+### Migration & Testing (13-15)
 - **REED-19-13**: Migration from REED-02
 - **REED-19-14**: Performance Testing & Benchmarks
-
 - **REED-19-15**: Documentation
+
+### Distributed P2P System (16-18)
+- **REED-19-16**: Database Registry & Name Resolution
+- **REED-19-17**: Multi-Location Sync System (Rsync-based)
+- **REED-19-18**: P2P Latency Measurement & Load-Based Query Routing
+
 ## Impact Analysis
 
 ### What Changes
@@ -127,19 +170,30 @@ Functions can cache results:
 - Backup system → Versioning system (bsdiff deltas)
 - Single-writer → Concurrent writers
 - File-level ops → Row-level ops
+- Path-based access → Name-based registry
+- Single-location → Multi-location P2P
 
 **APIs:**
 - `reedbase::get::text()` - Same API, different implementation
 - `reedbase::set::text()` - Now returns conflict info
 - New: `reedbase::merge::resolve_conflict()`
 - New: `reedbase::version::list()`, `rollback()`
+- New: `reedbase::registry::*` - Registry management
+- New: `reedbase::routing::*` - Query routing
+- New: `reedbase::sync::*` - Multi-location sync
 
 **CLI:**
 - Existing commands mostly work (API compatible)
-- New: `reed version:*` commands
-- New: `reed conflict:*` commands
-- New: `reed dict:*` commands
-- Changed: `reed backup:*` → `reed version:*`
+- New: `rdb version:*` commands
+- New: `rdb conflict:*` commands
+- New: `rdb dict:*` commands
+- New: `rdb db:init` - Database initialization with locations
+- New: `rdb db:register` - Register existing database
+- New: `rdb db:list` - Show all registered databases
+- New: `rdb db:nodes` - Show P2P node status
+- New: `rdb db:sync` - Manual synchronisation
+- New: `rdb db:measure:start` - Start latency measurement daemon
+- Changed: `reed backup:*` → `rdb version:*`
 
 ### What Stays Same
 
@@ -158,6 +212,9 @@ Functions can cache results:
 - ✅ **Complete history** (every change tracked)
 - ✅ **Conflict resolution** (row-level merge)
 - ✅ **Function caching** (100-500x speedup)
+- ✅ **Distributed deployment** (multi-location P2P)
+- ✅ **Automatic failover** (load-based routing)
+- ✅ **Global accessibility** (name-based registry)
 
 ## Migration Strategy
 
@@ -175,12 +232,13 @@ Extensive testing:
 - Integration tests (real-world scenarios)
 - Performance benchmarks
 - Concurrent write stress tests
+- P2P sync stress tests
 - Migration testing (old → new)
 
 ### Phase 3: Migration Command
 
 ```bash
-reed migrate:reedbase-v2
+rdb migrate:reedbase-v2
 ```
 
 Migrates existing `.reed/` to new structure:
@@ -188,6 +246,7 @@ Migrates existing `.reed/` to new structure:
 - Creates initial version.log entries
 - Generates schemas
 - Preserves all data
+- Creates registry entries
 
 ### Phase 4: Cutover
 
@@ -214,6 +273,11 @@ Migrates existing `.reed/` to new structure:
    - Mitigation: Gradual deprecation warnings
    - Mitigation: Comprehensive docs
 
+4. **Network Failures in P2P System**
+   - Mitigation: Local-first architecture (always works offline)
+   - Mitigation: Automatic retry with exponential backoff
+   - Mitigation: Health monitoring and automatic failover
+
 ### Medium Risk
 
 1. **Concurrent Write Bugs**
@@ -229,9 +293,14 @@ Migrates existing `.reed/` to new structure:
    - Mitigation: Automatic cleanup
    - Mitigation: Deltas are tiny (95% savings)
 
+4. **Sync Conflicts in Multi-Location Setup**
+   - Mitigation: Row-level conflict detection
+   - Mitigation: Last-write-wins with conflict log
+   - Mitigation: Manual resolution tools
+
 ## Success Criteria
 
-- [ ] All REED-19 tickets completed
+- [ ] All REED-19 tickets completed (01-18)
 - [ ] 100% test coverage for core functionality
 - [ ] Performance benchmarks show improvement
 - [ ] Migration tested on real data
@@ -239,17 +308,22 @@ Migrates existing `.reed/` to new structure:
 - [ ] Zero data loss in migration
 - [ ] API compatibility maintained
 - [ ] Concurrent writes work reliably
+- [ ] P2P sync works across 10+ nodes
+- [ ] Query routing shows <10ms overhead
+- [ ] Registry system handles 1000+ databases
 
 ## Timeline Estimate
 
-**Conservative: 3-4 weeks full-time**
+**Conservative: 5-6 weeks full-time**
 
 - Week 1: Core tables + versioning (REED-19-01 to REED-19-03)
-- Week 2: Concurrent writes + merge (REED-19-06 to REED-19-07)
-- Week 3: Schemas + functions + indices + logs (REED-19-04 to REED-19-11)
-- Week 4: ReedQL + migration + testing + docs (REED-19-12 to REED-19-15)
+- Week 2: Crash recovery + concurrent writes (REED-19-04 to REED-19-07)
+- Week 3: Schemas + indices + functions (REED-19-08 to REED-19-11)
+- Week 4: ReedQL + migration (REED-19-12 to REED-19-13)
+- Week 5: P2P system (REED-19-16 to REED-19-18)
+- Week 6: Testing + docs (REED-19-14 to REED-19-15)
 
-**Aggressive: 2 weeks** (if parallel development)
+**Aggressive: 3-4 weeks** (if parallel development)
 
 ## Open Questions
 
@@ -268,15 +342,30 @@ Migrates existing `.reed/` to new structure:
 5. **Keep REED-02 as fallback?**
    - Proposal: Yes, feature flag for 6 months, then remove
 
+6. **Default sync topology?**
+   - Proposal: Hub-Spoke with local as hub, configurable
+
+7. **Load threshold defaults?**
+   - Proposal: CPU 80%, Memory 90%, configurable per database
+
+8. **Measurement interval?**
+   - Proposal: 30s default, configurable down to 10s
+
 ## References
 
 - Current: REED-02 (Data Layer)
 - Inspiration: Git (delta compression, versioning)
 - Inspiration: PostgreSQL MVCC (concurrent writes)
 - Inspiration: Redis (function memoization)
+- Inspiration: Rsync (efficient file sync)
+- Inspiration: Consul (distributed health checks)
 
 ## Notes
 
-This is a **foundational change** that affects nearly every part of ReedCMS. While risky, it solves fundamental limitations and sets ReedCMS up for enterprise scale.
+This is a **foundational change** that affects nearly every part of ReedCMS. While risky, it solves fundamental limitations and sets ReedCMS up for enterprise scale with distributed deployment.
 
-The key insight: **CSV is structured data**, making row-level operations and intelligent merging possible (unlike Git's line-based text merging).
+The key insights:
+- **CSV is structured data**, making row-level operations and intelligent merging possible (unlike Git's line-based text merging)
+- **P2P without master** eliminates single point of failure and enables truly distributed deployment
+- **Local-first routing** ensures zero-downtime even when all remotes are down
+- **Name-based registry** makes database access intuitive and location-independent
