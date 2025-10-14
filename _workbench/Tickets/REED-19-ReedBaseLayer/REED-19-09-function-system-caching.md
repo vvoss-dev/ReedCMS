@@ -1,1664 +1,1044 @@
-# REED-19-09: Function System & Caching
+# REED-19-09: Function System & Memoization Cache
 
-## MANDATORY Development Standards
-
-**CRITICAL**: Every implementation MUST follow these standards:
-
-- **Language**: All documentation and code comments in BBC English
-- **Principle**: KISS (Keep It Simple, Stupid) - minimal code and professional inline documentation
-- **File Naming**: File name = Unique theme - crystal clear what single topic this file handles
-- **Files**: One file = One responsibility
-- **Functions**: One function = One distinctive job
-- **Shared Functions**: Same patterns = One shared function
-- **Testing**: Separate test files as `{name}.test.rs` - never inline `#[cfg(test)]` modules
-- **Avoid**: Avoid Swiss Army knife functions
-- **Avoid**: Generic file names like `handler.rs`, `utils.rs`
-- **Templates**: See `_workbench/Tickets/templates/service-template.md` for complete implementation guide
-- **Testing**: See `_workbench/Tickets/templates/service-template.test.md` for test structure
-
-## Ticket Information
-- **ID**: REED-19-09
-- **Title**: Function System, Caching & Smart Indices
-- **Layer**: ReedBase Layer (REED-19)
+## Metadata
+- **Status**: Planned
 - **Priority**: High
-- **Status**: Open
-- **Complexity**: High
-- **Dependencies**: REED-19-02 (Universal Table API), REED-19-08 (Key Validation / RBKS v2)
-- **Estimated Time**: 1 week
+- **Complexity**: Medium (4-6 days)
+- **Layer**: Data Layer (REED-19)
+- **Depends on**: 
+  - REED-19-08 (Key Validation / RBKS v2 - for computed key generation)
+- **Blocks**: 
+  - REED-19-11 (CLI/SQL Query Interface - uses functions in queries)
+- **Related Tickets**: 
+  - REED-19-10 (Smart Indices - similar performance goals)
 
-## Objective
+## Problem Statement
 
-Implement three interconnected systems:
-1. **Function System** - Rust-based computed columns, aggregations, transformations
-2. **Memoization Cache** - Automatic result caching for expensive computations
-3. **Smart Indices** - Key-structure-based indices for O(1) queries
+ReedBase v1 requires **manual computation** for common data transformations:
+- Need `full_name` → Manually concatenate in templates: `{{ first_name }} {{ last_name }}`
+- Need aggregations → Export CSV, run Python scripts, re-import results
+- Need transformations → Custom CLI scripts or template helpers
 
-**Why together?** Smart Indices enable 100-1000x faster queries by leveraging RBKS v2 key structure. Functions benefit from both memoization cache AND index-accelerated data access.
+**Problems**:
+- **Repetitive logic** scattered across templates and scripts
+- **No caching** → Same computation runs repeatedly
+- **Slow aggregations** → O(n) scans every time
+- **Maintenance burden** → Changes require updates in multiple places
 
-## Requirements
+**Example**: A dashboard template computing statistics:
+```jinja
+{# Manually compute statistics in template #}
+{% set total_users = 0 %}
+{% for row in data %}
+  {% set total_users = total_users + 1 %}
+{% endfor %}
 
-### Function Types
+{# No caching - runs every page render #}
+Average age: {{ compute_average_age(data) }}  {# O(n) every time #}
+```
 
-**1. Computed Columns**
+**Target**: **Rust-based function system** with **memoization cache** for **instant recomputation** (<100ns cache hits).
+
+## Solution Overview
+
+Implement **three function categories** with **automatic caching**:
+
 ```rust
-// Calculate age from birth_date
-fn calculate_age(birth_date: u64) -> u32 {
-    let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
-    ((now - birth_date) / 31536000) as u32
-}
-```
-
-**2. Aggregations**
-```rust
-// Count rows matching condition
-fn count_users_by_status(rows: &[CsvRow], status: &str) -> usize {
-    rows.iter().filter(|r| r.values.get(2) == Some(&status.to_string())).count()
-}
-```
-
-**3. Transformations**
-```rust
-// Normalize email to lowercase
-fn normalize_email(email: &str) -> String {
-    email.to_lowercase()
-}
-```
-
-### Function Registry
-
-```
 .reed/functions/
-├── mod.rs                  # Function registry
-├── computed.rs             # Computed column functions
-├── aggregations.rs         # Aggregation functions
-├── transformations.rs      # Transformation functions
-└── cache.rs                # Memoization cache
+├── cache.rs            // Memoization cache (100ns hits, 10μs inserts)
+├── computed.rs         // Computed columns: calculate_age, full_name, etc.
+├── aggregations.rs     // Aggregations: count, sum, avg, min, max, group_by
+└── transformations.rs  // Transformations: normalize_email, trim, capitalize, etc.
 ```
 
-### Cache Structure
+**Usage Examples**:
+```rust
+// Computed column
+let age = functions::computed::calculate_age(birthdate)?;
+
+// Cached aggregation
+let avg_age = functions::aggregations::avg("users.csv", "age")?;  // Cached
+
+// Transformation
+let email = functions::transformations::normalize_email(raw_email)?;
+```
+
+## Architecture
+
+### Core Types
 
 ```rust
-struct FunctionCache {
-    cache: Arc<RwLock<HashMap<String, CachedResult>>>,
+/// Cache key for function results
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+pub struct CacheKey {
+    pub function: String,      // e.g., "calculate_age"
+    pub args: Vec<String>,     // e.g., ["1990-05-15"]
 }
 
-struct CachedResult {
-    input_hash: u64,
-    output: Value,
-    timestamp: u64,
-    hit_count: usize,
-}
-```
-
-### Performance Targets (Functions & Cache)
-
-| Operation | Target | Notes |
-|-----------|--------|-------|
-| Function execution (cached) | < 100ns | O(1) HashMap lookup |
-| Function execution (uncached) | Varies | Depends on function |
-| Cache insert | < 10μs | HashMap insert + hash |
-| Cache lookup | < 100ns | HashMap get |
-| Aggregate 1000 rows | < 10ms | Single pass through data |
-
----
-
-## Part 2: Smart Indices
-
-### Why Smart Indices?
-
-**ReedBase Keys ARE the Index!**
-
-SQLite uses B-Trees for indices. ReedBase keys already contain structure:
-```
-page.header.title<de,prod,christmas>
-  │     │      │    │   │     │
-  │     │      │    │   │     └─ Season
-  │     │      │    │   └─ Environment  
-  │     │      │    └─ Language
-  │     │      └─ Type
-  │     └─ Sub-namespace
-  └─ Namespace
-```
-
-**This structure enables O(1) lookups!**
-
-### Index Types
-
-**1. Namespace Index** - O(1) prefix lookup
-```rust
-// Query: page.* → O(1) lookup
-NamespaceIndex.get("page") → ["page.title<de>", "page.header.logo", ...]
-```
-
-**2. Language Index** - O(1) suffix lookup
-```rust
-// Query: *<de> → O(1) lookup
-LanguageIndex.get("de") → ["page.title<de>", "blog.post<de>", ...]
-```
-
-**3. Environment Index** - O(1) environment lookup
-```rust
-// Query: *<prod> → O(1) lookup
-EnvironmentIndex.get("prod") → ["page.title<prod>", "api.key<prod>", ...]
-```
-
-**4. Hierarchy Trie** - O(d) hierarchical lookup
-```rust
-// Query: page.header.* → O(3) trie walk
-HierarchyTrie.walk(["page", "header"]) → ["page.header.title", "page.header.logo", ...]
-```
-
-### Index Structure
-
-```
-.reed/indices/
-├── namespace.idx     # Namespace → [keys] mapping
-├── language.idx      # Language → [keys] mapping
-├── environment.idx   # Environment → [keys] mapping
-└── hierarchy.trie    # Hierarchical trie structure
-```
-
-### Performance Comparison
-
-| Query Type | SQLite B-Tree | ReedBase Index | Speedup |
-|------------|---------------|----------------|---------|
-| Exact key | O(log n) | **O(1)** HashMap | **10x** |
-| Namespace prefix | O(log n + k) | **O(1)** index | **100x** |
-| Language suffix | O(n) full scan | **O(1)** index | **1000x** |
-| Hierarchy | O(log n + k) | **O(d)** trie | **10x** |
-| Combined filters | O(n) scan | **O(k)** set intersection | **100x** |
-
-**Where**:
-- n = total rows
-- k = matching rows
-- d = hierarchy depth (2-8)
-
-### Memory Overhead
-
-| Index | Memory (10k keys) | Build Time |
-|-------|-------------------|------------|
-| NamespaceIndex | ~200KB | ~10ms |
-| LanguageIndex | ~200KB | ~10ms |
-| EnvironmentIndex | ~200KB | ~10ms |
-| HierarchyTrie | ~500KB | ~20ms |
-| **Total** | **~1.1MB** | **~50ms** |
-
-**Trade-off**: +1.1MB RAM for 100-1000x faster queries!
-
-### Performance Targets (Indices)
-
-| Operation | Target | Notes |
-|-----------|--------|-------|
-| Build index (10k keys) | < 50ms | One-time at startup |
-| Namespace lookup | < 1μs | O(1) HashMap get |
-| Language lookup | < 1μs | O(1) HashMap get |
-| Environment lookup | < 1μs | O(1) HashMap get |
-| Hierarchy walk (depth 4) | < 10μs | O(d) trie navigation |
-| Combined filter (2 indices) | < 100μs | Set intersection |
-| Index update (single key) | < 10μs | Add to relevant indices |
-
----
-
-## Implementation Files (Part 1: Functions & Cache)
-
-[existing function implementations remain unchanged...]
-
-## Implementation Files (Part 2: Smart Indices)
-
-### Primary Implementation
-
-**`reedbase/src/functions/cache.rs`**
-
-One file = Function caching only. NO other responsibilities.
-
-```rust
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
-
-//! Function result caching (memoization).
-//!
-//! Caches function results for identical inputs.
-
-use std::collections::HashMap;
-use std::sync::{Arc, RwLock};
-use std::hash::{Hash, Hasher};
-use std::collections::hash_map::DefaultHasher;
-use serde_json::Value;
-use crate::types::{ReedResult, ReedError};
-
-/// Function cache (memoization).
-pub struct FunctionCache {
-    cache: Arc<RwLock<HashMap<u64, CachedResult>>>,
-}
-
-/// Cached function result.
+/// Cached function result
 #[derive(Debug, Clone)]
-struct CachedResult {
-    output: Value,
-    timestamp: u64,
-    hit_count: usize,
+pub struct CacheEntry {
+    pub key: CacheKey,
+    pub result: String,        // Serialized result
+    pub timestamp: SystemTime, // When computed
+    pub hits: usize,           // Cache hit count
+}
+
+/// Function metadata
+#[derive(Debug)]
+pub struct FunctionMeta {
+    pub name: &'static str,
+    pub category: FunctionCategory,
+    pub cacheable: bool,       // Whether results can be cached
+    pub cache_ttl: Option<Duration>, // Optional TTL for cache entries
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum FunctionCategory {
+    Computed,      // Pure functions: f(args) → result
+    Aggregation,   // Dataset functions: f(csv, column) → aggregate
+    Transformation, // Data transformation: f(value) → transformed_value
+}
+```
+
+### Function Trait
+
+```rust
+/// Common interface for all functions
+pub trait ReedFunction {
+    /// Function metadata
+    fn meta(&self) -> FunctionMeta;
+    
+    /// Execute function with arguments
+    fn execute(&self, args: &[&str]) -> ReedResult<String>;
+    
+    /// Whether this function's results should be cached
+    fn is_cacheable(&self) -> bool {
+        self.meta().cacheable
+    }
+}
+```
+
+## Implementation Details
+
+### 1. Memoization Cache (cache.rs)
+
+**Purpose**: Ultra-fast in-memory cache for function results.
+
+```rust
+// cache.rs
+use std::collections::HashMap;
+use std::sync::RwLock;
+use std::time::SystemTime;
+
+pub struct FunctionCache {
+    /// Cache storage: CacheKey → CacheEntry
+    entries: RwLock<HashMap<CacheKey, CacheEntry>>,
+    
+    /// Cache statistics
+    stats: RwLock<CacheStats>,
+}
+
+#[derive(Debug, Default)]
+pub struct CacheStats {
+    pub hits: usize,
+    pub misses: usize,
+    pub inserts: usize,
+    pub evictions: usize,
 }
 
 impl FunctionCache {
-    /// Create new function cache.
-    ///
-    /// ## Output
-    /// - `FunctionCache`: New cache instance
-    ///
-    /// ## Performance
-    /// - O(1) operation
-    /// - < 1μs
-    ///
-    /// ## Example Usage
-    /// ```rust
-    /// let cache = FunctionCache::new();
-    /// ```
     pub fn new() -> Self {
         Self {
-            cache: Arc::new(RwLock::new(HashMap::new())),
+            entries: RwLock::new(HashMap::new()),
+            stats: RwLock::new(CacheStats::default()),
         }
     }
     
-    /// Get cached result if available.
-    ///
-    /// ## Input
-    /// - `function_name`: Function name
-    /// - `args`: Function arguments
-    ///
-    /// ## Output
-    /// - `Option<Value>`: Cached result or None
-    ///
-    /// ## Performance
-    /// - < 100ns cache hit
-    /// - O(1) HashMap lookup
-    ///
-    /// ## Example Usage
-    /// ```rust
-    /// if let Some(result) = cache.get("calculate_age", &args) {
-    ///     return Ok(result);
-    /// }
-    /// ```
-    pub fn get(&self, function_name: &str, args: &[Value]) -> Option<Value> {
-        let input_hash = hash_input(function_name, args);
+    /// Get cached result (returns None if not cached)
+    pub fn get(&self, key: &CacheKey) -> Option<String> {
+        let mut entries = self.entries.write().unwrap();
         
-        let mut cache = self.cache.write().unwrap();
-        
-        if let Some(cached) = cache.get_mut(&input_hash) {
-            cached.hit_count += 1;
-            Some(cached.output.clone())
-        } else {
-            None
+        if let Some(entry) = entries.get_mut(key) {
+            // Update hit counter
+            entry.hits += 1;
+            
+            // Update stats
+            let mut stats = self.stats.write().unwrap();
+            stats.hits += 1;
+            
+            return Some(entry.result.clone());
         }
+        
+        // Cache miss
+        let mut stats = self.stats.write().unwrap();
+        stats.misses += 1;
+        
+        None
     }
     
-    /// Store result in cache.
-    ///
-    /// ## Input
-    /// - `function_name`: Function name
-    /// - `args`: Function arguments
-    /// - `result`: Function result
-    ///
-    /// ## Output
-    /// - None
-    ///
-    /// ## Performance
-    /// - < 10μs typical
-    /// - O(1) HashMap insert
-    ///
-    /// ## Example Usage
-    /// ```rust
-    /// let result = calculate_age(birth_date);
-    /// cache.set("calculate_age", &args, result);
-    /// ```
-    pub fn set(&self, function_name: &str, args: &[Value], result: Value) {
-        let input_hash = hash_input(function_name, args);
-        let timestamp = std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
-            .as_secs();
+    /// Store result in cache
+    pub fn insert(&self, key: CacheKey, result: String) {
+        let mut entries = self.entries.write().unwrap();
         
-        let mut cache = self.cache.write().unwrap();
+        let entry = CacheEntry {
+            key: key.clone(),
+            result,
+            timestamp: SystemTime::now(),
+            hits: 0,
+        };
         
-        cache.insert(input_hash, CachedResult {
-            output: result,
-            timestamp,
-            hit_count: 0,
-        });
+        entries.insert(key, entry);
+        
+        // Update stats
+        let mut stats = self.stats.write().unwrap();
+        stats.inserts += 1;
     }
     
-    /// Clear all cached results.
-    ///
-    /// ## Output
-    /// - None
-    ///
-    /// ## Performance
-    /// - O(1) operation (drops HashMap)
-    /// - < 1ms for large caches
-    ///
-    /// ## Example Usage
-    /// ```rust
-    /// cache.clear();
-    /// ```
+    /// Clear entire cache
     pub fn clear(&self) {
-        let mut cache = self.cache.write().unwrap();
-        cache.clear();
+        let mut entries = self.entries.write().unwrap();
+        entries.clear();
     }
     
-    /// Get cache statistics.
-    ///
-    /// ## Output
-    /// - `CacheStats`: Statistics (size, hit rate, etc.)
-    ///
-    /// ## Performance
-    /// - O(n) where n = cache size
-    /// - < 1ms for typical caches (< 1000 entries)
-    ///
-    /// ## Example Usage
-    /// ```rust
-    /// let stats = cache.stats();
-    /// println!("Cache size: {}, total hits: {}", stats.size, stats.total_hits);
-    /// ```
+    /// Get cache statistics
     pub fn stats(&self) -> CacheStats {
-        let cache = self.cache.read().unwrap();
-        
-        let size = cache.len();
-        let total_hits: usize = cache.values().map(|c| c.hit_count).sum();
-        
-        CacheStats {
-            size,
-            total_hits,
-            hit_rate: if size > 0 {
-                (total_hits as f64 / size as f64) * 100.0
-            } else {
-                0.0
-            },
-        }
+        let stats = self.stats.read().unwrap();
+        *stats
     }
     
-    /// Evict old entries (LRU-like).
-    ///
-    /// ## Input
-    /// - `max_age_secs`: Maximum age in seconds
-    ///
-    /// ## Output
-    /// - `usize`: Number of entries evicted
-    ///
-    /// ## Performance
-    /// - O(n) where n = cache size
-    /// - < 5ms for 1000 entries
-    ///
-    /// ## Example Usage
-    /// ```rust
-    /// let evicted = cache.evict_old(3600); // Remove entries older than 1 hour
-    /// println!("Evicted {} old entries", evicted);
-    /// ```
-    pub fn evict_old(&self, max_age_secs: u64) -> usize {
-        let now = std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
-            .as_secs();
+    /// Get cache memory usage in bytes
+    pub fn memory_usage(&self) -> usize {
+        let entries = self.entries.read().unwrap();
         
-        let mut cache = self.cache.write().unwrap();
-        
-        let before = cache.len();
-        cache.retain(|_, cached| now - cached.timestamp <= max_age_secs);
-        let after = cache.len();
-        
-        before - after
+        entries.iter().map(|(key, entry)| {
+            key.function.len() + 
+            key.args.iter().map(|s| s.len()).sum::<usize>() +
+            entry.result.len() +
+            64 // Overhead for structs
+        }).sum()
     }
 }
 
-/// Hash function inputs for cache key.
-///
-/// ## Input
-/// - `function_name`: Function name
-/// - `args`: Function arguments
-///
-/// ## Output
-/// - `u64`: Hash value
-///
-/// ## Performance
-/// - < 1μs typical
-///
-/// ## Example Usage
-/// ```rust
-/// let hash = hash_input("calculate_age", &args);
-/// ```
-fn hash_input(function_name: &str, args: &[Value]) -> u64 {
-    let mut hasher = DefaultHasher::new();
-    function_name.hash(&mut hasher);
-    
-    for arg in args {
-        // Hash JSON representation of argument
-        let json = serde_json::to_string(arg).unwrap_or_default();
-        json.hash(&mut hasher);
-    }
-    
-    hasher.finish()
-}
+/// Global cache instance
+static FUNCTION_CACHE: Lazy<FunctionCache> = Lazy::new(FunctionCache::new);
 
-/// Cache statistics.
-#[derive(Debug, Clone)]
-pub struct CacheStats {
-    pub size: usize,
-    pub total_hits: usize,
-    pub hit_rate: f64,
-}
-
-impl Default for FunctionCache {
-    fn default() -> Self {
-        Self::new()
-    }
+/// Get global cache instance
+pub fn get_cache() -> &'static FunctionCache {
+    &FUNCTION_CACHE
 }
 ```
 
-**`reedbase/src/functions/computed.rs`**
+**Performance**:
+- **Cache hit**: <100ns (RwLock read + HashMap lookup)
+- **Cache insert**: <10μs (RwLock write + HashMap insert)
+- **Memory**: ~150 bytes per entry (key + result + metadata)
 
-One file = Computed column functions only. NO other responsibilities.
+### 2. Computed Functions (computed.rs)
+
+**Purpose**: Pure functions that compute derived values from inputs.
 
 ```rust
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
+// computed.rs
+use chrono::{NaiveDate, Utc};
 
-//! Computed column functions.
-//!
-//! Functions that compute values from existing columns.
-
-use crate::types::{ReedResult, ReedError};
-use serde_json::Value;
-use std::time::{SystemTime, UNIX_EPOCH};
-
-/// Calculate age from birth date (Unix timestamp).
-///
-/// ## Input
-/// - `birth_date`: Birth date as Unix timestamp
-///
-/// ## Output
-/// - `u32`: Age in years
-///
-/// ## Performance
-/// - < 1μs typical
-///
-/// ## Example Usage
+/// Calculate age from birthdate
+/// 
+/// ## Arguments
+/// - birthdate: ISO 8601 date string (YYYY-MM-DD)
+/// 
+/// ## Returns
+/// - Age in years as string
+/// 
+/// ## Example
 /// ```rust
-/// let age = calculate_age(946684800); // Born 2000-01-01
-/// assert_eq!(age, 25); // Assuming current year is 2025
+/// let age = calculate_age("1990-05-15")?; // "35"
 /// ```
-pub fn calculate_age(birth_date: u64) -> u32 {
-    let now = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_secs();
+pub fn calculate_age(birthdate: &str) -> ReedResult<String> {
+    let key = CacheKey {
+        function: "calculate_age".to_string(),
+        args: vec![birthdate.to_string()],
+    };
     
-    ((now - birth_date) / 31536000) as u32
-}
-
-/// Calculate full name from first and last name.
-///
-/// ## Input
-/// - `first_name`: First name
-/// - `last_name`: Last name
-///
-/// ## Output
-/// - `String`: Full name
-///
-/// ## Performance
-/// - < 1μs typical
-///
-/// ## Example Usage
-/// ```rust
-/// let full = full_name("Alice", "Smith");
-/// assert_eq!(full, "Alice Smith");
-/// ```
-pub fn full_name(first_name: &str, last_name: &str) -> String {
-    format!("{} {}", first_name, last_name)
-}
-
-/// Calculate days since date.
-///
-/// ## Input
-/// - `date`: Date as Unix timestamp
-///
-/// ## Output
-/// - `u64`: Days elapsed
-///
-/// ## Performance
-/// - < 1μs typical
-///
-/// ## Example Usage
-/// ```rust
-/// let days = days_since(1736860800);
-/// ```
-pub fn days_since(date: u64) -> u64 {
-    let now = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_secs();
-    
-    (now - date) / 86400
-}
-
-/// Calculate percentage.
-///
-/// ## Input
-/// - `part`: Part value
-/// - `total`: Total value
-///
-/// ## Output
-/// - `ReedResult<f64>`: Percentage (0.0 to 100.0)
-///
-/// ## Performance
-/// - < 1μs typical
-///
-/// ## Error Conditions
-/// - DivisionByZero: Total is zero
-///
-/// ## Example Usage
-/// ```rust
-/// let pct = calculate_percentage(25.0, 100.0)?;
-/// assert_eq!(pct, 25.0);
-/// ```
-pub fn calculate_percentage(part: f64, total: f64) -> ReedResult<f64> {
-    if total == 0.0 {
-        return Err(ReedError::DivisionByZero {
-            context: "calculate_percentage".to_string(),
-        });
+    // Check cache first
+    if let Some(cached) = get_cache().get(&key) {
+        return Ok(cached);
     }
     
-    Ok((part / total) * 100.0)
+    // Parse birthdate
+    let birth = NaiveDate::parse_from_str(birthdate, "%Y-%m-%d")
+        .map_err(|e| ReedError::InvalidDate {
+            date: birthdate.to_string(),
+            reason: e.to_string(),
+        })?;
+    
+    // Calculate age
+    let today = Utc::now().date_naive();
+    let age = today.years_since(birth).unwrap_or(0);
+    let result = age.to_string();
+    
+    // Cache result
+    get_cache().insert(key, result.clone());
+    
+    Ok(result)
 }
 
-/// Check if date is in past.
-///
-/// ## Input
-/// - `date`: Date as Unix timestamp
-///
-/// ## Output
-/// - `bool`: True if date is in past
-///
-/// ## Performance
-/// - < 1μs typical
-///
-/// ## Example Usage
-/// ```rust
-/// if is_past(some_date) {
-///     println!("Date has passed");
-/// }
-/// ```
-pub fn is_past(date: u64) -> bool {
-    let now = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_secs();
+/// Compute full name from first and last name
+/// 
+/// ## Arguments
+/// - first_name: First name string
+/// - last_name: Last name string
+/// 
+/// ## Returns
+/// - Full name as "FirstName LastName"
+pub fn full_name(first_name: &str, last_name: &str) -> ReedResult<String> {
+    let key = CacheKey {
+        function: "full_name".to_string(),
+        args: vec![first_name.to_string(), last_name.to_string()],
+    };
     
-    date < now
+    if let Some(cached) = get_cache().get(&key) {
+        return Ok(cached);
+    }
+    
+    let result = format!("{} {}", first_name.trim(), last_name.trim());
+    
+    get_cache().insert(key, result.clone());
+    
+    Ok(result)
+}
+
+/// Calculate days since a given date
+/// 
+/// ## Arguments
+/// - date: ISO 8601 date string (YYYY-MM-DD)
+/// 
+/// ## Returns
+/// - Number of days since date as string
+pub fn days_since(date: &str) -> ReedResult<String> {
+    let key = CacheKey {
+        function: "days_since".to_string(),
+        args: vec![date.to_string()],
+    };
+    
+    if let Some(cached) = get_cache().get(&key) {
+        return Ok(cached);
+    }
+    
+    let past = NaiveDate::parse_from_str(date, "%Y-%m-%d")
+        .map_err(|e| ReedError::InvalidDate {
+            date: date.to_string(),
+            reason: e.to_string(),
+        })?;
+    
+    let today = Utc::now().date_naive();
+    let days = (today - past).num_days();
+    let result = days.to_string();
+    
+    get_cache().insert(key, result.clone());
+    
+    Ok(result)
 }
 ```
 
-**`reedbase/src/functions/aggregations.rs`**
+**Additional Computed Functions**:
+- `calculate_age(birthdate)` → Age in years
+- `full_name(first, last)` → Combined name
+- `days_since(date)` → Days elapsed
+- `is_expired(expiry_date)` → Boolean (true/false)
+- `format_date(date, format)` → Formatted date string
+- `calculate_discount(price, percentage)` → Discounted price
 
-One file = Aggregation functions only. NO other responsibilities.
+### 3. Aggregation Functions (aggregations.rs)
+
+**Purpose**: Dataset-level aggregations (count, sum, avg, etc.).
 
 ```rust
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
+// aggregations.rs
 
-//! Aggregation functions.
-//!
-//! Functions that aggregate data across multiple rows.
-
-use crate::types::{ReedResult, ReedError, CsvRow};
-
-/// Count rows.
-///
-/// ## Input
-/// - `rows`: Rows to count
-///
-/// ## Output
-/// - `usize`: Row count
-///
-/// ## Performance
-/// - O(1) operation (len())
-/// - < 1μs typical
-///
-/// ## Example Usage
-/// ```rust
-/// let count = count_rows(&rows);
-/// ```
-pub fn count_rows(rows: &[CsvRow]) -> usize {
-    rows.len()
-}
-
-/// Count rows matching predicate.
-///
-/// ## Input
-/// - `rows`: Rows to filter
-/// - `column_index`: Column index to check
-/// - `value`: Value to match
-///
-/// ## Output
-/// - `usize`: Count of matching rows
-///
-/// ## Performance
-/// - O(n) where n = number of rows
-/// - < 5ms for 1000 rows
-///
-/// ## Example Usage
-/// ```rust
-/// let active_users = count_where(&rows, 2, "active");
-/// ```
-pub fn count_where(rows: &[CsvRow], column_index: usize, value: &str) -> usize {
-    rows.iter()
-        .filter(|row| {
-            row.values.get(column_index)
-                .map(|v| v == value)
-                .unwrap_or(false)
-        })
-        .count()
-}
-
-/// Sum numeric column.
-///
-/// ## Input
-/// - `rows`: Rows to sum
-/// - `column_index`: Column index to sum
-///
-/// ## Output
-/// - `ReedResult<f64>`: Sum of values
-///
-/// ## Performance
-/// - O(n) where n = number of rows
-/// - < 10ms for 1000 rows
-///
-/// ## Error Conditions
-/// - ParseError: Non-numeric value encountered
-///
-/// ## Example Usage
-/// ```rust
-/// let total = sum_column(&rows, 3)?;
-/// ```
-pub fn sum_column(rows: &[CsvRow], column_index: usize) -> ReedResult<f64> {
-    let mut sum = 0.0;
+/// Count rows in CSV table
+/// 
+/// ## Arguments
+/// - table: Table name (e.g., "text", "users")
+/// 
+/// ## Returns
+/// - Number of rows as string
+pub fn count(table: &str) -> ReedResult<String> {
+    let key = CacheKey {
+        function: "count".to_string(),
+        args: vec![table.to_string()],
+    };
     
-    for row in rows {
-        if let Some(value) = row.values.get(column_index) {
-            let num = value.parse::<f64>()
-                .map_err(|_| ReedError::ParseError {
-                    reason: format!("Cannot parse '{}' as number", value),
-                })?;
-            sum += num;
-        }
+    if let Some(cached) = get_cache().get(&key) {
+        return Ok(cached);
     }
     
-    Ok(sum)
+    let csv_path = get_csv_path(table)?;
+    let rows = crate::csv::read_csv(&csv_path)?;
+    let count = rows.len();
+    let result = count.to_string();
+    
+    get_cache().insert(key, result.clone());
+    
+    Ok(result)
 }
 
-/// Calculate average of numeric column.
-///
-/// ## Input
-/// - `rows`: Rows to average
-/// - `column_index`: Column index to average
-///
-/// ## Output
-/// - `ReedResult<f64>`: Average value
-///
-/// ## Performance
-/// - O(n) where n = number of rows
-/// - < 10ms for 1000 rows
-///
-/// ## Error Conditions
-/// - ParseError: Non-numeric value encountered
-/// - DivisionByZero: No rows provided
-///
-/// ## Example Usage
-/// ```rust
-/// let avg_age = average_column(&rows, 2)?;
-/// ```
-pub fn average_column(rows: &[CsvRow], column_index: usize) -> ReedResult<f64> {
-    if rows.is_empty() {
-        return Err(ReedError::DivisionByZero {
-            context: "average_column".to_string(),
-        });
+/// Sum numeric column
+/// 
+/// ## Arguments
+/// - table: Table name
+/// - column: Column name to sum
+/// 
+/// ## Returns
+/// - Sum as string
+pub fn sum(table: &str, column: &str) -> ReedResult<String> {
+    let key = CacheKey {
+        function: "sum".to_string(),
+        args: vec![table.to_string(), column.to_string()],
+    };
+    
+    if let Some(cached) = get_cache().get(&key) {
+        return Ok(cached);
     }
     
-    let sum = sum_column(rows, column_index)?;
-    Ok(sum / rows.len() as f64)
-}
-
-/// Find minimum value in numeric column.
-///
-/// ## Input
-/// - `rows`: Rows to search
-/// - `column_index`: Column index to search
-///
-/// ## Output
-/// - `ReedResult<f64>`: Minimum value
-///
-/// ## Performance
-/// - O(n) where n = number of rows
-/// - < 10ms for 1000 rows
-///
-/// ## Error Conditions
-/// - ParseError: Non-numeric value encountered
-/// - EmptySet: No rows provided
-///
-/// ## Example Usage
-/// ```rust
-/// let min_age = min_column(&rows, 2)?;
-/// ```
-pub fn min_column(rows: &[CsvRow], column_index: usize) -> ReedResult<f64> {
-    if rows.is_empty() {
-        return Err(ReedError::EmptySet {
-            context: "min_column".to_string(),
-        });
-    }
+    let csv_path = get_csv_path(table)?;
+    let rows = crate::csv::read_csv(&csv_path)?;
+    let col_idx = get_column_index(&rows, column)?;
     
-    let mut min = f64::MAX;
-    
-    for row in rows {
-        if let Some(value) = row.values.get(column_index) {
-            let num = value.parse::<f64>()
-                .map_err(|_| ReedError::ParseError {
-                    reason: format!("Cannot parse '{}' as number", value),
-                })?;
-            if num < min {
-                min = num;
+    let mut total: f64 = 0.0;
+    for row in &rows[1..] { // Skip header
+        if let Some(value) = row.get(col_idx) {
+            if let Ok(num) = value.parse::<f64>() {
+                total += num;
             }
         }
     }
     
-    Ok(min)
+    let result = total.to_string();
+    
+    get_cache().insert(key, result.clone());
+    
+    Ok(result)
 }
 
-/// Find maximum value in numeric column.
-///
-/// ## Input
-/// - `rows`: Rows to search
-/// - `column_index`: Column index to search
-///
-/// ## Output
-/// - `ReedResult<f64>`: Maximum value
-///
-/// ## Performance
-/// - O(n) where n = number of rows
-/// - < 10ms for 1000 rows
-///
-/// ## Error Conditions
-/// - ParseError: Non-numeric value encountered
-/// - EmptySet: No rows provided
-///
-/// ## Example Usage
-/// ```rust
-/// let max_age = max_column(&rows, 2)?;
-/// ```
-pub fn max_column(rows: &[CsvRow], column_index: usize) -> ReedResult<f64> {
-    if rows.is_empty() {
-        return Err(ReedError::EmptySet {
-            context: "max_column".to_string(),
-        });
+/// Calculate average of numeric column
+/// 
+/// ## Arguments
+/// - table: Table name
+/// - column: Column name
+/// 
+/// ## Returns
+/// - Average as string
+pub fn avg(table: &str, column: &str) -> ReedResult<String> {
+    let key = CacheKey {
+        function: "avg".to_string(),
+        args: vec![table.to_string(), column.to_string()],
+    };
+    
+    if let Some(cached) = get_cache().get(&key) {
+        return Ok(cached);
     }
     
-    let mut max = f64::MIN;
+    let total_sum = sum(table, column)?.parse::<f64>()
+        .map_err(|e| ReedError::ParseError {
+            value: "sum".to_string(),
+            reason: e.to_string(),
+        })?;
     
-    for row in rows {
-        if let Some(value) = row.values.get(column_index) {
-            let num = value.parse::<f64>()
-                .map_err(|_| ReedError::ParseError {
-                    reason: format!("Cannot parse '{}' as number", value),
-                })?;
-            if num > max {
-                max = num;
-            }
+    let total_count = count(table)?.parse::<usize>()
+        .map_err(|e| ReedError::ParseError {
+            value: "count".to_string(),
+            reason: e.to_string(),
+        })?;
+    
+    let average = total_sum / total_count as f64;
+    let result = average.to_string();
+    
+    get_cache().insert(key, result.clone());
+    
+    Ok(result)
+}
+
+/// Find minimum value in column
+pub fn min(table: &str, column: &str) -> ReedResult<String> {
+    // Similar implementation with caching
+    todo!()
+}
+
+/// Find maximum value in column
+pub fn max(table: &str, column: &str) -> ReedResult<String> {
+    // Similar implementation with caching
+    todo!()
+}
+
+/// Group by column and count occurrences
+/// 
+/// ## Returns
+/// - JSON object: {"value1": count1, "value2": count2, ...}
+pub fn group_by(table: &str, column: &str) -> ReedResult<String> {
+    let key = CacheKey {
+        function: "group_by".to_string(),
+        args: vec![table.to_string(), column.to_string()],
+    };
+    
+    if let Some(cached) = get_cache().get(&key) {
+        return Ok(cached);
+    }
+    
+    let csv_path = get_csv_path(table)?;
+    let rows = crate::csv::read_csv(&csv_path)?;
+    let col_idx = get_column_index(&rows, column)?;
+    
+    let mut counts: HashMap<String, usize> = HashMap::new();
+    
+    for row in &rows[1..] {
+        if let Some(value) = row.get(col_idx) {
+            *counts.entry(value.to_string()).or_insert(0) += 1;
         }
     }
     
-    Ok(max)
-}
-
-/// Group by column value and count.
-///
-/// ## Input
-/// - `rows`: Rows to group
-/// - `column_index`: Column index to group by
-///
-/// ## Output
-/// - `HashMap<String, usize>`: Value → count mapping
-///
-/// ## Performance
-/// - O(n) where n = number of rows
-/// - < 10ms for 1000 rows
-///
-/// ## Example Usage
-/// ```rust
-/// let status_counts = group_by_count(&rows, 2);
-/// for (status, count) in status_counts {
-///     println!("{}: {}", status, count);
-/// }
-/// ```
-pub fn group_by_count(rows: &[CsvRow], column_index: usize) -> std::collections::HashMap<String, usize> {
-    let mut counts = std::collections::HashMap::new();
+    let result = serde_json::to_string(&counts)
+        .map_err(|e| ReedError::SerializationError {
+            reason: e.to_string(),
+        })?;
     
-    for row in rows {
-        if let Some(value) = row.values.get(column_index) {
-            *counts.entry(value.clone()).or_insert(0) += 1;
-        }
-    }
+    get_cache().insert(key, result.clone());
     
-    counts
+    Ok(result)
 }
 ```
 
-**`reedbase/src/functions/transformations.rs`**
+**Performance**:
+- **First call**: O(n) scan of CSV (e.g., 5ms for 10k rows)
+- **Cached calls**: <100ns (instant)
+- **Cache invalidation**: On write to table (automatic)
 
-One file = Transformation functions only. NO other responsibilities.
+### 4. Transformation Functions (transformations.rs)
+
+**Purpose**: Data cleaning and normalization.
 
 ```rust
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
+// transformations.rs
 
-//! Transformation functions.
-//!
-//! Functions that transform data values.
-
-/// Normalize email to lowercase.
-///
-/// ## Input
-/// - `email`: Email address
-///
-/// ## Output
-/// - `String`: Normalized email
-///
-/// ## Performance
-/// - < 1μs typical
-///
-/// ## Example Usage
-/// ```rust
-/// let normalized = normalize_email("Alice@EXAMPLE.COM");
-/// assert_eq!(normalized, "alice@example.com");
-/// ```
-pub fn normalize_email(email: &str) -> String {
-    email.to_lowercase()
+/// Normalize email address (lowercase, trim)
+/// 
+/// ## Arguments
+/// - email: Raw email address
+/// 
+/// ## Returns
+/// - Normalized email
+pub fn normalize_email(email: &str) -> ReedResult<String> {
+    let key = CacheKey {
+        function: "normalize_email".to_string(),
+        args: vec![email.to_string()],
+    };
+    
+    if let Some(cached) = get_cache().get(&key) {
+        return Ok(cached);
+    }
+    
+    let result = email.trim().to_lowercase();
+    
+    get_cache().insert(key, result.clone());
+    
+    Ok(result)
 }
 
-/// Trim whitespace from both ends.
-///
-/// ## Input
-/// - `text`: Text to trim
-///
-/// ## Output
-/// - `String`: Trimmed text
-///
-/// ## Performance
-/// - < 1μs typical
-///
-/// ## Example Usage
-/// ```rust
-/// let trimmed = trim_text("  hello  ");
-/// assert_eq!(trimmed, "hello");
-/// ```
-pub fn trim_text(text: &str) -> String {
-    text.trim().to_string()
+/// Trim whitespace from string
+pub fn trim(value: &str) -> ReedResult<String> {
+    Ok(value.trim().to_string())
 }
 
-/// Capitalize first letter.
-///
-/// ## Input
-/// - `text`: Text to capitalize
-///
-/// ## Output
-/// - `String`: Capitalized text
-///
-/// ## Performance
-/// - < 1μs typical
-///
-/// ## Example Usage
-/// ```rust
-/// let capitalized = capitalize("alice");
-/// assert_eq!(capitalized, "Alice");
-/// ```
-pub fn capitalize(text: &str) -> String {
-    let mut chars = text.chars();
-    match chars.next() {
+/// Capitalize first letter
+pub fn capitalize(value: &str) -> ReedResult<String> {
+    let key = CacheKey {
+        function: "capitalize".to_string(),
+        args: vec![value.to_string()],
+    };
+    
+    if let Some(cached) = get_cache().get(&key) {
+        return Ok(cached);
+    }
+    
+    let mut chars = value.chars();
+    let result = match chars.next() {
+        Some(first) => first.to_uppercase().chain(chars).collect(),
         None => String::new(),
-        Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
-    }
+    };
+    
+    get_cache().insert(key, result.clone());
+    
+    Ok(result)
 }
 
-/// Replace substring.
-///
-/// ## Input
-/// - `text`: Text to search
-/// - `from`: Substring to replace
-/// - `to`: Replacement string
-///
-/// ## Output
-/// - `String`: Text with replacements
-///
-/// ## Performance
-/// - O(n) where n = text length
-/// - < 10μs typical
-///
-/// ## Example Usage
-/// ```rust
-/// let replaced = replace_text("Hello World", "World", "Rust");
-/// assert_eq!(replaced, "Hello Rust");
-/// ```
-pub fn replace_text(text: &str, from: &str, to: &str) -> String {
-    text.replace(from, to)
-}
-
-/// Truncate text to maximum length.
-///
-/// ## Input
-/// - `text`: Text to truncate
-/// - `max_length`: Maximum length
-///
-/// ## Output
-/// - `String`: Truncated text (with "..." if truncated)
-///
-/// ## Performance
-/// - O(n) where n = max_length
-/// - < 5μs typical
-///
-/// ## Example Usage
-/// ```rust
-/// let truncated = truncate_text("Hello World", 8);
-/// assert_eq!(truncated, "Hello...");
-/// ```
-pub fn truncate_text(text: &str, max_length: usize) -> String {
-    if text.len() <= max_length {
-        text.to_string()
-    } else {
-        format!("{}...", &text[..max_length.saturating_sub(3)])
+/// Slugify string (URL-safe)
+/// 
+/// ## Example
+/// "Hello World!" → "hello-world"
+pub fn slugify(value: &str) -> ReedResult<String> {
+    let key = CacheKey {
+        function: "slugify".to_string(),
+        args: vec![value.to_string()],
+    };
+    
+    if let Some(cached) = get_cache().get(&key) {
+        return Ok(cached);
     }
-}
-
-/// Pad text to minimum length.
-///
-/// ## Input
-/// - `text`: Text to pad
-/// - `min_length`: Minimum length
-/// - `pad_char`: Character to pad with
-///
-/// ## Output
-/// - `String`: Padded text
-///
-/// ## Performance
-/// - O(n) where n = min_length
-/// - < 5μs typical
-///
-/// ## Example Usage
-/// ```rust
-/// let padded = pad_text("42", 5, '0');
-/// assert_eq!(padded, "00042");
-/// ```
-pub fn pad_text(text: &str, min_length: usize, pad_char: char) -> String {
-    if text.len() >= min_length {
-        text.to_string()
-    } else {
-        format!("{}{}", pad_char.to_string().repeat(min_length - text.len()), text)
-    }
+    
+    let result = value
+        .to_lowercase()
+        .chars()
+        .map(|c| if c.is_alphanumeric() { c } else { '-' })
+        .collect::<String>()
+        .trim_matches('-')
+        .to_string();
+    
+    get_cache().insert(key, result.clone());
+    
+    Ok(result)
 }
 ```
 
-**`reedbase/src/types.rs`** (additions)
+**Additional Transformations**:
+- `normalize_email(email)` → Cleaned email
+- `trim(value)` → Whitespace removed
+- `capitalize(value)` → First letter uppercase
+- `slugify(value)` → URL-safe slug
+- `truncate(value, length)` → Truncated string
+- `replace(value, old, new)` → String replacement
 
-```rust
-/// Additional ReedBase errors.
-#[derive(Error, Debug)]
-pub enum ReedError {
-    // ... (existing errors)
-    
-    #[error("Division by zero in {context}")]
-    DivisionByZero {
-        context: String,
-    },
-    
-    #[error("Empty set in {context}")]
-    EmptySet {
-        context: String,
-    },
-}
-```
+## CLI Integration
 
-### Test Files
+### Using Functions in Queries
 
-**`reedbase/src/functions/cache.test.rs`**
-
-```rust
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use serde_json::json;
-    
-    #[test]
-    fn test_cache_get_set() {
-        let cache = FunctionCache::new();
-        let args = vec![json!(1736860800)];
-        
-        assert!(cache.get("calculate_age", &args).is_none());
-        
-        cache.set("calculate_age", &args, json!(25));
-        
-        let result = cache.get("calculate_age", &args);
-        assert_eq!(result, Some(json!(25)));
-    }
-    
-    #[test]
-    fn test_cache_clear() {
-        let cache = FunctionCache::new();
-        let args = vec![json!(1736860800)];
-        
-        cache.set("calculate_age", &args, json!(25));
-        assert!(cache.get("calculate_age", &args).is_some());
-        
-        cache.clear();
-        assert!(cache.get("calculate_age", &args).is_none());
-    }
-    
-    #[test]
-    fn test_cache_stats() {
-        let cache = FunctionCache::new();
-        let args1 = vec![json!(1)];
-        let args2 = vec![json!(2)];
-        
-        cache.set("func", &args1, json!(10));
-        cache.set("func", &args2, json!(20));
-        
-        let _ = cache.get("func", &args1);
-        let _ = cache.get("func", &args1);
-        let _ = cache.get("func", &args2);
-        
-        let stats = cache.stats();
-        assert_eq!(stats.size, 2);
-        assert_eq!(stats.total_hits, 3);
-    }
-    
-    #[test]
-    fn test_evict_old() {
-        let cache = FunctionCache::new();
-        let args = vec![json!(1)];
-        
-        cache.set("func", &args, json!(10));
-        
-        std::thread::sleep(std::time::Duration::from_secs(2));
-        
-        let evicted = cache.evict_old(1); // Evict entries older than 1 second
-        assert_eq!(evicted, 1);
-        assert!(cache.get("func", &args).is_none());
-    }
-}
-```
-
-**`reedbase/src/functions/computed.test.rs`**
-
-```rust
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    
-    #[test]
-    fn test_calculate_age() {
-        let birth_date = 946684800; // 2000-01-01
-        let age = calculate_age(birth_date);
-        assert!(age >= 24 && age <= 26); // Rough check
-    }
-    
-    #[test]
-    fn test_full_name() {
-        let name = full_name("Alice", "Smith");
-        assert_eq!(name, "Alice Smith");
-    }
-    
-    #[test]
-    fn test_calculate_percentage() {
-        let pct = calculate_percentage(25.0, 100.0).unwrap();
-        assert_eq!(pct, 25.0);
-    }
-    
-    #[test]
-    fn test_calculate_percentage_zero() {
-        let result = calculate_percentage(25.0, 0.0);
-        assert!(matches!(result, Err(ReedError::DivisionByZero { .. })));
-    }
-    
-    #[test]
-    fn test_is_past() {
-        let old_date = 946684800; // 2000-01-01
-        assert!(is_past(old_date));
-        
-        let future_date = 2000000000; // Far future
-        assert!(!is_past(future_date));
-    }
-}
-```
-
-**`reedbase/src/functions/aggregations.test.rs`**
-
-```rust
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    
-    fn create_test_rows() -> Vec<CsvRow> {
-        vec![
-            CsvRow {
-                key: "1".to_string(),
-                values: vec!["Alice".to_string(), "30".to_string(), "active".to_string()],
-            },
-            CsvRow {
-                key: "2".to_string(),
-                values: vec!["Bob".to_string(), "25".to_string(), "active".to_string()],
-            },
-            CsvRow {
-                key: "3".to_string(),
-                values: vec!["Charlie".to_string(), "35".to_string(), "inactive".to_string()],
-            },
-        ]
-    }
-    
-    #[test]
-    fn test_count_rows() {
-        let rows = create_test_rows();
-        assert_eq!(count_rows(&rows), 3);
-    }
-    
-    #[test]
-    fn test_count_where() {
-        let rows = create_test_rows();
-        let active_count = count_where(&rows, 2, "active");
-        assert_eq!(active_count, 2);
-    }
-    
-    #[test]
-    fn test_sum_column() {
-        let rows = create_test_rows();
-        let total_age = sum_column(&rows, 1).unwrap();
-        assert_eq!(total_age, 90.0);
-    }
-    
-    #[test]
-    fn test_average_column() {
-        let rows = create_test_rows();
-        let avg_age = average_column(&rows, 1).unwrap();
-        assert_eq!(avg_age, 30.0);
-    }
-    
-    #[test]
-    fn test_min_column() {
-        let rows = create_test_rows();
-        let min_age = min_column(&rows, 1).unwrap();
-        assert_eq!(min_age, 25.0);
-    }
-    
-    #[test]
-    fn test_max_column() {
-        let rows = create_test_rows();
-        let max_age = max_column(&rows, 1).unwrap();
-        assert_eq!(max_age, 35.0);
-    }
-    
-    #[test]
-    fn test_group_by_count() {
-        let rows = create_test_rows();
-        let counts = group_by_count(&rows, 2);
-        
-        assert_eq!(counts.get("active"), Some(&2));
-        assert_eq!(counts.get("inactive"), Some(&1));
-    }
-}
-```
-
-**`reedbase/src/functions/transformations.test.rs`**
-
-```rust
-// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
-// SPDX-License-Identifier: Apache-2.0
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    
-    #[test]
-    fn test_normalize_email() {
-        let normalized = normalize_email("Alice@EXAMPLE.COM");
-        assert_eq!(normalized, "alice@example.com");
-    }
-    
-    #[test]
-    fn test_trim_text() {
-        let trimmed = trim_text("  hello  ");
-        assert_eq!(trimmed, "hello");
-    }
-    
-    #[test]
-    fn test_capitalize() {
-        let capitalized = capitalize("alice");
-        assert_eq!(capitalized, "Alice");
-    }
-    
-    #[test]
-    fn test_replace_text() {
-        let replaced = replace_text("Hello World", "World", "Rust");
-        assert_eq!(replaced, "Hello Rust");
-    }
-    
-    #[test]
-    fn test_truncate_text() {
-        let truncated = truncate_text("Hello World", 8);
-        assert_eq!(truncated, "Hello...");
-        
-        let not_truncated = truncate_text("Hello", 10);
-        assert_eq!(not_truncated, "Hello");
-    }
-    
-    #[test]
-    fn test_pad_text() {
-        let padded = pad_text("42", 5, '0');
-        assert_eq!(padded, "00042");
-        
-        let not_padded = pad_text("12345", 3, '0');
-        assert_eq!(not_padded, "12345");
-    }
-}
-```
-
-## Implementation Files (Part 2: Smart Indices)
-
-### Index Implementations
-
-**`reedbase/src/indices/namespace.rs`**
-
-```rust
-/// Namespace index for O(1) prefix lookups.
-pub struct NamespaceIndex {
-    index: HashMap<String, Vec<String>>,
-}
-
-impl NamespaceIndex {
-    /// Build index from keys.
-    /// - O(n) build time
-    /// - < 10ms for 10k keys
-    pub fn build(keys: &[String]) -> Self;
-    
-    /// Query by namespace.
-    /// - O(1) lookup
-    /// - < 1μs
-    pub fn query(&self, namespace: &str) -> Option<&Vec<String>>;
-    
-    /// Update index with new key.
-    /// - O(1) update
-    /// - < 10μs
-    pub fn insert(&mut self, key: &str);
-}
-```
-
-**`reedbase/src/indices/language.rs`**
-
-```rust
-/// Language index for O(1) language-based lookups.
-pub struct LanguageIndex {
-    index: HashMap<String, Vec<String>>,
-}
-
-impl LanguageIndex {
-    /// Build index from keys.
-    /// - Extracts <lang> from keys
-    /// - O(n) build time
-    pub fn build(keys: &[String]) -> Self;
-    
-    /// Query by language.
-    /// - O(1) lookup
-    pub fn query(&self, language: &str) -> Option<&Vec<String>>;
-}
-```
-
-**`reedbase/src/indices/environment.rs`**
-
-```rust
-/// Environment index for O(1) environment-based lookups.
-pub struct EnvironmentIndex {
-    index: HashMap<String, Vec<String>>,
-}
-
-impl EnvironmentIndex {
-    /// Build index from keys with <env> modifiers.
-    pub fn build(keys: &[String]) -> Self;
-    
-    /// Query by environment.
-    pub fn query(&self, environment: &str) -> Option<&Vec<String>>;
-}
-```
-
-**`reedbase/src/indices/hierarchy.rs`**
-
-```rust
-/// Hierarchical trie for O(d) prefix walks.
-pub struct HierarchyTrie {
-    root: TrieNode,
-}
-
-pub struct TrieNode {
-    segment: String,
-    children: HashMap<String, TrieNode>,
-    keys: Vec<String>,  // Complete keys at this node
-}
-
-impl HierarchyTrie {
-    /// Build trie from keys.
-    /// - O(n × d) where d = average depth
-    /// - < 20ms for 10k keys
-    pub fn build(keys: &[String]) -> Self;
-    
-    /// Walk trie to find all keys under path.
-    /// - O(d) where d = path depth
-    /// - < 10μs for depth 4
-    pub fn walk(&self, path: &[String]) -> Vec<String>;
-}
-```
-
-**`reedbase/src/indices/combined.rs`**
-
-```rust
-/// Combined index manager.
-pub struct IndexManager {
-    namespace: NamespaceIndex,
-    language: LanguageIndex,
-    environment: EnvironmentIndex,
-    hierarchy: HierarchyTrie,
-}
-
-impl IndexManager {
-    /// Build all indices from keys.
-    /// - Total: < 50ms for 10k keys
-    pub fn build(keys: &[String]) -> Self;
-    
-    /// Query with multiple filters (set intersection).
-    /// - namespace: Option<&str>
-    /// - language: Option<&str>
-    /// - environment: Option<&str>
-    /// Returns: Vec<String> (keys matching ALL filters)
-    /// - O(k) where k = result set size
-    /// - < 100μs typical
-    pub fn query_combined(
-        &self,
-        namespace: Option<&str>,
-        language: Option<&str>,
-        environment: Option<&str>,
-    ) -> Vec<String>;
-    
-    /// Rebuild indices (after bulk changes).
-    pub fn rebuild(&mut self, keys: &[String]);
-}
-```
-
----
-
-## Performance Requirements
-
-### Part 1: Functions & Cache
-
-| Operation | Target |
-|-----------|--------|
-| Function execution (cached) | < 100ns |
-| Cache insert | < 10μs |
-| Cache lookup | < 100ns |
-| Computed function | < 1μs |
-| Aggregation (1000 rows) | < 10ms |
-| Transformation | < 10μs |
-
-### Part 2: Smart Indices
-
-| Operation | Target |
-|-----------|--------|
-| Build all indices (10k keys) | < 50ms |
-| Namespace lookup | < 1μs |
-| Language lookup | < 1μs |
-| Environment lookup | < 1μs |
-| Hierarchy walk (depth 4) | < 10μs |
-| Combined query (2 filters) | < 100μs |
-| Index update (single key) | < 10μs |
-
-## Error Conditions
-
-- **DivisionByZero**: Division by zero in aggregation
-- **EmptySet**: Aggregation on empty dataset
-- **ParseError**: Cannot parse value as number
-
-## CLI Commands
-
-### Part 1: Functions & Cache
+Functions are callable from CLI via ReedQL (REED-19-11):
 
 ```bash
-# Execute function
-reed function:exec calculate_age 946684800
-# Output: 25
+# Computed column
+reed query "SELECT first_name, last_name, full_name(first_name, last_name) AS name FROM users"
 
-# Show function cache stats
-reed function:cache-stats
-# Output:
-# Cache size: 45 entries
-# Total hits: 1250
-# Hit rate: 96.5%
+# Aggregation
+reed query "SELECT count(*) FROM text WHERE lang = 'de'"
+reed query "SELECT avg(age) FROM users"
 
-# Clear function cache
-reed function:clear-cache
-# Output: ✓ Cache cleared
+# Transformation
+reed query "SELECT email, normalize_email(email) AS clean_email FROM users"
 ```
 
-### Part 2: Smart Indices
+### Direct Function Calls
 
 ```bash
-# Build indices for table
-reed index:build text
-# Output:
-# Building indices for table 'text'...
-# ✓ NamespaceIndex built (45 namespaces, 1,234 keys) in 12ms
-# ✓ LanguageIndex built (8 languages, 1,234 keys) in 10ms
-# ✓ EnvironmentIndex built (3 environments, 234 keys) in 8ms
-# ✓ HierarchyTrie built (1,234 keys, max depth 6) in 18ms
-# Total: 48ms, 1.1MB memory
+# Call function directly
+reed function calculate_age "1990-05-15"
+# Output: 35
 
-# Query by namespace (O(1) lookup!)
-reed index:query text --namespace page
-# Output: 234 keys found in < 1μs
-# page.title<de>
-# page.title<en>
-# page.header.logo
-# ...
+reed function sum users age
+# Output: 1245
 
-# Query by language (O(1) lookup!)
-reed index:query text --language de
-# Output: 456 keys found in < 1μs
-# page.title<de>
-# blog.post.title<de>
-# ...
-
-# Combined query (set intersection)
-reed index:query text --namespace page --language de
-# Output: 89 keys found in 95μs
-# page.title<de>
-# page.header.logo<de>
-# ...
-
-# Hierarchy walk (O(d) trie walk)
-reed index:query text --hierarchy page.header
-# Output: 12 keys found in 8μs
-# page.header.logo
-# page.header.title<de>
-# page.header.title<en>
-# ...
-
-# Show index stats
-reed index:stats text
-# Output:
-# NamespaceIndex: 45 namespaces, 1,234 keys, 201KB
-# LanguageIndex: 8 languages, 1,234 keys, 195KB
-# EnvironmentIndex: 3 environments, 234 keys, 48KB
-# HierarchyTrie: 1,234 keys, max depth 6, 512KB
-# Total: 956KB memory
-
-# Rebuild indices (after bulk updates)
-reed index:rebuild text
-# Output: ✓ Indices rebuilt in 49ms
+reed function normalize_email "  John.Doe@Example.COM  "
+# Output: john.doe@example.com
 ```
 
-## Acceptance Criteria
+### Cache Management
 
-### Part 1: Functions & Cache
-- [ ] Function result caching with memoization
-- [ ] Cache get/set operations
-- [ ] Cache statistics (size, hit rate)
-- [ ] Cache eviction (by age)
-- [ ] Computed column functions (age, full name, etc.)
-- [ ] Aggregation functions (count, sum, avg, min, max)
-- [ ] Transformation functions (normalize, trim, capitalize, etc.)
-- [ ] Group by with count
-- [ ] Function cache < 100ns hit time
-- [ ] Aggregations < 10ms for 1000 rows
+```bash
+# Show cache statistics
+reed cache:stats
 
-### Part 2: Smart Indices
-- [ ] NamespaceIndex implementation with O(1) lookup
-- [ ] LanguageIndex implementation with O(1) lookup
-- [ ] EnvironmentIndex implementation with O(1) lookup
-- [ ] HierarchyTrie implementation with O(d) walk
-- [ ] IndexManager for combined queries
-- [ ] Build all indices < 50ms for 10k keys
-- [ ] Namespace query < 1μs
-- [ ] Language query < 1μs
-- [ ] Environment query < 1μs
-- [ ] Hierarchy walk < 10μs for depth 4
-- [ ] Combined query (2 filters) < 100μs
-- [ ] Index update (single key) < 10μs
-- [ ] CLI commands for index operations
-- [ ] Index statistics and monitoring
+# Output:
+# Function Cache Statistics:
+#   Total entries: 1,247
+#   Cache hits: 45,892
+#   Cache misses: 1,247
+#   Hit rate: 97.4%
+#   Memory usage: 186 KB
 
-### Integration
-- [ ] ReedQL uses indices automatically (REED-19-10)
-- [ ] RBKS v2 key parsing integrated (REED-19-08)
-- [ ] Indices rebuild on bulk updates
-- [ ] Graceful degradation if indices not built
+# Clear cache
+reed cache:clear
 
-### Quality
-- [ ] All tests pass with 100% coverage
-- [ ] Performance targets met for functions AND indices
-- [ ] All code in BBC English
-- [ ] All functions have complete documentation
-- [ ] Separate test files for each module
-- [ ] Memory overhead documented (< 1.5MB for 10k keys)
+# Clear specific function cache
+reed cache:clear --function calculate_age
+```
+
+## Performance Targets
+
+### Cache Performance
+- **Cache hit**: < 100ns (RwLock read + HashMap lookup)
+- **Cache insert**: < 10μs (RwLock write + HashMap insert)
+- **Memory overhead**: ~150 bytes per cache entry
+
+### Function Performance
+
+**Computed Functions** (Pure calculations):
+- `calculate_age`: < 1μs (first call), < 100ns (cached)
+- `full_name`: < 500ns (first call), < 100ns (cached)
+- `days_since`: < 1μs (first call), < 100ns (cached)
+
+**Aggregation Functions** (Dataset operations):
+- `count`: 2-5ms (first call, 10k rows), < 100ns (cached)
+- `sum`: 5-10ms (first call, 10k rows), < 100ns (cached)
+- `avg`: 5-10ms (first call, 10k rows), < 100ns (cached)
+
+**Transformation Functions** (String operations):
+- `normalize_email`: < 500ns (first call), < 100ns (cached)
+- `slugify`: < 2μs (first call), < 100ns (cached)
+- `capitalize`: < 300ns (first call), < 100ns (cached)
+
+### Cache Hit Rate
+- **Target**: > 95% hit rate for repeated queries
+- **Typical**: 97-99% for dashboard/template rendering
+
+## Cache Invalidation Strategy
+
+Cache entries are invalidated on:
+
+1. **Table write**: Clear all aggregation caches for that table
+2. **Manual clear**: `reed cache:clear` command
+3. **Memory pressure**: LRU eviction if cache exceeds configured limit
+
+```rust
+// In reedbase/set.rs (after write)
+pub fn set_key_value(table: &str, key: &str, value: &str) -> ReedResult<()> {
+    // ... existing write logic ...
+    
+    // Invalidate aggregation caches for this table
+    get_cache().invalidate_table(table)?;
+    
+    Ok(())
+}
+```
+
+**Smart invalidation**:
+- Writing to `text.csv` → Only clear `count("text")`, `sum("text", *)`, etc.
+- Writing to `users.csv` → Only clear `count("users")`, `avg("users", *)`, etc.
+- Computed functions → NOT invalidated (pure, input-dependent only)
+
+## Testing Strategy
+
+### Unit Tests
+
+```rust
+// cache.test.rs
+#[test]
+fn test_cache_hit() {
+    let cache = FunctionCache::new();
+    
+    let key = CacheKey {
+        function: "test".to_string(),
+        args: vec!["arg1".to_string()],
+    };
+    
+    cache.insert(key.clone(), "result".to_string());
+    
+    let cached = cache.get(&key);
+    assert_eq!(cached, Some("result".to_string()));
+    
+    let stats = cache.stats();
+    assert_eq!(stats.hits, 1);
+    assert_eq!(stats.misses, 0);
+}
+
+#[test]
+fn test_cache_miss() {
+    let cache = FunctionCache::new();
+    
+    let key = CacheKey {
+        function: "test".to_string(),
+        args: vec!["arg1".to_string()],
+    };
+    
+    let cached = cache.get(&key);
+    assert_eq!(cached, None);
+    
+    let stats = cache.stats();
+    assert_eq!(stats.hits, 0);
+    assert_eq!(stats.misses, 1);
+}
+
+// computed.test.rs
+#[test]
+fn test_calculate_age() {
+    let age = calculate_age("1990-05-15").unwrap();
+    assert_eq!(age, "35"); // Assuming current year 2025
+    
+    // Second call should be cached
+    let start = Instant::now();
+    let age_cached = calculate_age("1990-05-15").unwrap();
+    let elapsed = start.elapsed();
+    
+    assert_eq!(age_cached, "35");
+    assert!(elapsed < Duration::from_micros(1)); // < 1μs (cache hit)
+}
+
+#[test]
+fn test_full_name() {
+    let name = full_name("John", "Doe").unwrap();
+    assert_eq!(name, "John Doe");
+    
+    let name_trim = full_name("  Jane  ", "  Smith  ").unwrap();
+    assert_eq!(name_trim, "Jane Smith");
+}
+
+// aggregations.test.rs
+#[test]
+fn test_count() {
+    setup_test_csv("test_users.csv", 100); // 100 rows
+    
+    let count = count("test_users").unwrap();
+    assert_eq!(count, "100");
+    
+    // Second call should be cached
+    let start = Instant::now();
+    let count_cached = count("test_users").unwrap();
+    let elapsed = start.elapsed();
+    
+    assert_eq!(count_cached, "100");
+    assert!(elapsed < Duration::from_micros(1)); // < 1μs
+}
+
+#[test]
+fn test_sum() {
+    setup_test_csv_with_numbers("test_sales.csv", vec![10, 20, 30, 40]);
+    
+    let total = sum("test_sales", "amount").unwrap();
+    assert_eq!(total, "100");
+}
+
+#[test]
+fn test_avg() {
+    setup_test_csv_with_numbers("test_ages.csv", vec![20, 30, 40]);
+    
+    let average = avg("test_ages", "age").unwrap();
+    assert_eq!(average, "30");
+}
+
+// transformations.test.rs
+#[test]
+fn test_normalize_email() {
+    let email = normalize_email("  John.Doe@Example.COM  ").unwrap();
+    assert_eq!(email, "john.doe@example.com");
+}
+
+#[test]
+fn test_slugify() {
+    let slug = slugify("Hello World!").unwrap();
+    assert_eq!(slug, "hello-world");
+    
+    let slug_special = slugify("A/B Testing & Analysis").unwrap();
+    assert_eq!(slug_special, "a-b-testing-analysis");
+}
+```
+
+### Performance Benchmarks
+
+```rust
+// benchmarks.rs
+#[bench]
+fn bench_cache_hit(b: &mut Bencher) {
+    let cache = FunctionCache::new();
+    let key = CacheKey {
+        function: "test".to_string(),
+        args: vec!["arg1".to_string()],
+    };
+    cache.insert(key.clone(), "result".to_string());
+    
+    b.iter(|| {
+        cache.get(&key)
+    });
+    // Target: < 100ns per lookup
+}
+
+#[bench]
+fn bench_calculate_age_cached(b: &mut Bencher) {
+    calculate_age("1990-05-15").unwrap(); // Prime cache
+    
+    b.iter(|| {
+        calculate_age("1990-05-15")
+    });
+    // Target: < 100ns (cache hit)
+}
+
+#[bench]
+fn bench_sum_10k_rows(b: &mut Bencher) {
+    setup_test_csv_with_numbers("bench_data.csv", (0..10000).collect());
+    
+    b.iter(|| {
+        sum("bench_data", "value")
+    });
+    // Target: < 10ms first call, < 100ns cached
+}
+```
+
+### Integration Tests
+
+```rust
+// integration.test.rs
+#[test]
+fn test_cache_invalidation_on_write() {
+    setup_test_csv("users.csv", 100);
+    
+    // Prime cache
+    let count1 = count("users").unwrap();
+    assert_eq!(count1, "100");
+    
+    // Write new row
+    set_key_value("users", "user.101.name", "New User").unwrap();
+    
+    // Cache should be invalidated
+    let count2 = count("users").unwrap();
+    assert_eq!(count2, "101");
+}
+
+#[test]
+fn test_functions_in_reedql() {
+    // Integration test with ReedQL (REED-19-11)
+    let query = "SELECT first_name, last_name, full_name(first_name, last_name) AS name FROM users";
+    let results = execute_query(query).unwrap();
+    
+    assert_eq!(results[0]["name"], "John Doe");
+}
+```
+
+## Error Handling
+
+```rust
+#[derive(Debug)]
+pub enum FunctionError {
+    InvalidArgument { function: String, arg: String, reason: String },
+    CacheError { reason: String },
+    ComputationFailed { function: String, reason: String },
+    TableNotFound { table: String },
+    ColumnNotFound { table: String, column: String },
+}
+```
+
+## File Structure
+
+```
+src/reedcms/reedbase/
+├── functions/
+│   ├── mod.rs              # Public API + cache management
+│   ├── cache.rs            # Memoization cache implementation
+│   ├── computed.rs         # Computed column functions
+│   ├── aggregations.rs     # Aggregation functions
+│   ├── transformations.rs  # Transformation functions
+│   ├── cache.test.rs       # Cache unit tests
+│   ├── computed.test.rs    # Computed function tests
+│   ├── aggregations.test.rs # Aggregation tests
+│   ├── transformations.test.rs # Transformation tests
+│   ├── integration.test.rs # Integration tests
+│   └── benchmarks.rs       # Performance benchmarks
+```
 
 ## Dependencies
 
-**Requires**: 
-- REED-19-02 (Universal Table API - for CsvRow type)
+**Internal**:
+- `reedbase::schema::rbks` (REED-19-08) - Key generation for computed columns
+- `csv::read_csv` - CSV reading for aggregations
+- `reedstream::ReedError` - Error handling
 
-**Blocks**: None
+**External**:
+- `chrono` - Date/time calculations for computed functions
+- `serde_json` - JSON serialization for group_by results
+- `std::collections::HashMap` - Cache storage
+- `std::sync::RwLock` - Concurrent cache access
+
+## Acceptance Criteria
+
+### Functional Requirements
+- [x] Memoization cache with <100ns hit time
+- [x] Computed functions: calculate_age, full_name, days_since, etc.
+- [x] Aggregation functions: count, sum, avg, min, max, group_by
+- [x] Transformation functions: normalize_email, trim, capitalize, slugify, etc.
+- [x] Cache invalidation on table writes
+- [x] CLI commands for direct function calls
+- [x] Cache statistics and management commands
+- [x] Integration with ReedQL (REED-19-11)
+
+### Performance Requirements
+- [x] Cache hit: < 100ns
+- [x] Cache insert: < 10μs
+- [x] Computed functions: < 1μs (first), < 100ns (cached)
+- [x] Aggregations: < 10ms for 10k rows (first), < 100ns (cached)
+- [x] Transformations: < 2μs (first), < 100ns (cached)
+- [x] Cache hit rate: > 95% for repeated queries
+
+### Quality Requirements
+- [x] 100% test coverage for all function categories
+- [x] Performance benchmarks for cache and all functions
+- [x] Integration tests with ReedQL
+- [x] Cache memory usage tests
+- [x] Concurrent access tests (RwLock correctness)
+
+### Documentation Requirements
+- [x] Architecture documentation (this ticket)
+- [x] API documentation for all functions
+- [x] Performance characteristics documented
+- [x] CLI usage examples
+- [x] Integration guide with ReedQL
+
+## Implementation Notes
+
+### Trade-offs
+
+**Pros**:
+- ✅ **Instant recomputation**: 100-1000x faster for cached results
+- ✅ **DRY principle**: Centralized logic, no template duplication
+- ✅ **Type safety**: Rust functions > template helpers
+- ✅ **Testability**: Unit tests for all functions
+
+**Cons**:
+- ❌ **Memory overhead**: ~150 bytes per cached result
+- ❌ **Cache invalidation complexity**: Must track table dependencies
+- ❌ **Cold start**: First call still requires full computation
+
+**Decision**: Memory overhead is acceptable for massive performance gains.
+
+### Alternative Approaches Considered
+
+1. **No caching (compute every time)**
+   - ❌ 10-50ms aggregations unacceptable for dashboards
+   - ✅ Our approach: <100ns for cached results
+
+2. **Template-level caching (MiniJinja)**
+   - ❌ No cross-request caching
+   - ❌ Cache per template, not per function
+   - ✅ Our approach: Global function cache
+
+3. **Database views (PostgreSQL-style)**
+   - ❌ Requires migration from CSV
+   - ❌ Violates "CSV as source of truth"
+   - ✅ Our approach: CSV remains authoritative
+
+### Future Enhancements
+
+1. **Persistent cache** (survive restarts)
+   - Store cache to `.reed/cache/functions.bin`
+   - Load on startup if CSV timestamp unchanged
+   - Benefit: No cold start after restart
+
+2. **TTL-based expiration**
+   - Optional `cache_ttl` per function
+   - Auto-invalidate after duration
+   - Benefit: Balance freshness vs performance
+
+3. **Dependency tracking**
+   - Track which functions depend on which columns
+   - Smarter invalidation (only affected functions)
+   - Benefit: Fewer unnecessary cache clears
+
+4. **LRU eviction**
+   - Current: Unbounded cache growth
+   - Future: Evict least-recently-used entries
+   - Benefit: Bounded memory usage
 
 ## References
-- Service Template: `_workbench/Tickets/templates/service-template.md`
-- Service Test Template: `_workbench/Tickets/templates/service-template.test.md`
-- REED-19-00: Layer Overview
 
-## Notes
+- **REED-19-08**: RBKS v2 Key Validation (computed key generation)
+- **REED-19-10**: Smart Indices (similar performance goals)
+- **REED-19-11**: CLI/SQL Query Interface (uses functions in queries)
+- **REED-02**: Original ReedBase (baseline for aggregations)
 
-### Part 1: Function System Philosophy
+## Summary
 
-**Function System:**
-- **Rust functions, not Lua**: Type-safe, compiled, no runtime overhead
-- **Pure functions**: No side effects, deterministic results
-- **Memoization**: Automatic caching for expensive computations
-- **Composable**: Functions can call other functions
-
-**Cache Strategy:**
-- **Key**: Hash of (function_name + arguments)
-- **Value**: Cached result + metadata (timestamp, hit count)
-- **Eviction**: LRU-like based on timestamp
-- **Size**: Unlimited (bounded by available memory, can add max_size limit)
-
-**Trade-offs:**
-- **Pro**: Rust performance (vs Lua/Python)
-- **Pro**: Type safety (compile-time checking)
-- **Pro**: Zero overhead (compiled code)
-- **Con**: Functions must be compiled (cannot add at runtime)
-- **Con**: Cache uses memory (mitigated by eviction policy)
-
----
-
-### Part 2: Smart Indices Philosophy
-
-**Why Indices Beat SQLite B-Trees:**
-
-| Aspect | SQLite B-Tree | ReedBase Indices | Winner |
-|--------|---------------|------------------|--------|
-| Key structure | Generic (any data) | Structured (namespace.hierarchy<modifiers>) | **ReedBase** |
-| Namespace query | O(log n + k) | **O(1)** HashMap | **ReedBase** (100x) |
-| Language query | O(n) full scan | **O(1)** HashMap | **ReedBase** (1000x) |
-| Hierarchy query | O(log n + k) | **O(d)** Trie | **ReedBase** (10x) |
-| Memory | ~50KB per 10k rows | ~1.1MB per 10k keys | **SQLite** (smaller) |
-| Build time | Incremental | ~50ms for 10k keys | **SQLite** (faster) |
-
-**Design Decisions:**
-- **Namespace Index**: HashMap for O(1) lookup (most common query pattern)
-- **Language Index**: HashMap for O(1) lookup (2nd most common)
-- **Environment Index**: HashMap for O(1) lookup (production/dev filtering)
-- **Hierarchy Trie**: Trie for O(d) prefix walks (complex hierarchy queries)
-- **No Inverted Text Index**: Too much memory for marginal benefit (can add later if needed)
-
-**Index Build Strategy:**
-- **Eager**: Build all indices at startup (~50ms for 10k keys)
-- **Update on write**: Add new keys to indices incrementally (< 10μs overhead)
-- **Rebuild on bulk**: Full rebuild after bulk operations
-
-**Memory Management:**
-- **Keys stored once**: Indices store pointers/references, not copies
-- **Overhead**: ~100 bytes per key across all indices
-- **Total**: ~1.1MB for 10k keys (acceptable trade-off)
-
-**Integration with ReedQL (REED-19-10):**
-```rust
-// ReedQL automatically detects index-able queries:
-
-// Query: SELECT * FROM text WHERE key LIKE 'page.%'
-// → Detected: Namespace pattern
-// → Uses: NamespaceIndex.query("page")
-// → Result: O(1) lookup instead of O(n) scan!
-
-// Query: SELECT * FROM text WHERE key LIKE '%<de>'
-// → Detected: Language pattern
-// → Uses: LanguageIndex.query("de")
-// → Result: O(1) lookup instead of O(n) scan!
-
-// Query: SELECT * FROM text WHERE key LIKE 'page.%<de>'
-// → Detected: Combined pattern
-// → Uses: NamespaceIndex ∩ LanguageIndex
-// → Result: O(k) set intersection, k = result size!
-```
-
-**Trade-offs:**
-- **Pro**: 100-1000x faster queries for common patterns
-- **Pro**: Validates RBKS v2 key structure investment
-- **Pro**: Enables instant language/environment/namespace filtering
-- **Con**: +1.1MB RAM per 10k keys (mitigated: modern systems have GB of RAM)
-- **Con**: +50ms startup time (mitigated: one-time cost, acceptable)
-- **Con**: Requires RBKS v2 validation (mitigated: already implemented in REED-19-08)
-
-**Future Enhancements (Functions):**
-- Hot-reload functions (via dynamic library loading)
-- Python/Lua bindings for scripting
-- Window functions (LEAD, LAG, etc.)
-- Recursive functions with cycle detection
-
-**Future Enhancements (Indices):**
-- Full-text search index (inverted index for values)
-- Persistent indices (save to disk, load at startup)
-- Incremental index updates (no full rebuild needed)
-- Index compression (reduce memory footprint)
+The Function System provides **Rust-based computed columns, aggregations, and transformations** with **automatic memoization caching**. Cache hits are **<100ns** (100-1000x faster than recomputation), enabling **instant dashboard rendering** and **interactive CLI queries**. Integration with ReedQL (REED-19-11) makes functions **transparent** to users while dramatically improving performance.
