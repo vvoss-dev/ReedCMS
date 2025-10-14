@@ -18,17 +18,22 @@
 
 ## Ticket Information
 - **ID**: REED-19-09
-- **Title**: Function System & Caching
+- **Title**: Function System, Caching & Smart Indices
 - **Layer**: ReedBase Layer (REED-19)
-- **Priority**: Medium
+- **Priority**: High
 - **Status**: Open
-- **Complexity**: Medium
-- **Dependencies**: REED-19-02 (Universal Table API)
-- **Estimated Time**: 5 days
+- **Complexity**: High
+- **Dependencies**: REED-19-02 (Universal Table API), REED-19-08 (Key Validation / RBKS v2)
+- **Estimated Time**: 1 week
 
 ## Objective
 
-Implement Rust-based function system with memoization cache. Provide computed columns, aggregations, and custom transformations with automatic result caching for performance.
+Implement three interconnected systems:
+1. **Function System** - Rust-based computed columns, aggregations, transformations
+2. **Memoization Cache** - Automatic result caching for expensive computations
+3. **Smart Indices** - Key-structure-based indices for O(1) queries
+
+**Why together?** Smart Indices enable 100-1000x faster queries by leveraging RBKS v2 key structure. Functions benefit from both memoization cache AND index-accelerated data access.
 
 ## Requirements
 
@@ -85,7 +90,7 @@ struct CachedResult {
 }
 ```
 
-### Performance Targets
+### Performance Targets (Functions & Cache)
 
 | Operation | Target | Notes |
 |-----------|--------|-------|
@@ -95,7 +100,110 @@ struct CachedResult {
 | Cache lookup | < 100ns | HashMap get |
 | Aggregate 1000 rows | < 10ms | Single pass through data |
 
-## Implementation Files
+---
+
+## Part 2: Smart Indices
+
+### Why Smart Indices?
+
+**ReedBase Keys ARE the Index!**
+
+SQLite uses B-Trees for indices. ReedBase keys already contain structure:
+```
+page.header.title<de,prod,christmas>
+  │     │      │    │   │     │
+  │     │      │    │   │     └─ Season
+  │     │      │    │   └─ Environment  
+  │     │      │    └─ Language
+  │     │      └─ Type
+  │     └─ Sub-namespace
+  └─ Namespace
+```
+
+**This structure enables O(1) lookups!**
+
+### Index Types
+
+**1. Namespace Index** - O(1) prefix lookup
+```rust
+// Query: page.* → O(1) lookup
+NamespaceIndex.get("page") → ["page.title<de>", "page.header.logo", ...]
+```
+
+**2. Language Index** - O(1) suffix lookup
+```rust
+// Query: *<de> → O(1) lookup
+LanguageIndex.get("de") → ["page.title<de>", "blog.post<de>", ...]
+```
+
+**3. Environment Index** - O(1) environment lookup
+```rust
+// Query: *<prod> → O(1) lookup
+EnvironmentIndex.get("prod") → ["page.title<prod>", "api.key<prod>", ...]
+```
+
+**4. Hierarchy Trie** - O(d) hierarchical lookup
+```rust
+// Query: page.header.* → O(3) trie walk
+HierarchyTrie.walk(["page", "header"]) → ["page.header.title", "page.header.logo", ...]
+```
+
+### Index Structure
+
+```
+.reed/indices/
+├── namespace.idx     # Namespace → [keys] mapping
+├── language.idx      # Language → [keys] mapping
+├── environment.idx   # Environment → [keys] mapping
+└── hierarchy.trie    # Hierarchical trie structure
+```
+
+### Performance Comparison
+
+| Query Type | SQLite B-Tree | ReedBase Index | Speedup |
+|------------|---------------|----------------|---------|
+| Exact key | O(log n) | **O(1)** HashMap | **10x** |
+| Namespace prefix | O(log n + k) | **O(1)** index | **100x** |
+| Language suffix | O(n) full scan | **O(1)** index | **1000x** |
+| Hierarchy | O(log n + k) | **O(d)** trie | **10x** |
+| Combined filters | O(n) scan | **O(k)** set intersection | **100x** |
+
+**Where**:
+- n = total rows
+- k = matching rows
+- d = hierarchy depth (2-8)
+
+### Memory Overhead
+
+| Index | Memory (10k keys) | Build Time |
+|-------|-------------------|------------|
+| NamespaceIndex | ~200KB | ~10ms |
+| LanguageIndex | ~200KB | ~10ms |
+| EnvironmentIndex | ~200KB | ~10ms |
+| HierarchyTrie | ~500KB | ~20ms |
+| **Total** | **~1.1MB** | **~50ms** |
+
+**Trade-off**: +1.1MB RAM for 100-1000x faster queries!
+
+### Performance Targets (Indices)
+
+| Operation | Target | Notes |
+|-----------|--------|-------|
+| Build index (10k keys) | < 50ms | One-time at startup |
+| Namespace lookup | < 1μs | O(1) HashMap get |
+| Language lookup | < 1μs | O(1) HashMap get |
+| Environment lookup | < 1μs | O(1) HashMap get |
+| Hierarchy walk (depth 4) | < 10μs | O(d) trie navigation |
+| Combined filter (2 indices) | < 100μs | Set intersection |
+| Index update (single key) | < 10μs | Add to relevant indices |
+
+---
+
+## Implementation Files (Part 1: Functions & Cache)
+
+[existing function implementations remain unchanged...]
+
+## Implementation Files (Part 2: Smart Indices)
 
 ### Primary Implementation
 
@@ -1164,7 +1272,140 @@ mod tests {
 }
 ```
 
+## Implementation Files (Part 2: Smart Indices)
+
+### Index Implementations
+
+**`reedbase/src/indices/namespace.rs`**
+
+```rust
+/// Namespace index for O(1) prefix lookups.
+pub struct NamespaceIndex {
+    index: HashMap<String, Vec<String>>,
+}
+
+impl NamespaceIndex {
+    /// Build index from keys.
+    /// - O(n) build time
+    /// - < 10ms for 10k keys
+    pub fn build(keys: &[String]) -> Self;
+    
+    /// Query by namespace.
+    /// - O(1) lookup
+    /// - < 1μs
+    pub fn query(&self, namespace: &str) -> Option<&Vec<String>>;
+    
+    /// Update index with new key.
+    /// - O(1) update
+    /// - < 10μs
+    pub fn insert(&mut self, key: &str);
+}
+```
+
+**`reedbase/src/indices/language.rs`**
+
+```rust
+/// Language index for O(1) language-based lookups.
+pub struct LanguageIndex {
+    index: HashMap<String, Vec<String>>,
+}
+
+impl LanguageIndex {
+    /// Build index from keys.
+    /// - Extracts <lang> from keys
+    /// - O(n) build time
+    pub fn build(keys: &[String]) -> Self;
+    
+    /// Query by language.
+    /// - O(1) lookup
+    pub fn query(&self, language: &str) -> Option<&Vec<String>>;
+}
+```
+
+**`reedbase/src/indices/environment.rs`**
+
+```rust
+/// Environment index for O(1) environment-based lookups.
+pub struct EnvironmentIndex {
+    index: HashMap<String, Vec<String>>,
+}
+
+impl EnvironmentIndex {
+    /// Build index from keys with <env> modifiers.
+    pub fn build(keys: &[String]) -> Self;
+    
+    /// Query by environment.
+    pub fn query(&self, environment: &str) -> Option<&Vec<String>>;
+}
+```
+
+**`reedbase/src/indices/hierarchy.rs`**
+
+```rust
+/// Hierarchical trie for O(d) prefix walks.
+pub struct HierarchyTrie {
+    root: TrieNode,
+}
+
+pub struct TrieNode {
+    segment: String,
+    children: HashMap<String, TrieNode>,
+    keys: Vec<String>,  // Complete keys at this node
+}
+
+impl HierarchyTrie {
+    /// Build trie from keys.
+    /// - O(n × d) where d = average depth
+    /// - < 20ms for 10k keys
+    pub fn build(keys: &[String]) -> Self;
+    
+    /// Walk trie to find all keys under path.
+    /// - O(d) where d = path depth
+    /// - < 10μs for depth 4
+    pub fn walk(&self, path: &[String]) -> Vec<String>;
+}
+```
+
+**`reedbase/src/indices/combined.rs`**
+
+```rust
+/// Combined index manager.
+pub struct IndexManager {
+    namespace: NamespaceIndex,
+    language: LanguageIndex,
+    environment: EnvironmentIndex,
+    hierarchy: HierarchyTrie,
+}
+
+impl IndexManager {
+    /// Build all indices from keys.
+    /// - Total: < 50ms for 10k keys
+    pub fn build(keys: &[String]) -> Self;
+    
+    /// Query with multiple filters (set intersection).
+    /// - namespace: Option<&str>
+    /// - language: Option<&str>
+    /// - environment: Option<&str>
+    /// Returns: Vec<String> (keys matching ALL filters)
+    /// - O(k) where k = result set size
+    /// - < 100μs typical
+    pub fn query_combined(
+        &self,
+        namespace: Option<&str>,
+        language: Option<&str>,
+        environment: Option<&str>,
+    ) -> Vec<String>;
+    
+    /// Rebuild indices (after bulk changes).
+    pub fn rebuild(&mut self, keys: &[String]);
+}
+```
+
+---
+
 ## Performance Requirements
+
+### Part 1: Functions & Cache
 
 | Operation | Target |
 |-----------|--------|
@@ -1175,6 +1416,18 @@ mod tests {
 | Aggregation (1000 rows) | < 10ms |
 | Transformation | < 10μs |
 
+### Part 2: Smart Indices
+
+| Operation | Target |
+|-----------|--------|
+| Build all indices (10k keys) | < 50ms |
+| Namespace lookup | < 1μs |
+| Language lookup | < 1μs |
+| Environment lookup | < 1μs |
+| Hierarchy walk (depth 4) | < 10μs |
+| Combined query (2 filters) | < 100μs |
+| Index update (single key) | < 10μs |
+
 ## Error Conditions
 
 - **DivisionByZero**: Division by zero in aggregation
@@ -1182,6 +1435,8 @@ mod tests {
 - **ParseError**: Cannot parse value as number
 
 ## CLI Commands
+
+### Part 1: Functions & Cache
 
 ```bash
 # Execute function
@@ -1200,8 +1455,66 @@ reed function:clear-cache
 # Output: ✓ Cache cleared
 ```
 
+### Part 2: Smart Indices
+
+```bash
+# Build indices for table
+reed index:build text
+# Output:
+# Building indices for table 'text'...
+# ✓ NamespaceIndex built (45 namespaces, 1,234 keys) in 12ms
+# ✓ LanguageIndex built (8 languages, 1,234 keys) in 10ms
+# ✓ EnvironmentIndex built (3 environments, 234 keys) in 8ms
+# ✓ HierarchyTrie built (1,234 keys, max depth 6) in 18ms
+# Total: 48ms, 1.1MB memory
+
+# Query by namespace (O(1) lookup!)
+reed index:query text --namespace page
+# Output: 234 keys found in < 1μs
+# page.title<de>
+# page.title<en>
+# page.header.logo
+# ...
+
+# Query by language (O(1) lookup!)
+reed index:query text --language de
+# Output: 456 keys found in < 1μs
+# page.title<de>
+# blog.post.title<de>
+# ...
+
+# Combined query (set intersection)
+reed index:query text --namespace page --language de
+# Output: 89 keys found in 95μs
+# page.title<de>
+# page.header.logo<de>
+# ...
+
+# Hierarchy walk (O(d) trie walk)
+reed index:query text --hierarchy page.header
+# Output: 12 keys found in 8μs
+# page.header.logo
+# page.header.title<de>
+# page.header.title<en>
+# ...
+
+# Show index stats
+reed index:stats text
+# Output:
+# NamespaceIndex: 45 namespaces, 1,234 keys, 201KB
+# LanguageIndex: 8 languages, 1,234 keys, 195KB
+# EnvironmentIndex: 3 environments, 234 keys, 48KB
+# HierarchyTrie: 1,234 keys, max depth 6, 512KB
+# Total: 956KB memory
+
+# Rebuild indices (after bulk updates)
+reed index:rebuild text
+# Output: ✓ Indices rebuilt in 49ms
+```
+
 ## Acceptance Criteria
 
+### Part 1: Functions & Cache
 - [ ] Function result caching with memoization
 - [ ] Cache get/set operations
 - [ ] Cache statistics (size, hit rate)
@@ -1210,11 +1523,38 @@ reed function:clear-cache
 - [ ] Aggregation functions (count, sum, avg, min, max)
 - [ ] Transformation functions (normalize, trim, capitalize, etc.)
 - [ ] Group by with count
+- [ ] Function cache < 100ns hit time
+- [ ] Aggregations < 10ms for 1000 rows
+
+### Part 2: Smart Indices
+- [ ] NamespaceIndex implementation with O(1) lookup
+- [ ] LanguageIndex implementation with O(1) lookup
+- [ ] EnvironmentIndex implementation with O(1) lookup
+- [ ] HierarchyTrie implementation with O(d) walk
+- [ ] IndexManager for combined queries
+- [ ] Build all indices < 50ms for 10k keys
+- [ ] Namespace query < 1μs
+- [ ] Language query < 1μs
+- [ ] Environment query < 1μs
+- [ ] Hierarchy walk < 10μs for depth 4
+- [ ] Combined query (2 filters) < 100μs
+- [ ] Index update (single key) < 10μs
+- [ ] CLI commands for index operations
+- [ ] Index statistics and monitoring
+
+### Integration
+- [ ] ReedQL uses indices automatically (REED-19-10)
+- [ ] RBKS v2 key parsing integrated (REED-19-08)
+- [ ] Indices rebuild on bulk updates
+- [ ] Graceful degradation if indices not built
+
+### Quality
 - [ ] All tests pass with 100% coverage
-- [ ] Performance targets met
+- [ ] Performance targets met for functions AND indices
 - [ ] All code in BBC English
 - [ ] All functions have complete documentation
 - [ ] Separate test files for each module
+- [ ] Memory overhead documented (< 1.5MB for 10k keys)
 
 ## Dependencies
 
@@ -1230,7 +1570,9 @@ reed function:clear-cache
 
 ## Notes
 
-**Function System Philosophy:**
+### Part 1: Function System Philosophy
+
+**Function System:**
 - **Rust functions, not Lua**: Type-safe, compiled, no runtime overhead
 - **Pure functions**: No side effects, deterministic results
 - **Memoization**: Automatic caching for expensive computations
@@ -1249,8 +1591,74 @@ reed function:clear-cache
 - **Con**: Functions must be compiled (cannot add at runtime)
 - **Con**: Cache uses memory (mitigated by eviction policy)
 
-**Future Enhancements:**
+---
+
+### Part 2: Smart Indices Philosophy
+
+**Why Indices Beat SQLite B-Trees:**
+
+| Aspect | SQLite B-Tree | ReedBase Indices | Winner |
+|--------|---------------|------------------|--------|
+| Key structure | Generic (any data) | Structured (namespace.hierarchy<modifiers>) | **ReedBase** |
+| Namespace query | O(log n + k) | **O(1)** HashMap | **ReedBase** (100x) |
+| Language query | O(n) full scan | **O(1)** HashMap | **ReedBase** (1000x) |
+| Hierarchy query | O(log n + k) | **O(d)** Trie | **ReedBase** (10x) |
+| Memory | ~50KB per 10k rows | ~1.1MB per 10k keys | **SQLite** (smaller) |
+| Build time | Incremental | ~50ms for 10k keys | **SQLite** (faster) |
+
+**Design Decisions:**
+- **Namespace Index**: HashMap for O(1) lookup (most common query pattern)
+- **Language Index**: HashMap for O(1) lookup (2nd most common)
+- **Environment Index**: HashMap for O(1) lookup (production/dev filtering)
+- **Hierarchy Trie**: Trie for O(d) prefix walks (complex hierarchy queries)
+- **No Inverted Text Index**: Too much memory for marginal benefit (can add later if needed)
+
+**Index Build Strategy:**
+- **Eager**: Build all indices at startup (~50ms for 10k keys)
+- **Update on write**: Add new keys to indices incrementally (< 10μs overhead)
+- **Rebuild on bulk**: Full rebuild after bulk operations
+
+**Memory Management:**
+- **Keys stored once**: Indices store pointers/references, not copies
+- **Overhead**: ~100 bytes per key across all indices
+- **Total**: ~1.1MB for 10k keys (acceptable trade-off)
+
+**Integration with ReedQL (REED-19-10):**
+```rust
+// ReedQL automatically detects index-able queries:
+
+// Query: SELECT * FROM text WHERE key LIKE 'page.%'
+// → Detected: Namespace pattern
+// → Uses: NamespaceIndex.query("page")
+// → Result: O(1) lookup instead of O(n) scan!
+
+// Query: SELECT * FROM text WHERE key LIKE '%<de>'
+// → Detected: Language pattern
+// → Uses: LanguageIndex.query("de")
+// → Result: O(1) lookup instead of O(n) scan!
+
+// Query: SELECT * FROM text WHERE key LIKE 'page.%<de>'
+// → Detected: Combined pattern
+// → Uses: NamespaceIndex ∩ LanguageIndex
+// → Result: O(k) set intersection, k = result size!
+```
+
+**Trade-offs:**
+- **Pro**: 100-1000x faster queries for common patterns
+- **Pro**: Validates RBKS v2 key structure investment
+- **Pro**: Enables instant language/environment/namespace filtering
+- **Con**: +1.1MB RAM per 10k keys (mitigated: modern systems have GB of RAM)
+- **Con**: +50ms startup time (mitigated: one-time cost, acceptable)
+- **Con**: Requires RBKS v2 validation (mitigated: already implemented in REED-19-08)
+
+**Future Enhancements (Functions):**
 - Hot-reload functions (via dynamic library loading)
 - Python/Lua bindings for scripting
 - Window functions (LEAD, LAG, etc.)
 - Recursive functions with cycle detection
+
+**Future Enhancements (Indices):**
+- Full-text search index (inverted index for values)
+- Persistent indices (save to disk, load at startup)
+- Incremental index updates (no full rebuild needed)
+- Index compression (reduce memory footprint)
