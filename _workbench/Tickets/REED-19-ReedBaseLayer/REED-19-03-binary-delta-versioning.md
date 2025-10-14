@@ -533,6 +533,16 @@ mod tests {
 # Rollback to version (uses delta chain)
 reed rollback users 1736860800
 # Internally: Apply deltas in reverse to reconstruct version
+
+# Emergency recovery from last valid delta (crash recovery)
+reed recover:from-deltas users
+# Reconstructs .csv from initial snapshot + all valid deltas
+# Used when .csv is corrupted but deltas are intact
+
+# Validate delta chain integrity
+reed validate:deltas users
+# Checks all deltas can be applied successfully
+# Reports any corrupted or missing deltas
 ```
 
 ## Acceptance Criteria
@@ -547,6 +557,12 @@ reed rollback users 1736860800
 - [ ] Apply delta in < 30ms for 100-row CSV
 - [ ] Calculate savings percentage
 - [ ] Handle corrupted delta files gracefully
+- [ ] Emergency recovery: `recover:from-deltas` CLI command
+- [ ] Reconstruct CSV from initial snapshot + delta chain
+- [ ] Find last valid delta in chain (backwards iteration)
+- [ ] Validate delta chain integrity: `validate:deltas` CLI command
+- [ ] Atomic CSV writes during recovery (temp file + rename)
+- [ ] Recovery time < 30ms per delta in chain
 - [ ] All tests pass with 100% coverage
 - [ ] Performance targets met
 - [ ] All code in BBC English
@@ -585,7 +601,60 @@ reed rollback users 1736860800
 - **Con**: Rollback requires applying delta chain (slower than full snapshots)
 - **Con**: Corrupted delta breaks reconstruction (mitigated by periodic full snapshots in REED-19-07)
 
+**Crash Recovery Integration:**
+
+This ticket provides emergency recovery when CSV files are corrupted:
+
+**Scenario 1: Corrupted .log (partial write)**
+→ Handled by REED-19-04 (CRC32 validation + auto-truncate)
+→ `.csv` is still valid, no delta recovery needed
+
+**Scenario 2: Corrupted .csv (crash during merge)**
+→ **This ticket handles it**: Reconstruct from initial + deltas
+→ Command: `reed recover:from-deltas <table>`
+
+**Scenario 3: Both .csv AND .log corrupted (catastrophic)**
+→ **This ticket handles it**: Reconstruct from last valid delta
+→ Requires at least initial snapshot + deltas to be valid
+
+**Recovery workflow:**
+```rust
+fn emergency_recovery(table: &str) -> ReedResult<()> {
+    // 1. Find last valid delta (iterate backwards from HEAD)
+    let last_valid_delta = find_last_valid_delta(table)?;
+    
+    // 2. Load initial snapshot
+    let mut state = load_initial_snapshot(table)?;
+    
+    // 3. Apply all deltas up to last valid
+    for delta_file in walk_deltas_to(last_valid_delta) {
+        let delta = load_and_decompress_delta(&delta_file)?;
+        state = apply_bspatch(&state, &delta)?;
+    }
+    
+    // 4. Write reconstructed state as new .csv
+    write_csv_atomic(table, &state)?;
+    
+    // 5. Truncate .log (entries now in CSV)
+    truncate_log(table)?;
+    
+    Ok(())
+}
+```
+
+**Safety guarantees:**
+- ✅ Can recover from any delta in the chain
+- ✅ Maximum data loss: Changes after last valid delta only
+- ✅ Automatic validation during recovery (CRC32 + bspatch integrity)
+- ✅ Atomic writes (temp file + rename) prevent double-corruption
+
+**Performance:**
+- Recovery time: ~30ms per delta in chain
+- 100 deltas: ~3 seconds recovery time
+- 1000 deltas: ~30 seconds recovery time
+
 **Future Enhancements:**
-- Periodic full snapshots (every 100 deltas) for faster rollback
-- Delta chain optimization (merge old deltas)
+- Periodic full snapshots (every 100 deltas) for faster rollback and recovery
+- Delta chain optimization (merge old deltas to reduce recovery time)
 - Parallel delta application for long chains
+- Background delta validation (detect corruption before emergency)

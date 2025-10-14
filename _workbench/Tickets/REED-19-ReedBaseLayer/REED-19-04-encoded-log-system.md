@@ -39,15 +39,27 @@ Implement encoded version log system using integer codes from registries instead
 1736860900|update|admin|1736860800|2500|15|sha256:abc123
 ```
 
-**Encoded (new way):**
+**Encoded with CRC32 validation (new way):**
 ```
-1736860900|2|1|1736860800|2500|15|sha256:abc123
+REED|00000052|1736860900|2|1|1736860800|2500|15|sha256:abc123|A1B2C3D4
 ```
 
 **Format specification:**
 ```
-{timestamp}|{action_code}|{user_code}|{base_version}|{size}|{rows}|{hash}
+{magic}|{length}|{timestamp}|{action_code}|{user_code}|{base_version}|{size}|{rows}|{hash}|{crc32}
 ```
+
+**Fields:**
+- `magic`: "REED" (4 bytes) - Corruption detection at startup
+- `length`: Entry size in bytes (8 bytes hex) - Validates complete write
+- `timestamp`: Unix timestamp (u64)
+- `action_code`: Action code from dictionary (u8)
+- `user_code`: User code from dictionary (u32)
+- `base_version`: Previous version timestamp (u64)
+- `size`: Delta size in bytes (usize)
+- `rows`: Number of rows affected (usize)
+- `hash`: SHA-256 hash of delta
+- `crc32`: CRC32 checksum of data portion (8 bytes hex)
 
 ### Dictionary Mappings
 
@@ -731,18 +743,24 @@ reed log:show users --raw
 
 ## Acceptance Criteria
 
-- [ ] Encode log entry using action/user codes
+- [ ] Encode log entry using action/user codes with CRC32
+- [ ] Add magic bytes ("REED") and length field to entries
+- [ ] Calculate and append CRC32 checksum
 - [ ] Decode log entry to human-readable format
+- [ ] Validate magic bytes on decode
+- [ ] Validate CRC32 checksum on decode
 - [ ] Encode multiple entries to file
 - [ ] Decode multiple entries from file
+- [ ] `validate_and_truncate_log()` removes corrupted entries
+- [ ] Auto-truncation on startup for crash recovery
 - [ ] Calculate size savings (50%+ vs plain text)
 - [ ] Filter log entries by action
 - [ ] Filter log entries by user
 - [ ] Filter log entries by time range
 - [ ] Handle empty lines gracefully
-- [ ] Return specific errors for invalid formats
+- [ ] Return specific errors for invalid formats (ParseError, CorruptedLogEntry)
 - [ ] All tests pass with 100% coverage
-- [ ] Performance targets met
+- [ ] Performance targets met (< 150μs encode with CRC32)
 - [ ] All code in BBC English
 - [ ] All functions have complete documentation (Input/Output/Performance/Error Conditions/Example Usage)
 - [ ] No Swiss Army knife functions (each function = one job)
@@ -784,6 +802,26 @@ reed log:show users --raw
 - **Pro**: Better XZ compression (integers compress better than strings)
 - **Con**: Requires dictionary lookups (mitigated by HashMap caching - 100ns per lookup)
 - **Con**: Dictionary must be maintained (automated via get_or_create_user_code)
+
+**Crash Recovery Integration:**
+
+This ticket provides the foundation for crash recovery via:
+1. **Magic bytes ("REED")**: Instant corruption detection at startup
+2. **CRC32 validation**: Detect partial writes and bit-rot
+3. **Auto-truncation**: `validate_and_truncate_log()` removes corrupted entries on startup
+4. **Length field**: Validates complete entry was written
+
+**Recovery workflow** (integrated with REED-19-03):
+```
+Startup → Validate .log (truncate corruption) → Check .csv integrity → 
+If .csv corrupt: Emergency recovery from last valid delta (see REED-19-03)
+```
+
+**Safety guarantees:**
+- ✅ Partial writes detected and removed automatically
+- ✅ Bit-rot detected via CRC32 mismatch
+- ✅ Log always consistent after startup validation
+- ✅ Maximum loss: Last incomplete entry only
 
 **Future Enhancements:**
 - Compressed log format (gzip per entry for huge logs)
