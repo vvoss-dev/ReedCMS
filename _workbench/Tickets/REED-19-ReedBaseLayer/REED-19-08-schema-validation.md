@@ -28,9 +28,238 @@
 
 ## Objective
 
-Implement schema validation for CSV tables. Define and enforce column schemas (types, required fields, constraints) to prevent data corruption and ensure data quality.
+Implement comprehensive schema validation for ReedBase:
+1. **Key validation** (RBKS v2) - Enforce key structure for reliable indices
+2. **Column schemas** - Define and enforce column types and constraints
+
+This ensures data quality and enables high-performance index-based queries.
 
 ## Requirements
+
+### Part 1: Key Validation (RBKS v2)
+
+#### ReedBase Key Specification v2 (RBKS v2)
+
+**Canonical Format:**
+```
+<namespace>.<hierarchy>.<type>[<modifier,modifier,...>]
+```
+
+**Why Key Validation?**
+- ✅ Enables reliable index-based queries (namespace, language, hierarchy)
+- ✅ Guarantees O(1) lookups for common patterns (`page.%`, `%<de>`)
+- ✅ Prevents developer errors at write-time
+- ✅ Self-documenting keys with clear structure
+
+#### Key Structure Rules
+
+1. **Lowercase only**: `page.header.title` ✅, `Page.Header.Title` ❌
+2. **Dots for hierarchy**: `page.header.title` ✅, `page-header-title` ❌
+3. **Angle brackets for modifiers**: `<de,prod>` ✅, `@de#prod` ❌
+4. **Modifiers comma-separated**: `<de,prod,christmas>` ✅, `<de prod>` ❌
+5. **Modifiers order-independent**: `<de,prod>` = `<prod,de>` ✅
+6. **No empty segments**: `page.title` ✅, `page..title` ❌
+7. **No leading/trailing dots**: `page.title` ✅, `.page.title` ❌
+8. **Depth 2-8 levels**: `page.title` (2) ✅, `a.b.c.d.e.f.g.h.i` (9) ❌
+9. **No empty modifiers**: `<de>` ✅, `<>` ❌
+
+#### Modifier Categories
+
+**Language** (ISO 639-1, 2-letter):
+- `de`, `en`, `fr`, `es`, `it`, `pt`, `nl`, `pl`, `ru`, `ja`, `zh`, `ar`
+- Max 1 per key
+- Example: `page.title<de>`
+
+**Environment**:
+- `dev`, `prod`, `staging`, `test`
+- Max 1 per key
+- Example: `page.title<prod>`
+
+**Season**:
+- `christmas`, `easter`, `summer`, `winter`
+- Max 1 per key
+- Example: `landing.hero<christmas>`
+
+**Variant** (device type):
+- `mobile`, `desktop`, `tablet`
+- Max 1 per key
+- Example: `page.header<mobile>`
+
+**Custom**:
+- Any lowercase identifier not in above categories
+- Multiple allowed
+- Example: `component.widget<custom1,custom2>`
+
+#### Key Examples
+
+```rust
+// Valid keys
+"page.title"                              // Base key
+"page.title<de>"                          // German only
+"page.title<prod>"                        // Production only
+"page.title<de,prod>"                     // German + Production
+"page.title<de,prod,christmas>"           // German + Prod + Christmas
+"landing.hero<en,mobile,summer>"          // Multi-modifier
+"blog.post.headline<fr,staging>"          // Complex hierarchy
+
+// Invalid keys
+"Page.Title"                              // ❌ Uppercase
+"page-title"                              // ❌ Hyphen instead of dot
+"page.title<DE>"                          // ❌ Uppercase modifier
+"page.title<de prod>"                     // ❌ Space instead of comma
+"page.title<>"                            // ❌ Empty modifiers
+"page.title<de,>"                         // ❌ Trailing comma
+"page..title"                             // ❌ Empty segment
+".page.title"                             // ❌ Leading dot
+"page.title<de,en>"                       // ❌ Multiple languages
+"a.b.c.d.e.f.g.h.i"                      // ❌ Too deep (9 levels)
+```
+
+#### Regex Pattern
+
+```rust
+pub const RBKS_V2_PATTERN: &str = 
+    r"^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*){1,7}(<[a-z]+(,[a-z]+)*>)?$";
+```
+
+#### Modifier Classification
+
+```rust
+/// Parsed modifiers from <lang,env,...> syntax.
+#[derive(Debug, Clone, PartialEq, Default)]
+pub struct Modifiers {
+    pub language: Option<String>,       // Some("de")
+    pub environment: Option<String>,    // Some("prod")
+    pub season: Option<String>,         // Some("christmas")
+    pub variant: Option<String>,        // Some("mobile")
+    pub custom: Vec<String>,            // ["other", "modifiers"]
+}
+
+/// Classify raw modifiers into categories.
+///
+/// ## Rules
+/// - Language: 2-letter ISO 639-1 codes (max 1)
+/// - Environment: dev/prod/staging/test (max 1)
+/// - Season: christmas/easter/summer/winter (max 1)
+/// - Variant: mobile/desktop/tablet (max 1)
+/// - Custom: anything else (multiple allowed)
+///
+/// ## Error Conditions
+/// - Multiple languages: "Multiple languages not allowed"
+/// - Multiple environments: "Multiple environments not allowed"
+/// - Multiple seasons: "Multiple seasons not allowed"
+/// - Multiple variants: "Multiple variants not allowed"
+fn classify_modifiers(raw: &[String]) -> ReedResult<Modifiers>;
+```
+
+#### Fallback Chain Resolution
+
+```rust
+/// Fallback chain for modifier resolution.
+///
+/// ## Priority (highest to lowest)
+/// 1. Exact match: page.title<de,prod,christmas>
+/// 2. Without season: page.title<de,prod>
+/// 3. Without environment: page.title<de,christmas>
+/// 4. Language only: page.title<de>
+/// 5. Environment + season: page.title<prod,christmas>
+/// 6. Environment only: page.title<prod>
+/// 7. Season only: page.title<christmas>
+/// 8. Base key: page.title
+///
+/// ## Performance
+/// - Max 8 lookups (power set of 3 modifier types)
+/// - < 100μs typical (early exit on match)
+///
+/// ## Example
+/// ```rust
+/// // Query: get("page.title<de,prod,christmas>")
+/// // Tries in order:
+/// get_exact("page.title<de,prod,christmas>")      // Full match
+///   .or_else(|| get_exact("page.title<de,prod>"))  // Without season
+///   .or_else(|| get_exact("page.title<de,christmas>")) // Without env
+///   .or_else(|| get_exact("page.title<de>"))       // Language only
+///   .or_else(|| get_exact("page.title<prod,christmas>")) // Without lang
+///   .or_else(|| get_exact("page.title<prod>"))     // Env only
+///   .or_else(|| get_exact("page.title<christmas>")) // Season only
+///   .or_else(|| get_exact("page.title"))           // Base fallback
+/// ```
+pub fn get_with_fallback(
+    base_key: &str,
+    modifiers: &Modifiers,
+) -> ReedResult<Option<String>>;
+```
+
+#### Normalization
+
+```rust
+/// Normalize key to canonical format.
+///
+/// ## Operations
+/// - Convert to lowercase
+/// - Sort modifiers alphabetically
+/// - Remove duplicate modifiers
+/// - Trim whitespace
+/// - Remove duplicate dots
+/// - Remove leading/trailing dots
+///
+/// ## Performance
+/// - O(n + m log m) where n = key length, m = modifiers count
+/// - < 15μs typical
+///
+/// ## Example
+/// ```rust
+/// let normalized = normalize_key("Page.Header..Title<PROD,DE,prod>")?;
+/// assert_eq!(normalized, "page.header.title<de,prod>");
+/// ```
+pub fn normalize_key(raw: &str) -> ReedResult<String>;
+```
+
+#### CLI Integration
+
+```bash
+# Set with validation
+reed set:text page.title<de,prod> "Titel"
+# ✅ Valid - accepted
+
+reed set:text "Page.Title<DE>" "Test"
+# ❌ Error: Key validation failed: Must be lowercase
+# Hint: Did you mean "page.title<de>"?
+
+reed set:text page-title<de> "Test"
+# ❌ Error: Key validation failed: Use dots (.) for hierarchy
+# Hint: Did you mean "page.title<de>"?
+
+reed set:text page.title<> "Test"
+# ❌ Error: Key validation failed: Empty modifiers <> not allowed
+
+reed set:text page.title<de,en> "Test"
+# ❌ Error: Key validation failed: Multiple languages not allowed
+
+# Auto-normalize (optional flag)
+reed set:text "Page.Title<PROD,DE>" "Test" --normalize
+# ⚠️  Warning: Key normalized: page.title<de,prod>
+# ✅ Set: page.title<de,prod> = "Test"
+
+# Query with modifiers (uses indices!)
+reed query text "SELECT * WHERE key LIKE 'page.%<de>'"
+# → Uses NamespaceIndex + LanguageIndex → O(1) lookup!
+```
+
+#### Performance Requirements (Key Validation)
+
+| Operation | Target | Notes |
+|-----------|--------|-------|
+| Parse key | < 15μs | Regex + modifier parsing |
+| Validate key | < 20μs | Pattern match + classification |
+| Normalize key | < 15μs | Lowercase + sort + dedup |
+| Classify modifiers | < 10μs | Category matching |
+| Generate fallback chain | < 50μs | Power set generation |
+| **Total SET overhead** | **< 30μs** | +20% vs no validation |
+
+---
+
+### Part 2: Column Schema Validation
 
 ### Schema File Format
 
@@ -44,8 +273,40 @@ Implement schema validation for CSV tables. Define and enforce column schemas (t
 **schema.toml:**
 ```toml
 [schema]
-version = "1.0"
-strict = true  # Reject writes that violate schema
+version = "2.0"  # v2 includes RBKS key validation
+strict = true     # Reject writes that violate schema
+
+# ===== PART 1: Key Validation (RBKS v2) =====
+
+[key_validation]
+enabled = true
+pattern = "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*){1,7}(<[a-z]+(,[a-z]+)*>)?$"
+min_depth = 2
+max_depth = 8
+allow_normalization = true  # Auto-normalize on --normalize flag
+
+[key_validation.modifiers.language]
+allowed = ["de", "en", "fr", "es", "it", "pt", "nl", "pl", "ru", "ja", "zh", "ar"]
+max_count = 1  # Only one language per key
+
+[key_validation.modifiers.environment]
+allowed = ["dev", "prod", "staging", "test"]
+max_count = 1
+
+[key_validation.modifiers.season]
+allowed = ["christmas", "easter", "summer", "winter"]
+max_count = 1
+
+[key_validation.modifiers.variant]
+allowed = ["mobile", "desktop", "tablet"]
+max_count = 1
+
+[key_validation.namespace]
+# Optional: restrict allowed namespaces
+# allowed = ["page", "blog", "landing", "meta"]
+# If not specified, all namespaces allowed
+
+# ===== PART 2: Column Validation =====
 
 [[columns]]
 name = "id"
@@ -1127,8 +1388,25 @@ reed schema:edit users
 
 ## Acceptance Criteria
 
+### Part 1: Key Validation (RBKS v2)
+- [ ] Parse key with RBKS v2 regex pattern
+- [ ] Validate key structure (lowercase, dots, modifiers)
+- [ ] Parse modifiers from `<modifier,modifier>` syntax
+- [ ] Classify modifiers into categories (language, environment, season, variant, custom)
+- [ ] Reject multiple modifiers of same category (e.g., `<de,en>`)
+- [ ] Normalize keys (lowercase, sort modifiers, dedup)
+- [ ] Generate fallback chain for modifier resolution
+- [ ] Validate depth (2-8 levels)
+- [ ] Validate no empty segments or trailing commas
+- [ ] Load key_validation config from schema.toml
+- [ ] CLI `--normalize` flag for auto-normalization
+- [ ] Helpful error messages with suggestions ("Did you mean...?")
+- [ ] Key validation < 30μs overhead on SET operations
+
+### Part 2: Column Schema Validation
 - [ ] Load schema from TOML file
 - [ ] Parse schema with all constraint types
+- [ ] Parse key_validation section from schema.toml
 - [ ] Validate row against schema
 - [ ] Validate string fields (length, pattern)
 - [ ] Validate integer fields (range)
@@ -1138,13 +1416,15 @@ reed schema:edit users
 - [ ] Check uniqueness constraints across all rows
 - [ ] Validate multiple rows in batch
 - [ ] Create default schema from column names
-- [ ] Save schema to TOML file
+- [ ] Save schema to TOML file (including key_validation)
 - [ ] Serialize schema to TOML format
+
+### Quality
 - [ ] All tests pass with 100% coverage
-- [ ] Performance targets met
+- [ ] Performance targets met (key validation + column validation)
 - [ ] All code in BBC English
 - [ ] All functions have complete documentation
-- [ ] Separate test files as `validation.test.rs` and `loader.test.rs`
+- [ ] Separate test files: `key_validation.test.rs`, `validation.test.rs`, `loader.test.rs`
 
 ## Dependencies
 
@@ -1160,6 +1440,37 @@ reed schema:edit users
 
 ## Notes
 
+### Part 1: RBKS v2 Philosophy
+
+**Why Key Validation?**
+- **Enables Indices**: Structured keys = O(1) lookups via NamespaceIndex, LanguageIndex
+- **Self-Documenting**: `page.header.title<de,prod>` explains itself
+- **Prevents Chaos**: Without validation, keys become inconsistent over time
+- **Performance**: 100-1000x faster queries via index-based lookups
+
+**Key Design Decisions:**
+- **Angle-bracket modifiers `<>`**: Cleaner than `@#`, order-independent
+- **Comma-separated**: `<de,prod>` is clear, no ambiguity
+- **Lowercase enforced**: Consistency, no case-sensitivity issues
+- **Dots for hierarchy**: Standard practice, works with existing tooling
+- **Depth 2-8**: Optimal for readability and performance
+
+**Validation Strategy:**
+- **Strict on write**: Reject invalid keys immediately
+- **Normalization available**: `--normalize` flag auto-fixes common mistakes
+- **Helpful errors**: "Did you mean...?" suggestions
+- **< 30μs overhead**: Minimal performance impact
+
+**Fallback Chain Benefits:**
+- **Graceful degradation**: Falls back from specific to general
+- **Environment-agnostic**: Same content, different environments
+- **Seasonal themes**: Christmas theme falls back to default
+- **Early exit**: Stops at first match (< 100μs typical)
+
+---
+
+### Part 2: Column Schema Philosophy
+
 **Schema Philosophy:**
 - **Optional by default**: New tables work without schema (lenient)
 - **Enforce when present**: If schema.toml exists, strict validation
@@ -1171,11 +1482,27 @@ reed schema:edit users
 - **Strict**: Schema exists, `strict = true` (reject invalid data)
 
 **Trade-offs:**
-- **Pro**: Data quality enforcement
+- **Pro**: Data quality enforcement at both key and column level
 - **Pro**: Type safety at database level
 - **Pro**: Self-documenting (schema.toml is documentation)
+- **Pro**: Enables high-performance indices (via key structure)
 - **Con**: Schema must be maintained (mitigated by auto-generation)
-- **Con**: Validation overhead (< 1ms per row, acceptable)
+- **Con**: Validation overhead (< 30μs key + < 1ms row = acceptable)
+
+---
+
+### Integration with Indices (REED-19-09)
+
+**Key Validation enables:**
+- **NamespaceIndex**: `page.%` → O(1) lookup via namespace="page"
+- **LanguageIndex**: `%<de>` → O(1) lookup via language="de"
+- **EnvironmentIndex**: `%<prod>` → O(1) lookup via environment="prod"
+- **HierarchyTrie**: `page.header.%` → O(d) trie walk where d=depth
+
+**Without key validation:**
+- ❌ Index lookups unreliable (keys inconsistent)
+- ❌ Queries fall back to O(n) full scans
+- ❌ Performance degrades over time
 
 **Future Enhancements:**
 - Foreign key constraints (reference other tables)
