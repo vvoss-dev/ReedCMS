@@ -1,10 +1,10 @@
-# REED-19-11: CLI SQL-Like Query Interface (ReedQL)
+# REED-19-12: CLI SQL-Like Query Interface (ReedQL)
 
 **Status**: Not Started  
 **Priority**: High  
 **Estimated Effort**: 1.5 weeks  
 **Layer**: ReedBase (Data Layer)  
-**Dependencies**: REED-19-02, REED-19-08, REED-19-09, REED-19-10  
+**Dependencies**: REED-19-02, REED-19-08, REED-19-10, REED-19-11  
 
 ---
 

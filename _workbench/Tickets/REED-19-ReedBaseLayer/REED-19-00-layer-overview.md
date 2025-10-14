@@ -109,14 +109,15 @@ Functions can cache results:
 - **REED-19-06**: Row-Level CSV Merge
 - **REED-19-07**: Conflict Resolution
 - **REED-19-04**: Encoded Log System
-- **REED-19-08**: Schema Validation
-- **REED-19-09**: Function System & Caching
-- **REED-19-10**: Smart Indices
-- **REED-19-11**: CLI SQL-Like Query Interface (ReedQL)
-- **REED-19-12**: Migration from REED-02
-- **REED-19-13**: Performance Testing & Benchmarks
+- **REED-19-08**: RBKS v2 Key Validation
+- **REED-19-10**: Function System & Caching
+- **REED-19-09**: Column Schema Validation
+- **REED-19-11**: Smart Indices
+- **REED-19-12**: CLI SQL-Like Query Interface (ReedQL)
+- **REED-19-13**: Migration from REED-02
+- **REED-19-14**: Performance Testing & Benchmarks
 
-- **REED-19-14**: Documentation
+- **REED-19-15**: Documentation
 ## Impact Analysis
 
 ### What Changes
@@ -245,8 +246,8 @@ Migrates existing `.reed/` to new structure:
 
 - Week 1: Core tables + versioning (REED-19-01 to REED-19-03)
 - Week 2: Concurrent writes + merge (REED-19-06 to REED-19-07)
-- Week 3: Schemas + functions + indices + logs (REED-19-04 to REED-19-10)
-- Week 4: ReedQL + migration + testing + docs (REED-19-11 to REED-19-14)
+- Week 3: Schemas + functions + indices + logs (REED-19-04 to REED-19-11)
+- Week 4: ReedQL + migration + testing + docs (REED-19-12 to REED-19-15)
 
 **Aggressive: 2 weeks** (if parallel development)
 

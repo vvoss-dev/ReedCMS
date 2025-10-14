@@ -1,4 +1,4 @@
-# REED-19-10: Smart Indices for Accelerated Queries
+# REED-19-11: Smart Indices for Accelerated Queries
 
 ## Metadata
 - **Status**: Planned
