@@ -917,6 +917,187 @@ pub fn load_schema(table: &str) -> ReedResult<Schema> {
 
 **Cons**:
 - ❌ Schema must be maintained (mitigated by auto-generation)
+
+---
+
+## Frame-Based Schema Migrations
+
+**Integration with Frame-System** (coordinated batch operations):
+
+Schema migrations that affect data structure use the Frame-System to ensure atomicity across multiple operations.
+
+### Schema Migration with Frame
+
+When changing table schemas, all related operations (schema file update, data transformation, index rebuild) share ONE timestamp via a Frame:
+
+```rust
+use crate::reedbase::frame::Frame;
+
+/// Migrate schema from version 1 to version 2.
+///
+/// Uses Frame-System to coordinate:
+/// - Schema file write
+/// - Data transformation for all rows
+/// - Index rebuilds
+/// - Validation
+///
+/// All operations share the same timestamp for consistency.
+pub fn migrate_schema(table: &str, from_version: u32, to_version: u32) -> ReedResult<MigrationReport> {
+    // 1. Begin frame - get ONE timestamp for all operations
+    let mut frame = Frame::begin(&format!("schema_migration_{}_{}_{}", table, from_version, to_version))?;
+    let ts = frame.timestamp();
+    
+    // 2. Load migration definition
+    let migration = load_migration(table, from_version, to_version)?;
+    frame.log_operation("load_migration", None);
+    
+    // 3. Write new schema file (with timestamp)
+    let new_schema = migration.target_schema();
+    let schema_path = format!(".reed/tables/{}/schema.{}.toml", table, ts);
+    save_schema(&new_schema, &schema_path)?;
+    frame.log_operation("write_schema", Some(table));
+    
+    // 4. Transform existing data to match new schema
+    let current_data = read_table_current(table)?;
+    let transformed = migration.transform_data(&current_data)?;
+    
+    // Write transformed data as delta with SAME timestamp
+    write_table_delta(table, ts, &transformed)?;
+    frame.log_operation("transform_data", Some(table));
+    
+    // Write version.log entry with frame_id
+    write_version_log(
+        table,
+        ts,
+        &format!("schema_migration_{}_{}", from_version, to_version),
+        "system",
+        Some(frame.id),  // ← Links to frame
+    )?;
+    
+    // 5. Rebuild indices for new schema (SAME timestamp)
+    for index in migration.affected_indices() {
+        rebuild_index(table, index, ts)?;
+        frame.log_operation("rebuild_index", Some(index));
+    }
+    
+    // 6. Validate all data against new schema
+    validate_table_against_schema(table, &new_schema)?;
+    frame.log_operation("validate_schema", Some(table));
+    
+    // 7. Commit frame (creates snapshot automatically)
+    let frame_report = frame.commit()?;
+    
+    Ok(MigrationReport {
+        table: table.to_string(),
+        from_version,
+        to_version,
+        frame_id: frame_report.frame_id,
+        timestamp: ts,
+        rows_transformed: transformed.len(),
+        indices_rebuilt: migration.affected_indices().len(),
+        duration: frame_report.duration,
+    })
+}
+```
+
+### Rollback Schema Migration
+
+Frame-System enables simple rollback:
+
+```rust
+/// Rollback a schema migration.
+///
+/// Uses Frame-System to restore previous state atomically.
+pub fn rollback_schema_migration(migration_frame_id: Uuid) -> ReedResult<RollbackReport> {
+    // Frame-System handles rollback automatically
+    // - Finds previous frame before migration
+    // - Restores schema, data, and indices to previous state
+    // - Creates new version (versionised rollback, no data loss)
+    
+    rollback_frame(migration_frame_id)
+}
+```
+
+### CLI Commands
+
+```bash
+# Run schema migration (creates frame automatically)
+reed schema:migrate users 1 2
+
+# List all schema migrations
+reed frame:list --filter schema_migration
+
+# Show migration details
+reed frame:status <frame-id>
+
+# Rollback migration if something went wrong
+reed frame:rollback <frame-id> --confirm
+```
+
+### Example Migration Timeline
+
+```
+Timeline for "users" table:
+
+Frame 1 (ts=1736860700): Initial schema v1
+├─ schema.1736860700.toml         # Version 1 schema
+├─ 1736860700.bsdiff               # Initial data
+└─ version.log: n/a                # No frame (initial)
+
+Frame 2 (ts=1736860800): Schema migration 1→2
+├─ schema.1736860800.toml         # Version 2 schema (new columns)
+├─ 1736860800.bsdiff               # Transformed data
+├─ version.log: uuid002            # ← Frame links all operations
+└─ .reed/frames/1736860800.snapshot.csv  # Snapshot of all tables
+
+Frame 3 (ts=1736860900): Rollback to v1
+├─ 1736860900.bsdiff               # Data from Frame 1 restored
+├─ version.log: n/a                # Rollback doesn't create frame
+└─ .reed/frames/1736860900.snapshot.csv  # New snapshot after rollback
+```
+
+### Benefits
+
+**Atomicity**: Schema + data + indices updated together (one timestamp)
+
+**Fast Rollback**: O(tables) instead of O(tables × versions)
+- Without Frame: Search version.log for each table (~500ms)
+- With Frame: Load snapshot, restore tables (~5ms)
+- **100× speedup**
+
+**Audit Trail**: All migration operations linked via frame_id in version.log
+
+**Crash Recovery**: Incomplete migrations automatically rolled back on server start
+
+**Consistency**: Point-in-time recovery uses frame snapshots (all tables consistent)
+
+### Performance Guarantees
+
+| Operation | Target | Measured |
+|-----------|--------|----------|
+| Schema migration (1000 rows) | <10s | frame_commit_duration_seconds |
+| Rollback migration | <5s | frame_rollback_duration_seconds |
+| Validation after migration | <1s | schema_validation_duration_seconds |
+| Recovery from crash | <30s | frame_recovery_duration_seconds |
+
+### Frame Metrics
+
+All schema migration operations collect Frame metrics (see REED-19-01A):
+
+```rust
+// Automatically collected by Frame::begin/commit/rollback
+metrics().record(Metric {
+    name: "frame_commit_duration_seconds".to_string(),
+    value: duration.as_secs_f64(),
+    unit: MetricUnit::Seconds,
+    tags: hashmap!{
+        "name" => "schema_migration_users_1_2",
+        "tables_affected" => "1",
+    },
+});
+```
+
+---
 - ❌ Validation overhead (< 1ms per row = acceptable)
 
 ### Future Enhancements

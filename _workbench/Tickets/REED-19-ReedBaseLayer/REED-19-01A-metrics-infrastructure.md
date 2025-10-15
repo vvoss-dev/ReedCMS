@@ -519,6 +519,135 @@ mod tests {
 - Metrics Design: `_workbench/Tickets/templates/metrics-module-design.md`
 - REED-19-00: Layer Overview
 
+## Frame-System Metrics
+
+The Frame-System (coordinated batch operations) uses this metrics infrastructure for observability.
+
+### Frame Lifecycle Metrics
+
+**Counters** (monotonic, total counts):
+
+```rust
+// Frame started
+metrics().increment("frame_started_total", hashmap!{
+    "name" => frame_name,
+});
+
+// Frame committed successfully
+metrics().increment("frame_committed_total", hashmap!{
+    "name" => frame_name,
+    "tables_affected" => &tables.len().to_string(),
+});
+
+// Frame rolled back
+metrics().increment("frame_rolled_back_total", hashmap!{
+    "name" => frame_name,
+    "reason" => "manual" | "crash_recovery",
+});
+
+// Frame crashed (found during recovery)
+metrics().increment("frame_crashed_total", hashmap!{
+    "name" => frame_name,
+});
+```
+
+### Frame Performance Metrics
+
+**Histograms** (latency distribution):
+
+```rust
+// Frame commit duration
+metrics().record(Metric {
+    name: "frame_commit_duration_seconds".to_string(),
+    value: duration.as_secs_f64(),
+    unit: MetricUnit::Seconds,
+    tags: hashmap!{
+        "name" => frame_name,
+        "tables_affected" => &tables.len().to_string(),
+    },
+});
+
+// Frame rollback duration
+metrics().record(Metric {
+    name: "frame_rollback_duration_seconds".to_string(),
+    value: duration.as_secs_f64(),
+    unit: MetricUnit::Seconds,
+    tags: hashmap!{ "frame_id" => &frame_id.to_string() },
+});
+
+// Frame operations count
+metrics().record(Metric {
+    name: "frame_operations_count".to_string(),
+    value: operations.len() as f64,
+    unit: MetricUnit::Count,
+    tags: hashmap!{ "name" => frame_name },
+});
+
+// Frame snapshot size
+metrics().record(Metric {
+    name: "frame_snapshot_size_bytes".to_string(),
+    value: snapshot_size as f64,
+    unit: MetricUnit::Bytes,
+    tags: hashmap!{ "frame_id" => &frame_id.to_string() },
+});
+```
+
+### Frame Recovery Metrics
+
+```rust
+// Recovery operation duration
+metrics().record(Metric {
+    name: "frame_recovery_duration_seconds".to_string(),
+    value: duration.as_secs_f64(),
+    unit: MetricUnit::Seconds,
+    tags: hashmap!{
+        "frames_recovered" => &count.to_string(),
+    },
+});
+
+// Active frame duration (gauge)
+metrics().gauge("frame_active_duration_seconds", hashmap!{
+    "frame_id" => &frame_id.to_string(),
+    "name" => frame_name,
+}, started_at.elapsed().as_secs_f64());
+```
+
+### Alert Rules for Frames
+
+**CRITICAL Alerts:**
+- `frame_crashed_total > 0` for 1m → "Frame crashed - data may be inconsistent, check logs"
+- `frame_commit_duration_seconds > 30` → "Frame commit taking too long (>30s)"
+- `frame_active_duration_seconds > 600` for 5m → "Frame active for >10min - possible deadlock or leak"
+
+**WARNING Alerts:**
+- `frame_operations_count > 100` → "Frame has >100 operations - consider splitting"
+- `frame_rollback_duration_seconds > 5` → "Frame rollback slow (>5s)"
+- `frame_snapshot_size_bytes > 10485760` → "Frame snapshot >10MB - unusually large"
+
+### Storage Location
+
+Frame metrics stored in:
+```
+.reedbase/metrics/
+├── frame_lifecycle.csv          # Counters (started, committed, rolled_back, crashed)
+├── frame_performance.csv        # Histograms (commit_duration, operations_count)
+├── frame_recovery.csv           # Recovery metrics
+└── aggregates/
+    └── 5min/
+        └── frame_*.csv          # 5-minute rolling aggregates
+```
+
+### Collection Points
+
+All Frame metrics collected in `src/reedcms/reedbase/frame/`:
+
+- `frame/mod.rs:Frame::begin()` → `frame_started_total`
+- `frame/mod.rs:Frame::commit()` → `frame_committed_total`, `frame_commit_duration_seconds`
+- `frame/mod.rs:Frame::rollback()` → `frame_rolled_back_total`, `frame_rollback_duration_seconds`
+- `frame/recovery.rs:recover_crashed_frames()` → `frame_crashed_total`, `frame_recovery_duration_seconds`
+
+---
+
 ## Notes
 
 This ticket implements the REUSABLE metrics infrastructure that all other tickets will use.
@@ -539,3 +668,4 @@ This ticket implements the REUSABLE metrics infrastructure that all other ticket
 1. Implement this ticket FIRST (REED-19-01A)
 2. Then add metrics sections to all other tickets (REED-19-01 through REED-19-19)
 3. All tickets use `use crate::reedbase::metrics::global as metrics;`
+4. Frame-System uses these metrics for observability

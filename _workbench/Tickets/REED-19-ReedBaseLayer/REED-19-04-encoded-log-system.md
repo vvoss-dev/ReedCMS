@@ -41,12 +41,12 @@ Implement encoded version log system using integer codes from registries instead
 
 **Encoded with CRC32 validation (new way):**
 ```
-REED|00000052|1736860900|2|1|1736860800|2500|15|sha256:abc123|A1B2C3D4
+REED|00000052|1736860900|2|1|1736860800|2500|15|sha256:abc123|uuid002|A1B2C3D4
 ```
 
 **Format specification:**
 ```
-{magic}|{length}|{timestamp}|{action_code}|{user_code}|{base_version}|{size}|{rows}|{hash}|{crc32}
+{magic}|{length}|{timestamp}|{action_code}|{user_code}|{base_version}|{size}|{rows}|{hash}|{frame_id}|{crc32}
 ```
 
 **Fields:**
@@ -59,7 +59,28 @@ REED|00000052|1736860900|2|1|1736860800|2500|15|sha256:abc123|A1B2C3D4
 - `size`: Delta size in bytes (usize)
 - `rows`: Number of rows affected (usize)
 - `hash`: SHA-256 hash of delta
+- `frame_id`: Frame UUID if operation is part of coordinated batch, "n/a" otherwise
 - `crc32`: CRC32 checksum of data portion (8 bytes hex)
+
+**Frame Integration:**
+
+When operations are part of a Frame (coordinated batch), the `frame_id` field links all related operations:
+
+```
+# Schema migration frame (uuid002)
+REED|00000065|1736860800|2|1|1736860700|1500|10|sha256:abc|uuid002|A1B2C3D4  # text table
+REED|00000065|1736860800|2|1|1736860700|800|5|sha256:def|uuid002|E5F6G7H8   # routes table
+REED|00000065|1736860800|2|1|1736860750|1200|8|sha256:ghi|uuid002|I9J0K1L2  # meta table
+
+# Regular operation (no frame)
+REED|00000058|1736860900|2|1|1736860800|500|2|sha256:jkl|n/a|M3N4O5P6
+```
+
+This enables:
+- Fast lookup of all operations in a frame
+- Point-in-time recovery using frame snapshots
+- Rollback of coordinated operations
+- Audit trail for batch changes
 
 ### Dictionary Mappings
 
@@ -136,23 +157,29 @@ use crate::registry;
 ///     size: 2500,
 ///     rows: 15,
 ///     hash: "sha256:abc123".to_string(),
+///     frame_id: Some(Uuid::parse_str("uuid002")?),
 /// };
 /// let encoded = encode_log_entry(&entry)?;
-/// // "1736860900|2|1|1736860800|2500|15|sha256:abc123"
+/// // "1736860900|2|1|1736860800|2500|15|sha256:abc123|uuid002"
 /// ```
 pub fn encode_log_entry(entry: &LogEntry) -> ReedResult<String> {
     let action_code = registry::get_action_code(&entry.action)?;
     let user_code = registry::get_or_create_user_code(&entry.user)?;
     
+    let frame_id_str = entry.frame_id
+        .map(|id| id.to_string())
+        .unwrap_or_else(|| "n/a".to_string());
+    
     Ok(format!(
-        "{}|{}|{}|{}|{}|{}|{}",
+        "{}|{}|{}|{}|{}|{}|{}|{}",
         entry.timestamp,
         action_code,
         user_code,
         entry.base_version,
         entry.size,
         entry.rows,
-        entry.hash
+        entry.hash,
+        frame_id_str
     ))
 }
 
@@ -260,17 +287,19 @@ use crate::registry;
 ///
 /// ## Example Usage
 /// ```rust
-/// let line = "1736860900|2|1|1736860800|2500|15|sha256:abc123";
+/// let line = "1736860900|2|1|1736860800|2500|15|sha256:abc123|uuid002";
 /// let entry = decode_log_entry(line)?;
 /// assert_eq!(entry.action, "update");
 /// assert_eq!(entry.user, "admin");
+/// assert!(entry.frame_id.is_some());
 /// ```
 pub fn decode_log_entry(line: &str) -> ReedResult<LogEntry> {
     let parts: Vec<&str> = line.split('|').collect();
     
-    if parts.len() != 7 {
+    // Support both old (7 fields) and new (8 fields with frame_id) formats
+    if parts.len() != 7 && parts.len() != 8 {
         return Err(ReedError::ParseError {
-            reason: format!("Expected 7 fields, got {}", parts.len()),
+            reason: format!("Expected 7 or 8 fields, got {}", parts.len()),
         });
     }
     
@@ -306,6 +335,19 @@ pub fn decode_log_entry(line: &str) -> ReedResult<LogEntry> {
     
     let hash = parts[6].to_string();
     
+    // Parse frame_id if present (new format)
+    let frame_id = if parts.len() == 8 {
+        match parts[7] {
+            "n/a" | "" => None,
+            uuid_str => Some(Uuid::parse_str(uuid_str)
+                .map_err(|e| ReedError::ParseError {
+                    reason: format!("Invalid frame_id UUID: {}", e),
+                })?),
+        }
+    } else {
+        None  // Old format without frame_id
+    };
+    
     // Decode codes to names
     let action = registry::get_action_name(action_code)?;
     let user = registry::get_username(user_code)?;
@@ -318,6 +360,7 @@ pub fn decode_log_entry(line: &str) -> ReedResult<LogEntry> {
         size,
         rows,
         hash,
+        frame_id,
     })
 }
 
@@ -457,6 +500,7 @@ pub struct LogEntry {
     pub size: usize,
     pub rows: usize,
     pub hash: String,
+    pub frame_id: Option<Uuid>,  // Frame UUID if part of coordinated batch
 }
 
 /// Additional ReedBase errors.

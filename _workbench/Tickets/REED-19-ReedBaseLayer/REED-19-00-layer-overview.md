@@ -276,6 +276,192 @@ See `_workbench/Tickets/templates/metrics-module-design.md` for complete impleme
 
 ---
 
+### Frame System (Coordinated Batch Operations)
+
+**Philosophy**: Batch operations must share a single timestamp for consistency. Frame-System provides coordinated operations with crash recovery.
+
+**Purpose**: Enable atomic multi-table operations where all changes share ONE Unix timestamp:
+- Schema migrations with data updates
+- Multi-table backups
+- Bulk imports across tables
+- Index rebuilds with validation
+
+**Reusable Module**: `src/reedcms/reedbase/frame/`
+- ONE implementation of FrameManager (singleton, thread-safe)
+- All batch operations use `Frame::begin()` → `commit()` pattern
+- NO manual timestamp coordination
+
+**Core Types** (in `src/reedcms/reedstream.rs`):
+
+```rust
+/// Frame: Coordinated set of operations sharing ONE timestamp
+pub struct FrameInfo {
+    pub id: Uuid,
+    pub timestamp: i64,           // THE shared timestamp
+    pub name: String,              // Human-readable name
+    pub status: FrameStatus,
+    pub tables_affected: usize,
+    pub started_at: i64,
+    pub committed_at: Option<i64>,
+}
+
+/// Frame status lifecycle
+pub enum FrameStatus {
+    Active,       // Frame is currently being built
+    Committed,    // Frame successfully committed with snapshot
+    RolledBack,   // Frame was rolled back (versionised)
+    Crashed,      // Frame was active when system crashed
+    Archived,     // Frame older than retention (snapshot deleted)
+}
+
+impl FrameStatus {
+    pub fn as_str(&self) -> &str {
+        match self {
+            FrameStatus::Active => "active",
+            FrameStatus::Committed => "committed",
+            FrameStatus::RolledBack => "rolled_back",
+            FrameStatus::Crashed => "crashed",
+            FrameStatus::Archived => "archived",
+        }
+    }
+}
+
+/// Frame snapshot: State of all tables at frame commit
+pub type FrameSnapshot = HashMap<String, SnapshotEntry>;
+
+pub struct SnapshotEntry {
+    pub timestamp: i64,    // Actual bsdiff timestamp for this table
+    pub hash: String,      // Content hash for integrity
+}
+
+/// Frame-specific errors
+pub enum ReedError {
+    // ... existing variants ...
+    
+    FrameAlreadyActive { frame_id: Uuid },
+    FrameNotFound { frame_id: Uuid },
+    NoFrameBeforeTimestamp { target: i64 },
+    FrameSnapshotCorrupted { path: String },
+    ServerStartAborted,
+    InvalidChoice,
+}
+```
+
+**Standard Usage Pattern**:
+
+```rust
+use crate::reedbase::frame::Frame;
+
+pub fn migrate_schema(from: u32, to: u32) -> ReedResult<MigrationReport> {
+    // 1. Begin frame - get ONE timestamp
+    let mut frame = Frame::begin(&format!("schema_migration_{}_{}", from, to))?;
+    let ts = frame.timestamp();  // All operations use THIS timestamp
+    
+    // 2. Perform operations
+    write_schema_file(ts)?;
+    frame.log_operation("write_schema", None);
+    
+    for table in affected_tables {
+        migrate_table_data(table, ts)?;  // SAME timestamp
+        frame.log_operation("migrate_data", Some(table));
+    }
+    
+    rebuild_indices(ts)?;  // SAME timestamp
+    frame.log_operation("rebuild_indices", None);
+    
+    // 3. Commit (creates snapshot automatically)
+    let report = frame.commit()?;
+    
+    Ok(report)
+}
+```
+
+**Key Features**:
+
+1. **Snapshot Creation**: Frame commit automatically creates `.reed/frames/{timestamp}.snapshot.csv` with current state of ALL tables
+2. **Frame Index**: Sorted list in `.reed/frames/index.csv` for O(log n) binary search lookup
+3. **Frame Index Cache**: Memory-cached for sub-millisecond lookups (60s TTL)
+4. **Crash Recovery**: Automatic rollback of incomplete frames on server start
+5. **Versionised Rollback**: Rollback creates NEW version (forward recovery), no data loss
+6. **TTL Cleanup**: Configurable retention (default 365 days) via `frame.retention.days` in `.reed/project.csv`
+
+**File Structure**:
+
+```
+.reed/
+└── frames/
+    ├── index.csv                    # Sorted list of all frames (O(log n) lookup)
+    ├── frame.log                    # Frame lifecycle events
+    ├── {timestamp}.snapshot.csv     # Table states at commit time
+    └── ...
+```
+
+**Frame Snapshot Format** (`.reed/frames/{timestamp}.snapshot.csv`):
+
+```csv
+table|timestamp|hash|frame_id
+text|1736860800|abc123|uuid002
+routes|1736860700|def456|uuid002
+meta|1736860750|ghi789|uuid002
+```
+
+**Frame Index Format** (`.reed/frames/index.csv`):
+
+```csv
+timestamp|frame_id|name|status|tables_affected|committed_at
+1736860800|uuid002|schema_migration_1_2|committed|4|1736860815
+```
+
+**CLI Commands**:
+
+```bash
+# List all frames
+reed frame:list
+
+# List only crashed frames
+reed frame:list --crashed
+
+# Show frame details
+reed frame:status <frame-id>
+
+# Rollback frame (with confirmation)
+reed frame:rollback <frame-id> --confirm
+
+# Cleanup old frames (respects retention policy)
+reed frame:cleanup
+```
+
+**Performance Guarantees**:
+
+| Operation | Without Frames | With Frames | Speedup |
+|-----------|----------------|-------------|---------|
+| Point-in-Time Recovery | O(Tables × Versions) | O(log Frames + Tables) | 100-500× |
+| Rollback | O(Tables × Versions) | O(Tables) | 100-500× |
+| Frame Lookup | N/A | O(log n) < 1ms | N/A |
+
+**Design Principles**:
+- **KISS**: Frame = ONE timestamp + snapshot at commit
+- **DRY**: FrameManager singleton, reused everywhere
+- **Consistency**: All batch operations use Frame-System
+- **Zero Data Loss**: Rollback is versionised (forward recovery)
+
+**Configuration**:
+
+```csv
+# .reed/project.csv
+key|value|description
+frame.retention.days|365|Frame snapshot retention (days)
+```
+
+```bash
+# Change retention
+reed set:project frame.retention.days 730  # 2 years
+```
+
+See `_workbench/Tickets/FRAME-SYSTEM-IMPLEMENTATION-PLAN.md` for complete implementation details.
+
+---
+
 ## Layer Tickets
 
 ### Core Infrastructure (01-08)
