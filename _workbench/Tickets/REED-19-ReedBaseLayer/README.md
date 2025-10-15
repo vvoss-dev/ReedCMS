@@ -14,6 +14,325 @@ ReedBase is a **versioned, distributed CSV database** designed specifically for 
 
 ---
 
+## Deployment Flexibility: Global, Local, or Distributed
+
+**One of ReedBase's most powerful features**: Deploy however your project needs - from simple local development to globally distributed production.
+
+### Three Deployment Modes
+
+#### 1. **Global Database** - System-Wide Shared Database
+
+Perfect for production servers running multiple applications:
+
+```bash
+# Create global database (lives in ~/.reedbase/databases/)
+rdb db:init users_prod --global
+
+# Access from ANYWHERE on the system
+cd /var/www/app1/
+rdb db:query users_prod "SELECT * FROM users"
+
+cd /var/www/app2/
+rdb db:query users_prod "SELECT * FROM users"  # Same database!
+
+cd /tmp/
+rdb db:query users_prod "SELECT * FROM users"  # Still works!
+```
+
+**Use Cases**:
+- ✅ Production servers with multiple apps sharing data
+- ✅ System-wide services (analytics, logging, config)
+- ✅ Centralised data management
+
+**Location**: `~/.reedbase/databases/{name}/`
+
+---
+
+#### 2. **Local Database** - Project-Embedded Database
+
+Perfect for development and project-specific data:
+
+```bash
+# Create local database (lives in ./.reedbase/)
+cd ~/my-project/
+rdb db:init my_project_dev --local
+
+# Only accessible from this project
+rdb db:query my_project_dev "SELECT * FROM users"
+
+# Other projects can't access it
+cd ~/other-project/
+rdb db:query my_project_dev "SELECT * FROM users"  # ❌ Not found
+```
+
+**Use Cases**:
+- ✅ Development databases (dev/test isolation)
+- ✅ Project-specific data (doesn't need global access)
+- ✅ Git-versioned databases (commit .reedbase/ to repo)
+
+**Location**: `./reedbase/` (in project directory)
+
+---
+
+#### 3. **Distributed Multi-Location** - Global Synchronisation
+
+**The killer feature**: Synchronise one database across **local AND remote** locations with automatic load balancing.
+
+```bash
+# Deploy to 3 local + 8 remote locations in ONE command
+rdb db:init users_prod --global --local[3] --remote[8]
+
+# Interactive prompts guide you through:
+# → 3 local paths (e.g., backup drives, different projects)
+# → 8 remote servers (IP, SSH key, installation mode)
+
+# Result: 12-location distributed database!
+```
+
+**What happens**:
+1. **Automatic detection**: Checks if ReedBase is installed on remote systems
+2. **Smart installation**: Installs ReedBase (global or local mode) if missing
+3. **Continuous sync**: rsync daemon keeps all locations in sync
+4. **Health monitoring**: Tracks latency & load of all nodes
+5. **Intelligent routing**: Queries go to nearest healthy node
+
+**Example Topology**:
+
+```
+London (Primary)           New York (Replica)
+  ├─ ~/.reedbase/            ├─ ~/.reedbase/
+  └─ rsync ←──────→          └─ rsync
+       ↓                          ↓
+Tokyo (Replica)            Sydney (Replica)
+  ├─ ~/.reedbase/            ├─ ~/.reedbase/
+  └─ rsync ←──────→          └─ rsync
+
++ 8 more locations (local backups, edge servers, etc.)
+```
+
+**Use Cases**:
+- ✅ Globally distributed web applications
+- ✅ Multi-region content delivery
+- ✅ High-availability setups (automatic failover)
+- ✅ Edge computing (serve from nearest location)
+- ✅ Local development + remote staging/production sync
+
+---
+
+### Real-World Deployment Scenarios
+
+#### Scenario 1: Solo Developer
+
+```bash
+# Local development
+cd ~/my-blog/
+rdb db:init blog_dev --local
+
+# Git-commit .reedbase/ for version control
+git add .reedbase/
+git commit -m "Add blog database"
+
+# Deploy to production
+ssh server
+cd /var/www/blog/
+rdb db:init blog_prod --global
+
+# Optional: Sync dev → prod
+rdb db:sync blog_dev blog_prod
+```
+
+---
+
+#### Scenario 2: SaaS Application (Multi-Tenant)
+
+```bash
+# Global database for all tenants
+rdb db:init saas_prod --global
+
+# Multiple apps access same database
+# /var/www/api/
+# /var/www/admin/
+# /var/www/worker/
+# All use: rdb db:query saas_prod "..."
+```
+
+---
+
+#### Scenario 3: Global CDN / Edge Deployment
+
+```bash
+# Deploy to 3 continents + 2 local backups
+rdb db:init content_prod --global \
+  --remote[3]  # London, New York, Tokyo \
+  --local[2]   # Local SSD backup, NAS backup
+
+# Automatic features:
+# → Latency measurement (which server is fastest?)
+# → Load balancing (forward queries if CPU > 80%)
+# → Failover (retry next node if one fails)
+# → Continuous sync (rsync every 5 minutes)
+
+# Query from anywhere - automatically routed to nearest healthy node
+rdb db:query content_prod "SELECT * FROM articles"
+# → Executes on London (25ms) if you're in Europe
+# → Executes on Tokyo (18ms) if you're in Asia
+# → Forwards to New York (65ms) if London overloaded
+```
+
+**Query Routing Logic**:
+1. **Try local first** (always fastest)
+2. **If local overloaded** (CPU > 80% or Memory > 90%):
+   - Measure latency to all healthy peers
+   - Forward to nearest available node
+   - Return result with routing info
+3. **If node fails**:
+   - Automatic retry on next-nearest node
+   - Health status updated
+   - Admin notification
+
+---
+
+#### Scenario 4: Hybrid Local + Remote
+
+Mix local and global databases in the same project:
+
+```bash
+# Project-specific data (local)
+rdb db:init app_cache --local
+
+# Shared user database (global, distributed)
+rdb db:init users_prod --global --remote[5]
+
+# Use both in same application
+rdb db:query app_cache "SELECT * FROM sessions"    # Local
+rdb db:query users_prod "SELECT * FROM users"      # Distributed
+```
+
+---
+
+### Database Registry: Name-Based Access
+
+All databases (global, local, distributed) are managed via central registry:
+
+```bash
+# List all registered databases
+rdb db:list
+
+# Output:
+# Global databases:
+#   users_prod          v2.0    ~/.reedbase/databases/users_prod
+#   analytics           v2.0    ~/.reedbase/databases/analytics
+#
+# Local databases:
+#   my_project_dev      v2.0    ~/my-project/.reedbase
+#   blog_local          v2.0    ~/blog/.reedbase
+#
+# Distributed databases:
+#   content_cdn         v2.0    12 locations (3 healthy, 0 degraded)
+
+# Show detailed info
+rdb db:info content_cdn
+
+# Output:
+# Database: content_cdn
+# Mode:          Distributed
+# Locations:     12 total
+#   - local1      (local)    Healthy    CPU: 45%   Memory: 62%
+#   - london      (remote)   Healthy    CPU: 32%   Latency: 25ms
+#   - newyork     (remote)   Healthy    CPU: 28%   Latency: 85ms
+#   - tokyo       (remote)   Degraded   CPU: 82%   Latency: 120ms
+#   - sydney      (remote)   Unhealthy  Timeout
+# Topology:      Mesh (all-to-all sync)
+# Last Sync:     2 minutes ago
+```
+
+**Registry file**: `~/.reedbase/registry.toml`
+
+```toml
+[[database]]
+name = "users_prod"
+mode = "global"
+location = "/Users/vivian/.reedbase/databases/users_prod"
+
+[[database]]
+name = "my_project_dev"
+mode = "local"
+location = "/Users/vivian/Projects/my-project/.reedbase"
+project_root = "/Users/vivian/Projects/my-project"
+
+[[database]]
+name = "content_cdn"
+mode = "distributed"
+topology = "mesh"
+locations = [
+  { id = "london", type = "remote", host = "lon.example.com", path = "/var/reedbase" },
+  { id = "tokyo", type = "remote", host = "tok.example.com", path = "/var/reedbase" },
+  # ... 10 more
+]
+```
+
+---
+
+### Sync Topologies for Distributed Databases
+
+**Hub-Spoke**: One primary syncs to all replicas
+
+```
+    Primary (London)
+         │
+    ┌────┼────┬────┐
+    ▼    ▼    ▼    ▼
+  NY   Tokyo  LA  Sydney
+  
+# All writes go to London
+# Replicas pull updates every 5 min
+```
+
+**Mesh**: Every node syncs to every other (most resilient)
+
+```
+London ←→ New York
+  ↕         ↕
+Tokyo  ←→ Sydney
+
+# Any node can receive writes
+# All nodes sync bidirectionally
+# Conflict resolution via timestamps
+```
+
+**Custom**: Define your own sync pairs
+
+```
+London → Tokyo    (one-way)
+London ↔ New York (bidirectional)
+Tokyo → Sydney    (one-way)
+
+# Fine-grained control
+# Optimized for your network topology
+```
+
+---
+
+### Key Deployment Benefits
+
+**vs. PostgreSQL**:
+- ❌ PostgreSQL: Master-slave replication (manual failover, single point of failure)
+- ✅ ReedBase: P2P mesh (automatic failover, no master node)
+
+**vs. MySQL**:
+- ❌ MySQL: Complex replication setup (binlog, GTIDs, replication users)
+- ✅ ReedBase: One command: `--remote[N]` (automatic setup via SSH)
+
+**vs. MongoDB**:
+- ❌ MongoDB: Replica sets (election complexity, split-brain issues)
+- ✅ ReedBase: Fully decentralized (no elections, simpler logic)
+
+**vs. SQLite**:
+- ❌ SQLite: File-based (manual sync via rsync/Dropbox, no coordination)
+- ✅ ReedBase: Built-in sync daemon (automatic, conflict resolution, health monitoring)
+
+---
+
 ## Core Features
 
 ### 1. Git-Like Versioning (REED-19-03)
@@ -612,27 +931,87 @@ reed metrics:export prometheus > /metrics/reedbase.prom
 
 ## Conclusion
 
-**ReedBase is the sweet spot between SQLite and PostgreSQL for web applications.**
+**ReedBase is the sweet spot between SQLite and PostgreSQL for web applications - with deployment flexibility no other database offers.**
 
 ### What Makes ReedBase Special
 
-1. **Simplicity**: CSV files, zero config, human-readable
-2. **Power**: Versioning, atomic transactions, distributed sync
-3. **Performance**: Smart indices, function caching, Frame-optimised recovery
-4. **Reliability**: Crash recovery, conflict resolution, audit trails
-5. **Scalability**: P2P replication, no master node, load-based routing
+1. **Deployment Flexibility**: Local, Global, or Distributed - your choice
+   - Start local in development (`--local`)
+   - Scale to global production (`--global`)  
+   - Distribute worldwide in one command (`--remote[N]`)
+   - Mix modes in same application (local cache + distributed users)
+
+2. **Simplicity**: CSV files, zero config, human-readable
+   - Edit data with any text editor
+   - Debug queries by reading CSVs
+   - Version control with Git (commit .reedbase/)
+   - No complex installation or tuning
+
+3. **Enterprise Power**: Features big databases have, without the complexity
+   - Git-like versioning (bsdiff deltas, 95% space savings)
+   - Atomic transactions (Frame-System)
+   - Distributed P2P sync (no master node)
+   - Automatic failover & load balancing
+   - Crash recovery & point-in-time restore
+
+4. **Performance**: Fast where it matters
+   - Smart indices (100-1000× speedup)
+   - Function caching (100-500× for expensive ops)
+   - Frame-optimised recovery (100× faster than version-log scan)
+   - Latency-aware routing (query nearest healthy node)
+
+5. **Reliability**: Production-grade safety
+   - CRC32 validation on every write
+   - Automatic crash recovery
+   - Conflict resolution (row-level like Git)
+   - Complete audit trail
+   - Versionised rollback (no data loss)
+
+6. **Scalability**: Grow without limits
+   - Local → Global → Distributed (no migration)
+   - P2P mesh (12+ locations, no master)
+   - Load-based query routing
+   - Automatic health monitoring
+   - Configurable sync topologies
 
 ### The ReedBase Promise
 
 > "Maximum power with minimum complexity - enterprise features without enterprise headaches."
 
+**Deploy anywhere, sync everywhere, query from anywhere.**
+
 ---
 
-**For Web Applications**: ReedBase gives you PostgreSQL-level features with SQLite-level simplicity.
+### Deployment Spectrum
 
-**For Developers**: Start simple, grow powerful - no migration needed.
+```
+Solo Developer        →        SaaS Team        →        Global Enterprise
+────────────────────────────────────────────────────────────────────────────
 
-**For Admins**: Zero tuning, automatic recovery, built-in monitoring.
+Local (.reedbase/)           Global (~/.reedbase/)      Distributed (12+ locations)
+├─ Git-versioned             ├─ System-wide access      ├─ Multi-region sync
+├─ Project-embedded          ├─ Multiple apps           ├─ Automatic failover
+└─ Dev/test isolation        └─ Centralised mgmt        └─ Load balancing
+
+ReedBase supports ALL scenarios with the SAME database engine.
+```
+
+---
+
+**For Web Applications**: PostgreSQL power + SQLite simplicity + deployment flexibility unique to ReedBase.
+
+**For Developers**: 
+- Local development with `.reedbase/` (commit to Git)
+- Global production with `~/.reedbase/databases/` (system-wide)
+- Distributed deployment with `--remote[N]` (worldwide in one command)
+- **No migration between modes** - upgrade by changing one flag
+
+**For Admins**: 
+- Zero database tuning (no config files, no performance knobs)
+- Automatic recovery (crash → rollback → notification)
+- Built-in monitoring (Prometheus-compatible metrics)
+- One-command distributed setup (SSH + rsync, that's it)
+- P2P mesh (no master node to worry about)
 
 ---
 
