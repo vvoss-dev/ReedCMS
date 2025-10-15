@@ -746,6 +746,91 @@ pub enum RegistryError {
 }
 ```
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| registry_lookup_latency | Histogram | μs | <10 | >100 | registry.rs:resolve() |
+| registry_load_latency | Histogram | ms | <5 | >20 | registry.rs:load() |
+| registered_databases_count | Gauge | count | n/a | >1000 | registry.rs:list() |
+| registration_errors | Counter | count | <1% | >10% | registry.rs:register() |
+| duplicate_name_attempts | Counter | count | <1% | >5% | registry.rs:register() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `registry_lookup_latency p99 > 100μs` for 5 minutes → "Registry lookups critically slow"
+- `registration_errors > 10%` for 10 minutes → "High registration failure rate"
+
+**WARNING Alerts:**
+- `registered_databases_count > 1000` for 10 minutes → "Very large registry - consider cleanup"
+- `duplicate_name_attempts > 5%` for 10 minutes → "Frequent duplicate name conflicts"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn resolve(name: &str) -> ReedResult<DatabaseInfo> {
+    let start = Instant::now();
+    let info = resolve_inner(name)?;
+    
+    metrics().record(Metric {
+        name: "registry_lookup_latency".to_string(),
+        value: start.elapsed().as_nanos() as f64 / 1000.0,
+        unit: MetricUnit::Microseconds,
+        tags: hashmap!{ "name" => name },
+    });
+    
+    Ok(info)
+}
+
+pub fn list() -> ReedResult<Vec<DatabaseInfo>> {
+    let databases = list_inner()?;
+    
+    metrics().record(Metric {
+        name: "registered_databases_count".to_string(),
+        value: databases.len() as f64,
+        unit: MetricUnit::Count,
+        tags: hashmap!{},
+    });
+    
+    Ok(databases)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/registry.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**registry_lookup_latency**: Name resolution performance
+- Used in EVERY database access
+- Sub-10μs target enables high-throughput operations
+- Slow lookups affect all database operations
+
+**registered_databases_count**: Registry scale
+- Tracks growth of managed databases
+- Very large registries may need optimization
+- Helps plan system capacity
+
+**registration_errors**: Operational health
+- High error rates indicate user confusion or bugs
+- Helps identify registration workflow issues
+- Guides UX improvements
+
+**duplicate_name_attempts**: User behavior
+- Frequent duplicates indicate naming confusion
+- May need better naming guidance
+- Helps improve CLI error messages
+
 ## Acceptance Criteria
 
 ### Functional Requirements

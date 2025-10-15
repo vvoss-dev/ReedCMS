@@ -632,6 +632,98 @@ mod tests {
 - **DeserializationError**: Cannot parse TOML or invalid format
 - **InvalidStrategy**: Strategy not applicable to conflict type
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| resolution_latency | Histogram | ms | <20 | >100 | resolve.rs:resolve_conflict() |
+| conflict_detection_latency | Histogram | ms | <10 | >50 | resolve.rs:detect_conflict() |
+| pending_conflicts | Gauge | count | 0 | >10 | resolve.rs:list_conflicts() |
+| resolution_strategy_distribution | Counter | count | n/a | n/a | resolve.rs:resolve_conflict() |
+| auto_resolution_success_rate | Gauge | % | >80 | <50 | resolve.rs:resolve_conflict() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `pending_conflicts > 20` for 10 minutes → "Excessive pending conflicts - manual intervention needed"
+- `auto_resolution_success_rate < 50%` for 15 minutes → "Low auto-resolution rate - review strategies"
+
+**WARNING Alerts:**
+- `pending_conflicts > 10` for 5 minutes → "Conflicts accumulating - check resolution workflow"
+- `resolution_latency p99 > 100ms` for 5 minutes → "Conflict resolution slow - investigate"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn resolve_conflict(conflict_id: &str, strategy: ResolutionStrategy) -> ReedResult<()> {
+    let start = Instant::now();
+    let result = resolve_conflict_inner(conflict_id, strategy)?;
+    
+    metrics().record(Metric {
+        name: "resolution_latency".to_string(),
+        value: start.elapsed().as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{ "strategy" => format!("{:?}", strategy) },
+    });
+    
+    metrics().record(Metric {
+        name: "resolution_strategy_distribution".to_string(),
+        value: 1.0,
+        unit: MetricUnit::Count,
+        tags: hashmap!{ "strategy" => format!("{:?}", strategy) },
+    });
+    
+    Ok(result)
+}
+
+pub fn list_conflicts(table: &str) -> ReedResult<Vec<Conflict>> {
+    let conflicts = list_conflicts_inner(table)?;
+    
+    metrics().record(Metric {
+        name: "pending_conflicts".to_string(),
+        value: conflicts.len() as f64,
+        unit: MetricUnit::Count,
+        tags: hashmap!{ "table" => table },
+    });
+    
+    Ok(conflicts)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/conflict.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**resolution_latency**: User experience impact
+- Conflicts block write completion
+- Fast resolution critical for concurrent workflows
+- Slow resolution frustrates users
+
+**pending_conflicts**: System health indicator
+- Zero pending = ideal state
+- Growing count = resolution not keeping up
+- Indicates need for better auto-resolution or user training
+
+**resolution_strategy_distribution**: Pattern analysis
+- Shows which strategies used most often
+- Helps optimize default strategies
+- Identifies common conflict types
+
+**auto_resolution_success_rate**: Automation effectiveness
+- High rate = good conflict avoidance
+- Low rate = users frequently intervene manually
+- Guides strategy tuning
+
 ## CLI Commands
 
 ```bash

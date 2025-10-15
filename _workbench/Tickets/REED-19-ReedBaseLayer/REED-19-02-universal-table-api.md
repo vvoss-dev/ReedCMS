@@ -465,6 +465,93 @@ mod tests {
 - **NotConfirmed**: Safety flag not set
 - **IoError**: File system errors
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| table_read_latency | Histogram | ms | <1 | >5 | table.rs:read_current() |
+| table_write_latency | Histogram | ms | <5 | >20 | table.rs:write() |
+| table_init_latency | Histogram | ms | <20 | >100 | table.rs:init() |
+| rollback_latency | Histogram | ms | <100 | >500 | table.rs:rollback() |
+| version_list_latency | Histogram | ms | <5 | >20 | table.rs:list_versions() |
+| operation_errors | Counter | count | <1% | >5% | table.rs (all operations) |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `operation_errors > 5%` for 5 minutes → "High table operation error rate - investigate immediately"
+- `table_write_latency p99 > 50ms` for 5 minutes → "Write performance critically degraded"
+
+**WARNING Alerts:**
+- `table_read_latency p99 > 5ms` for 5 minutes → "Read latency elevated - check I/O"
+- `rollback_latency p99 > 500ms` for 1 minute → "Rollback operations slow - delta chain issue"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn read_current(&self) -> ReedResult<Vec<HashMap<String, String>>> {
+    let start = Instant::now();
+    let result = self.read_current_inner()?;
+    
+    metrics().record(Metric {
+        name: "table_read_latency".to_string(),
+        value: start.elapsed().as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{ "table" => &self.table_name },
+    });
+    
+    Ok(result)
+}
+
+pub fn write(&mut self, data: &[HashMap<String, String>]) -> ReedResult<()> {
+    let start = Instant::now();
+    let result = self.write_inner(data)?;
+    
+    metrics().record(Metric {
+        name: "table_write_latency".to_string(),
+        value: start.elapsed().as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{ "table" => &self.table_name },
+    });
+    
+    Ok(result)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/table.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**table_read_latency**: Read path performance
+- Most frequent operation in ReedBase
+- Directly impacts all GET operations
+- Critical for cache-miss scenarios
+
+**table_write_latency**: Write path health
+- Includes CSV write + delta generation
+- Slow writes affect concurrent operations
+- Indicates I/O or lock contention issues
+
+**rollback_latency**: Recovery performance
+- Applies delta chain to reconstruct old version
+- Long delta chains = slow rollbacks
+- Indicates need for periodic snapshots
+
+**operation_errors**: System reliability
+- High error rates indicate data corruption or I/O failures
+- Early warning for serious problems
+- Should be investigated immediately
+
 ## Acceptance Criteria
 
 - [ ] Table struct with all methods implemented

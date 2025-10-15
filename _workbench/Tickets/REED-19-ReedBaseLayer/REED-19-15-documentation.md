@@ -1499,6 +1499,104 @@ fn test_examples_produce_expected_output()
 
 ---
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| doc_build_time | Histogram | s | <10 | >30 | build.rs:build_docs() |
+| broken_links | Counter | count | 0 | >0 | validate.rs:check_links() |
+| code_examples_failing | Counter | count | 0 | >0 | test.rs:test_examples() |
+| coverage_percent | Gauge | % | >95 | <80 | coverage.rs:calculate() |
+| doc_search_latency | Histogram | ms | <100 | >500 | search.rs:search() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `broken_links > 0` for 1 minute → "Broken documentation links - fix immediately"
+- `code_examples_failing > 0` for 1 minute → "Documentation examples broken - update or fix"
+
+**WARNING Alerts:**
+- `coverage_percent < 80%` for 10 minutes → "Documentation coverage low - add missing docs"
+- `doc_build_time > 30s` for 5 minutes → "Documentation build slow - optimize"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn build_docs() -> ReedResult<()> {
+    let start = Instant::now();
+    let result = build_docs_inner()?;
+    
+    metrics().record(Metric {
+        name: "doc_build_time".to_string(),
+        value: start.elapsed().as_secs() as f64,
+        unit: MetricUnit::Seconds,
+        tags: hashmap!{},
+    });
+    
+    Ok(result)
+}
+
+pub fn validate_links() -> ReedResult<ValidationReport> {
+    let report = validate_links_inner()?;
+    
+    metrics().record(Metric {
+        name: "broken_links".to_string(),
+        value: report.broken_count as f64,
+        unit: MetricUnit::Count,
+        tags: hashmap!{},
+    });
+    
+    Ok(report)
+}
+
+pub fn calculate_coverage() -> ReedResult<f64> {
+    let coverage = calculate_coverage_inner()?;
+    
+    metrics().record(Metric {
+        name: "coverage_percent".to_string(),
+        value: coverage,
+        unit: MetricUnit::Percent,
+        tags: hashmap!{},
+    });
+    
+    Ok(coverage)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/docs.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**doc_build_time**: Developer experience
+- Fast builds enable iterative documentation writing
+- Slow builds frustrate contributors
+- Affects documentation update frequency
+
+**broken_links**: Documentation quality
+- Zero tolerance - broken links confuse users
+- Indicates outdated or moved content
+- Critical for user trust
+
+**code_examples_failing**: Documentation accuracy
+- Examples must work - users copy-paste them
+- Failing examples damage credibility
+- Indicates API changes not reflected in docs
+
+**coverage_percent**: Documentation completeness
+- High coverage (>95%) ensures all features documented
+- Low coverage leaves users guessing
+- Directly impacts user success
+
 ## Acceptance Criteria
 
 - [ ] All 9 documentation sections complete

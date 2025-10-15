@@ -679,6 +679,114 @@ Partner can upsell: Implementation, training ($10k-50k+)
 
 ---
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| certificate_validation_time | Histogram | ms | <50 | >200 | certificate.rs:validate() |
+| yubikey_latency | Histogram | ms | <100 | >500 | yubikey.rs:sign() |
+| encryption_overhead | Histogram | % | <5 | >15 | encryption.rs:encrypt() |
+| certificate_generation_time | Histogram | s | <5 | >30 | certificate.rs:generate() |
+| verification_requests | Counter | count | n/a | n/a | verify.rs:verify() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `yubikey_latency p99 > 1000ms` for 5 minutes → "YubiKey operations critically slow - check hardware"
+- `encryption_overhead > 20%` for 10 minutes → "Encryption severely impacting performance"
+
+**WARNING Alerts:**
+- `certificate_validation_time p99 > 200ms` for 10 minutes → "Certificate validation slow"
+- `certificate_generation_time p99 > 30s` for 5 minutes → "Certificate generation too slow"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn validate_certificate(cert: &Certificate) -> ReedResult<bool> {
+    let start = Instant::now();
+    let is_valid = validate_certificate_inner(cert)?;
+    
+    metrics().record(Metric {
+        name: "certificate_validation_time".to_string(),
+        value: start.elapsed().as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{ "valid" => is_valid.to_string() },
+    });
+    
+    Ok(is_valid)
+}
+
+pub fn sign_with_yubikey(data: &[u8]) -> ReedResult<Vec<u8>> {
+    let start = Instant::now();
+    let signature = sign_with_yubikey_inner(data)?;
+    
+    metrics().record(Metric {
+        name: "yubikey_latency".to_string(),
+        value: start.elapsed().as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{},
+    });
+    
+    Ok(signature)
+}
+
+pub fn encrypt_data(data: &[u8]) -> ReedResult<Vec<u8>> {
+    let unencrypted_start = Instant::now();
+    let baseline = process_unencrypted(data)?;
+    let baseline_time = unencrypted_start.elapsed();
+    
+    let encrypted_start = Instant::now();
+    let encrypted = encrypt_data_inner(data)?;
+    let encrypted_time = encrypted_start.elapsed();
+    
+    let overhead = ((encrypted_time.as_micros() - baseline_time.as_micros()) as f64 
+        / baseline_time.as_micros() as f64) * 100.0;
+    
+    metrics().record(Metric {
+        name: "encryption_overhead".to_string(),
+        value: overhead,
+        unit: MetricUnit::Percent,
+        tags: hashmap!{},
+    });
+    
+    Ok(encrypted)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/certificates.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**certificate_validation_time**: Security overhead
+- Validation on every secure operation
+- Slow validation impacts user experience
+- Must be fast to avoid disabling security
+
+**yubikey_latency**: Hardware performance
+- YubiKey operations required for Enterprise tier
+- Hardware latency varies by model and connection
+- Affects secure operation throughput
+
+**encryption_overhead**: Performance cost
+- Measures performance impact of encryption
+- High overhead may discourage adoption
+- Helps justify hardware requirements
+
+**certificate_generation_time**: Onboarding experience
+- Initial setup time for new installations
+- Slow generation frustrates users
+- One-time operation but important for first impression
+
 ## Acceptance Criteria
 
 - [ ] Certificate generation for all 4 levels (Free, Pro, Team, Enterprise)

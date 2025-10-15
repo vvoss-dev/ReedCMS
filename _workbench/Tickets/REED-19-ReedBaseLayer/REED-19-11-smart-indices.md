@@ -812,6 +812,116 @@ src/reedcms/reedbase/
 - `std::collections::HashMap` - O(1) index lookups
 - `std::collections::HashSet` - Set intersection for combined queries
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| index_build_time | Histogram | ms | <100 | >500 | index.rs:build_indices() |
+| index_lookup_latency | Histogram | μs | <1 | >10 | index.rs:lookup() |
+| query_speedup | Histogram | ratio | >100 | <10 | index.rs:query() |
+| index_hit_rate | Gauge | % | >90 | <70 | index.rs:query() |
+| index_memory_bytes | Gauge | MB | <50 | >200 | index.rs (overall) |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `index_build_time p99 > 1000ms` for 5 minutes → "Index build critically slow - check data size"
+- `index_hit_rate < 70%` for 10 minutes → "Low index utilization - review query patterns"
+
+**WARNING Alerts:**
+- `query_speedup < 10x` for 10 minutes → "Indices not providing expected speedup"
+- `index_memory_bytes > 200MB` for 5 minutes → "Index memory excessive - check cardinality"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn build_indices(table: &str) -> ReedResult<Indices> {
+    let start = Instant::now();
+    let indices = build_indices_inner(table)?;
+    
+    metrics().record(Metric {
+        name: "index_build_time".to_string(),
+        value: start.elapsed().as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{ "table" => table },
+    });
+    
+    let memory_bytes = indices.memory_usage();
+    metrics().record(Metric {
+        name: "index_memory_bytes".to_string(),
+        value: (memory_bytes as f64) / 1_048_576.0, // Convert to MB
+        unit: MetricUnit::Megabytes,
+        tags: hashmap!{ "table" => table },
+    });
+    
+    Ok(indices)
+}
+
+pub fn query_with_index(filter: &QueryFilter) -> ReedResult<Vec<String>> {
+    let start = Instant::now();
+    let result = query_with_index_inner(filter)?;
+    
+    let index_time = start.elapsed();
+    
+    // Measure non-indexed equivalent
+    let full_scan_start = Instant::now();
+    let _ = query_without_index(filter)?;
+    let full_scan_time = full_scan_start.elapsed();
+    
+    let speedup = full_scan_time.as_micros() as f64 / index_time.as_micros() as f64;
+    
+    metrics().record(Metric {
+        name: "index_lookup_latency".to_string(),
+        value: index_time.as_nanos() as f64 / 1000.0,
+        unit: MetricUnit::Microseconds,
+        tags: hashmap!{},
+    });
+    
+    metrics().record(Metric {
+        name: "query_speedup".to_string(),
+        value: speedup,
+        unit: MetricUnit::Count,
+        tags: hashmap!{ "filter_type" => format!("{:?}", filter) },
+    });
+    
+    Ok(result)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/indices.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**index_build_time**: Startup and write performance
+- Indices rebuilt after every write
+- Fast builds (<100ms) critical for write latency
+- Slow builds indicate large datasets or inefficient indexing
+
+**index_lookup_latency**: Query performance
+- Sub-microsecond lookups enable high-throughput queries
+- Degradation indicates index complexity or memory pressure
+- Core value proposition of smart indices
+
+**query_speedup**: ROI metric
+- Demonstrates actual performance improvement (100-1000x target)
+- Low speedup indicates queries not using indices
+- Helps justify index maintenance cost
+
+**index_memory_bytes**: Resource cost
+- Indices trade memory for speed
+- High memory usage may require selective indexing
+- Helps optimize index vs full-scan tradeoffs
+
 ## Acceptance Criteria
 
 ### Functional Requirements

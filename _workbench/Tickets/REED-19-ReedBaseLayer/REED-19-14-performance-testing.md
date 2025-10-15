@@ -1068,6 +1068,100 @@ fn test_save_and_load_baseline()
 
 ---
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| benchmark_execution_time | Histogram | s | <300 | >600 | benchmark.rs:run_all() |
+| regression_detected | Counter | count | 0 | >0 | regression.rs:detect() |
+| performance_degradation | Gauge | % | <5 | >10 | regression.rs:compare() |
+| memory_leak_detected | Counter | count | 0 | >0 | memory.rs:check_leaks() |
+| benchmark_failure_rate | Gauge | % | 0 | >5 | benchmark.rs (all) |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `regression_detected > 0` for 1 minute → "Performance regression detected - investigate immediately"
+- `memory_leak_detected > 0` for 1 minute → "Memory leak found - fix before release"
+
+**WARNING Alerts:**
+- `performance_degradation > 10%` for 5 minutes → "Significant performance degradation detected"
+- `benchmark_failure_rate > 5%` for 10 minutes → "Benchmarks failing - check test infrastructure"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn run_benchmark(name: &str, operation: impl Fn()) -> ReedResult<BenchmarkResult> {
+    let start = Instant::now();
+    let result = run_benchmark_inner(name, operation)?;
+    
+    metrics().record(Metric {
+        name: "benchmark_execution_time".to_string(),
+        value: start.elapsed().as_secs() as f64,
+        unit: MetricUnit::Seconds,
+        tags: hashmap!{ "benchmark" => name },
+    });
+    
+    Ok(result)
+}
+
+pub fn detect_regression(current: &BenchmarkResult, baseline: &BenchmarkResult) -> ReedResult<()> {
+    let degradation = ((current.duration - baseline.duration) / baseline.duration) * 100.0;
+    
+    if degradation > 5.0 {
+        metrics().record(Metric {
+            name: "regression_detected".to_string(),
+            value: 1.0,
+            unit: MetricUnit::Count,
+            tags: hashmap!{ "benchmark" => &current.name, "degradation_pct" => degradation.to_string() },
+        });
+    }
+    
+    metrics().record(Metric {
+        name: "performance_degradation".to_string(),
+        value: degradation,
+        unit: MetricUnit::Percent,
+        tags: hashmap!{ "benchmark" => &current.name },
+    });
+    
+    Ok(())
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/benchmarks.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**benchmark_execution_time**: Test infrastructure health
+- Long execution times slow CI/CD pipeline
+- Indicates benchmark complexity or infrastructure issues
+- Helps maintain fast feedback loops
+
+**regression_detected**: Quality gate
+- Zero tolerance - regressions must be fixed
+- Early detection prevents performance degradation in production
+- Critical for maintaining performance SLAs
+
+**performance_degradation**: Trend analysis
+- Tracks performance changes over time
+- Small degradations (<5%) acceptable, large ones investigated
+- Helps prioritize optimization work
+
+**memory_leak_detected**: Memory safety
+- Rust prevents most leaks, but logic leaks possible
+- Any detection requires immediate investigation
+- Critical for long-running processes
+
 ## Acceptance Criteria
 
 - [ ] `core_ops.rs` benchmarks all CRUD operations

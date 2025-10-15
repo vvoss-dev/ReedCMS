@@ -1146,6 +1146,110 @@ remote2:
 
 ---
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| peer_latency | Histogram | ms | <50 | >200 | latency.rs:measure() |
+| query_forward_rate | Gauge | % | <20 | >50 | router.rs:route() |
+| local_cpu_percent | Gauge | % | <80 | >90 | load.rs:measure_cpu() |
+| local_memory_percent | Gauge | % | <90 | >95 | load.rs:measure_memory() |
+| routing_decision_time | Histogram | μs | <100 | >1000 | router.rs:select_peer() |
+| measurement_errors | Counter | count | <5% | >20% | latency.rs:measure() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `local_cpu_percent > 90%` for 5 minutes → "Local node overloaded - queries will forward"
+- `query_forward_rate > 50%` for 10 minutes → "Excessive query forwarding - local node issues"
+
+**WARNING Alerts:**
+- `peer_latency p99 > 200ms` for 10 minutes → "High peer latency - network issues"
+- `routing_decision_time p99 > 1ms` for 5 minutes → "Router slow - check peer count"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn route_query(query: &Query) -> ReedResult<QueryResult> {
+    let start = Instant::now();
+    
+    let local_load = measure_local_load()?;
+    let should_forward = local_load.cpu > CPU_THRESHOLD || local_load.memory > MEMORY_THRESHOLD;
+    
+    let result = if should_forward {
+        let peer = select_best_peer()?;
+        forward_to_peer(&peer, query)?
+    } else {
+        execute_locally(query)?
+    };
+    
+    metrics().record(Metric {
+        name: "routing_decision_time".to_string(),
+        value: start.elapsed().as_nanos() as f64 / 1000.0,
+        unit: MetricUnit::Microseconds,
+        tags: hashmap!{ "forwarded" => should_forward.to_string() },
+    });
+    
+    let forward_rate = if should_forward { 100.0 } else { 0.0 };
+    metrics().record(Metric {
+        name: "query_forward_rate".to_string(),
+        value: forward_rate,
+        unit: MetricUnit::Percent,
+        tags: hashmap!{},
+    });
+    
+    Ok(result)
+}
+
+pub fn measure_latency(peer: &Peer) -> ReedResult<Duration> {
+    let start = Instant::now();
+    let latency = ping_peer(peer)?;
+    
+    metrics().record(Metric {
+        name: "peer_latency".to_string(),
+        value: latency.as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{ "peer" => &peer.name },
+    });
+    
+    Ok(latency)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/p2p.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**peer_latency**: Network performance
+- Directly affects query forwarding decisions
+- High latency = slow remote queries
+- Helps identify network issues
+
+**query_forward_rate**: Load distribution
+- Low rate (<20%) = healthy local node
+- High rate = local node overloaded or failing
+- Indicates when to scale local resources
+
+**local_cpu_percent**: Resource monitoring
+- Triggers query forwarding when high
+- Prevents local node degradation
+- Guides capacity planning
+
+**routing_decision_time**: Routing overhead
+- Should be negligible (<100μs)
+- Slow decisions add latency to all queries
+- Indicates algorithmic or data structure issues
+
 ## Acceptance Criteria
 
 - [ ] Latency measurement using ping and SSH echo

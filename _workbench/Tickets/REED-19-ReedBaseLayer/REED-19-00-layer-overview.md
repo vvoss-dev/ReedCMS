@@ -131,6 +131,151 @@ Global database registry for easy access:
 - Tracks all locations per database
 - Explicit registration (no auto-discovery)
 
+## Cross-Cutting Concerns
+
+### Metrics & Observability
+
+**Philosophy**: Monitoring is foundational, not an afterthought. Every module must be observable from day one.
+
+**Reusable Module**: `src/reedcms/reedbase/metrics/`
+- ONE implementation of MetricsCollector (singleton, thread-safe)
+- Modules use `metrics::global()` for instrumentation
+- NO copy-paste metric collection code
+
+**Standard Framework**:
+
+```rust
+// Reusable types (defined once in metrics/types.rs)
+pub struct Metric {
+    pub name: String,
+    pub value: f64,
+    pub unit: MetricUnit,
+    pub tags: HashMap<String, String>,
+    pub timestamp: i64,
+}
+
+pub enum MetricType {
+    Counter,      // Monotonically increasing (total operations)
+    Gauge,        // Point-in-time value (queue depth, memory usage)
+    Histogram,    // Distribution (latency percentiles)
+    Timer,        // Duration measurement
+}
+
+pub enum MetricUnit {
+    Nanoseconds, Microseconds, Milliseconds, Seconds,
+    Bytes, Kilobytes, Megabytes,
+    Count, Percent
+}
+
+// Global collector (singleton)
+use crate::reedbase::metrics::global as metrics;
+
+pub fn operation(&self) -> ReedResult<T> {
+    let start = Instant::now();
+    let result = self.operation_inner()?;
+    
+    metrics().record(Metric {
+        name: "module_operation_latency".to_string(),
+        value: start.elapsed().as_micros() as f64,
+        unit: MetricUnit::Microseconds,
+        tags: hashmap!{ "module" => "name" },
+    });
+    
+    Ok(result)
+}
+```
+
+**Every Ticket MUST Include**:
+
+1. **Performance Metrics Table**
+   - Minimum 5, maximum 12 metrics
+   - Format: `{module}_{operation}_{type}` (e.g., `table_read_latency`)
+   - Collection points (file:function)
+
+2. **Alert Rules**
+   - Minimum 2 CRITICAL, 2 WARNING alerts
+   - Duration-based (avoid false positives)
+   - Clear alert messages
+
+3. **Implementation Example**
+   - Shows ONE line `metrics().record()` calls
+   - NO complex instrumentation code
+   - Clean, minimal example
+
+4. **Collection Strategy** (MANDATORY - all 4 fields):
+   - **Sampling**: All operations | 10% sample | Per request
+   - **Aggregation**: 1-minute | 5-minute rolling window
+   - **Storage**: `.reedbase/metrics/{module}.csv`
+   - **Retention**: 7 days raw, 90 days aggregated
+
+5. **Why These Metrics Matter**
+   - 3-5 key explanations
+   - Business/technical impact
+   - Thresholds reasoning
+
+**Standard Section Template**:
+
+```markdown
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| {module}_{op}_latency | Histogram | μs | <100 | >200 | file.rs:function() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `metric > threshold` for duration → "Message"
+
+**WARNING Alerts:**
+- `metric > threshold` for duration → "Message"
+
+### Implementation
+
+\`\`\`rust
+use crate::reedbase::metrics::global as metrics;
+
+pub fn operation(&self) -> ReedResult<T> {
+    let start = Instant::now();
+    let result = self.operation_inner()?;
+    
+    metrics().record(Metric {
+        name: "{module}_{operation}_latency".to_string(),
+        value: start.elapsed().as_micros() as f64,
+        unit: MetricUnit::Microseconds,
+        tags: hashmap!{ "module" => "{name}" },
+    });
+    
+    Ok(result)
+}
+\`\`\`
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: \`.reedbase/metrics/{module}.csv\`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**Primary Metric**: Explanation
+- Key point 1
+- Key point 2
+- Impact on system
+```
+
+**Design Principles**:
+- **KISS**: One `metrics().record()` call per metric - nothing complex
+- **DRY**: MetricsCollector implemented once, reused everywhere
+- **Consistency**: Every ticket follows IDENTICAL section structure
+
+See `_workbench/Tickets/templates/metrics-module-design.md` for complete implementation details.
+
+---
+
 ## Layer Tickets
 
 ### Core Infrastructure (01-08)

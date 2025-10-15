@@ -764,6 +764,95 @@ mod tests {
 - **ParseError**: Invalid CSV format or structure
 - **MergeConflict**: Cannot auto-merge (same row modified)
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| merge_latency | Histogram | ms | <50 | >200 | merge.rs:merge_rows() |
+| conflict_detection_time | Histogram | ms | <5 | >20 | merge.rs:detect_conflicts() |
+| auto_merge_success_rate | Gauge | % | >90 | <70 | merge.rs:merge_rows() |
+| rows_merged_per_operation | Histogram | count | <100 | >1000 | merge.rs:merge_rows() |
+| conflict_count | Counter | count | <10% | >30% | merge.rs:detect_conflicts() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `auto_merge_success_rate < 70%` for 10 minutes → "High merge conflict rate - review write patterns"
+- `conflict_count > 30%` for 5 minutes → "Excessive conflicts - possible concurrent write issue"
+
+**WARNING Alerts:**
+- `merge_latency p99 > 200ms` for 5 minutes → "Merge operations slow - check row count"
+- `rows_merged_per_operation p99 > 1000` for 10 minutes → "Large merge operations - consider batching"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn merge_rows(base: &[Row], local: &[Row], remote: &[Row]) -> ReedResult<MergeResult> {
+    let start = Instant::now();
+    let result = merge_rows_inner(base, local, remote)?;
+    
+    let success = result.conflicts.is_empty();
+    let total_rows = local.len().max(remote.len());
+    
+    metrics().record(Metric {
+        name: "merge_latency".to_string(),
+        value: start.elapsed().as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{ "rows" => total_rows.to_string() },
+    });
+    
+    metrics().record(Metric {
+        name: "auto_merge_success_rate".to_string(),
+        value: if success { 100.0 } else { 0.0 },
+        unit: MetricUnit::Percent,
+        tags: hashmap!{},
+    });
+    
+    metrics().record(Metric {
+        name: "conflict_count".to_string(),
+        value: result.conflicts.len() as f64,
+        unit: MetricUnit::Count,
+        tags: hashmap!{ "total_rows" => total_rows.to_string() },
+    });
+    
+    Ok(result)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/merge.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**merge_latency**: Concurrent write performance
+- Merge happens on EVERY concurrent write scenario
+- Slow merges block write completion
+- Indicates complexity of changes or data size
+
+**auto_merge_success_rate**: System efficiency
+- High rate (>90%) = most concurrent writes succeed automatically
+- Low rate = frequent manual conflict resolution needed
+- Indicates write pattern compatibility
+
+**conflict_detection_time**: Merge overhead
+- Should be fast (<5ms) for typical row counts
+- Slow detection indicates algorithmic issues
+- Affects total merge latency
+
+**conflict_count**: Concurrency indicator
+- Low conflicts = good write isolation
+- High conflicts = overlapping modifications
+- Helps identify problematic concurrent access patterns
+
 ## CLI Commands
 
 ```bash

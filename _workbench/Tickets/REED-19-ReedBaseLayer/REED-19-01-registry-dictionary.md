@@ -377,6 +377,93 @@ reed dict:reload
 - **IoError**: File system errors
 - **PermissionDenied**: Insufficient permissions
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| dict_lookup_latency | Histogram | μs | <0.1 | >1.0 | dictionary.rs:get_action_name() |
+| dict_lookup_latency | Histogram | μs | <0.1 | >1.0 | dictionary.rs:get_username() |
+| user_creation_latency | Histogram | ms | <10 | >50 | dictionary.rs:get_or_create_user_code() |
+| dict_reload_latency | Histogram | ms | <10 | >50 | dictionary.rs:reload_dictionaries() |
+| cache_hit_rate | Gauge | % | >99.5 | <95.0 | dictionary.rs (all lookups) |
+| code_collisions | Counter | count | 0 | >0 | dictionary.rs:get_or_create_user_code() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `code_collisions > 0` for 1 minute → "User code collision detected - data integrity issue"
+- `cache_hit_rate < 90%` for 5 minutes → "Dictionary cache degraded - performance impact"
+
+**WARNING Alerts:**
+- `dict_lookup_latency p99 > 1μs` for 5 minutes → "Dictionary lookup slower than expected"
+- `user_creation_latency p99 > 50ms` for 5 minutes → "User creation slow - possible I/O bottleneck"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn get_action_name(code: u8) -> ReedResult<String> {
+    let start = Instant::now();
+    let result = get_action_name_inner(code)?;
+    
+    metrics().record(Metric {
+        name: "dict_lookup_latency".to_string(),
+        value: start.elapsed().as_nanos() as f64 / 1000.0, // Convert to μs
+        unit: MetricUnit::Microseconds,
+        tags: hashmap!{ "operation" => "action_lookup", "cache_hit" => "true" },
+    });
+    
+    Ok(result)
+}
+
+pub fn get_or_create_user_code(username: &str) -> ReedResult<u32> {
+    let start = Instant::now();
+    let result = get_or_create_user_code_inner(username)?;
+    
+    metrics().record(Metric {
+        name: "user_creation_latency".to_string(),
+        value: start.elapsed().as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{ "username" => username },
+    });
+    
+    Ok(result)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/registry.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**dict_lookup_latency**: Core performance indicator
+- Dictionaries used on EVERY version log operation
+- Sub-microsecond performance critical for high throughput
+- Degradation indicates cache problems or lock contention
+
+**user_creation_latency**: Write path health
+- New users trigger CSV append + cache update
+- Slow creation indicates I/O or locking issues
+- Affects concurrent write performance
+
+**cache_hit_rate**: System efficiency
+- HashMap cache should hit >99.5% (dictionaries rarely change)
+- Low hit rate indicates cache invalidation issues
+- Directly impacts all dictionary-dependent operations
+
+**code_collisions**: Data integrity
+- Should NEVER occur with proper locking
+- Any collision is a critical bug requiring immediate investigation
+- Could cause data corruption in version logs
+
 ## Acceptance Criteria
 
 - [ ] actions.dict created with default 10 actions

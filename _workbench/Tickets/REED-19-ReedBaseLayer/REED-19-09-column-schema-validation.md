@@ -751,6 +751,101 @@ pub enum ReedError {
 }
 ```
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| schema_validation_latency | Histogram | μs | <100 | >500 | schema.rs:validate_row() |
+| schema_load_latency | Histogram | ms | <5 | >20 | schema.rs:load_schema() |
+| constraint_violations | Counter | count | <1% | >10% | schema.rs:validate_row() |
+| validation_error_rate | Gauge | % | <5 | >20 | schema.rs:validate_row() |
+| schema_cache_hit_rate | Gauge | % | >95 | <80 | schema.rs:load_schema() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `constraint_violations > 10%` for 10 minutes → "High schema violation rate - data quality issue"
+- `validation_error_rate > 20%` for 5 minutes → "Excessive validation failures - investigate data sources"
+
+**WARNING Alerts:**
+- `schema_validation_latency p99 > 500μs` for 5 minutes → "Schema validation slow - check constraint complexity"
+- `schema_cache_hit_rate < 80%` for 10 minutes → "Schema cache degraded - memory pressure"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn validate_row(row: &HashMap<String, String>, schema: &Schema) -> ReedResult<()> {
+    let start = Instant::now();
+    let result = validate_row_inner(row, schema);
+    
+    metrics().record(Metric {
+        name: "schema_validation_latency".to_string(),
+        value: start.elapsed().as_nanos() as f64 / 1000.0, // Convert to μs
+        unit: MetricUnit::Microseconds,
+        tags: hashmap!{ "table" => &schema.table_name },
+    });
+    
+    if let Err(ReedError::ValidationError(ref e)) = result {
+        metrics().record(Metric {
+            name: "constraint_violations".to_string(),
+            value: 1.0,
+            unit: MetricUnit::Count,
+            tags: hashmap!{ "constraint" => e.constraint.clone(), "column" => e.column.clone() },
+        });
+    }
+    
+    result
+}
+
+pub fn load_schema(table: &str) -> ReedResult<Schema> {
+    let start = Instant::now();
+    let schema = load_schema_inner(table)?;
+    
+    metrics().record(Metric {
+        name: "schema_load_latency".to_string(),
+        value: start.elapsed().as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{ "table" => table },
+    });
+    
+    Ok(schema)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/schema.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**schema_validation_latency**: Write performance impact
+- Validation happens on every write when schema exists
+- Sub-millisecond performance critical for throughput
+- Complex constraints increase validation time
+
+**constraint_violations**: Data quality monitoring
+- Low violation rate = clean data inputs
+- High rates indicate bugs or user errors
+- Helps identify problematic data sources
+
+**validation_error_rate**: System health
+- Tracks overall validation success
+- High error rates require investigation
+- May indicate schema misconfiguration
+
+**schema_cache_hit_rate**: Performance optimization
+- Cached schemas avoid repeated file I/O
+- High hit rate (>95%) expected for stable schemas
+- Low rates indicate cache thrashing or memory issues
+
 ## Acceptance Criteria
 
 ### Functional Requirements

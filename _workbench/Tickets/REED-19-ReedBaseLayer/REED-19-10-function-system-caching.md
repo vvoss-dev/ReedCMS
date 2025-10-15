@@ -943,6 +943,102 @@ src/reedcms/reedbase/
 - `std::collections::HashMap` - Cache storage
 - `std::sync::RwLock` - Concurrent cache access
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| function_cache_hit_rate | Gauge | % | >80 | <50 | cache.rs:get_cached() |
+| function_execution_time | Histogram | ms | <10 | >100 | functions.rs:execute() |
+| cache_evictions | Counter | count | <10% | >30% | cache.rs:evict() |
+| cache_size_bytes | Gauge | bytes | <10MB | >50MB | cache.rs (overall) |
+| cache_invalidations | Counter | count | n/a | n/a | cache.rs:invalidate() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `function_cache_hit_rate < 50%` for 10 minutes → "Function cache ineffective - review caching strategy"
+- `cache_size_bytes > 50MB` for 5 minutes → "Function cache too large - memory pressure"
+
+**WARNING Alerts:**
+- `function_execution_time p99 > 100ms` for 5 minutes → "Function execution slow - check complexity"
+- `cache_evictions > 30%` for 10 minutes → "High cache eviction rate - increase cache size"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn execute_function(name: &str, args: &[Value]) -> ReedResult<Value> {
+    let cache_key = generate_cache_key(name, args);
+    
+    // Check cache
+    if let Some(cached) = get_cached(&cache_key) {
+        metrics().record(Metric {
+            name: "function_cache_hit_rate".to_string(),
+            value: 100.0,
+            unit: MetricUnit::Percent,
+            tags: hashmap!{ "function" => name, "cache_hit" => "true" },
+        });
+        return Ok(cached);
+    }
+    
+    // Cache miss - execute function
+    let start = Instant::now();
+    let result = execute_function_inner(name, args)?;
+    
+    metrics().record(Metric {
+        name: "function_execution_time".to_string(),
+        value: start.elapsed().as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{ "function" => name },
+    });
+    
+    metrics().record(Metric {
+        name: "function_cache_hit_rate".to_string(),
+        value: 0.0,
+        unit: MetricUnit::Percent,
+        tags: hashmap!{ "function" => name, "cache_hit" => "false" },
+    });
+    
+    // Store in cache
+    store_cached(&cache_key, &result);
+    
+    Ok(result)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/functions.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**function_cache_hit_rate**: Performance optimization
+- High hit rate (>80%) = effective caching
+- Low rates indicate poor cache key design or high volatility
+- Directly impacts query performance (100-500x speedup when cached)
+
+**function_execution_time**: Computational cost
+- Shows actual function execution cost
+- Helps identify expensive operations
+- Guides caching strategy priorities
+
+**cache_evictions**: Cache efficiency
+- Low evictions = stable working set
+- High evictions = cache too small or thrashing
+- May require cache size tuning
+
+**cache_size_bytes**: Memory management
+- Tracks total cache memory usage
+- Prevents runaway memory consumption
+- Helps set appropriate cache limits
+
 ## Acceptance Criteria
 
 ### Functional Requirements

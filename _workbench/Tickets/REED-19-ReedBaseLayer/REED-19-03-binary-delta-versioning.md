@@ -524,6 +524,109 @@ mod tests {
 - **CompressionFailed**: XZ compression error
 - **DecompressionFailed**: XZ decompression error
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| delta_generation_time | Histogram | ms | <50 | >200 | delta.rs:generate_delta() |
+| delta_application_time | Histogram | ms | <30 | >150 | delta.rs:apply_delta() |
+| compression_ratio | Gauge | % | <10 | >30 | delta.rs:compress_delta() |
+| delta_size_bytes | Histogram | bytes | <500 | >5000 | delta.rs:generate_delta() |
+| compression_time | Histogram | ms | <20 | >100 | delta.rs:compress_delta() |
+| decompression_time | Histogram | ms | <10 | >50 | delta.rs:decompress_delta() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `delta_generation_time p99 > 500ms` for 5 minutes → "Delta generation critically slow - check CPU/disk"
+- `compression_ratio > 50%` for 10 minutes → "Poor compression - deltas too large"
+
+**WARNING Alerts:**
+- `delta_application_time p99 > 150ms` for 5 minutes → "Delta application slow - rollback performance degraded"
+- `delta_size_bytes p99 > 5KB` for 10 minutes → "Large deltas detected - review change patterns"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn generate_delta(old: &[u8], new: &[u8]) -> ReedResult<Vec<u8>> {
+    let start = Instant::now();
+    let delta = generate_delta_inner(old, new)?;
+    
+    metrics().record(Metric {
+        name: "delta_generation_time".to_string(),
+        value: start.elapsed().as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{ "old_size" => old.len().to_string(), "new_size" => new.len().to_string() },
+    });
+    
+    metrics().record(Metric {
+        name: "delta_size_bytes".to_string(),
+        value: delta.len() as f64,
+        unit: MetricUnit::Bytes,
+        tags: hashmap!{ "original_size" => new.len().to_string() },
+    });
+    
+    Ok(delta)
+}
+
+pub fn compress_delta(delta: &[u8]) -> ReedResult<Vec<u8>> {
+    let start = Instant::now();
+    let compressed = compress_delta_inner(delta)?;
+    
+    let ratio = (compressed.len() as f64 / delta.len() as f64) * 100.0;
+    
+    metrics().record(Metric {
+        name: "compression_ratio".to_string(),
+        value: ratio,
+        unit: MetricUnit::Percent,
+        tags: hashmap!{ "uncompressed_size" => delta.len().to_string() },
+    });
+    
+    metrics().record(Metric {
+        name: "compression_time".to_string(),
+        value: start.elapsed().as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{},
+    });
+    
+    Ok(compressed)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/delta.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**delta_generation_time**: Write performance impact
+- Deltas generated on EVERY write operation
+- Slow generation blocks writes
+- CPU-intensive operation (bsdiff algorithm)
+
+**compression_ratio**: Storage efficiency
+- Low compression = wasted disk space
+- High ratio indicates redundant changes
+- Helps identify optimization opportunities
+
+**delta_application_time**: Rollback speed
+- Critical for recovery scenarios
+- Long chains = slow rollbacks
+- Indicates when to create new snapshots
+
+**delta_size_bytes**: Change pattern analysis
+- Small deltas (<500 bytes) = efficient versioning
+- Large deltas indicate major rewrites
+- Helps identify problematic operations
+
 ## CLI Commands
 
 ```bash

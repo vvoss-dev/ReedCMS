@@ -715,6 +715,100 @@ mod tests {
 - **UnknownAction**: Action name not found (encoding)
 - **UnknownUser**: User not found (encoding - creates new user)
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| log_validation_latency | Histogram | ms | <1 | >5 | log.rs:validate_log() |
+| log_decode_latency | Histogram | ms | <1 | >5 | log.rs:decode_entry() |
+| log_encode_latency | Histogram | μs | <100 | >500 | log.rs:encode_entry() |
+| crc_check_time | Histogram | μs | <50 | >200 | log.rs:validate_crc() |
+| corrupted_entries | Counter | count | 0 | >0 | log.rs:validate_log() |
+| log_parse_errors | Counter | count | <0.1% | >1% | log.rs:decode_entry() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `corrupted_entries > 0` for 1 minute → "Log corruption detected - data integrity issue"
+- `log_parse_errors > 1%` for 5 minutes → "High log parse error rate - investigate format issues"
+
+**WARNING Alerts:**
+- `log_validation_latency p99 > 5ms` for 5 minutes → "Log validation slow - check CRC performance"
+- `crc_check_time p99 > 200μs` for 10 minutes → "CRC validation slower than expected"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn validate_log(log_path: &Path) -> ReedResult<ValidationReport> {
+    let start = Instant::now();
+    let report = validate_log_inner(log_path)?;
+    
+    metrics().record(Metric {
+        name: "log_validation_latency".to_string(),
+        value: start.elapsed().as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{ "log" => log_path.to_string_lossy().to_string() },
+    });
+    
+    metrics().record(Metric {
+        name: "corrupted_entries".to_string(),
+        value: report.corrupted_count as f64,
+        unit: MetricUnit::Count,
+        tags: hashmap!{ "log" => log_path.to_string_lossy().to_string() },
+    });
+    
+    Ok(report)
+}
+
+pub fn validate_crc(entry: &str, expected_crc: u32) -> ReedResult<bool> {
+    let start = Instant::now();
+    let is_valid = validate_crc_inner(entry, expected_crc)?;
+    
+    metrics().record(Metric {
+        name: "crc_check_time".to_string(),
+        value: start.elapsed().as_nanos() as f64 / 1000.0, // Convert to μs
+        unit: MetricUnit::Microseconds,
+        tags: hashmap!{ "valid" => is_valid.to_string() },
+    });
+    
+    Ok(is_valid)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/log.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**log_validation_latency**: System startup performance
+- Validation runs on every table load
+- Slow validation delays system availability
+- Indicates log file size or I/O issues
+
+**crc_check_time**: Crash recovery efficiency
+- CRC checked for EVERY log entry during recovery
+- Sub-microsecond checks critical for fast recovery
+- Degradation indicates CPU or memory pressure
+
+**corrupted_entries**: Data integrity monitoring
+- Should ALWAYS be zero in healthy system
+- Any corruption indicates serious problem (power loss, disk failure, bug)
+- Triggers immediate investigation and recovery
+
+**log_parse_errors**: Log format health
+- Low error rate expected (dictionary mismatches possible)
+- High rates indicate bugs in encoding/decoding logic
+- Affects system reliability and recoverability
+
 ## CLI Commands
 
 ```bash

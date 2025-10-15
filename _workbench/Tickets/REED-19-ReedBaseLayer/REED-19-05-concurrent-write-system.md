@@ -731,6 +731,113 @@ mod tests {
 - **SerializationError**: Cannot serialize pending write to JSON
 - **DeserializationError**: Cannot deserialize pending write from JSON
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| lock_acquire_latency | Histogram | ms | <10 | >100 | lock.rs:acquire() |
+| lock_wait_time | Histogram | ms | <50 | >5000 | lock.rs:acquire() (contended) |
+| queue_depth | Gauge | count | <10 | >50 | queue.rs:queue_write() |
+| queue_add_latency | Histogram | ms | <5 | >20 | queue.rs:queue_write() |
+| lock_timeouts | Counter | count | <1% | >5% | lock.rs:acquire() |
+| queue_full_rejections | Counter | count | 0 | >0 | queue.rs:queue_write() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `queue_full_rejections > 0` for 1 minute → "Write queue full - system overloaded"
+- `lock_timeouts > 5%` for 5 minutes → "High lock contention - investigate concurrent writes"
+
+**WARNING Alerts:**
+- `queue_depth > 50` for 5 minutes → "Write queue backing up - check processing speed"
+- `lock_wait_time p99 > 5s` for 5 minutes → "Long lock waits - possible deadlock or slow writes"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn acquire(&self, timeout: Duration) -> ReedResult<LockGuard> {
+    let start = Instant::now();
+    let guard = self.acquire_inner(timeout)?;
+    
+    let elapsed = start.elapsed();
+    
+    metrics().record(Metric {
+        name: "lock_acquire_latency".to_string(),
+        value: elapsed.as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{ "table" => &self.table_name },
+    });
+    
+    if elapsed > Duration::from_millis(10) {
+        metrics().record(Metric {
+            name: "lock_wait_time".to_string(),
+            value: elapsed.as_millis() as f64,
+            unit: MetricUnit::Milliseconds,
+            tags: hashmap!{ "table" => &self.table_name, "contended" => "true" },
+        });
+    }
+    
+    Ok(guard)
+}
+
+pub fn queue_write(&self, write: PendingWrite) -> ReedResult<()> {
+    let start = Instant::now();
+    let result = self.queue_write_inner(write)?;
+    
+    let depth = self.get_queue_depth()?;
+    
+    metrics().record(Metric {
+        name: "queue_depth".to_string(),
+        value: depth as f64,
+        unit: MetricUnit::Count,
+        tags: hashmap!{ "table" => &self.table_name },
+    });
+    
+    metrics().record(Metric {
+        name: "queue_add_latency".to_string(),
+        value: start.elapsed().as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{ "table" => &self.table_name },
+    });
+    
+    Ok(result)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/concurrent.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**lock_acquire_latency**: Write performance baseline
+- Uncontended locks should be <10ms
+- Long acquisition indicates high concurrency or slow operations
+- Directly impacts write throughput
+
+**queue_depth**: System load indicator
+- Low depth (<10) = healthy system
+- Growing depth = writes arriving faster than processing
+- Sustained high depth requires scaling or optimization
+
+**lock_timeouts**: Concurrency health
+- Timeouts indicate deadlock or extremely slow operations
+- Should be rare (<1% of attempts)
+- Frequent timeouts require investigation
+
+**queue_full_rejections**: Critical capacity issue
+- Queue full = writes being dropped
+- Zero tolerance metric - must never happen in production
+- Triggers immediate capacity increase or rate limiting
+
 ## CLI Commands
 
 ```bash

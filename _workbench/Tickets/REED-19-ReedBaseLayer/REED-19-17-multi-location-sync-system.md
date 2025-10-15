@@ -1346,6 +1346,94 @@ Location Status:
 
 ---
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| sync_duration | Histogram | s | <30 | >120 | sync.rs:sync_location() |
+| bytes_transferred | Histogram | KB | <100 | >10000 | sync.rs:sync_location() |
+| sync_lag_seconds | Gauge | s | <60 | >300 | sync.rs:calculate_lag() |
+| sync_errors | Counter | count | <1% | >10% | sync.rs:sync_location() |
+| network_latency_ms | Histogram | ms | <50 | >500 | sync.rs:ping_location() |
+| retry_attempts | Counter | count | <5% | >20% | sync.rs:sync_with_retry() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `sync_lag_seconds > 600` for 10 minutes → "Sync critically lagged - data divergence risk"
+- `sync_errors > 10%` for 5 minutes → "High sync failure rate - check network/ssh"
+
+**WARNING Alerts:**
+- `sync_duration p99 > 120s` for 10 minutes → "Slow sync operations - check bandwidth"
+- `bytes_transferred p99 > 10MB` for 15 minutes → "Large syncs detected - check delta efficiency"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn sync_location(location: &Location) -> ReedResult<SyncReport> {
+    let start = Instant::now();
+    let report = sync_location_inner(location)?;
+    
+    metrics().record(Metric {
+        name: "sync_duration".to_string(),
+        value: start.elapsed().as_secs() as f64,
+        unit: MetricUnit::Seconds,
+        tags: hashmap!{ "location" => &location.name },
+    });
+    
+    metrics().record(Metric {
+        name: "bytes_transferred".to_string(),
+        value: (report.bytes_transferred as f64) / 1024.0,
+        unit: MetricUnit::Kilobytes,
+        tags: hashmap!{ "location" => &location.name },
+    });
+    
+    let lag = calculate_sync_lag(&location)?;
+    metrics().record(Metric {
+        name: "sync_lag_seconds".to_string(),
+        value: lag as f64,
+        unit: MetricUnit::Seconds,
+        tags: hashmap!{ "location" => &location.name },
+    });
+    
+    Ok(report)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/sync.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**sync_duration**: Operational efficiency
+- Long syncs tie up resources
+- Indicates network or data volume issues
+- Affects data freshness
+
+**sync_lag_seconds**: Data freshness
+- Critical metric for distributed consistency
+- High lag = stale data on remotes
+- May require topology or interval tuning
+
+**bytes_transferred**: Network cost
+- Tracks bandwidth consumption
+- Large transfers indicate inefficient deltas
+- Helps optimize sync efficiency
+
+**sync_errors**: System reliability
+- High error rates prevent data distribution
+- Indicates network, SSH, or permission issues
+- Critical for multi-location deployments
+
 ## Acceptance Criteria
 
 - [ ] Array syntax parser handles `--local[N]` and `--remote[N]`

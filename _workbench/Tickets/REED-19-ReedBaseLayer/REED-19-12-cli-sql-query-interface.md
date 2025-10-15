@@ -1389,6 +1389,101 @@ fn test_valid_query_passes()
 
 ---
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| parse_time | Histogram | μs | <10 | >50 | parser.rs:parse() |
+| query_execution_time | Histogram | ms | <50 | >500 | executor.rs:execute() |
+| index_utilization_rate | Gauge | % | >80 | <50 | executor.rs:execute() |
+| query_error_rate | Gauge | % | <5 | >20 | executor.rs:execute() |
+| subquery_depth | Histogram | count | <3 | >5 | parser.rs:parse() |
+| optimization_speedup | Histogram | ratio | >2 | <1.5 | optimiser.rs:optimize() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `query_execution_time p99 > 1000ms` for 5 minutes → "Queries critically slow - investigate"
+- `query_error_rate > 20%` for 10 minutes → "High query failure rate - check syntax/data"
+
+**WARNING Alerts:**
+- `index_utilization_rate < 50%` for 10 minutes → "Low index usage - queries not optimized"
+- `parse_time p99 > 50μs` for 5 minutes → "Parser slower than expected"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn parse(query: &str) -> ReedResult<ParsedQuery> {
+    let start = Instant::now();
+    let parsed = parse_inner(query)?;
+    
+    metrics().record(Metric {
+        name: "parse_time".to_string(),
+        value: start.elapsed().as_nanos() as f64 / 1000.0, // Convert to μs
+        unit: MetricUnit::Microseconds,
+        tags: hashmap!{ "query_type" => parsed.query_type() },
+    });
+    
+    Ok(parsed)
+}
+
+pub fn execute(query: &ParsedQuery) -> ReedResult<QueryResult> {
+    let start = Instant::now();
+    let result = execute_inner(query)?;
+    
+    metrics().record(Metric {
+        name: "query_execution_time".to_string(),
+        value: start.elapsed().as_millis() as f64,
+        unit: MetricUnit::Milliseconds,
+        tags: hashmap!{ "query_type" => query.query_type(), "used_index" => result.used_index.to_string() },
+    });
+    
+    let index_used = if result.used_index { 100.0 } else { 0.0 };
+    metrics().record(Metric {
+        name: "index_utilization_rate".to_string(),
+        value: index_used,
+        unit: MetricUnit::Percent,
+        tags: hashmap!{},
+    });
+    
+    Ok(result)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/reedql.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**parse_time**: Parser performance
+- Custom parser should be 10x faster than generic SQL parsers
+- Target <10μs validates design decision
+- Slow parsing affects interactive CLI experience
+
+**query_execution_time**: Query performance
+- Core user-facing metric
+- Slow queries impact productivity
+- Helps identify optimization opportunities
+
+**index_utilization_rate**: Optimization effectiveness
+- High utilization (>80%) = optimizer working well
+- Low rates = queries doing full table scans
+- Directly correlates with query performance
+
+**optimization_speedup**: Optimizer value
+- Shows actual improvement from query optimization
+- Target >2x validates optimizer implementation
+- Low speedup indicates optimizer ineffectiveness
+
 ## Acceptance Criteria
 
 ### Core Implementation

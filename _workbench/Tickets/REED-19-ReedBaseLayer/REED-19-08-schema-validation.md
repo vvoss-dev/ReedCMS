@@ -278,6 +278,101 @@ src/reedcms/reedbase/
 **External**:
 - `regex` - Key pattern matching
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| key_validation_latency | Histogram | μs | <20 | >100 | rbks.rs:validate_key() |
+| key_parse_latency | Histogram | μs | <15 | >80 | rbks.rs:parse_key() |
+| key_normalize_latency | Histogram | μs | <15 | >80 | rbks.rs:normalize_key() |
+| validation_error_rate | Gauge | % | <5 | >20 | rbks.rs:validate_key() |
+| invalid_modifier_count | Counter | count | <1% | >10% | rbks.rs:parse_modifiers() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `validation_error_rate > 20%` for 10 minutes → "High key validation failure rate - check key formats"
+- `key_validation_latency p99 > 100μs` for 5 minutes → "Key validation critically slow"
+
+**WARNING Alerts:**
+- `validation_error_rate > 5%` for 15 minutes → "Elevated validation errors - review key generation"
+- `invalid_modifier_count > 10%` for 10 minutes → "High invalid modifier rate - check modifier usage"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn validate_key(key: &str) -> ReedResult<()> {
+    let start = Instant::now();
+    let result = validate_key_inner(key);
+    
+    metrics().record(Metric {
+        name: "key_validation_latency".to_string(),
+        value: start.elapsed().as_nanos() as f64 / 1000.0, // Convert to μs
+        unit: MetricUnit::Microseconds,
+        tags: hashmap!{ "valid" => result.is_ok().to_string() },
+    });
+    
+    if result.is_err() {
+        metrics().record(Metric {
+            name: "validation_error_rate".to_string(),
+            value: 1.0,
+            unit: MetricUnit::Percent,
+            tags: hashmap!{ "key" => key },
+        });
+    }
+    
+    result
+}
+
+pub fn parse_key(key: &str) -> ReedResult<ParsedKey> {
+    let start = Instant::now();
+    let parsed = parse_key_inner(key)?;
+    
+    metrics().record(Metric {
+        name: "key_parse_latency".to_string(),
+        value: start.elapsed().as_nanos() as f64 / 1000.0, // Convert to μs
+        unit: MetricUnit::Microseconds,
+        tags: hashmap!{ "depth" => parsed.depth().to_string() },
+    });
+    
+    Ok(parsed)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/schema.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**key_validation_latency**: Write path performance
+- Key validation happens on EVERY write operation
+- Sub-microsecond performance critical for high throughput
+- Slow validation directly impacts write latency
+
+**validation_error_rate**: Data quality indicator
+- Low error rate (<5%) = good key hygiene
+- High rates indicate bugs in key generation or user errors
+- Helps identify problematic code paths
+
+**invalid_modifier_count**: Modifier usage health
+- Tracks modifier parsing failures
+- High rates indicate misuse of modifier syntax
+- Guides documentation and error message improvements
+
+**key_parse_latency**: Index performance
+- Parsed keys used for index lookups
+- Fast parsing critical for query performance
+- Affects all indexed operations
+
 ## Acceptance Criteria
 
 ### Functional Requirements

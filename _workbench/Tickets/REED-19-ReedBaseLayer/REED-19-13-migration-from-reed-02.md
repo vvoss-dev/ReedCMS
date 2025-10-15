@@ -799,6 +799,92 @@ fn test_schema_change_detection()
 
 ---
 
+## Metrics & Observability
+
+### Performance Metrics
+
+| Metric | Type | Unit | Target | P99 Alert | Collection Point |
+|--------|------|------|--------|-----------|------------------|
+| migration_progress | Gauge | % | 100 | <50 | migrate.rs:migrate() |
+| row_processing_rate | Histogram | rows/s | >1000 | <100 | convert.rs:convert_table() |
+| validation_errors | Counter | count | 0 | >0 | validate.rs:validate() |
+| migration_duration | Histogram | s | <60 | >300 | migrate.rs:migrate() |
+| rollback_success_rate | Gauge | % | 100 | <100 | rollback.rs:rollback() |
+
+### Alert Rules
+
+**CRITICAL Alerts:**
+- `validation_errors > 0` for 1 minute → "Migration validation failed - data integrity at risk"
+- `rollback_success_rate < 100%` for 1 minute → "Rollback failure - manual intervention required"
+
+**WARNING Alerts:**
+- `row_processing_rate < 100 rows/s` for 5 minutes → "Migration processing slow"
+- `migration_duration > 300s` for 1 minute → "Migration taking too long - check data size"
+
+### Implementation
+
+```rust
+use crate::reedbase::metrics::global as metrics;
+use std::time::Instant;
+
+pub fn migrate(dry_run: bool) -> ReedResult<MigrationReport> {
+    let start = Instant::now();
+    let total_rows = count_total_rows()?;
+    let mut processed = 0;
+    
+    for table in tables {
+        let rows = convert_table(table)?;
+        processed += rows;
+        
+        let progress = (processed as f64 / total_rows as f64) * 100.0;
+        metrics().record(Metric {
+            name: "migration_progress".to_string(),
+            value: progress,
+            unit: MetricUnit::Percent,
+            tags: hashmap!{},
+        });
+    }
+    
+    metrics().record(Metric {
+        name: "migration_duration".to_string(),
+        value: start.elapsed().as_secs() as f64,
+        unit: MetricUnit::Seconds,
+        tags: hashmap!{ "dry_run" => dry_run.to_string() },
+    });
+    
+    Ok(report)
+}
+```
+
+### Collection Strategy
+
+- **Sampling**: All operations
+- **Aggregation**: 1-minute rolling window
+- **Storage**: `.reedbase/metrics/migration.csv`
+- **Retention**: 7 days raw, 90 days aggregated
+
+### Why These Metrics Matter
+
+**migration_progress**: User feedback
+- Long migrations need progress visibility
+- Helps estimate completion time
+- Prevents user uncertainty
+
+**row_processing_rate**: Performance indicator
+- Slow processing indicates bottlenecks
+- Helps estimate migration time for large datasets
+- Guides performance optimization
+
+**validation_errors**: Data integrity
+- Zero tolerance - any error is critical
+- Prevents data loss during migration
+- Must be addressed before proceeding
+
+**rollback_success_rate**: Safety net
+- 100% success rate required
+- Failed rollback = data loss risk
+- Critical for migration confidence
+
 ## Acceptance Criteria
 
 - [ ] `analyse.rs` implements structure analysis and schema detection
