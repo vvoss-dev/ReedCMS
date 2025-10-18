@@ -77,6 +77,12 @@ pub enum ReedError {
 
     /// Decompression failed.
     DecompressionFailed { reason: String },
+
+    /// Parse error (invalid format).
+    ParseError { reason: String },
+
+    /// Corrupted log entry (CRC32 mismatch or invalid magic bytes).
+    CorruptedLogEntry { line: usize, reason: String },
 }
 
 impl fmt::Display for ReedError {
@@ -150,6 +156,12 @@ impl fmt::Display for ReedError {
             }
             Self::DecompressionFailed { reason } => {
                 write!(f, "Decompression failed: {}", reason)
+            }
+            Self::ParseError { reason } => {
+                write!(f, "Parse error: {}", reason)
+            }
+            Self::CorruptedLogEntry { line, reason } => {
+                write!(f, "Corrupted log entry at line {}: {}", line, reason)
             }
         }
     }

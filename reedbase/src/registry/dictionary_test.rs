@@ -116,12 +116,12 @@ mod tests {
         let temp_dir = setup_test_registry("create_user");
 
         let code = get_or_create_user_code("alice").unwrap();
-        assert_eq!(code, 1); // First non-system user
+        assert_eq!(code, 2); // Third user (0=system, 1=admin, 2=alice)
 
         // Verify it was written to file
         let users_path = temp_dir.join("registry/users.dict");
         let content = fs::read_to_string(&users_path).unwrap();
-        assert!(content.contains("1|alice|"));
+        assert!(content.contains("2|alice|"));
 
         let _ = fs::remove_dir_all(&temp_dir);
     }
@@ -154,9 +154,9 @@ mod tests {
         let code2 = get_or_create_user_code("user2").unwrap();
         let code3 = get_or_create_user_code("user3").unwrap();
 
-        assert_eq!(code1, 1);
-        assert_eq!(code2, 2);
-        assert_eq!(code3, 3);
+        assert_eq!(code1, 2); // 0=system, 1=admin, 2=user1
+        assert_eq!(code2, 3); // 3=user2
+        assert_eq!(code3, 4); // 4=user3
 
         let _ = fs::remove_dir_all(&temp_dir);
     }

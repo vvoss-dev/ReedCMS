@@ -108,7 +108,10 @@ fn create_default_user_dict(path: &Path) -> ReedResult<()> {
         .expect("System time before Unix epoch")
         .as_secs();
 
-    let content = format!("code|username|created_at\n0|system|{}\n", timestamp);
+    let content = format!(
+        "code|username|created_at\n0|system|{}\n1|admin|{}\n",
+        timestamp, timestamp
+    );
 
     fs::write(path, content).map_err(|e| ReedError::IoError {
         operation: "write_users_dict".to_string(),
