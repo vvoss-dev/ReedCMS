@@ -83,6 +83,15 @@ pub enum ReedError {
 
     /// Corrupted log entry (CRC32 mismatch or invalid magic bytes).
     CorruptedLogEntry { line: usize, reason: String },
+
+    /// Command execution failed.
+    CommandFailed { command: String, error: String },
+
+    /// No tables found for operation.
+    NoTablesFound,
+
+    /// Table restore failed.
+    TableRestoreFailed { table: String, reason: String },
 }
 
 impl fmt::Display for ReedError {
@@ -162,6 +171,15 @@ impl fmt::Display for ReedError {
             }
             Self::CorruptedLogEntry { line, reason } => {
                 write!(f, "Corrupted log entry at line {}: {}", line, reason)
+            }
+            Self::CommandFailed { command, error } => {
+                write!(f, "Command '{}' failed: {}", command, error)
+            }
+            Self::NoTablesFound => {
+                write!(f, "No tables found")
+            }
+            Self::TableRestoreFailed { table, reason } => {
+                write!(f, "Table '{}' restore failed: {}", table, reason)
             }
         }
     }
