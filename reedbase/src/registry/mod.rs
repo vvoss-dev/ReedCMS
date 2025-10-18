@@ -38,5 +38,6 @@ mod init_test;
 // Re-export public API
 pub use dictionary::{
     get_action_code, get_action_name, get_or_create_user_code, get_username, reload_dictionaries,
+    set_base_path,
 };
 pub use init::{init_registry, validate_dictionaries};

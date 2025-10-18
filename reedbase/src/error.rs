@@ -44,6 +44,27 @@ pub enum ReedError {
         operation: String,
         reason: String,
     },
+
+    /// Table not found.
+    TableNotFound { name: String },
+
+    /// Table already exists.
+    TableAlreadyExists { name: String },
+
+    /// Version not found.
+    VersionNotFound { timestamp: u64 },
+
+    /// Invalid CSV format.
+    InvalidCsv { reason: String, line: usize },
+
+    /// Version log corrupted.
+    LogCorrupted { reason: String },
+
+    /// Delta corrupted or invalid.
+    DeltaCorrupted { timestamp: u64, reason: String },
+
+    /// Confirmation required but not provided.
+    NotConfirmed { operation: String },
 }
 
 impl fmt::Display for ReedError {
@@ -84,6 +105,27 @@ impl fmt::Display for ReedError {
                     "CSV error in '{}' during '{}': {}",
                     file, operation, reason
                 )
+            }
+            Self::TableNotFound { name } => {
+                write!(f, "Table '{}' not found", name)
+            }
+            Self::TableAlreadyExists { name } => {
+                write!(f, "Table '{}' already exists", name)
+            }
+            Self::VersionNotFound { timestamp } => {
+                write!(f, "Version {} not found", timestamp)
+            }
+            Self::InvalidCsv { reason, line } => {
+                write!(f, "Invalid CSV at line {}: {}", line, reason)
+            }
+            Self::LogCorrupted { reason } => {
+                write!(f, "Version log corrupted: {}", reason)
+            }
+            Self::DeltaCorrupted { timestamp, reason } => {
+                write!(f, "Delta {} corrupted: {}", timestamp, reason)
+            }
+            Self::NotConfirmed { operation } => {
+                write!(f, "Operation '{}' requires confirmation", operation)
             }
         }
     }
