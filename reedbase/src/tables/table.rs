@@ -273,22 +273,24 @@ impl Table {
 
         let timestamp = Self::now_nanos();
 
-        // Read old version (currently unused, will be needed for bsdiff in REED-19-03)
-        let _old_content = self.read_current()?;
-
-        // Create simple delta (for now, just store new content - bsdiff in REED-19-03)
+        // Create binary delta using bsdiff
+        let current_path = self.current_path();
         let delta_path = self.delta_path(timestamp);
-        fs::write(&delta_path, content).map_err(|e| ReedError::IoError {
-            operation: "write_delta".to_string(),
+
+        // Write new content to temp file for delta generation
+        let temp_new_path = current_path.with_extension("new.tmp");
+        fs::write(&temp_new_path, content).map_err(|e| ReedError::IoError {
+            operation: "write_temp_new".to_string(),
             reason: e.to_string(),
         })?;
 
-        let delta_size = fs::metadata(&delta_path)
-            .map_err(|e| ReedError::IoError {
-                operation: "stat_delta".to_string(),
-                reason: e.to_string(),
-            })?
-            .len();
+        // Generate binary delta (old -> new)
+        let delta_info =
+            crate::version::generate_delta(&current_path, &temp_new_path, &delta_path)?;
+        let delta_size = delta_info.size as u64;
+
+        // Clean up temp file
+        let _ = fs::remove_file(&temp_new_path);
 
         // Update current.csv
         fs::write(&self.current_path(), content).map_err(|e| ReedError::IoError {
@@ -466,17 +468,50 @@ impl Table {
     /// ```
     pub fn rollback(&self, timestamp: u64, user: &str) -> ReedResult<()> {
         // Verify version exists
-        let versions = self.list_versions()?;
+        let mut versions = self.list_versions()?;
         if !versions.iter().any(|v| v.timestamp == timestamp) {
             return Err(ReedError::VersionNotFound { timestamp });
         }
 
-        // Read delta (for now, deltas are full content - bsdiff in REED-19-03)
-        let delta_path = self.delta_path(timestamp);
-        let content = fs::read(&delta_path).map_err(|e| ReedError::DeltaCorrupted {
-            timestamp,
+        // Versions are newest-first, reverse to get oldest-first for reconstruction
+        versions.reverse();
+
+        // Find target version index
+        let target_idx = versions
+            .iter()
+            .position(|v| v.timestamp == timestamp)
+            .ok_or(ReedError::VersionNotFound { timestamp })?;
+
+        // Reconstruct version by applying deltas in sequence
+        // Start with initial version (index 0) and apply deltas up to target
+        let table_dir = self.table_dir();
+        let mut reconstructed_path = table_dir.join("rollback.tmp");
+
+        // First delta from init() is raw content (not a bsdiff delta)
+        let first_delta_path = self.delta_path(versions[0].timestamp);
+        fs::copy(&first_delta_path, &reconstructed_path).map_err(|e| ReedError::IoError {
+            operation: "copy_init_delta".to_string(),
             reason: e.to_string(),
         })?;
+
+        // Apply subsequent deltas to reach target version
+        for i in 1..=target_idx {
+            let prev_path = reconstructed_path.clone();
+            let delta_path = self.delta_path(versions[i].timestamp);
+            reconstructed_path = table_dir.join(format!("rollback_{}.tmp", i));
+
+            crate::version::apply_delta(&prev_path, &delta_path, &reconstructed_path)?;
+            let _ = fs::remove_file(&prev_path);
+        }
+
+        // Read reconstructed content
+        let content = fs::read(&reconstructed_path).map_err(|e| ReedError::IoError {
+            operation: "read_reconstructed".to_string(),
+            reason: e.to_string(),
+        })?;
+
+        // Clean up temp file
+        let _ = fs::remove_file(&reconstructed_path);
 
         // Write as new version
         self.write(&content, user)?;

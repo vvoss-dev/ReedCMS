@@ -65,6 +65,18 @@ pub enum ReedError {
 
     /// Confirmation required but not provided.
     NotConfirmed { operation: String },
+
+    /// Delta generation failed.
+    DeltaGenerationFailed { reason: String },
+
+    /// Delta application failed.
+    DeltaApplicationFailed { reason: String },
+
+    /// Compression failed.
+    CompressionFailed { reason: String },
+
+    /// Decompression failed.
+    DecompressionFailed { reason: String },
 }
 
 impl fmt::Display for ReedError {
@@ -126,6 +138,18 @@ impl fmt::Display for ReedError {
             }
             Self::NotConfirmed { operation } => {
                 write!(f, "Operation '{}' requires confirmation", operation)
+            }
+            Self::DeltaGenerationFailed { reason } => {
+                write!(f, "Delta generation failed: {}", reason)
+            }
+            Self::DeltaApplicationFailed { reason } => {
+                write!(f, "Delta application failed: {}", reason)
+            }
+            Self::CompressionFailed { reason } => {
+                write!(f, "Compression failed: {}", reason)
+            }
+            Self::DecompressionFailed { reason } => {
+                write!(f, "Decompression failed: {}", reason)
             }
         }
     }

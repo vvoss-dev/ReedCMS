@@ -42,6 +42,7 @@ pub mod error;
 pub mod metrics;
 pub mod registry;
 pub mod tables;
+pub mod version;
 
 // Re-export commonly used types
 pub use error::{ReedError, ReedResult};
