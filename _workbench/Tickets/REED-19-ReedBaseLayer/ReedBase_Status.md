@@ -14,7 +14,7 @@ The tickets are implemented in dependency order to ensure each component builds 
 
 | Ticket | Status | Priority | Complexity | Dependencies | Commit | Notes |
 |--------|--------|----------|-----------|--------------|--------|-------|
-| **REED-19-01A** | 🟢 Complete | Critical | Medium | None | 22efe08 | Metrics infrastructure (singleton) - ALL tickets need this |
+| **REED-19-01A** | 🟢 Complete | Critical | Medium | None | 22efe08, b8270b4 | Metrics infrastructure (singleton) - ALL tickets need this |
 | **REED-19-01** | 🔴 Planned | Critical | Low | None | - | Registry & Dictionary System |
 | **REED-19-02** | 🔴 Planned | Critical | Medium | REED-19-01 | - | Universal Table API |
 | **REED-19-03** | 🔴 Planned | Critical | High | REED-19-02 | - | Binary Delta Versioning (bsdiff + XZ) |
@@ -26,6 +26,9 @@ The tickets are implemented in dependency order to ensure each component builds 
 - ✅ Core table operations (read/write/rollback)
 - ✅ Version history with deltas
 - ✅ Backup and restore capabilities
+
+**Important Notes:**
+- **REED-19-01A Refactoring (b8270b4)**: Initial implementation violated CLAUDE.md mandatory Rule #3 (inline tests). All tests moved to separate `*_test.rs` files as required. This is a CRITICAL standard for all future tickets.
 
 ---
 
