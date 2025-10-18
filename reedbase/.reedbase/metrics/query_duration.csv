@@ -1,0 +1,5 @@
+timestamp|value|unit|tags
+1760760260713038000|1250.00|μs|table=text,operation=get
+1760760261496141000|1250.00|μs|table=text
+1760760296226528000|1250.00|μs|operation=get,table=text
+1760760297518188000|1250.00|μs|table=text

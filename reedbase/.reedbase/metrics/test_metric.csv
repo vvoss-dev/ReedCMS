@@ -1,0 +1,5 @@
+timestamp|value|unit|tags
+1760760259236742000|100.00|μs|operation=get
+1760760259236745000|200.00|μs|operation=set
+1760760295419862000|100.00|μs|operation=get
+1760760295419864000|200.00|μs|operation=set
