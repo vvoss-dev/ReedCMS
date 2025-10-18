@@ -38,7 +38,10 @@
 //! - **concurrency**: Concurrent write handling (planned)
 //! - **distribution**: P2P replication (planned)
 
+pub mod error;
 pub mod metrics;
+pub mod registry;
 
 // Re-export commonly used types
+pub use error::{ReedError, ReedResult};
 pub use metrics::{Metric, MetricType, MetricUnit, MetricsCollector};
