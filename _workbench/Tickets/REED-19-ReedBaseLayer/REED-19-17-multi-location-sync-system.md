@@ -187,7 +187,7 @@ pub struct LocationInput {
 ### Module Structure
 
 ```
-src/reedcms/reedbase/
+reedbase/src/
 ├── sync/
 │   ├── mod.rs                    # Module exports
 │   ├── array_parser.rs           # Parse --local[N] --remote[N]

@@ -137,7 +137,7 @@ Global database registry for easy access:
 
 **Philosophy**: Monitoring is foundational, not an afterthought. Every module must be observable from day one.
 
-**Reusable Module**: `src/reedcms/reedbase/metrics/`
+**Reusable Module**: `reedbase/src/metrics/`
 - ONE implementation of MetricsCollector (singleton, thread-safe)
 - Modules use `metrics::global()` for instrumentation
 - NO copy-paste metric collection code
@@ -286,7 +286,7 @@ See `_workbench/Tickets/templates/metrics-module-design.md` for complete impleme
 - Bulk imports across tables
 - Index rebuilds with validation
 
-**Reusable Module**: `src/reedcms/reedbase/frame/`
+**Reusable Module**: `reedbase/src/frame/`
 - ONE implementation of FrameManager (singleton, thread-safe)
 - All batch operations use `Frame::begin()` → `commit()` pattern
 - NO manual timestamp coordination
@@ -555,7 +555,7 @@ See `_workbench/Tickets/FRAME-SYSTEM-IMPLEMENTATION-PLAN.md` for complete implem
 ### Phase 1: Parallel Implementation
 
 Build new ReedBase alongside old:
-- `src/reedcms/reedbase/` - Old (keep working)
+- `reedbase/src/` - Old (keep working)
 - `src/reedcms/reedbase_v2/` - New implementation
 - Feature flag: `reedbase_v2`
 

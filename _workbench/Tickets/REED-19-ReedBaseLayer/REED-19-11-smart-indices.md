@@ -785,7 +785,7 @@ impl IndexManager {
 ## File Structure
 
 ```
-src/reedcms/reedbase/
+reedbase/src/
 ├── indices/
 │   ├── mod.rs              # Public API + IndexManager
 │   ├── namespace.rs        # NamespaceIndex implementation

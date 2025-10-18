@@ -542,7 +542,7 @@ Response:
 ### Module Structure
 
 ```
-src/reedcms/reedbase/
+reedbase/src/
 ├── certificates/
 │   ├── mod.rs                    # Module exports
 │   ├── generation.rs             # Certificate generation

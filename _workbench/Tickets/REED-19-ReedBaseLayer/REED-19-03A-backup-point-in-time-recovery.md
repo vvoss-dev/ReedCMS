@@ -110,7 +110,7 @@ Result: Consistent state "as of 14:00"
 
 ### Primary Implementation
 
-**`src/reedcms/reedbase/backup/mod.rs`**
+**`reedbase/src/backup/mod.rs`**
 
 ```rust
 // Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
@@ -129,7 +129,7 @@ pub use restore::restore_point_in_time;
 pub use types::{BackupInfo, RestoreReport};
 ```
 
-**`src/reedcms/reedbase/backup/create.rs`**
+**`reedbase/src/backup/create.rs`**
 
 One file = Backup creation only.
 
@@ -217,7 +217,7 @@ pub fn create_backup() -> ReedResult<BackupInfo> {
 }
 ```
 
-**`src/reedcms/reedbase/backup/list.rs`**
+**`reedbase/src/backup/list.rs`**
 
 One file = List backups only.
 
@@ -294,7 +294,7 @@ pub fn list_backups() -> ReedResult<Vec<BackupInfo>> {
 }
 ```
 
-**`src/reedcms/reedbase/backup/restore.rs`**
+**`reedbase/src/backup/restore.rs`**
 
 One file = Point-in-time restore only.
 
@@ -410,7 +410,7 @@ pub fn restore_point_in_time(target_timestamp: i64) -> ReedResult<RestoreReport>
 }
 ```
 
-**`src/reedcms/reedbase/backup/types.rs`**
+**`reedbase/src/backup/types.rs`**
 
 One file = Type definitions only.
 

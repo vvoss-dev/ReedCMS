@@ -237,7 +237,7 @@ pub struct RoutingResult {
 ### Module Structure
 
 ```
-src/reedcms/reedbase/
+reedbase/src/
 ├── routing/
 │   ├── mod.rs                    # Module exports
 │   ├── latency_probe.rs          # Latency measurement

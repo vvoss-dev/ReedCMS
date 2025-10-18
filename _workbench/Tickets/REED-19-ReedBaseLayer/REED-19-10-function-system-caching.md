@@ -915,7 +915,7 @@ pub enum FunctionError {
 ## File Structure
 
 ```
-src/reedcms/reedbase/
+reedbase/src/
 ├── functions/
 │   ├── mod.rs              # Public API + cache management
 │   ├── cache.rs            # Memoization cache implementation

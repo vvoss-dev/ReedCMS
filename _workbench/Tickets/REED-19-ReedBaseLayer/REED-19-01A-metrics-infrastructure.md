@@ -42,7 +42,7 @@ Implement reusable, KISS-compliant metrics infrastructure that ALL ReedBase modu
 ### File Structure
 
 ```
-src/reedcms/reedbase/metrics/
+reedbase/src/metrics/
 ├── mod.rs                    # Public API exports
 ├── types.rs                  # Core types (Metric, MetricType, MetricUnit)
 ├── collector.rs              # MetricsCollector singleton
@@ -65,7 +65,7 @@ src/reedcms/reedbase/metrics/
 
 ### Primary Implementation
 
-**`src/reedcms/reedbase/metrics/mod.rs`**
+**`reedbase/src/metrics/mod.rs`**
 
 ```rust
 // Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
@@ -101,7 +101,7 @@ pub fn global() -> &'static MetricsCollector {
 }
 ```
 
-**`src/reedcms/reedbase/metrics/types.rs`**
+**`reedbase/src/metrics/types.rs`**
 
 ```rust
 // Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
@@ -186,7 +186,7 @@ impl MetricUnit {
 }
 ```
 
-**`src/reedcms/reedbase/metrics/collector.rs`**
+**`reedbase/src/metrics/collector.rs`**
 
 ```rust
 // Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
@@ -308,7 +308,7 @@ impl MetricsCollector {
 }
 ```
 
-**`src/reedcms/reedbase/metrics/storage.rs`**
+**`reedbase/src/metrics/storage.rs`**
 
 ```rust
 // Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
@@ -395,7 +395,7 @@ pub fn write_metrics(metrics: &[Metric]) -> Result<()> {
 }
 ```
 
-**`src/reedcms/reedbase/metrics/aggregator.rs`**
+**`reedbase/src/metrics/aggregator.rs`**
 
 ```rust
 // Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
@@ -447,7 +447,7 @@ pub fn percentiles(values: &mut [f64]) -> (f64, f64, f64) {
 
 ### Test Files
 
-**`src/reedcms/reedbase/metrics/collector_test.rs`**
+**`reedbase/src/metrics/collector_test.rs`**
 
 ```rust
 #[cfg(test)]
@@ -639,7 +639,7 @@ Frame metrics stored in:
 
 ### Collection Points
 
-All Frame metrics collected in `src/reedcms/reedbase/frame/`:
+All Frame metrics collected in `reedbase/src/frame/`:
 
 - `frame/mod.rs:Frame::begin()` → `frame_started_total`
 - `frame/mod.rs:Frame::commit()` → `frame_committed_total`, `frame_commit_duration_seconds`

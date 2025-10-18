@@ -718,7 +718,7 @@ fn test_create_and_save_schema() {
 ## File Structure
 
 ```
-src/reedcms/reedbase/
+reedbase/src/
 ├── schema/
 │   ├── mod.rs              # Public API
 │   ├── validation.rs       # Row and field validation

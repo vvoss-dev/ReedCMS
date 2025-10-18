@@ -263,7 +263,7 @@ reed query text "SELECT * WHERE key LIKE 'page.%<de>'"
 ## File Structure
 
 ```
-src/reedcms/reedbase/
+reedbase/src/
 ├── schema/
 │   ├── mod.rs              # Public API
 │   ├── rbks.rs             # RBKS v2 key validation
