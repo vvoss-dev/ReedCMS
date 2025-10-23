@@ -44,6 +44,7 @@ pub mod concurrent;
 pub mod conflict;
 pub mod error;
 pub mod functions;
+pub mod indices;
 pub mod log;
 pub mod merge;
 pub mod metrics;

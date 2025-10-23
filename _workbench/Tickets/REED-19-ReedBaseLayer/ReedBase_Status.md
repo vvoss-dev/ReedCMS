@@ -2,7 +2,7 @@
 
 **Last Updated**: 2025-10-23  
 **Current Phase**: Schema & Performance Layer  
-**Overall Progress**: 12/18 tickets complete (66.7%)
+**Overall Progress**: 13/18 tickets complete (72.2%)
 
 ---
 
@@ -53,14 +53,14 @@ The tickets are implemented in dependency order to ensure each component builds 
 |--------|--------|----------|-----------|--------------|--------|-------|
 | **REED-19-08** | 🟢 Complete | Medium | Medium | REED-19-02 | 4cbef48 | RBKS v2 Key Validation (53 tests passing, 296 tests total) |
 | **REED-19-09** | 🟢 Complete | Medium | Medium | REED-19-08 | a8411b7 | Column Schema Validation (40 tests passing, 337 tests total) |
-| **REED-19-10** | 🟢 Complete | High | Medium | REED-19-02 | [pending] | Function System & Memoization Cache (84 tests passing, 421 tests total) |
-| **REED-19-11** | 🔴 Planned | High | Medium | REED-19-02 | - | Smart Indices (HashMap O(1)) |
+| **REED-19-10** | 🟢 Complete | High | Medium | REED-19-02 | 92c23e0 | Function System & Memoization Cache (84 tests passing, 421 tests total) |
+| **REED-19-11** | 🟢 Complete | High | High | REED-19-08 | [pending] | Smart Indices (17 tests passing, 438 tests total) |
 
 **Phase 3 Goals:**
 - ✅ RBKS v2 key validation for structured keys
 - ✅ TOML-based column schemas with type and constraint validation
 - ✅ 100-500x speedup via function caching (<100ns cache hits)
-- ⏳ 100-1000x faster queries via smart indices
+- ✅ 100-1000x faster queries via smart indices (O(1) HashMap + O(d) trie)
 
 ---
 
