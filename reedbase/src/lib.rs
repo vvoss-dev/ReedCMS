@@ -31,6 +31,7 @@
 //!
 //! ReedBase is organized into modules:
 //!
+//! - **functions**: Computed functions, aggregations, and transformations with caching
 //! - **metrics**: Performance monitoring and observability
 //! - **registry**: Database registry and discovery (planned)
 //! - **table**: Universal table API (planned)
@@ -42,6 +43,7 @@ pub mod backup;
 pub mod concurrent;
 pub mod conflict;
 pub mod error;
+pub mod functions;
 pub mod log;
 pub mod merge;
 pub mod metrics;
