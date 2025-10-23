@@ -107,6 +107,19 @@ pub enum ReedError {
 
     /// Deserialisation error.
     DeserializationError { reason: String },
+
+    /// Schema not found.
+    SchemaNotFound { table: String },
+
+    /// Invalid schema format.
+    InvalidSchema { reason: String },
+
+    /// Schema validation error.
+    ValidationError {
+        column: String,
+        reason: String,
+        value: Option<String>,
+    },
 }
 
 impl fmt::Display for ReedError {
@@ -217,6 +230,27 @@ impl fmt::Display for ReedError {
             }
             Self::DeserializationError { reason } => {
                 write!(f, "Deserialisation error: {}", reason)
+            }
+            Self::SchemaNotFound { table } => {
+                write!(f, "Schema not found for table '{}'", table)
+            }
+            Self::InvalidSchema { reason } => {
+                write!(f, "Invalid schema: {}", reason)
+            }
+            Self::ValidationError {
+                column,
+                reason,
+                value,
+            } => {
+                if let Some(val) = value {
+                    write!(
+                        f,
+                        "Validation error in column '{}': {} (value: '{}')",
+                        column, reason, val
+                    )
+                } else {
+                    write!(f, "Validation error in column '{}': {}", column, reason)
+                }
             }
         }
     }
