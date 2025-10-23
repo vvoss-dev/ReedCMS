@@ -46,6 +46,7 @@ pub mod log;
 pub mod merge;
 pub mod metrics;
 pub mod registry;
+pub mod schema;
 pub mod tables;
 pub mod version;
 
