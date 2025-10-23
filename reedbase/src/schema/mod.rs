@@ -5,7 +5,7 @@
 //!
 //! Provides comprehensive schema validation for ReedBase:
 //! - **RBKS v2 Key Validation** - Structured key format enforcement
-//! - **Column Schema Validation** - Type and constraint enforcement (future)
+//! - **Column Schema Validation** - Type and constraint enforcement
 //!
 //! ## Key Validation (RBKS v2)
 //!
@@ -28,45 +28,83 @@
 //! - **Variant**: mobile/desktop/tablet - max 1
 //! - **Custom**: Any other identifier - multiple allowed
 //!
+//! ## Column Schema Validation
+//!
+//! TOML-based schema files with type and constraint validation:
+//!
+//! ### Column Types
+//!
+//! - **string**: Text data with length and pattern constraints
+//! - **integer**: Whole numbers with min/max range
+//! - **float**: Decimal numbers
+//! - **boolean**: True/false values
+//! - **timestamp**: Unix timestamps
+//!
+//! ### Constraints
+//!
+//! - **required**: Cannot be empty
+//! - **unique**: No duplicate values
+//! - **primary_key**: Required + unique
+//! - **min/max**: Range constraints for integer/float
+//! - **min_length/max_length**: Length constraints for string
+//! - **pattern**: Regex validation for string
+//!
 //! ## Example Usage
 //!
 //! ```rust
-//! use reedbase::schema::rbks::{validate_key, parse_key, normalize_key};
+//! use reedbase::schema::{
+//!     validate_key, parse_key, normalize_key,
+//!     Schema, ColumnDef, validate_row, CsvRow,
+//! };
 //!
-//! // Validate a key
+//! // Key validation
 //! validate_key("page.header.title<de,prod>")?;
 //!
-//! // Parse key with modifiers
-//! let parsed = parse_key("page.title<de,prod,christmas>")?;
-//! assert_eq!(parsed.base, "page.title");
-//! assert_eq!(parsed.modifiers.language, Some("de".to_string()));
+//! // Column validation
+//! let schema = Schema::new("2.0".to_string(), true, vec![
+//!     ColumnDef::primary_key("id".to_string(), "integer".to_string()),
+//!     ColumnDef::new("name".to_string(), "string".to_string()).required(),
+//! ]);
 //!
-//! // Normalize malformed key
-//! let normalized = normalize_key("Page.Title<PROD,DE>")?;
-//! assert_eq!(normalized, "page.title<de,prod>");
+//! let row = CsvRow::new("1".to_string(), vec!["1".to_string(), "Alice".to_string()]);
+//! validate_row(&row, &schema)?;
 //! ```
 //!
 //! ## Performance
 //!
 //! - Key validation: < 20μs
-//! - Key parsing: < 15μs
-//! - Normalization: < 15μs
-//! - Total SET overhead: < 30μs (+20% vs no validation)
+//! - Row validation: < 1ms
+//! - Schema load: < 5ms
+//! - Total overhead: < 30μs per write
 //!
 //! ## Benefits
 //!
-//! - **Enables O(1) index-based queries** via Smart Indices (REED-19-11)
-//! - **Self-documenting keys** with clear structure
-//! - **Prevents inconsistencies** through strict validation
-//! - **100-1000x query speedup** through index optimisation
+//! - **Type-safe data** with column validation
+//! - **Self-documenting schemas** in TOML
+//! - **Catch errors early** at write time
+//! - **Enables O(1) queries** via Smart Indices
 
+pub mod loader;
 pub mod rbks;
+pub mod types;
+pub mod validation;
 
 #[cfg(test)]
+mod loader_test;
+#[cfg(test)]
 mod rbks_test;
+#[cfg(test)]
+mod validation_test;
 
 // Re-export commonly used types
+
+// RBKS v2 (key validation)
 pub use rbks::{
     normalize_key, parse_key, validate_key, Modifiers, ParsedKey, KNOWN_ENVIRONMENTS,
     KNOWN_LANGUAGES, KNOWN_SEASONS, KNOWN_VARIANTS, RBKS_V2_PATTERN,
 };
+
+// Column schema validation
+pub use loader::{create_default_schema, delete_schema, load_schema, save_schema, schema_exists};
+pub use types::{ColumnDef, Schema};
+pub use validation::{validate_row, validate_rows, validate_uniqueness, CsvRow};
