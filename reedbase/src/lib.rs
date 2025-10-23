@@ -48,6 +48,7 @@ pub mod indices;
 pub mod log;
 pub mod merge;
 pub mod metrics;
+pub mod reedql;
 pub mod registry;
 pub mod schema;
 pub mod tables;
