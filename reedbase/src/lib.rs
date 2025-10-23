@@ -39,6 +39,7 @@
 //! - **distribution**: P2P replication (planned)
 
 pub mod backup;
+pub mod concurrent;
 pub mod error;
 pub mod log;
 pub mod metrics;

@@ -92,6 +92,21 @@ pub enum ReedError {
 
     /// Table restore failed.
     TableRestoreFailed { table: String, reason: String },
+
+    /// Lock timeout waiting for exclusive access.
+    LockTimeout { table: String, timeout_secs: u64 },
+
+    /// Write queue is full.
+    QueueFull { table: String, size: usize },
+
+    /// Invalid queue file format.
+    InvalidQueueFile { path: String },
+
+    /// Serialisation error.
+    SerializationError { reason: String },
+
+    /// Deserialisation error.
+    DeserializationError { reason: String },
 }
 
 impl fmt::Display for ReedError {
@@ -180,6 +195,28 @@ impl fmt::Display for ReedError {
             }
             Self::TableRestoreFailed { table, reason } => {
                 write!(f, "Table '{}' restore failed: {}", table, reason)
+            }
+            Self::LockTimeout {
+                table,
+                timeout_secs,
+            } => {
+                write!(
+                    f,
+                    "Lock timeout for table '{}' after {}s",
+                    table, timeout_secs
+                )
+            }
+            Self::QueueFull { table, size } => {
+                write!(f, "Queue full for table '{}' ({} pending)", table, size)
+            }
+            Self::InvalidQueueFile { path } => {
+                write!(f, "Invalid queue file: {}", path)
+            }
+            Self::SerializationError { reason } => {
+                write!(f, "Serialisation error: {}", reason)
+            }
+            Self::DeserializationError { reason } => {
+                write!(f, "Deserialisation error: {}", reason)
             }
         }
     }
