@@ -42,6 +42,7 @@ pub mod backup;
 pub mod concurrent;
 pub mod error;
 pub mod log;
+pub mod merge;
 pub mod metrics;
 pub mod registry;
 pub mod tables;
