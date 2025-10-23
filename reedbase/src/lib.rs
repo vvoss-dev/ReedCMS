@@ -40,6 +40,7 @@
 
 pub mod backup;
 pub mod concurrent;
+pub mod conflict;
 pub mod error;
 pub mod log;
 pub mod merge;
