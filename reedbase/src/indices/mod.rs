@@ -50,17 +50,27 @@
 //! # Ok::<(), reedbase::ReedError>(())
 //! ```
 
+pub mod btree_index;
+pub mod builder;
+pub mod hashmap_index;
 pub mod hierarchy;
+pub mod index_trait;
 pub mod manager;
 pub mod modifier;
 pub mod namespace;
 pub mod types;
 
 #[cfg(test)]
+mod builder_tests;
+#[cfg(test)]
 mod indices_test;
 
 // Re-export public API
+pub use btree_index::BTreeIndex;
+pub use builder::{IndexBackend, IndexBuilder, IndexConfig};
+pub use hashmap_index::HashMapIndex;
 pub use hierarchy::HierarchyTrie;
+pub use index_trait::Index;
 pub use manager::{IndexManager, IndexStats};
 pub use modifier::ModifierIndex;
 pub use namespace::NamespaceIndex;

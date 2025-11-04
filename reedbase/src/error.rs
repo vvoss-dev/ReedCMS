@@ -132,6 +132,13 @@ pub enum ReedError {
 
     /// Invalid page format.
     InvalidPageFormat { page_id: u32, reason: String },
+
+    /// Index operation not supported by backend.
+    IndexOperationUnsupported {
+        operation: String,
+        backend: String,
+        reason: String,
+    },
 }
 
 impl fmt::Display for ReedError {
@@ -275,6 +282,17 @@ impl fmt::Display for ReedError {
             }
             Self::InvalidPageFormat { page_id, reason } => {
                 write!(f, "Invalid page format at page {}: {}", page_id, reason)
+            }
+            Self::IndexOperationUnsupported {
+                operation,
+                backend,
+                reason,
+            } => {
+                write!(
+                    f,
+                    "Operation '{}' not supported by '{}' backend: {}",
+                    operation, backend, reason
+                )
             }
         }
     }

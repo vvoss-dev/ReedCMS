@@ -65,4 +65,7 @@ mod btree_test;
 // Re-export public API
 pub use iter::RangeScanIterator;
 pub use tree::BPlusTree;
-pub use types::{Index, Order, PageId, BTREE_MAGIC};
+pub use types::{Order, PageId, BTREE_MAGIC};
+
+// Re-export Index trait from indices module (canonical definition).
+pub use crate::indices::Index;

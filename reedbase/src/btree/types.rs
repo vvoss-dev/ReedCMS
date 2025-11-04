@@ -9,6 +9,9 @@
 use crate::error::{ReedError, ReedResult};
 use serde::{Deserialize, Serialize};
 
+// Re-export Index trait from indices module (canonical definition).
+pub use crate::indices::Index;
+
 /// Magic bytes for B+-Tree file format validation.
 ///
 /// Used in file headers to verify file type and detect corruption.
@@ -19,145 +22,6 @@ pub const BTREE_MAGIC: u32 = 0xB7EE_7EE1;
 /// 32-bit identifier allowing up to 4,294,967,295 pages.
 /// With 4KB pages, this supports up to 16TB index files.
 pub type PageId = u32;
-
-/// Generic index interface for key-value storage backends.
-///
-/// Provides a unified API for different index implementations (in-memory, B+-Tree, etc.).
-/// All implementations must be thread-safe (`Send + Sync`).
-///
-/// ## Type Parameters
-/// - `K`: Key type (must implement `Clone + Ord`)
-/// - `V`: Value type (must implement `Clone`)
-///
-/// ## Performance
-/// - Operations should target O(log n) for tree-based implementations
-/// - Range queries should be efficient (leveraging sorted storage)
-///
-/// ## Thread Safety
-/// All implementations must be `Send + Sync` for concurrent access.
-pub trait Index<K, V>: Send + Sync
-where
-    K: Clone + Ord,
-    V: Clone,
-{
-    /// Retrieve value for given key.
-    ///
-    /// ## Input
-    /// - `key`: Reference to key to look up
-    ///
-    /// ## Output
-    /// - `Ok(Some(V))`: Key found, returns associated value
-    /// - `Ok(None)`: Key not found
-    /// - `Err(ReedError)`: I/O or corruption error
-    ///
-    /// ## Performance
-    /// - In-memory: O(log n) HashMap lookup
-    /// - Disk: O(log n) B+-Tree traversal with page I/O
-    ///
-    /// ## Error Conditions
-    /// - I/O errors during disk read
-    /// - Corrupted page data
-    fn get(&self, key: &K) -> ReedResult<Option<V>>;
-
-    /// Retrieve all key-value pairs within range [start, end).
-    ///
-    /// ## Input
-    /// - `start`: Inclusive lower bound
-    /// - `end`: Exclusive upper bound
-    ///
-    /// ## Output
-    /// - `Ok(Vec<(K, V)>)`: All matching pairs in sorted order
-    /// - `Err(ReedError)`: I/O or corruption error
-    ///
-    /// ## Performance
-    /// - Returns sorted results (leverages underlying order)
-    /// - Disk implementation: Sequential page reads after finding start
-    ///
-    /// ## Error Conditions
-    /// - I/O errors during range scan
-    /// - Corrupted page data
-    fn range(&self, start: &K, end: &K) -> ReedResult<Vec<(K, V)>>;
-
-    /// Insert or update key-value pair.
-    ///
-    /// ## Input
-    /// - `key`: Key to insert/update
-    /// - `value`: Value to associate with key
-    ///
-    /// ## Output
-    /// - `Ok(())`: Successfully inserted/updated
-    /// - `Err(ReedError)`: I/O error or capacity exceeded
-    ///
-    /// ## Performance
-    /// - In-memory: O(log n) HashMap insert
-    /// - Disk: O(log n) B+-Tree traversal + page write, may trigger splits
-    ///
-    /// ## Error Conditions
-    /// - Disk full (cannot allocate new pages)
-    /// - I/O errors during write
-    /// - Page split failures
-    fn insert(&mut self, key: K, value: V) -> ReedResult<()>;
-
-    /// Delete key and associated value.
-    ///
-    /// ## Input
-    /// - `key`: Key to delete
-    ///
-    /// ## Output
-    /// - `Ok(())`: Key deleted (or didn't exist)
-    /// - `Err(ReedError)`: I/O error
-    ///
-    /// ## Performance
-    /// - In-memory: O(log n) HashMap remove
-    /// - Disk: O(log n) B+-Tree traversal + page write, may trigger merges
-    ///
-    /// ## Error Conditions
-    /// - I/O errors during write
-    /// - Page merge failures
-    fn delete(&mut self, key: &K) -> ReedResult<()>;
-
-    /// Iterate over all key-value pairs in sorted order.
-    ///
-    /// ## Output
-    /// - Iterator yielding `(K, V)` pairs in ascending key order
-    ///
-    /// ## Performance
-    /// - Returns lazy iterator (does not load all data upfront)
-    /// - Disk implementation: Walks leaf pages sequentially
-    ///
-    /// ## Error Conditions
-    /// - Iterator may yield errors on I/O failures (check during iteration)
-    fn iter(&self) -> Box<dyn Iterator<Item = (K, V)> + '_>;
-
-    /// Get backend type identifier.
-    ///
-    /// ## Output
-    /// - `"memory"`: In-memory HashMap backend
-    /// - `"btree"`: Disk-based B+-Tree backend
-    ///
-    /// ## Performance
-    /// - O(1) constant time
-    fn backend_type(&self) -> &str;
-
-    /// Estimate memory usage in bytes.
-    ///
-    /// ## Output
-    /// - Approximate bytes used by in-memory structures
-    ///
-    /// ## Performance
-    /// - O(1) for cached metrics
-    /// - O(n) if full traversal needed
-    fn memory_usage(&self) -> usize;
-
-    /// Estimate disk usage in bytes.
-    ///
-    /// ## Output
-    /// - Total bytes used on disk (0 for in-memory backends)
-    ///
-    /// ## Performance
-    /// - O(1) for file-backed implementations (stat call)
-    fn disk_usage(&self) -> usize;
-}
 
 /// B+-Tree order (degree) configuration.
 ///

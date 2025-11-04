@@ -128,6 +128,21 @@ where
     _phantom: PhantomData<(K, V)>,
 }
 
+impl<K, V> std::fmt::Debug for BPlusTree<K, V>
+where
+    K: Clone + Ord + Serialize + for<'de> Deserialize<'de> + Send + Sync,
+    V: Clone + Serialize + for<'de> Deserialize<'de> + Send + Sync,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("BPlusTree")
+            .field("path", &self.path)
+            .field("root_page", &self.root_page)
+            .field("order", &self.order)
+            .field("next_page", &self.next_page)
+            .finish()
+    }
+}
+
 impl<K, V> BPlusTree<K, V>
 where
     K: Clone + Ord + Serialize + for<'de> Deserialize<'de> + Send + Sync,
@@ -744,7 +759,7 @@ where
     ///
     /// ## Output
     /// - `"btree"`: B+-Tree backend
-    fn backend_type(&self) -> &str {
+    fn backend_type(&self) -> &'static str {
         "btree"
     }
 
