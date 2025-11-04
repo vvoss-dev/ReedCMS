@@ -194,7 +194,11 @@ fn bench_backup_creation(c: &mut Criterion) {
             b.iter_batched(
                 || {
                     let temp_dir = TempDir::new().unwrap();
-                    let table = Table::new(temp_dir.path(), "backup_bench");
+                    let db_path = temp_dir.path().join(".reed");
+                    reedbase::registry::init_registry(&db_path).unwrap();
+                    reedbase::registry::set_base_path(db_path.clone());
+
+                    let table = Table::new(&db_path, "backup_bench");
                     let content = generate_test_data(bytes);
                     table.init(&content, "system").unwrap();
                     (table, temp_dir)
@@ -223,7 +227,11 @@ fn bench_backup_restoration(c: &mut Criterion) {
             b.iter_batched(
                 || {
                     let temp_dir = TempDir::new().unwrap();
-                    let table = Table::new(temp_dir.path(), "restore_bench");
+                    let db_path = temp_dir.path().join(".reed");
+                    reedbase::registry::init_registry(&db_path).unwrap();
+                    reedbase::registry::set_base_path(db_path.clone());
+
+                    let table = Table::new(&db_path, "restore_bench");
                     let content = generate_test_data(bytes);
                     table.init(&content, "system").unwrap();
                     let backup_path = create_backup(&table).unwrap();

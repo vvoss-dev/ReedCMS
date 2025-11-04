@@ -64,7 +64,11 @@ fn bench_write_with_delta(c: &mut Criterion) {
             b.iter_batched(
                 || {
                     let temp_dir = TempDir::new().unwrap();
-                    let table = Table::new(temp_dir.path(), "bench_write");
+                    let db_path = temp_dir.path().join(".reed");
+                    reedbase::registry::init_registry(&db_path).unwrap();
+                    reedbase::registry::set_base_path(db_path.clone());
+
+                    let table = Table::new(&db_path, "bench_write");
                     let content = generate_content(bytes);
                     table.init(&content, "system").unwrap();
 
@@ -101,7 +105,11 @@ fn bench_list_versions(c: &mut Criterion) {
                 b.iter_batched(
                     || {
                         let temp_dir = TempDir::new().unwrap();
-                        let table = Table::new(temp_dir.path(), "bench_versions");
+                        let db_path = temp_dir.path().join(".reed");
+                        reedbase::registry::init_registry(&db_path).unwrap();
+                        reedbase::registry::set_base_path(db_path.clone());
+
+                        let table = Table::new(&db_path, "bench_versions");
                         let mut content = generate_content(1024);
                         table.init(&content, "system").unwrap();
 
@@ -140,7 +148,11 @@ fn bench_rollback(c: &mut Criterion) {
                 b.iter_batched(
                     || {
                         let temp_dir = TempDir::new().unwrap();
-                        let table = Table::new(temp_dir.path(), "bench_rollback");
+                        let db_path = temp_dir.path().join(".reed");
+                        reedbase::registry::init_registry(&db_path).unwrap();
+                        reedbase::registry::set_base_path(db_path.clone());
+
+                        let table = Table::new(&db_path, "bench_rollback");
                         let mut content = generate_content(10_240);
                         table.init(&content, "system").unwrap();
 
@@ -184,7 +196,11 @@ fn bench_read_as_rows(c: &mut Criterion) {
                 b.iter_batched(
                     || {
                         let temp_dir = TempDir::new().unwrap();
-                        let table = Table::new(temp_dir.path(), "bench_rows");
+                        let db_path = temp_dir.path().join(".reed");
+                        reedbase::registry::init_registry(&db_path).unwrap();
+                        reedbase::registry::set_base_path(db_path.clone());
+
+                        let table = Table::new(&db_path, "bench_rows");
 
                         // Generate CSV content
                         let mut csv = String::from("key|value1|value2\n");
@@ -212,7 +228,11 @@ fn bench_read_as_rows(c: &mut Criterion) {
 /// Target: < 1ms
 fn bench_exists_check(c: &mut Criterion) {
     let temp_dir = TempDir::new().unwrap();
-    let table = Table::new(temp_dir.path(), "bench_exists");
+    let db_path = temp_dir.path().join(".reed");
+    reedbase::registry::init_registry(&db_path).unwrap();
+    reedbase::registry::set_base_path(db_path.clone());
+
+    let table = Table::new(&db_path, "bench_exists");
     table.init(b"test content", "system").unwrap();
 
     c.bench_function("table_exists", |b| {
@@ -230,7 +250,11 @@ fn bench_concurrent_reads(c: &mut Criterion) {
     use std::thread;
 
     let temp_dir = TempDir::new().unwrap();
-    let table = Arc::new(Table::new(temp_dir.path(), "bench_concurrent"));
+    let db_path = temp_dir.path().join(".reed");
+    reedbase::registry::init_registry(&db_path).unwrap();
+    reedbase::registry::set_base_path(db_path.clone());
+
+    let table = Arc::new(Table::new(&db_path, "bench_concurrent"));
     let content = generate_content(10_240);
     table.init(&content, "system").unwrap();
 

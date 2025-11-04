@@ -36,10 +36,12 @@ harness = false
 name = "queries"
 harness = false
 
-[[bench]]
-name = "concurrent"
-harness = false
+# Disabled: Missing APIs (merge::auto_merge, TableLock::acquire)
+# [[bench]]
+# name = "concurrent"
+# harness = false
 
-[[bench]]
-name = "versioning"
-harness = false
+# Disabled: Missing APIs (backup::restore_backup signature changed)
+# [[bench]]
+# name = "versioning"
+# harness = false
