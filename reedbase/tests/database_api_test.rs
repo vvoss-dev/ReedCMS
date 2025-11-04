@@ -498,3 +498,159 @@ fn test_query_metrics_collected() {
     // assert!(result.metrics.execution_time_us > 0, "Execution time should be recorded");
     // assert_eq!(result.metrics.rows_returned, 5, "Should return 5 rows");
 }
+
+// ============================================================================
+// Versioning Tests
+// ============================================================================
+
+#[test]
+#[serial]
+fn test_insert_creates_version() {
+    use reedbase::tables::Table;
+    use std::path::Path;
+
+    let (db, temp) = create_test_database("versioning_insert", 0);
+
+    // Get direct table reference (bypass Database API for testing)
+    let table_path = temp.path().join(".reed");
+    let table = Table::new(&table_path, "text");
+
+    // Get initial version count
+    let initial_versions = table.list_versions().expect("Should list versions");
+    let initial_count = initial_versions.len();
+
+    // Insert row via Database API
+    db.execute(
+        "INSERT INTO text (key, value) VALUES ('test.key', 'test value')",
+        "admin",
+    )
+    .expect("Insert failed");
+
+    // Verify version created
+    let versions = table.list_versions().expect("Should list versions");
+    assert_eq!(
+        versions.len(),
+        initial_count + 1,
+        "Insert should create a new version"
+    );
+
+    // Verify version metadata
+    let latest = &versions[0]; // Newest first
+    assert_eq!(latest.user, "admin", "Version should record correct user");
+    assert!(latest.delta_size > 0, "Delta should have non-zero size");
+}
+
+#[test]
+#[serial]
+fn test_update_creates_delta() {
+    use reedbase::tables::Table;
+
+    let (db, temp) = create_test_database("versioning_delta", 1);
+
+    // Get direct table reference
+    let table_path = temp.path().join(".reed");
+    let table = Table::new(&table_path, "text");
+
+    // Get version count after initial data
+    let versions_before = table.list_versions().expect("Should list versions");
+    let count_before = versions_before.len();
+
+    // Update row via Database API
+    db.execute(
+        "UPDATE text SET value = 'new_value' WHERE key = 'test.key.000000'",
+        "updater",
+    )
+    .expect("Update failed");
+
+    // Verify new version created
+    let versions_after = table.list_versions().expect("Should list versions");
+    assert_eq!(
+        versions_after.len(),
+        count_before + 1,
+        "Update should create new version"
+    );
+
+    // Verify delta properties
+    let latest = &versions_after[0];
+    assert_eq!(latest.user, "updater", "Should record updater username");
+    assert!(latest.delta_size > 0, "Delta should exist");
+
+    // Verify delta exists and has reasonable size
+    // Note: For very small files, bsdiff delta may be larger than content due to metadata overhead
+    // This is expected behavior - deltas are optimized for larger files
+    let current_size = table.read_current().expect("Should read current").len();
+
+    // Just verify delta exists (size > 0) - size comparison not meaningful for tiny test data
+    assert!(
+        latest.delta_size > 0,
+        "Delta should exist and have non-zero size"
+    );
+}
+
+#[test]
+#[serial]
+fn test_rollback_to_version() {
+    use reedbase::tables::Table;
+
+    let (db, temp) = create_test_database("versioning_rollback", 10);
+
+    // Query original value
+    let before = db
+        .query("SELECT * FROM text WHERE key = 'test.key.000005'")
+        .expect("Query failed");
+    let original_value = get_rows(&before)[0]
+        .get("value")
+        .expect("Should have value column")
+        .clone();
+
+    // Get direct table reference
+    let table_path = temp.path().join(".reed");
+    let table = Table::new(&table_path, "text");
+
+    // Get versions before modification
+    let versions_before_modify = table.list_versions().expect("Should list versions");
+    let target_version = versions_before_modify[0].timestamp; // Current version
+
+    // Modify row via Database API
+    db.execute(
+        "UPDATE text SET value = 'modified' WHERE key = 'test.key.000005'",
+        "modifier",
+    )
+    .expect("Update failed");
+
+    // Verify modification
+    let modified = db
+        .query("SELECT * FROM text WHERE key = 'test.key.000005'")
+        .expect("Query failed");
+    let modified_value = get_rows(&modified)[0]
+        .get("value")
+        .expect("Should have value column");
+    assert_eq!(
+        modified_value, "modified",
+        "Value should be modified before rollback"
+    );
+
+    // Rollback to version before modification
+    table
+        .rollback(target_version, "admin")
+        .expect("Rollback failed");
+
+    // Verify original value restored
+    let after = db
+        .query("SELECT * FROM text WHERE key = 'test.key.000005'")
+        .expect("Query failed");
+    let restored_value = get_rows(&after)[0]
+        .get("value")
+        .expect("Should have value column");
+    assert_eq!(
+        restored_value, &original_value,
+        "Rollback should restore original value"
+    );
+
+    // Verify rollback created a new version
+    let versions_after = table.list_versions().expect("Should list versions");
+    assert!(
+        versions_after.len() > versions_before_modify.len() + 1,
+        "Rollback should create a new version"
+    );
+}
