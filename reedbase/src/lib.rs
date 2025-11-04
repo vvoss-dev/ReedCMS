@@ -62,3 +62,4 @@ pub use btree::{BPlusTree, Index, Order};
 pub use database::{AutoIndexConfig, Database, DatabaseStats, ExecuteResult, QueryMetrics};
 pub use error::{ReedError, ReedResult};
 pub use metrics::{Metric, MetricType, MetricUnit, MetricsCollector};
+pub use reedql::QueryResult;

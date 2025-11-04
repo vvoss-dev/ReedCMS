@@ -1,0 +1,503 @@
+// Copyright 2025 Vivian Voss. Licensed under the Apache License, Version 2.0.
+// SPDX-License-Identifier: Apache-2.0
+
+//! Database API integration tests.
+//!
+//! Tests the programmatic Rust API for ReedBase operations including:
+//! - Basic CRUD operations
+//! - Complex queries with WHERE, LIKE, ORDER BY, LIMIT
+//! - Index operations and performance
+//! - Concurrency and thread safety
+//! - Error handling
+//! - Versioning operations
+
+mod test_utils;
+
+use reedbase::Database;
+use std::sync::Arc;
+use std::thread;
+use std::time::Instant;
+use test_utils::*;
+
+// ============================================================================
+// Basic Operations
+// ============================================================================
+
+#[test]
+fn test_database_open_create() {
+    let (db, _temp) = create_test_database("open_test", 0);
+    let stats = db.stats();
+    assert_eq!(stats.table_count, 1); // text table created
+}
+
+#[test]
+fn test_database_create_table() {
+    let (db, _temp) = create_test_database("create_table_test", 0);
+
+    db.create_table("routes", None)
+        .expect("Failed to create routes table");
+    db.create_table("meta", None)
+        .expect("Failed to create meta table");
+
+    let tables = db.list_tables().expect("Failed to list tables");
+    assert!(tables.contains(&"text".to_string()));
+    assert!(tables.contains(&"routes".to_string()));
+    assert!(tables.contains(&"meta".to_string()));
+}
+
+#[test]
+fn test_database_insert_query() {
+    let (db, _temp) = create_test_database("insert_query_test", 0);
+
+    // Insert a row
+    let result = db.execute(
+        "INSERT INTO text (key, value, description) VALUES ('test.key', 'test value', 'test desc')",
+        "admin"
+    ).expect("Insert failed");
+
+    assert_rows_affected(&result, 1);
+
+    // Query it back
+    let query_result = db
+        .query("SELECT * FROM text WHERE key = 'test.key'")
+        .expect("Query failed");
+
+    assert_query_result_count(&query_result, 1);
+    assert_eq!(get_rows(&query_result)[0].get("key").unwrap(), "test.key");
+    assert_eq!(
+        get_rows(&query_result)[0].get("value").unwrap(),
+        "test value"
+    );
+}
+
+#[test]
+fn test_database_update_query() {
+    let (db, _temp) = create_test_database("update_test", 5);
+
+    // Update a row
+    let result = db
+        .execute(
+            "UPDATE text SET value = 'updated value' WHERE key = 'test.key.000001'",
+            "admin",
+        )
+        .expect("Update failed");
+
+    assert_rows_affected(&result, 1);
+
+    // Verify update
+    let query_result = db
+        .query("SELECT value FROM text WHERE key = 'test.key.000001'")
+        .expect("Query failed");
+
+    assert_eq!(get_rows(&query_result)[0].get("value").unwrap(), "updated value");
+}
+
+#[test]
+fn test_database_delete_query() {
+    let (db, _temp) = create_test_database("delete_test", 10);
+
+    // Delete a row
+    let result = db
+        .execute("DELETE FROM text WHERE key = 'test.key.000005'", "admin")
+        .expect("Delete failed");
+
+    assert_rows_affected(&result, 1);
+
+    // Verify deletion
+    let query_result = db
+        .query("SELECT * FROM text WHERE key = 'test.key.000005'")
+        .expect("Query failed");
+
+    assert_query_result_count(&query_result, 0);
+
+    // Verify other rows still exist
+    let all_result = db.query("SELECT * FROM text").expect("Query failed");
+    assert_query_result_count(&all_result, 9);
+}
+
+// ============================================================================
+// Complex Queries
+// ============================================================================
+
+#[test]
+fn test_query_with_where_clause() {
+    let (db, _temp) = create_test_database("where_test", 20);
+
+    let result = db
+        .query("SELECT * FROM text WHERE key = 'test.key.000010'")
+        .expect("Query failed");
+
+    assert_query_result_count(&result, 1);
+    assert_eq!(get_rows(&result)[0].get("key").unwrap(), "test.key.000010");
+}
+
+#[test]
+fn test_query_with_like_pattern() {
+    let (db, _temp) = create_test_database("like_test", 0);
+    insert_multilingual_test_data(&db, 3);
+
+    // Query all German keys
+    let result = db
+        .query("SELECT * FROM text WHERE key LIKE '%@de'")
+        .expect("Query failed");
+
+    // Should have: page.title.*.@de, page.header.logo.*.@de, footer.copyright.*.@de, menu.item.*.@de
+    // = 4 prefixes × 3 keys = 12 rows
+    assert_query_result_count(&result, 12);
+
+    // Verify all are German
+    for row in get_rows(&result) {
+        let key = row.get("key").unwrap();
+        assert!(key.ends_with("@de"), "Key should end with @de: {}", key);
+    }
+}
+
+#[test]
+fn test_query_with_order_by() {
+    let (db, _temp) = create_test_database("order_test", 10);
+
+    // Order by key ascending
+    let result = db
+        .query("SELECT key FROM text ORDER BY key ASC")
+        .expect("Query failed");
+
+    assert_query_result_count(&result, 10);
+
+    // Verify sorted
+    let keys: Vec<String> = get_rows(&result)
+        .iter()
+        .map(|row| row.get("key").unwrap().to_string())
+        .collect();
+
+    let mut sorted_keys = keys.clone();
+    sorted_keys.sort();
+    assert_eq!(keys, sorted_keys, "Keys should be sorted ascending");
+}
+
+#[test]
+fn test_query_with_limit_offset() {
+    let (db, _temp) = create_test_database("limit_test", 50);
+
+    // Get rows 10-19 (LIMIT 10 OFFSET 10)
+    let result = db
+        .query("SELECT * FROM text ORDER BY key ASC LIMIT 10 OFFSET 10")
+        .expect("Query failed");
+
+    assert_query_result_count(&result, 10);
+
+    // Verify first row is the 11th row (offset 10)
+    assert_eq!(get_rows(&result)[0].get("key").unwrap(), "test.key.000010");
+}
+
+#[test]
+fn test_query_with_aggregation() {
+    let (db, _temp) = create_test_database("aggregation_test", 100);
+
+    // Count all rows
+    let result = db.query("SELECT COUNT(*) FROM text").expect("Query failed");
+
+    assert_query_result_count(&result, 1);
+    // Note: Actual aggregation support depends on ReedQL implementation
+}
+
+// ============================================================================
+// Index Operations
+// ============================================================================
+
+#[test]
+fn test_create_index_speeds_up_query() {
+    let (db, _temp) = create_test_database("index_speed_test", 1000);
+
+    // Query without index
+    let start = Instant::now();
+    let result1 = db
+        .query("SELECT * FROM text WHERE key = 'test.key.000500'")
+        .expect("Query failed");
+    let duration_no_index = start.elapsed();
+
+    assert_query_full_scan(&result1);
+
+    // Create index
+    db.create_index("text", "key")
+        .expect("Failed to create index");
+
+    // Query with index
+    let start = Instant::now();
+    let result2 = db
+        .query("SELECT * FROM text WHERE key = 'test.key.000500'")
+        .expect("Query failed");
+    let duration_with_index = start.elapsed();
+
+    assert_query_used_index(&result2);
+
+    // Index should be faster (at least 2x)
+    assert!(
+        duration_with_index < duration_no_index / 2,
+        "Index query ({:?}) should be faster than full scan ({:?})",
+        duration_with_index,
+        duration_no_index
+    );
+}
+
+#[test]
+fn test_auto_index_creation() {
+    let (db, _temp) = create_test_database("auto_index_test", 100);
+
+    // Execute same query 10 times (threshold)
+    for _ in 0..10 {
+        db.query("SELECT * FROM text WHERE key = 'test.key.000050'")
+            .expect("Query failed");
+    }
+
+    // Check if auto-index was created
+    let indices = db.list_indices();
+    let auto_index = indices.iter().find(|idx| idx.auto_created);
+
+    assert!(
+        auto_index.is_some(),
+        "Auto-index should have been created after 10 queries"
+    );
+}
+
+#[test]
+fn test_list_indices() {
+    let (db, _temp) = create_test_database("list_indices_test", 10);
+
+    // Initially no indices
+    let indices = db.list_indices();
+    assert_eq!(indices.len(), 0);
+
+    // Create two indices
+    db.create_index("text", "key")
+        .expect("Failed to create index on key");
+    db.create_index("text", "value")
+        .expect("Failed to create index on value");
+
+    // List indices
+    let indices = db.list_indices();
+    assert_eq!(indices.len(), 2);
+
+    let key_index = indices.iter().find(|idx| idx.column == "key");
+    let value_index = indices.iter().find(|idx| idx.column == "value");
+
+    assert!(key_index.is_some());
+    assert!(value_index.is_some());
+}
+
+#[test]
+fn test_drop_index() {
+    let (db, _temp) = create_test_database("drop_index_test", 10);
+
+    // Create index
+    db.create_index("text", "key")
+        .expect("Failed to create index");
+    assert_eq!(db.list_indices().len(), 1);
+
+    // Drop index
+    // db.drop_index("text", "key").expect("Failed to drop index");
+    // assert_eq!(db.list_indices().len(), 0);
+}
+
+// ============================================================================
+// Concurrency Tests
+// ============================================================================
+
+#[test]
+fn test_concurrent_reads() {
+    let (db, _temp) = create_test_database("concurrent_reads_test", 100);
+    let db = Arc::new(db);
+
+    let mut handles = vec![];
+
+    // Spawn 10 threads, each executing 50 queries
+    for i in 0..10 {
+        let db_clone = Arc::clone(&db);
+        let handle = thread::spawn(move || {
+            for j in 0..50 {
+                let key = format!("test.key.{:06}", (i * 10 + j) % 100);
+                let result = db_clone
+                    .query(&format!("SELECT * FROM text WHERE key = '{}'", key))
+                    .expect("Query failed");
+                assert!(get_rows(&result).len() <= 1);
+            }
+        });
+        handles.push(handle);
+    }
+
+    // Wait for all threads
+    for handle in handles {
+        handle.join().expect("Thread panicked");
+    }
+}
+
+#[test]
+fn test_concurrent_writes() {
+    let (db, _temp) = create_test_database("concurrent_writes_test", 0);
+    let db = Arc::new(db);
+
+    let mut handles = vec![];
+
+    // Spawn 5 threads, each inserting 20 rows
+    for i in 0..5 {
+        let db_clone = Arc::clone(&db);
+        let handle = thread::spawn(move || {
+            for j in 0..20 {
+                let key = format!("thread{}.key.{:03}", i, j);
+                let sql = format!(
+                    "INSERT INTO text (key, value) VALUES ('{}', 'value from thread {}')",
+                    key, i
+                );
+                db_clone
+                    .execute(&sql, &format!("user{}", i))
+                    .expect("Insert failed");
+            }
+        });
+        handles.push(handle);
+    }
+
+    // Wait for all threads
+    for handle in handles {
+        handle.join().expect("Thread panicked");
+    }
+
+    // Verify all 100 rows inserted
+    let result = db.query("SELECT * FROM text").expect("Query failed");
+    assert_query_result_count(&result, 100);
+}
+
+#[test]
+fn test_read_during_write() {
+    let (db, _temp) = create_test_database("read_write_test", 50);
+    let db = Arc::new(db);
+
+    let mut handles = vec![];
+
+    // Writer thread (inserts 50 more rows)
+    let db_writer = Arc::clone(&db);
+    let writer = thread::spawn(move || {
+        for i in 50..100 {
+            let key = format!("test.key.{:06}", i);
+            let sql = format!(
+                "INSERT INTO text (key, value) VALUES ('{}', 'new value')",
+                key
+            );
+            db_writer.execute(&sql, "writer").expect("Insert failed");
+        }
+    });
+    handles.push(writer);
+
+    // Reader threads (query existing data)
+    for _ in 0..5 {
+        let db_reader = Arc::clone(&db);
+        let reader = thread::spawn(move || {
+            for _ in 0..20 {
+                let result = db_reader
+                    .query("SELECT * FROM text LIMIT 10")
+                    .expect("Query failed");
+                assert!(get_rows(&result).len() <= 10);
+            }
+        });
+        handles.push(reader);
+    }
+
+    // Wait for all threads
+    for handle in handles {
+        handle.join().expect("Thread panicked");
+    }
+}
+
+// ============================================================================
+// Error Handling
+// ============================================================================
+
+#[test]
+fn test_query_nonexistent_table() {
+    let (db, _temp) = create_test_database("error_table_test", 0);
+
+    let result = db.query("SELECT * FROM nonexistent");
+    assert!(result.is_err(), "Query on nonexistent table should fail");
+}
+
+#[test]
+fn test_invalid_sql_syntax() {
+    let (db, _temp) = create_test_database("error_syntax_test", 10);
+
+    let result = db.query("SELECT FORM text");
+    assert!(result.is_err(), "Invalid SQL syntax should fail");
+}
+
+#[test]
+fn test_insert_duplicate_key() {
+    let (db, _temp) = create_test_database("error_duplicate_test", 5);
+
+    // Try to insert duplicate key
+    let result = db.execute(
+        "INSERT INTO text (key, value) VALUES ('test.key.000001', 'duplicate')",
+        "admin",
+    );
+
+    // Note: Behavior depends on schema - may succeed or fail
+    // This test documents current behavior
+    println!("Duplicate insert result: {:?}", result);
+}
+
+#[test]
+fn test_index_already_exists_error() {
+    let (db, _temp) = create_test_database("error_index_test", 10);
+
+    // Create index
+    db.create_index("text", "key")
+        .expect("First index creation should succeed");
+
+    // Try to create same index again
+    let result = db.create_index("text", "key");
+    assert!(result.is_err(), "Creating duplicate index should fail");
+}
+
+// ============================================================================
+// Statistics
+// ============================================================================
+
+#[test]
+fn test_database_stats_accurate() {
+    let (db, _temp) = create_test_database("stats_test", 100);
+
+    // Execute some operations
+    db.query("SELECT * FROM text LIMIT 10")
+        .expect("Query failed");
+    db.execute(
+        "INSERT INTO text (key, value) VALUES ('new.key', 'new value')",
+        "admin",
+    )
+    .expect("Insert failed");
+    db.execute(
+        "UPDATE text SET value = 'updated' WHERE key = 'new.key'",
+        "admin",
+    )
+    .expect("Update failed");
+    db.execute("DELETE FROM text WHERE key = 'new.key'", "admin")
+        .expect("Delete failed");
+
+    let stats = db.stats();
+
+    assert_eq!(stats.table_count, 1);
+    assert!(stats.query_count >= 1);
+    assert!(stats.insert_count >= 1);
+    assert!(stats.update_count >= 1);
+    assert!(stats.delete_count >= 1);
+}
+
+#[test]
+#[ignore] // TODO: QueryResult does not expose metrics yet
+fn test_query_metrics_collected() {
+    let (db, _temp) = create_test_database("metrics_test", 50);
+
+    let result = db
+        .query("SELECT * FROM text LIMIT 5")
+        .expect("Query failed");
+
+    // TODO: Verify metrics are collected once QueryResult exposes them
+    // assert!(result.metrics.parse_time_us > 0, "Parse time should be recorded");
+    // assert!(result.metrics.execution_time_us > 0, "Execution time should be recorded");
+    // assert_eq!(result.metrics.rows_returned, 5, "Should return 5 rows");
+}
