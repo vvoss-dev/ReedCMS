@@ -50,7 +50,7 @@ fn test_where_like_pattern_correct() {
     assert_query_result_count(&result, 20);
 
     // Verify all keys end with @de
-    for row in &result.rows {
+    for row in get_rows(&result) {
         let key = row.get("key").unwrap();
         assert!(
             key.ends_with("@de"),
@@ -73,7 +73,7 @@ fn test_where_like_prefix_pattern() {
     assert_query_result_count(&result, 10);
 
     // Verify all start with correct prefix
-    for row in &result.rows {
+    for row in get_rows(&result) {
         let key = row.get("key").unwrap();
         assert!(
             key.starts_with("test.key.0001"),
@@ -96,7 +96,7 @@ fn test_where_multiple_conditions() {
     // Should have 10 German page.title keys
     assert_query_result_count(&result, 10);
 
-    for row in &result.rows {
+    for row in get_rows(&result) {
         let key = row.get("key").unwrap();
         assert!(key.starts_with("page.title."));
         assert!(key.ends_with("@de"));
@@ -118,9 +118,7 @@ fn test_order_by_ascending() {
     assert_query_result_count(&result, 20);
 
     // Extract keys
-    let keys: Vec<String> = result
-        .rows
-        .iter()
+    let keys: Vec<String> = get_rows(&result).iter()
         .map(|row| row.get("key").unwrap().to_string())
         .collect();
 
@@ -142,9 +140,7 @@ fn test_order_by_descending() {
     assert_query_result_count(&result, 20);
 
     // Extract keys
-    let keys: Vec<String> = result
-        .rows
-        .iter()
+    let keys: Vec<String> = get_rows(&result).iter()
         .map(|row| row.get("key").unwrap().to_string())
         .collect();
 
@@ -265,10 +261,10 @@ fn test_insert_persists() {
         .expect("Query failed");
 
     assert_query_result_count(&query_result, 1);
-    assert_eq!(query_get_rows(&result)[0].get("key").unwrap(), "persist.test");
-    assert_eq!(query_get_rows(&result)[0].get("value").unwrap(), "test value");
+    assert_eq!(get_rows(&query_result)[0].get("key").unwrap(), "persist.test");
+    assert_eq!(get_rows(&query_result)[0].get("value").unwrap(), "test value");
     assert_eq!(
-        query_get_rows(&result)[0].get("description").unwrap(),
+        get_rows(&query_result)[0].get("description").unwrap(),
         "test desc"
     );
 }
@@ -351,7 +347,7 @@ fn test_update_multiple_rows() {
         .query("SELECT * FROM text WHERE key LIKE 'test.key.001%'")
         .expect("Query failed");
 
-    for row in &result.rows {
+    for row in get_rows(&result) {
         assert_eq!(row.get("value").unwrap(), "batch updated");
     }
 }

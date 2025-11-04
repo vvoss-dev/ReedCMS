@@ -121,9 +121,7 @@ fn test_multiple_writers() {
     assert_query_result_count(&result, 100);
 
     // Verify no duplicate keys
-    let keys: std::collections::HashSet<String> = result
-        .rows
-        .iter()
+    let keys: std::collections::HashSet<String> = get_rows(&result).iter()
         .map(|row| row.get("key").unwrap().to_string())
         .collect();
     assert_eq!(keys.len(), 100, "Should have 100 unique keys");

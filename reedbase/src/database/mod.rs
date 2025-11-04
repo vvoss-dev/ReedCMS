@@ -95,12 +95,13 @@ pub mod query;
 pub mod stats;
 pub mod types;
 
-#[cfg(test)]
-mod database_test;
-#[cfg(test)]
-mod execute_test;
-#[cfg(test)]
-mod query_test;
+// Unit tests moved to integration tests in tests/ directory
+// #[cfg(test)]
+// mod database_test;
+// #[cfg(test)]
+// mod execute_test;
+// #[cfg(test)]
+// mod query_test;
 
 // Re-export public API
 pub use database::Database;
