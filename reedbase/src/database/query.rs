@@ -149,12 +149,14 @@ fn track_query_pattern(db: &Database, query: &crate::reedql::types::ParsedQuery)
         let threshold = db.auto_index_config().threshold;
         if tracker.should_create_index(&pattern, threshold) {
             tracker.mark_indexed(pattern.clone());
+
+            // Drop lock before creating index (create_index needs write access)
             drop(tracker);
 
-            // Attempt to create index (ignore errors - best effort)
-            let _ = db.create_index(&query.table, &column);
+            // Attempt to create index with auto_created flag (ignore errors - best effort)
+            let _ = crate::database::index::create_index_internal(db, &query.table, &column, true);
 
-            // Re-acquire lock for next iteration
+            // Don't continue tracking - index created, we're done
             return;
         }
     }

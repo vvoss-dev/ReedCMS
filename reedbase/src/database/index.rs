@@ -16,6 +16,7 @@ use crate::indices::{HashMapIndex, Index};
 /// - `db`: Database reference
 /// - `table_name`: Table name
 /// - `column`: Column name
+/// - `auto_created`: Whether this index was auto-created (default: false)
 ///
 /// ## Output
 /// - `Ok(())`: Index created successfully
@@ -24,7 +25,12 @@ use crate::indices::{HashMapIndex, Index};
 /// ## Performance
 /// - HashMap index creation: < 10ms for 10k rows
 /// - B+-Tree index creation: < 50ms for 10k rows (persistent)
-pub fn create_index(db: &Database, table_name: &str, column: &str) -> ReedResult<()> {
+pub fn create_index_internal(
+    db: &Database,
+    table_name: &str,
+    column: &str,
+    auto_created: bool,
+) -> ReedResult<()> {
     // Check if index already exists
     let index_key = format!("{}.{}", table_name, column);
     {
@@ -89,11 +95,25 @@ pub fn create_index(db: &Database, table_name: &str, column: &str) -> ReedResult
     let mut indices = db.indices().write().unwrap();
     indices.insert(index_key.clone(), Box::new(index));
 
+    // Store auto-created flag
+    if auto_created {
+        let mut auto_flags = db.auto_created_indices().write().unwrap();
+        auto_flags.insert(index_key.clone(), true);
+    }
+
     // Update statistics
     let mut stats = db.stats_mut().write().unwrap();
     stats.index_count += 1;
+    if auto_created {
+        stats.auto_index_count += 1;
+    }
 
     Ok(())
+}
+
+/// Creates an index on a table column (public API - manual creation).
+pub fn create_index(db: &Database, table_name: &str, column: &str) -> ReedResult<()> {
+    create_index_internal(db, table_name, column, false)
 }
 
 /// Lists all indices in the database.
@@ -105,6 +125,7 @@ pub fn create_index(db: &Database, table_name: &str, column: &str) -> ReedResult
 /// - `Vec<IndexInfo>`: Information about all indices
 pub fn list_indices(db: &Database) -> Vec<IndexInfo> {
     let indices = db.indices().read().unwrap();
+    let auto_flags = db.auto_created_indices().read().unwrap();
     let mut result = Vec::new();
 
     for (key, _index) in indices.iter() {
@@ -112,6 +133,8 @@ pub fn list_indices(db: &Database) -> Vec<IndexInfo> {
         if parts.len() >= 2 {
             let table = parts[0].to_string();
             let column = parts[1..].join(".");
+
+            let auto_created = auto_flags.get(key).copied().unwrap_or(false);
 
             let info = IndexInfo {
                 table,
@@ -121,7 +144,7 @@ pub fn list_indices(db: &Database) -> Vec<IndexInfo> {
                 memory_bytes: 0,
                 disk_bytes: 0,
                 usage_count: 0,
-                auto_created: false,
+                auto_created,
             };
 
             result.push(info);

@@ -52,6 +52,9 @@ pub struct Database {
     /// Active indices (table.column → Index)
     indices: Arc<RwLock<HashMap<String, Box<dyn Index<String, Vec<usize>>>>>>,
 
+    /// Auto-created index flags (table.column → bool)
+    auto_created_indices: Arc<RwLock<HashMap<String, bool>>>,
+
     /// Pattern tracker for auto-indexing
     pattern_tracker: Arc<RwLock<PatternTracker>>,
 
@@ -112,6 +115,7 @@ impl Database {
             base_path: base_path.clone(),
             tables: Arc::new(RwLock::new(HashMap::new())),
             indices: Arc::new(RwLock::new(HashMap::new())),
+            auto_created_indices: Arc::new(RwLock::new(HashMap::new())),
             pattern_tracker: Arc::new(RwLock::new(PatternTracker::new())),
             auto_index_config: AutoIndexConfig::default(),
             stats: Arc::new(RwLock::new(DatabaseStats::new())),
@@ -246,11 +250,11 @@ impl Database {
         let mut stats = self.stats.write().unwrap();
         stats.table_count += 1;
 
-        // Auto-create primary key index
+        // Auto-create primary key index (marked as auto-created)
         if self.auto_index_config.enabled {
             drop(tables);
             drop(stats);
-            self.create_index(name, "key")?;
+            crate::database::index::create_index_internal(self, name, "key", true)?;
         }
 
         Ok(())
@@ -440,6 +444,10 @@ impl Database {
         &self,
     ) -> &Arc<RwLock<HashMap<String, Box<dyn Index<String, Vec<usize>>>>>> {
         &self.indices
+    }
+
+    pub(crate) fn auto_created_indices(&self) -> &Arc<RwLock<HashMap<String, bool>>> {
+        &self.auto_created_indices
     }
 
     pub(crate) fn pattern_tracker(&self) -> &Arc<RwLock<PatternTracker>> {

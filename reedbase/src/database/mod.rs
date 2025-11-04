@@ -106,5 +106,6 @@ pub mod types;
 // Re-export public API
 pub use database::Database;
 pub use execute::{ExecuteResult, ExecuteStatement};
+pub use index::create_index_internal; // For auto-indexing
 pub use query::QueryResultFormatter;
 pub use types::{AutoIndexConfig, DatabaseStats, IndexInfo, QueryMetrics};
