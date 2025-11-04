@@ -145,6 +145,18 @@ pub enum ReedError {
 
     /// Query optimization failed.
     QueryOptimizationFailed { query: String, reason: String },
+
+    /// Version log read failed.
+    VersionLogRead {
+        path: std::path::PathBuf,
+        reason: String,
+    },
+
+    /// Version index corrupted.
+    VersionIndexCorrupted {
+        index_type: String, // "timestamp" | "frame"
+        path: std::path::PathBuf,
+    },
 }
 
 impl fmt::Display for ReedError {
@@ -305,6 +317,22 @@ impl fmt::Display for ReedError {
             }
             Self::QueryOptimizationFailed { query, reason } => {
                 write!(f, "Query optimization failed for '{}': {}", query, reason)
+            }
+            Self::VersionLogRead { path, reason } => {
+                write!(
+                    f,
+                    "Version log read failed for '{}': {}",
+                    path.display(),
+                    reason
+                )
+            }
+            Self::VersionIndexCorrupted { index_type, path } => {
+                write!(
+                    f,
+                    "Version index '{}' corrupted at '{}'",
+                    index_type,
+                    path.display()
+                )
             }
         }
     }
