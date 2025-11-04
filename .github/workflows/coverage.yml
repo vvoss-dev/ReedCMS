@@ -1,0 +1,47 @@
+name: Coverage
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+
+      - name: Generate coverage
+        run: cd reedbase && cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: reedbase/lcov.info
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Check coverage threshold
+        run: |
+          cd reedbase
+          COVERAGE=$(cargo llvm-cov --all-features --workspace --summary-only | grep TOTAL | awk '{print $10}' | sed 's/%//')
+          echo "Coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 70.0" | bc -l) )); then
+            echo "❌ Coverage $COVERAGE% is below threshold 70%"
+            exit 1
+          else
+            echo "✅ Coverage $COVERAGE% meets threshold 70%"
+          fi
