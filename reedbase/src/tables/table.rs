@@ -7,10 +7,11 @@ use crate::error::{ReedError, ReedResult};
 use crate::registry::get_or_create_user_code;
 use crate::tables::csv_parser::parse_csv;
 use crate::tables::types::{CsvRow, VersionInfo, WriteResult};
+use fs2::FileExt;
 use std::fs::{self, File, OpenOptions};
 use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 /// Universal table abstraction.
 ///
@@ -271,6 +272,137 @@ impl Table {
             });
         }
 
+        // Acquire exclusive lock for write operation
+        let lock_result = self.write_with_lock(content, user);
+
+        lock_result
+    }
+
+    /// Performs an atomic read-modify-write operation under a single lock.
+    ///
+    /// This prevents Read-Modify-Write race conditions during concurrent operations.
+    ///
+    /// ## Input
+    /// - `modify_fn`: Function that takes current content and returns new content
+    /// - `user`: Username for audit trail
+    ///
+    /// ## Output
+    /// - `Ok(WriteResult)`: Write succeeded
+    /// - `Err(ReedError)`: Write failed
+    ///
+    /// ## Example
+    /// ```no_run
+    /// table.read_modify_write(|content| {
+    ///     let mut new_content = content.to_vec();
+    ///     new_content.extend_from_slice(b"new_row\n");
+    ///     new_content
+    /// }, "user123")?;
+    /// ```
+    pub fn read_modify_write<F>(&self, modify_fn: F, user: &str) -> ReedResult<WriteResult>
+    where
+        F: FnOnce(&[u8]) -> Vec<u8>,
+    {
+        if !self.exists() {
+            return Err(ReedError::TableNotFound {
+                name: self.name.clone(),
+            });
+        }
+
+        let lock_path = self.table_dir().join(".lock");
+
+        // Create lock file if it doesn't exist
+        let lock_file = OpenOptions::new()
+            .create(true)
+            .write(true)
+            .open(&lock_path)
+            .map_err(|e| ReedError::IoError {
+                operation: "create_lock_file".to_string(),
+                reason: e.to_string(),
+            })?;
+
+        // Try to acquire exclusive lock with retry mechanism
+        self.acquire_lock_with_retry(&lock_file)?;
+
+        // Read current content
+        let current_content = self.read_current().map_err(|e| {
+            let _ = lock_file.unlock();
+            e
+        })?;
+
+        // Apply modification function
+        let new_content = modify_fn(&current_content);
+
+        // Perform write operation
+        let result = self.write_internal(&new_content, user);
+
+        // Release lock (automatic on drop, but explicit unlock is clearer)
+        let _ = lock_file.unlock();
+
+        result
+    }
+
+    /// Internal write implementation with file locking.
+    ///
+    /// Acquires exclusive lock on table directory to prevent concurrent write conflicts.
+    fn write_with_lock(&self, content: &[u8], user: &str) -> ReedResult<WriteResult> {
+        let lock_path = self.table_dir().join(".lock");
+
+        // Create lock file if it doesn't exist
+        let lock_file = OpenOptions::new()
+            .create(true)
+            .write(true)
+            .open(&lock_path)
+            .map_err(|e| ReedError::IoError {
+                operation: "create_lock_file".to_string(),
+                reason: e.to_string(),
+            })?;
+
+        // Try to acquire exclusive lock with retry mechanism
+        self.acquire_lock_with_retry(&lock_file)?;
+
+        // Perform write operation
+        let result = self.write_internal(content, user);
+
+        // Release lock (automatic on drop, but explicit unlock is clearer)
+        let _ = lock_file.unlock();
+
+        result
+    }
+
+    /// Acquire exclusive lock with exponential backoff retry.
+    fn acquire_lock_with_retry(&self, lock_file: &File) -> ReedResult<()> {
+        const MAX_RETRIES: u32 = 50;
+        const INITIAL_WAIT_MS: u64 = 5;
+        const MAX_WAIT_MS: u64 = 100;
+
+        for attempt in 0..MAX_RETRIES {
+            match lock_file.try_lock_exclusive() {
+                Ok(_) => return Ok(()),
+                Err(_) if attempt < MAX_RETRIES - 1 => {
+                    // Exponential backoff with cap: 5ms, 10ms, 20ms, 40ms, 80ms, 100ms (capped)
+                    let wait_time = (INITIAL_WAIT_MS * 2u64.pow(attempt)).min(MAX_WAIT_MS);
+                    std::thread::sleep(Duration::from_millis(wait_time));
+                }
+                Err(e) => {
+                    return Err(ReedError::IoError {
+                        operation: "acquire_write_lock".to_string(),
+                        reason: format!(
+                            "Failed to acquire lock after {} attempts: {}",
+                            MAX_RETRIES, e
+                        ),
+                    });
+                }
+            }
+        }
+
+        Err(ReedError::IoError {
+            operation: "acquire_write_lock".to_string(),
+            reason: "Lock acquisition failed".to_string(),
+        })
+    }
+
+    /// Internal write implementation (called after lock is acquired).
+    fn write_internal(&self, content: &[u8], user: &str) -> ReedResult<WriteResult> {
         let timestamp = Self::now_nanos();
 
         // Create binary delta using bsdiff

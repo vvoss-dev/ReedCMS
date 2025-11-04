@@ -324,7 +324,6 @@ fn test_concurrent_reads() {
 }
 
 #[test]
-#[ignore] // TODO: Race condition in delta versioning during concurrent writes to empty table
 fn test_concurrent_writes() {
     let (db, _temp) = create_test_database("concurrent_writes_test", 0);
     let db = Arc::new(db);

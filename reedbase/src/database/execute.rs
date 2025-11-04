@@ -368,20 +368,6 @@ fn execute_insert(
 ) -> ReedResult<ExecuteResult> {
     let table = db.get_table(table_name)?;
 
-    // Read current content as bytes
-    let content = table.read_current()?;
-    let text = std::str::from_utf8(&content).map_err(|e| ReedError::InvalidCsv {
-        reason: format!("Invalid UTF-8: {}", e),
-        line: 0,
-    })?;
-
-    // Parse to get rows and header
-    let mut lines: Vec<&str> = text.lines().collect();
-    let header_line = lines.first().ok_or_else(|| ReedError::InvalidCsv {
-        reason: "Empty table".to_string(),
-        line: 0,
-    })?;
-
     // Build new row based on columns
     let key = columns
         .iter()
@@ -402,13 +388,17 @@ fn execute_insert(
     new_row_parts.extend(row_values);
     let new_row_line = new_row_parts.join("|");
 
-    // Append new row
-    let mut new_content = content.clone();
-    new_content.extend_from_slice(new_row_line.as_bytes());
-    new_content.push(b'\n');
-
-    // Write back
-    let write_result = table.write(&new_content, user)?;
+    // Use atomic read-modify-write to prevent race conditions
+    let write_result = table.read_modify_write(
+        |content| {
+            // Append new row to existing content
+            let mut new_content = content.to_vec();
+            new_content.extend_from_slice(new_row_line.as_bytes());
+            new_content.push(b'\n');
+            new_content
+        },
+        user,
+    )?;
 
     Ok(ExecuteResult {
         rows_affected: 1,
