@@ -63,13 +63,20 @@
 //! - `validator`: Query validation and security checks
 //! - `formatter`: Output formatting (table, JSON, CSV)
 
+pub mod analyzer;
+pub mod analyzer_test;
 pub mod executor;
+pub mod executor_test;
 pub mod parser;
+pub mod planner;
+pub mod planner_test;
 pub mod types;
 
 // Re-export commonly used types
-pub use executor::execute;
+pub use analyzer::{QueryAnalyzer, QueryPattern};
+pub use executor::{execute, OptimizedExecutor};
 pub use parser::parse;
+pub use planner::{ExecutionPlan, QueryPlanner};
 pub use types::{
     AggregationFunction, AggregationType, FilterCondition, LimitOffset, OrderBy, ParsedQuery,
     QueryResult, SortDirection,

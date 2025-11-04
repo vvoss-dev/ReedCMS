@@ -139,6 +139,12 @@ pub enum ReedError {
         backend: String,
         reason: String,
     },
+
+    /// Index not found during query execution.
+    IndexNotFound { name: String },
+
+    /// Query optimization failed.
+    QueryOptimizationFailed { query: String, reason: String },
 }
 
 impl fmt::Display for ReedError {
@@ -293,6 +299,12 @@ impl fmt::Display for ReedError {
                     "Operation '{}' not supported by '{}' backend: {}",
                     operation, backend, reason
                 )
+            }
+            Self::IndexNotFound { name } => {
+                write!(f, "Index '{}' not found", name)
+            }
+            Self::QueryOptimizationFailed { query, reason } => {
+                write!(f, "Query optimization failed for '{}': {}", query, reason)
             }
         }
     }

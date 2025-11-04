@@ -19,6 +19,9 @@
 //! 5. **Aggregate**: Apply aggregation function (if specified)
 
 use crate::error::{ReedError, ReedResult};
+use crate::indices::Index;
+use crate::reedql::analyzer::{QueryAnalyzer, QueryPattern};
+use crate::reedql::planner::{ExecutionPlan, QueryPlanner};
 use crate::reedql::types::{AggregationType, FilterCondition, ParsedQuery, QueryResult};
 use std::collections::HashMap;
 
@@ -345,6 +348,215 @@ fn aggregate(
                 Ok(0.0) // No values found
             }
         }
+    }
+}
+
+/// Extended executor with index-based optimization.
+///
+/// This executor automatically detects query patterns and uses B+-Tree indices
+/// when available and cost-effective.
+///
+/// ## Example
+/// ```rust,ignore
+/// use reedbase::reedql::{parse, OptimizedExecutor};
+/// use reedbase::indices::BTreeIndex;
+///
+/// // Create executor with index
+/// let hierarchy_index = BTreeIndex::open("hierarchy.idx", Order::new(100)?)?;
+/// let executor = OptimizedExecutor::new(vec![
+///     ("hierarchy_index".to_string(), Box::new(hierarchy_index)),
+/// ]);
+///
+/// // Execute optimized query
+/// let query = parse("SELECT * FROM text WHERE key LIKE 'page.%'")?;
+/// let result = executor.execute_optimized(&query, &table)?;
+/// ```
+pub struct OptimizedExecutor {
+    /// Available indices for optimization.
+    indices: Vec<(String, Box<dyn Index<String, Vec<usize>>>)>,
+}
+
+impl OptimizedExecutor {
+    /// Create executor with available indices.
+    ///
+    /// ## Arguments
+    /// - `indices`: List of (name, index) pairs for optimization
+    ///
+    /// ## Example
+    /// ```rust,ignore
+    /// let executor = OptimizedExecutor::new(vec![
+    ///     ("hierarchy_index".to_string(), Box::new(btree_index)),
+    /// ]);
+    /// ```
+    pub fn new(indices: Vec<(String, Box<dyn Index<String, Vec<usize>>>)>) -> Self {
+        Self { indices }
+    }
+
+    /// Execute query with automatic optimization.
+    ///
+    /// ## Algorithm
+    /// 1. Analyze query for patterns (point lookup, prefix scan, range scan)
+    /// 2. Plan execution strategy (cost-based: index vs full scan)
+    /// 3. Execute using indices if beneficial
+    /// 4. Fall back to full scan otherwise
+    ///
+    /// ## Performance
+    /// - Point lookup: <100μs (index)
+    /// - Range scan: <10ms for 1000 rows (index)
+    /// - Full scan: ~10ms for 1M rows (fallback)
+    ///
+    /// ## Example
+    /// ```rust,ignore
+    /// let query = parse("SELECT * FROM text WHERE key = 'page.title'")?;
+    /// let result = executor.execute_optimized(&query, &table)?;
+    /// // Uses index point lookup if available
+    /// ```
+    pub fn execute_optimized(
+        &self,
+        query: &ParsedQuery,
+        table: &[HashMap<String, String>],
+    ) -> ReedResult<QueryResult> {
+        // 1. Analyze query
+        let pattern = QueryAnalyzer::analyze(query)?;
+
+        // 2. Plan execution
+        let planner = QueryPlanner::new(
+            self.indices
+                .iter()
+                .map(|(name, _)| (name.clone(), "key".to_string()))
+                .collect(),
+        );
+        let plan = planner.plan(&pattern, table.len())?;
+
+        // 3. Execute plan
+        match plan {
+            ExecutionPlan::FullScan => {
+                // Original executor logic
+                self.execute_full_scan(query, table)
+            }
+
+            ExecutionPlan::IndexPointLookup { index_name, key } => {
+                self.execute_point_lookup(&index_name, &key, query, table)
+            }
+
+            ExecutionPlan::IndexRangeScan {
+                index_name,
+                start,
+                end,
+            } => self.execute_range_scan(&index_name, &start, &end, query, table),
+        }
+    }
+
+    fn execute_point_lookup(
+        &self,
+        index_name: &str,
+        key: &str,
+        query: &ParsedQuery,
+        table: &[HashMap<String, String>],
+    ) -> ReedResult<QueryResult> {
+        // Find index
+        let index = self
+            .indices
+            .iter()
+            .find(|(name, _)| name == index_name)
+            .ok_or_else(|| ReedError::IndexNotFound {
+                name: index_name.to_string(),
+            })?;
+
+        // Lookup row IDs
+        let row_ids = index.1.get(&key.to_string())?.unwrap_or_default();
+
+        // Fetch rows
+        let mut rows: Vec<HashMap<String, String>> = row_ids
+            .iter()
+            .filter_map(|&id| table.get(id).cloned())
+            .collect();
+
+        // Apply remaining filters (non-key conditions)
+        rows.retain(|row| Self::matches_all_conditions(row, &query.conditions));
+
+        // Apply ORDER BY, LIMIT, projections
+        Self::apply_post_processing(rows, query)
+    }
+
+    fn execute_range_scan(
+        &self,
+        index_name: &str,
+        start: &str,
+        end: &str,
+        query: &ParsedQuery,
+        table: &[HashMap<String, String>],
+    ) -> ReedResult<QueryResult> {
+        // Find index
+        let index = self
+            .indices
+            .iter()
+            .find(|(name, _)| name == index_name)
+            .ok_or_else(|| ReedError::IndexNotFound {
+                name: index_name.to_string(),
+            })?;
+
+        // Range scan
+        let results = index.1.range(&start.to_string(), &end.to_string())?;
+
+        // Flatten row IDs
+        let row_ids: Vec<usize> = results.into_iter().flat_map(|(_, ids)| ids).collect();
+
+        // Fetch rows
+        let mut rows: Vec<HashMap<String, String>> = row_ids
+            .iter()
+            .filter_map(|&id| table.get(id).cloned())
+            .collect();
+
+        // Apply remaining filters
+        rows.retain(|row| Self::matches_all_conditions(row, &query.conditions));
+
+        // Apply ORDER BY, LIMIT, projections
+        Self::apply_post_processing(rows, query)
+    }
+
+    fn execute_full_scan(
+        &self,
+        query: &ParsedQuery,
+        table: &[HashMap<String, String>],
+    ) -> ReedResult<QueryResult> {
+        // Original REED-19-12 logic (unchanged)
+        execute(query, table)
+    }
+
+    fn matches_all_conditions(
+        row: &HashMap<String, String>,
+        conditions: &[FilterCondition],
+    ) -> bool {
+        conditions
+            .iter()
+            .all(|cond| evaluate_condition(cond, row).unwrap_or(false))
+    }
+
+    fn apply_post_processing(
+        mut rows: Vec<HashMap<String, String>>,
+        query: &ParsedQuery,
+    ) -> ReedResult<QueryResult> {
+        // Handle aggregation (if specified)
+        if let Some(agg) = &query.aggregation {
+            let value = aggregate(&rows, agg, query)?;
+            return Ok(QueryResult::Aggregation(value));
+        }
+
+        // Apply ORDER BY
+        if !query.order_by.is_empty() {
+            sort_rows(&mut rows, query);
+        }
+
+        // Apply LIMIT/OFFSET
+        if let Some(limit) = &query.limit {
+            rows = apply_limit(rows, limit.offset, limit.limit);
+        }
+
+        // Project columns
+        let projected = project_columns(&rows, &query.columns)?;
+
+        Ok(QueryResult::Rows(projected))
     }
 }
 
