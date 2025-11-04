@@ -14,6 +14,7 @@
 mod test_utils;
 
 use reedbase::{Database, QueryResult};
+use serial_test::serial;
 use std::sync::Arc;
 use std::thread;
 use std::time::Instant;
@@ -296,6 +297,7 @@ fn test_drop_index() {
 // ============================================================================
 
 #[test]
+#[serial]
 fn test_concurrent_reads() {
     let (db, _temp) = create_test_database("concurrent_reads_test", 100);
     let db = Arc::new(db);
@@ -324,6 +326,7 @@ fn test_concurrent_reads() {
 }
 
 #[test]
+#[serial]
 fn test_concurrent_writes() {
     let (db, _temp) = create_test_database("concurrent_writes_test", 0);
     let db = Arc::new(db);
@@ -359,7 +362,7 @@ fn test_concurrent_writes() {
 }
 
 #[test]
-#[ignore] // TODO: Registry concurrency issue - users_dict file not found during concurrent operations
+#[serial]
 fn test_read_during_write() {
     let (db, _temp) = create_test_database("read_write_test", 50);
     let db = Arc::new(db);
