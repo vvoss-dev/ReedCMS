@@ -360,10 +360,23 @@ fn test_rollback_to_version() {
 - `reedbase/tests/database_api_test.rs` - Add versioning tests section
 
 **Acceptance**:
-- [ ] All 3 versioning tests implemented
-- [ ] Tests verify version creation
-- [ ] Tests verify delta creation
-- [ ] Tests verify rollback functionality
+- [x] All 3 versioning tests implemented
+- [x] Tests verify version creation
+- [x] Tests verify delta creation
+- [x] Tests verify rollback functionality
+
+**Status**: ✅ **COMPLETED** (Commit: 02fbf9f)
+
+**Implementation Details**:
+- Added 3 tests to database_api_test.rs (156 lines):
+  1. test_insert_creates_version - Verifies version count increases, metadata recorded
+  2. test_update_creates_delta - Verifies delta creation and user tracking  
+  3. test_rollback_to_version - Tests rollback to previous version restores data
+- All tests use Table::new() directly (bypass Database API) to avoid exposing internal get_table()
+- Tests marked #[serial] to avoid registry conflicts
+- Versioning API (list_versions, rollback) already existed - only test coverage added
+- Test results: All 3 pass, full suite now 28/29 (96.5%, up from 24/26)
+- Bonus: test_read_during_write now passes (was failing, fixed by test serialization)
 
 ---
 
