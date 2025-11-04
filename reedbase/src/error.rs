@@ -120,6 +120,18 @@ pub enum ReedError {
         reason: String,
         value: Option<String>,
     },
+
+    /// Invalid B+-Tree order.
+    InvalidOrder { order: u16, min: u16 },
+
+    /// Corrupted index page.
+    CorruptedIndex { page_id: u32, reason: String },
+
+    /// WAL recovery failed.
+    WalRecoveryFailed { reason: String },
+
+    /// Invalid page format.
+    InvalidPageFormat { page_id: u32, reason: String },
 }
 
 impl fmt::Display for ReedError {
@@ -251,6 +263,18 @@ impl fmt::Display for ReedError {
                 } else {
                     write!(f, "Validation error in column '{}': {}", column, reason)
                 }
+            }
+            Self::InvalidOrder { order, min } => {
+                write!(f, "Invalid B+-Tree order: {} (minimum: {})", order, min)
+            }
+            Self::CorruptedIndex { page_id, reason } => {
+                write!(f, "Corrupted index page {}: {}", page_id, reason)
+            }
+            Self::WalRecoveryFailed { reason } => {
+                write!(f, "WAL recovery failed: {}", reason)
+            }
+            Self::InvalidPageFormat { page_id, reason } => {
+                write!(f, "Invalid page format at page {}: {}", page_id, reason)
             }
         }
     }
