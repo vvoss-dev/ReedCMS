@@ -32,7 +32,11 @@ fn bench_read_current(c: &mut Criterion) {
 
     for size in [1024, 10_240, 102_400, 1_024_000].iter() {
         let temp_dir = TempDir::new().unwrap();
-        let table = Table::new(temp_dir.path(), "bench_read");
+        let db_path = temp_dir.path().join(".reed");
+        reedbase::registry::init_registry(&db_path).unwrap();
+        reedbase::registry::set_base_path(db_path.clone());
+
+        let table = Table::new(&db_path, "bench_read");
         let content = generate_content(*size);
         table.init(&content, "system").unwrap();
 
@@ -103,7 +107,7 @@ fn bench_list_versions(c: &mut Criterion) {
 
                         // Create version history
                         for i in 0..count {
-                            content[0] = (content[0] + 1) % 256;
+                            content[0] = content[0].wrapping_add(1);
                             table.write(&content, "system").unwrap();
                         }
 
@@ -144,7 +148,7 @@ fn bench_rollback(c: &mut Criterion) {
 
                         // Create version history
                         for _ in 0..count {
-                            content[0] = (content[0] + 1) % 256;
+                            content[0] = content[0].wrapping_add(1);
                             let result = table.write(&content, "system").unwrap();
                             timestamps.push(result.timestamp);
                         }
