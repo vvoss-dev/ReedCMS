@@ -13,7 +13,7 @@
 
 mod test_utils;
 
-use reedbase::Database;
+use reedbase::{Database, QueryResult};
 use std::sync::Arc;
 use std::thread;
 use std::time::Instant;
@@ -89,7 +89,10 @@ fn test_database_update_query() {
         .query("SELECT value FROM text WHERE key = 'test.key.000001'")
         .expect("Query failed");
 
-    assert_eq!(get_rows(&query_result)[0].get("value").unwrap(), "updated value");
+    assert_eq!(
+        get_rows(&query_result)[0].get("value").unwrap(),
+        "updated value"
+    );
 }
 
 #[test]
@@ -196,8 +199,15 @@ fn test_query_with_aggregation() {
     // Count all rows
     let result = db.query("SELECT COUNT(*) FROM text").expect("Query failed");
 
-    assert_query_result_count(&result, 1);
-    // Note: Actual aggregation support depends on ReedQL implementation
+    // Aggregation queries return Aggregation variant, not Rows
+    match result {
+        QueryResult::Aggregation(count) => {
+            assert_eq!(count, 100.0, "COUNT(*) should return 100");
+        }
+        QueryResult::Rows(_) => {
+            panic!("Expected Aggregation result, got Rows");
+        }
+    }
 }
 
 // ============================================================================
@@ -241,7 +251,7 @@ fn test_create_index_speeds_up_query() {
 
 #[test]
 fn test_auto_index_creation() {
-    let (db, _temp) = create_test_database("auto_index_test", 100);
+    let (db, _temp) = create_test_database_with_auto_index("auto_index_test", 100);
 
     // Execute same query 10 times (threshold)
     for _ in 0..10 {

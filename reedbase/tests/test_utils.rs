@@ -6,13 +6,16 @@
 //! Provides helper functions for creating test databases, inserting test data,
 //! and asserting on query results and execution metrics.
 
-use reedbase::{Database, ExecuteResult, QueryResult};
+use reedbase::{AutoIndexConfig, Database, ExecuteResult, QueryResult};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::Duration;
 use tempfile::TempDir;
 
 /// Creates a temporary test database with the specified name and initial row count.
+///
+/// Auto-indexing is **disabled** by default for predictable testing.
+/// Use `create_test_database_with_auto_index()` if you need auto-indexing.
 ///
 /// ## Arguments
 /// - `name`: Database name (used for temp directory)
@@ -31,7 +34,52 @@ pub fn create_test_database(_name: &str, rows: usize) -> (Database, TempDir) {
     // Set base path for registry lookups
     reedbase::registry::set_base_path(db_path.clone());
 
-    let db = Database::open(&db_path).expect("Failed to open database");
+    // Force reload of dictionaries with new path (critical for concurrent tests)
+    reedbase::registry::reload_dictionaries().expect("Failed to reload dictionaries");
+
+    // Open database with auto-indexing disabled (for predictable testing)
+    let db = Database::open_with_config(&db_path, AutoIndexConfig::disabled())
+        .expect("Failed to open database");
+
+    // Create text table
+    db.create_table("text", None)
+        .expect("Failed to create text table");
+
+    // Insert test data
+    if rows > 0 {
+        insert_test_data(&db, rows);
+    }
+
+    (db, temp_dir)
+}
+
+/// Creates a temporary test database with auto-indexing enabled.
+///
+/// Use this for testing auto-index creation behavior.
+///
+/// ## Arguments
+/// - `name`: Database name (used for temp directory)
+/// - `rows`: Number of test rows to insert initially
+///
+/// ## Returns
+/// - `(Database, TempDir)`: Database instance and temp directory handle
+pub fn create_test_database_with_auto_index(_name: &str, rows: usize) -> (Database, TempDir) {
+    let temp_dir = TempDir::new().expect("Failed to create temp directory");
+    let db_path = temp_dir.path().join(".reed");
+    fs::create_dir_all(&db_path).expect("Failed to create .reed directory");
+
+    // Initialize registry (creates actions.dict and users.dict)
+    reedbase::registry::init_registry(&db_path).expect("Failed to init registry");
+
+    // Set base path for registry lookups
+    reedbase::registry::set_base_path(db_path.clone());
+
+    // Force reload of dictionaries with new path (critical for concurrent tests)
+    reedbase::registry::reload_dictionaries().expect("Failed to reload dictionaries");
+
+    // Open database with auto-indexing ENABLED (default config)
+    let db = Database::open_with_config(&db_path, AutoIndexConfig::default())
+        .expect("Failed to open database");
 
     // Create text table
     db.create_table("text", None)
@@ -58,7 +106,12 @@ pub fn create_test_database_at_path<P: AsRef<Path>>(path: P, rows: usize) -> Dat
     // Set base path for registry lookups
     reedbase::registry::set_base_path(db_path.clone());
 
-    let db = Database::open(&db_path).expect("Failed to open database");
+    // Force reload of dictionaries with new path (critical for concurrent tests)
+    reedbase::registry::reload_dictionaries().expect("Failed to reload dictionaries");
+
+    // Open database with auto-indexing disabled (for predictable testing)
+    let db = Database::open_with_config(&db_path, AutoIndexConfig::disabled())
+        .expect("Failed to open database");
     db.create_table("text", None)
         .expect("Failed to create text table");
 
