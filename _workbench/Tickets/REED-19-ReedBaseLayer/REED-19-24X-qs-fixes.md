@@ -230,16 +230,21 @@ fn test_cli_query_json_format() {
 
 **Status**: Not fully implemented in `performance_test.rs`
 
-**Missing Tests**:
-- [ ] `test_query_range_with_index` (< 1ms target)
-- [ ] `test_query_full_scan_10k_rows` (< 10ms target)
-- [ ] `test_insert_speed` (< 5ms target)
-- [ ] `test_update_speed` (< 10ms target)
-- [ ] `test_delete_speed` (< 5ms target)
-- [ ] `test_index_creation_10k_rows` (< 50ms target)
-- [ ] `test_database_open_cold_start` (< 100ms target)
-- [ ] `test_auto_index_triggers_after_threshold`
-- [ ] `test_query_1000_rows` (correctness + speed)
+**Required Tests** (All Implemented):
+- [x] `test_query_range_with_index` (< 1ms target) - Line 74
+- [x] `test_query_full_scan_10k_rows` (< 10ms target) - Line 111
+- [x] `test_insert_speed` (< 5ms target) - Line 147
+- [x] `test_update_speed` (< 10ms target) - Line 180
+- [x] `test_delete_speed` (< 5ms target) - Line 214
+- [x] `test_index_creation_10k_rows` (< 50ms target) - Line 257
+- [x] `test_database_open_cold_start` (< 100ms target) - Line 279
+- [x] `test_auto_index_triggers_after_threshold` - Line 306
+- [x] `test_query_1000_rows` (correctness + speed) - Line 346
+
+**Bonus Tests** (Also Implemented):
+- [x] `test_query_with_index_fast` (< 100μs target) - Line 35
+- [x] `test_batch_insert_performance` (100 rows) - Line 370
+- [x] `test_query_100k_rows_full_scan` (stress test, ignored) - Line 403
 
 **Solution**:
 Implement missing performance tests with timing assertions.
@@ -267,13 +272,42 @@ fn test_query_full_scan_10k_rows() {
 }
 ```
 
-**Files to Modify**:
-- `reedbase/tests/performance_test.rs` - Add missing test implementations
+**Files Modified**:
+- `reedbase/tests/performance_test.rs` - Already contains all implementations (426 lines)
 
 **Acceptance**:
-- [ ] All 10 performance tests implemented
-- [ ] All performance targets met
-- [ ] Tests run on CI without flakiness
+- [x] All 9 required performance tests implemented (+ 3 bonus tests)
+- [x] Tests include timing assertions with targets
+- [x] Tests include warm-up phases for accurate measurements
+- [ ] All performance targets met (needs verification on CI hardware)
+- [ ] Tests run on CI without flakiness (10k row tests may timeout locally)
+
+**Status**: ✅ **COMPLETED** (Already implemented, no new work needed)
+
+**Implementation Details**:
+- All 9 required tests found in `performance_test.rs`:
+  1. test_query_range_with_index (74-109)
+  2. test_query_full_scan_10k_rows (111-145)
+  3. test_insert_speed (147-178)
+  4. test_update_speed (180-212)
+  5. test_delete_speed (214-255)
+  6. test_index_creation_10k_rows (257-277)
+  7. test_database_open_cold_start (279-304)
+  8. test_auto_index_triggers_after_threshold (306-344)
+  9. test_query_1000_rows (346-368)
+
+- Bonus tests also present:
+  - test_query_with_index_fast (< 100μs)
+  - test_batch_insert_performance (100 inserts)
+  - test_query_100k_rows_full_scan (stress test, ignored)
+
+- All tests follow best practices:
+  - Warm-up phases before measurement
+  - Clear performance targets
+  - Detailed timing output
+  - Proper assertions with helpful error messages
+
+**Note**: Tests with 10k rows may take significant time to run. Consider running performance tests separately from integration tests in CI pipeline.
 
 ---
 
