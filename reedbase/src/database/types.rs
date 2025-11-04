@@ -6,6 +6,7 @@
 //! Defines types used throughout the Database API.
 
 use crate::error::{ReedError, ReedResult};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::time::Duration;
 
@@ -67,6 +68,121 @@ impl AutoIndexConfig {
     }
 }
 
+/// Index backend type.
+///
+/// Determines storage and performance characteristics of an index.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum IndexBackend {
+    /// HashMap (in-memory, O(1) exact match, no persistence)
+    Hash,
+
+    /// B+-Tree (on-disk, O(log n) lookups, persistent, supports range queries)
+    BTree,
+}
+
+impl IndexBackend {
+    /// Returns optimal backend for query pattern operation.
+    ///
+    /// ## Rules
+    /// - Exact match (=) → Hash (O(1) faster)
+    /// - Range (<, >, <=, >=) → BTree (only backend supporting ranges)
+    /// - Prefix (LIKE 'foo%') → BTree (efficient range scan)
+    /// - Pattern (LIKE '%foo%') → Neither (full scan required)
+    ///
+    /// ## Input
+    /// - `operation`: Query operation type ("equals", "range", "prefix", etc.)
+    ///
+    /// ## Output
+    /// - Optimal backend for the operation
+    pub fn for_operation(operation: &str) -> Self {
+        match operation {
+            "equals" => Self::Hash,
+            "range"
+            | "prefix"
+            | "less_than"
+            | "greater_than"
+            | "less_than_or_equal"
+            | "greater_than_or_equal" => Self::BTree,
+            _ => Self::Hash, // Default to Hash
+        }
+    }
+
+    /// Returns human-readable name.
+    pub fn name(&self) -> &'static str {
+        match self {
+            Self::Hash => "hash",
+            Self::BTree => "btree",
+        }
+    }
+}
+
+/// Index metadata stored in .reed/indices/metadata.json
+///
+/// Tracks index creation, usage, and backend information for persistent
+/// index loading and management.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IndexMetadata {
+    /// Table name
+    pub table: String,
+
+    /// Column name
+    pub column: String,
+
+    /// Backend type (hash or btree)
+    pub backend: IndexBackend,
+
+    /// Creation timestamp (Unix seconds)
+    pub created_at: u64,
+
+    /// Query pattern that triggered creation ("exact", "range", "prefix")
+    pub query_pattern: String,
+
+    /// Whether index was auto-created by pattern detection
+    pub auto_created: bool,
+
+    /// Number of times index was used in queries
+    pub usage_count: usize,
+
+    /// Last usage timestamp (Unix seconds)
+    pub last_used: u64,
+}
+
+impl IndexMetadata {
+    /// Creates new index metadata.
+    pub fn new(table: String, column: String, backend: IndexBackend) -> Self {
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
+
+        Self {
+            table,
+            column,
+            backend,
+            created_at: now,
+            query_pattern: "unknown".to_string(),
+            auto_created: false,
+            usage_count: 0,
+            last_used: now,
+        }
+    }
+
+    /// Returns index key (table.column format).
+    pub fn index_key(&self) -> String {
+        format!("{}.{}", self.table, self.column)
+    }
+
+    /// Records index usage (increments count, updates last_used).
+    pub fn record_usage(&mut self) {
+        self.usage_count += 1;
+        self.last_used = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
+    }
+}
+
 /// Information about a database index.
 #[derive(Debug, Clone)]
 pub struct IndexInfo {
@@ -78,6 +194,9 @@ pub struct IndexInfo {
 
     /// Index type ("hash" or "btree")
     pub index_type: String,
+
+    /// Backend type
+    pub backend: IndexBackend,
 
     /// Number of entries in index
     pub entry_count: usize,
@@ -97,11 +216,12 @@ pub struct IndexInfo {
 
 impl IndexInfo {
     /// Creates new index information.
-    pub fn new(table: String, column: String, index_type: String) -> Self {
+    pub fn new(table: String, column: String, index_type: String, backend: IndexBackend) -> Self {
         Self {
             table,
             column,
             index_type,
+            backend,
             entry_count: 0,
             memory_bytes: 0,
             disk_bytes: 0,
@@ -295,17 +415,28 @@ mod tests {
 
     #[test]
     fn test_index_info_new() {
-        let info = IndexInfo::new("text".to_string(), "key".to_string(), "btree".to_string());
+        let info = IndexInfo::new(
+            "text".to_string(),
+            "key".to_string(),
+            "btree".to_string(),
+            IndexBackend::BTree,
+        );
         assert_eq!(info.table, "text");
         assert_eq!(info.column, "key");
         assert_eq!(info.index_type, "btree");
+        assert_eq!(info.backend, IndexBackend::BTree);
         assert_eq!(info.entry_count, 0);
         assert!(!info.auto_created);
     }
 
     #[test]
     fn test_index_info_total_bytes() {
-        let mut info = IndexInfo::new("text".to_string(), "key".to_string(), "btree".to_string());
+        let mut info = IndexInfo::new(
+            "text".to_string(),
+            "key".to_string(),
+            "btree".to_string(),
+            IndexBackend::BTree,
+        );
         info.memory_bytes = 1024;
         info.disk_bytes = 2048;
         assert_eq!(info.total_bytes(), 3072);
@@ -313,10 +444,70 @@ mod tests {
 
     #[test]
     fn test_index_info_efficiency_score() {
-        let mut info = IndexInfo::new("text".to_string(), "key".to_string(), "hash".to_string());
+        let mut info = IndexInfo::new(
+            "text".to_string(),
+            "key".to_string(),
+            "hash".to_string(),
+            IndexBackend::Hash,
+        );
         info.memory_bytes = 10240; // 10 KB
         info.usage_count = 100;
         assert!((info.efficiency_score() - 10.0).abs() < 0.01); // 100 / 10 = 10
+    }
+
+    #[test]
+    fn test_index_backend_for_operation() {
+        assert_eq!(IndexBackend::for_operation("equals"), IndexBackend::Hash);
+        assert_eq!(IndexBackend::for_operation("range"), IndexBackend::BTree);
+        assert_eq!(
+            IndexBackend::for_operation("less_than"),
+            IndexBackend::BTree
+        );
+        assert_eq!(
+            IndexBackend::for_operation("greater_than"),
+            IndexBackend::BTree
+        );
+        assert_eq!(IndexBackend::for_operation("prefix"), IndexBackend::BTree);
+        assert_eq!(IndexBackend::for_operation("unknown"), IndexBackend::Hash); // Default
+    }
+
+    #[test]
+    fn test_index_backend_name() {
+        assert_eq!(IndexBackend::Hash.name(), "hash");
+        assert_eq!(IndexBackend::BTree.name(), "btree");
+    }
+
+    #[test]
+    fn test_index_metadata_new() {
+        let metadata =
+            IndexMetadata::new("text".to_string(), "key".to_string(), IndexBackend::BTree);
+        assert_eq!(metadata.table, "text");
+        assert_eq!(metadata.column, "key");
+        assert_eq!(metadata.backend, IndexBackend::BTree);
+        assert_eq!(metadata.query_pattern, "unknown");
+        assert!(!metadata.auto_created);
+        assert_eq!(metadata.usage_count, 0);
+    }
+
+    #[test]
+    fn test_index_metadata_index_key() {
+        let metadata =
+            IndexMetadata::new("text".to_string(), "key".to_string(), IndexBackend::Hash);
+        assert_eq!(metadata.index_key(), "text.key");
+    }
+
+    #[test]
+    fn test_index_metadata_record_usage() {
+        let mut metadata =
+            IndexMetadata::new("text".to_string(), "key".to_string(), IndexBackend::Hash);
+        let initial_usage = metadata.usage_count;
+        let initial_last_used = metadata.last_used;
+
+        std::thread::sleep(std::time::Duration::from_millis(10));
+        metadata.record_usage();
+
+        assert_eq!(metadata.usage_count, initial_usage + 1);
+        assert!(metadata.last_used > initial_last_used);
     }
 
     #[test]
