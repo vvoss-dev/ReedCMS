@@ -43,6 +43,7 @@ pub mod backup;
 pub mod btree;
 pub mod concurrent;
 pub mod conflict;
+pub mod database;
 pub mod error;
 pub mod functions;
 pub mod indices;
@@ -58,5 +59,6 @@ pub mod version;
 // Re-export commonly used types
 pub use backup::{create_backup, list_backups, restore_point_in_time, BackupInfo, RestoreReport};
 pub use btree::{BPlusTree, Index, Order};
+pub use database::{AutoIndexConfig, Database, DatabaseStats, ExecuteResult, QueryMetrics};
 pub use error::{ReedError, ReedResult};
 pub use metrics::{Metric, MetricType, MetricUnit, MetricsCollector};

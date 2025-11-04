@@ -143,6 +143,9 @@ pub enum ReedError {
     /// Index not found during query execution.
     IndexNotFound { name: String },
 
+    /// Index already exists.
+    IndexAlreadyExists { table: String, column: String },
+
     /// Query optimization failed.
     QueryOptimizationFailed { query: String, reason: String },
 
@@ -314,6 +317,9 @@ impl fmt::Display for ReedError {
             }
             Self::IndexNotFound { name } => {
                 write!(f, "Index '{}' not found", name)
+            }
+            Self::IndexAlreadyExists { table, column } => {
+                write!(f, "Index already exists on {}.{}", table, column)
             }
             Self::QueryOptimizationFailed { query, reason } => {
                 write!(f, "Query optimization failed for '{}': {}", query, reason)
