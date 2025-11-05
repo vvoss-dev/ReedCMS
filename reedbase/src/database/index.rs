@@ -164,6 +164,46 @@ pub fn create_index_with_backend(
     Ok(())
 }
 
+/// Determines optimal index backend based on query pattern.
+///
+/// ## Input
+/// - `operation`: Query operation type ("equals", "range", "prefix", etc.)
+///
+/// ## Output
+/// - Optimal backend for the operation
+///
+/// ## Rules
+/// - Exact match (=) → Hash (O(1) faster for point lookups)
+/// - Range (<, >, <=, >=) → BTree (only backend supporting ranges)
+/// - Prefix (LIKE 'foo%') → BTree (efficient prefix scans)
+/// - Unknown → BTree (persistent, supports all operations)
+pub fn select_backend_for_operation(operation: &str) -> IndexBackend {
+    IndexBackend::for_operation(operation)
+}
+
+/// Creates an index with smart backend selection based on query pattern.
+///
+/// ## Input
+/// - `db`: Database reference
+/// - `table_name`: Table name
+/// - `column`: Column name
+/// - `operation`: Query operation that triggered creation ("equals", "range", etc.)
+/// - `auto_created`: Whether this index was auto-created
+///
+/// ## Output
+/// - `Ok(())`: Index created successfully
+/// - `Err(ReedError)`: Creation failed
+pub fn create_index_with_smart_selection(
+    db: &Database,
+    table_name: &str,
+    column: &str,
+    operation: &str,
+    auto_created: bool,
+) -> ReedResult<()> {
+    let backend = select_backend_for_operation(operation);
+    create_index_with_backend(db, table_name, column, backend, auto_created)
+}
+
 /// Creates an index on a table column (internal - delegates to create_index_with_backend).
 ///
 /// ## Input
@@ -289,27 +329,54 @@ pub fn create_index(db: &Database, table_name: &str, column: &str) -> ReedResult
 ///
 /// ## Output
 /// - `Vec<IndexInfo>`: Information about all indices
+///
+/// ## Features
+/// - Shows backend type (hash or btree)
+/// - Reports memory and disk usage
+/// - Includes usage count from metadata
 pub fn list_indices(db: &Database) -> Vec<IndexInfo> {
     let indices = db.indices().read().unwrap();
     let auto_flags = db.auto_created_indices().read().unwrap();
+
+    // Load metadata for usage tracking
+    let metadata_map: std::collections::HashMap<String, IndexMetadata> = load_index_metadata(db)
+        .ok()
+        .unwrap_or_default()
+        .into_iter()
+        .map(|m| (m.index_key(), m))
+        .collect();
+
     let mut result = Vec::new();
 
-    for (key, _index) in indices.iter() {
+    for (key, index) in indices.iter() {
         let parts: Vec<&str> = key.split('.').collect();
         if parts.len() >= 2 {
             let table = parts[0].to_string();
             let column = parts[1..].join(".");
 
+            // Get backend type from index trait
+            let backend_name = index.backend_type();
+            let backend = if backend_name == "btree" {
+                IndexBackend::BTree
+            } else {
+                IndexBackend::Hash
+            };
+
             let auto_created = auto_flags.get(key).copied().unwrap_or(false);
 
-            let mut info = IndexInfo::new(
-                table,
-                column,
-                "hash".to_string(),
-                crate::database::types::IndexBackend::Hash,
-            );
+            // Get memory and disk usage from index
+            let memory_bytes = index.memory_usage();
+            let disk_bytes = index.disk_usage();
+
+            // Get usage count from metadata
+            let usage_count = metadata_map.get(key).map(|m| m.usage_count).unwrap_or(0);
+
+            let mut info = IndexInfo::new(table, column, backend_name.to_string(), backend);
             info.auto_created = auto_created;
-            // TODO: Query index for entry_count, memory_bytes
+            info.memory_bytes = memory_bytes;
+            info.disk_bytes = disk_bytes;
+            info.usage_count = usage_count;
+            // entry_count would require iterating the index - skip for performance
 
             result.push(info);
         }
